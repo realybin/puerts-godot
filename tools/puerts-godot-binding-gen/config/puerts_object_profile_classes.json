@@ -1,0 +1,7 @@
+{
+	"source": "classes",
+	"register_function": "register_puerts_object_profile_bindings_generated",
+	"classes": [
+		"Object"
+	]
+}

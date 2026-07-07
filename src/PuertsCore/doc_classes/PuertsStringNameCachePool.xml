@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="PuertsStringNameCachePool" inherits="RefCounted">
+	<brief_description>
+		Shared UTF-8 cache pool for StringName keys used by Puerts environments.
+	</brief_description>
+	<description>
+		[PuertsStringNameCachePool] stores [StringName] to UTF-8 conversion results and can be shared by multiple [PuertsEnvironment] instances.
+		Call [method initialize] before passing the pool to [method PuertsEnvironment.initialize].
+		Use [member policy] to choose a strategy:
+		[code]POLICY_HASH_MAP[/code] keeps entries in a hash table with a stable hit rate.
+		[code]POLICY_FIXED_HASH_MAP[/code] uses [code]fixed_hash_map[/code] with compile-time fixed storage (1024 entries in this source tree).
+		[code]POLICY_NO_CACHE[/code] disables caching and converts [StringName] to UTF-8 every call.
+		To change that limit, edit [code]FIXED_HASH_MAP_MAX_CAPACITY[/code] in the C++ source and rebuild.
+		Use [member capacity] to control the cache size.
+	</description>
+	<methods>
+		<method name="initialize">
+			<return type="int" enum="Error" />
+			<param index="0" name="policy" type="int" enum="PuertsStringNameCachePool.Policy" default="0" />
+			<param index="1" name="capacity" type="int" default="512" />
+			<description>
+				Initializes this cache pool with [param policy] and [param capacity].
+				For [code]POLICY_FIXED_HASH_MAP[/code], [param capacity] is ignored and compile-time capacity is used.
+				For [code]POLICY_NO_CACHE[/code], [param capacity] is ignored.
+				Calling this method again reconfigures and clears existing entries.
+			</description>
+		</method>
+		<method name="is_initialized" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] after [method initialize] has been called.
+			</description>
+		</method>
+		<method name="clear">
+			<return type="void" />
+			<description>
+				Clears all cached entries.
+			</description>
+		</method>
+		<method name="get_policy" qualifiers="const">
+			<return type="int" enum="PuertsStringNameCachePool.Policy" />
+			<description>
+				Returns the active cache strategy.
+			</description>
+		</method>
+		<method name="get_capacity" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the current cache capacity.
+			</description>
+		</method>
+	</methods>
+	<constants>
+		<constant name="POLICY_HASH_MAP" value="0" enum="Policy">
+			Hash map strategy.
+		</constant>
+		<constant name="POLICY_FIXED_HASH_MAP" value="1" enum="Policy">
+			Fixed hash map strategy with compile-time maximum storage.
+		</constant>
+		<constant name="POLICY_NO_CACHE" value="2" enum="Policy">
+			No-cache strategy. Converts StringName to UTF-8 on every request.
+		</constant>
+	</constants>
+</class>

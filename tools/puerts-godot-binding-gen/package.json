@@ -1,0 +1,17 @@
+{
+  "name": "puerts-godot-binding-gen",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "generate:packed-byte-array": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --classes PackedByteArray --output ./output/packed_byte_array.binding.inc",
+    "generate:puerts-all": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --classes-json ./config/puerts_builtin_classes.json --output ./output/puerts_builtin_bindings.generated.inc",
+    "generate:puerts-object-profile": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --classes-json ./config/puerts_object_profile_classes.json --output ./output/puerts_object_profile_bindings.generated.inc",
+    "generate:puerts-global-scope": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --target globalscope --output ./output/puerts_global_scope.generated.inc"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "typescript": "^5.9.3"
+  }
+}

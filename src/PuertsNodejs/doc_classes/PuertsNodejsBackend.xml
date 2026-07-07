@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="PuertsNodejsBackend" inherits="Resource">
+	<brief_description>
+		Backend resource for running ECMAScript through Node.js.
+	</brief_description>
+	<description>
+		Instantiate [PuertsNodejsBackend] and pass it to [method PuertsEnvironment.initialize] to create a Puerts environment backed by Node.js.
+	</description>
+	<methods>
+		<method name="is_available" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns whether this backend is available in the current build.
+			</description>
+		</method>
+		<method name="get_backend_id" qualifiers="const">
+			<return type="StringName" />
+			<description>
+				Returns the stable backend identifier, [code]nodejs[/code].
+			</description>
+		</method>
+		<method name="get_backend_name" qualifiers="const">
+			<return type="String" />
+			<description>
+				Returns the human-readable backend name.
+			</description>
+		</method>
+		<method name="get_language_id" qualifiers="const">
+			<return type="StringName" />
+			<description>
+				Returns the language identifier, [code]ecmascript[/code].
+			</description>
+		</method>
+		<method name="supports_tick" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] because the Node.js backend supports [method PuertsEnvironment.tick].
+			</description>
+		</method>
+		<method name="supports_debugger" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] because the Node.js backend supports remote debugging.
+			</description>
+		</method>
+		<method name="supports_low_memory_notification" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] because the Node.js backend supports low-memory notifications.
+			</description>
+		</method>
+		<method name="supports_terminate_execution" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] because the Node.js backend supports forced script termination.
+			</description>
+		</method>
+		<method name="_puerts_get_functions_ptr" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns an internal pointer to the Puerts backend function table.
+				This method exists for extension internals. Do not call it from gameplay code.
+			</description>
+		</method>
+	</methods>
+</class>

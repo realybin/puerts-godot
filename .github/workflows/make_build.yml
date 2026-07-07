@@ -1,0 +1,98 @@
+name: Build GDExtension
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_windows_x86_64: { description: "windows/x86_64", type: boolean, required: false, default: false }
+      build_macos_arm64: { description: "macos/arm64", type: boolean, required: false, default: false }
+      build_linux_x86_64: { description: "linux/x86_64", type: boolean, required: false, default: false }
+      build_android_arm64: { description: "android/arm64", type: boolean, required: false, default: false }
+      build_ios_arm64: { description: "ios/arm64", type: boolean, required: false, default: false }
+      build_web_wasm32: { description: "web/wasm32", type: boolean, required: false, default: false }
+      target_type:
+        description: "Build target type"
+        type: choice
+        required: true
+        default: template_debug
+        options:
+          - template_debug
+          - template_release
+      float_precision:
+        description: "Build float precision"
+        type: choice
+        required: true
+        default: single
+        options:
+          - single
+          - double
+
+jobs:
+  prepare:
+    runs-on: ubuntu-22.04
+    outputs:
+      targets: ${{ steps.select.outputs.targets }}
+      has_targets: ${{ steps.select.outputs.has_targets }}
+    steps:
+      - id: select
+        shell: bash
+        run: |
+          targets='[]'
+          if [[ "${{ inputs.build_windows_x86_64 }}" == "true" ]]; then
+            targets=$(jq -c '. + [{"platform":"windows","arch":"x86_64","os":"windows-2022"}]' <<<"$targets")
+          fi
+          if [[ "${{ inputs.build_macos_arm64 }}" == "true" ]]; then
+            targets=$(jq -c '. + [{"platform":"macos","arch":"arm64","os":"macos-14"}]' <<<"$targets")
+          fi
+          if [[ "${{ inputs.build_linux_x86_64 }}" == "true" ]]; then
+            targets=$(jq -c '. + [{"platform":"linux","arch":"x86_64","os":"ubuntu-22.04"}]' <<<"$targets")
+          fi
+          if [[ "${{ inputs.build_android_arm64 }}" == "true" ]]; then
+            targets=$(jq -c '. + [{"platform":"android","arch":"arm64","os":"ubuntu-22.04"}]' <<<"$targets")
+          fi
+          if [[ "${{ inputs.build_ios_arm64 }}" == "true" ]]; then
+            targets=$(jq -c '. + [{"platform":"ios","arch":"arm64","os":"macos-15"}]' <<<"$targets")
+          fi
+          if [[ "${{ inputs.build_web_wasm32 }}" == "true" ]]; then
+            targets=$(jq -c '. + [{"platform":"web","arch":"wasm32","os":"ubuntu-22.04"}]' <<<"$targets")
+          fi
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+          if [[ "$targets" == "[]" ]]; then
+            echo "has_targets=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_targets=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: prepare
+    if: ${{ needs.prepare.outputs.has_targets == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(needs.prepare.outputs.targets) }}
+        target_type: ["${{ inputs.target_type }}"]
+        float_precision: ["${{ inputs.float_precision }}"]
+
+    uses: ./.github/workflows/build_target.yml
+    secrets: inherit
+    with:
+      runner: ${{ matrix.target.os }}
+      platform: ${{ matrix.target.platform }}
+      arch: ${{ matrix.target.arch }}
+      target_type: ${{ matrix.target_type }}
+      float_precision: ${{ matrix.float_precision }}
+      run_tests: true
+      upload_artifact: true
+      save_cache: true
+      artifact_name: puerts-godot-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float_precision }}-${{ matrix.target_type }}
+
+  merge:
+    runs-on: ubuntu-22.04
+    needs: [prepare, build]
+    if: ${{ needs.prepare.outputs.has_targets == 'true' }}
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: puerts-godot-all
+          pattern: puerts-godot-*
+          delete-merged: true

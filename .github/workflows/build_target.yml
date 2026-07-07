@@ -1,0 +1,174 @@
+name: Build GDExtension Target
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        required: true
+        type: string
+      platform:
+        required: true
+        type: string
+      arch:
+        required: true
+        type: string
+      target_type:
+        required: true
+        type: string
+      float_precision:
+        required: true
+        type: string
+      em_version:
+        required: false
+        type: string
+        default: "3.1.62"
+      upload_artifact:
+        required: false
+        type: boolean
+        default: false
+      run_tests:
+        required: false
+        type: boolean
+        default: false
+      godot_version:
+        required: false
+        type: string
+        default: "4.6.2"
+      artifact_name:
+        required: false
+        type: string
+        default: ""
+      save_cache:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: build and test
+    runs-on: ${{ inputs.runner }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: thirdparty/puerts/unity/package-lock.json
+
+      - name: Install Android NDK
+        if: ${{ inputs.platform == 'android' }}
+        shell: bash
+        run: |
+          cd ~
+          rm -rf ~/android-ndk-r27d
+          wget -O android-ndk.zip -q https://dl.google.com/android/repository/android-ndk-r27d-linux.zip
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          unzip -q android-ndk.zip
+
+      - name: Setup godot-cpp
+        uses: ./godot-cpp/.github/actions/setup-godot-cpp
+        with:
+          platform: ${{ inputs.platform }}
+          em-version: ${{ inputs.em_version }}
+
+      - name: Build puerts native backends
+        shell: bash
+        run: |
+          extra_args=""
+          if [ "${{ steps.puerts-node-modules-cache.outputs.cache-hit }}" = "true" ]; then
+            extra_args="--skip-npm-install"
+          fi
+          python3 scripts/make_puerts.py \
+            --platform ${{ inputs.platform }} \
+            --arch ${{ inputs.arch }} \
+            --config ${{ inputs.target_type == 'template_release' && 'Release' || 'Debug' }} \
+            $extra_args
+
+      - name: Restore .scons_cache
+        uses: ./godot-cpp/.github/actions/godot-cache-restore
+        with:
+          scons-cache: ${{ github.workspace }}/.scons-cache/
+          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}
+
+      - name: Build GDExtension
+        shell: bash
+        env:
+          SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
+        run: |
+          extra_scons_args=""
+          if [ "${{ inputs.platform }}" = "ios" ]; then
+            extra_scons_args="ios_min_version=16.0"
+          fi
+          scons target=${{ inputs.target_type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float_precision }} ${extra_scons_args}
+
+      - name: Copy nodejs dependencies
+        if: ${{ inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux' || inputs.platform == 'ios' }}
+        shell: bash
+        run: |
+          python3 scripts/copy_node_dependencies.py \
+            --platform ${{ inputs.platform }} \
+            --arch ${{ inputs.arch }}
+
+      - name: Save .scons_cache
+        if: ${{ inputs.save_cache }}
+        uses: ./godot-cpp/.github/actions/godot-cache-save
+        with:
+          scons-cache: ${{ github.workspace }}/.scons-cache/
+          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}
+
+      - name: Setup Godot
+        if: ${{ inputs.run_tests && (inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux') }}
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ inputs.godot_version }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Resolve Godot executable (Linux/macOS)
+        if: ${{ inputs.run_tests && (inputs.platform == 'linux' || inputs.platform == 'macos') }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot_path="$(command -v godot)"
+          echo "GODOT_EXE=$godot_path" >> "$GITHUB_ENV"
+
+      - name: Resolve Godot executable (Windows)
+        if: ${{ inputs.run_tests && inputs.platform == 'windows' }}
+        shell: pwsh
+        run: |
+          $godot = (Get-Command godot -ErrorAction Stop).Source
+          "GODOT_EXE=$godot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Run tests
+        if: ${{ inputs.run_tests }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot_exe="${GODOT_EXE:-godot-not-required-on-this-platform}"
+          python3 scripts/run_tests.py --platform "${{ inputs.platform }}" --godot "$godot_exe" --timeout 120
+
+      - name: Windows - Delete compilation files
+        if: ${{ inputs.upload_artifact && inputs.platform == 'windows' }}
+        shell: pwsh
+        run: |
+          Remove-Item bin/* -Include *.exp,*.lib,*.pdb -Force
+
+      - name: Upload Artifact
+        if: ${{ inputs.upload_artifact }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.artifact_name != '' && inputs.artifact_name || format('puerts-godot-{0}-{1}-{2}-{3}', inputs.platform, inputs.arch, inputs.float_precision, inputs.target_type) }}
+          path: |
+            ${{ github.workspace }}/bin/**

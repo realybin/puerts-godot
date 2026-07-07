@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="PuertsScriptValue" inherits="RefCounted">
+	<brief_description>
+		Wraps a live value inside a [PuertsEnvironment].
+	</brief_description>
+	<description>
+		[PuertsScriptValue] stores a stable reference to a value that lives inside a [PuertsEnvironment]. Use it when you need to keep a script object, read properties lazily, or call a script function later from Godot code.
+		Use the specific [code]is_*()[/code] and [code]to_*()[/code] methods when you know the expected type. The [code]to_*()[/code] helpers perform direct typed reads from the script value.
+		Once the parent environment is disposed, the wrapper becomes invalid and most operations stop working.
+		[codeblocks]
+		[gdscript]
+		var value := env.eval("({ answer: 42, add(a, b) { return a + b; } })")
+		var answer := value.get_property("answer").to_int()
+		var sum := value.call_method("add", [10, 32]).to_int()
+		print(answer, sum) # 42 42
+		[/gdscript]
+		[gdscript]
+		var bytes := PackedByteArray([1, 2, 3, 4])
+		env.set_global("payload", bytes)
+		var payload := env.get_global("payload")
+		if payload.is_binary():
+		    print(payload.to_binary().size()) # 4
+		[/gdscript]
+		[/codeblocks]
+	</description>
+	<methods>
+		<method name="is_valid" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the script value still points to a live value in a live [PuertsEnvironment].
+			</description>
+		</method>
+		<method name="is_null" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is [code]null[/code].
+				If the script value is no longer valid, this method also returns [code]true[/code].
+			</description>
+		</method>
+		<method name="is_undefined" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is [code]undefined[/code].
+				If the script value is no longer valid, this method also returns [code]true[/code].
+			</description>
+		</method>
+		<method name="is_bool" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is a script boolean.
+			</description>
+		</method>
+		<method name="is_int" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is an integer type.
+			</description>
+		</method>
+		<method name="is_float" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is a floating-point number.
+			</description>
+		</method>
+		<method name="is_string" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is a string.
+			</description>
+		</method>
+		<method name="is_binary" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is binary data.
+			</description>
+		</method>
+		<method name="is_object" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is a script object.
+			</description>
+		</method>
+		<method name="is_function" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the wrapped script value is callable as a function.
+			</description>
+		</method>
+		<method name="to_bool" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns the wrapped value as a Godot [bool] using direct typed access.
+			</description>
+		</method>
+		<method name="to_int" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the wrapped script value as a Godot [int] using direct typed access.
+			</description>
+		</method>
+		<method name="to_float" qualifiers="const">
+			<return type="float" />
+			<description>
+				Returns the wrapped script value as a Godot [float] using direct typed access.
+			</description>
+		</method>
+		<method name="to_string" qualifiers="const">
+			<return type="String" />
+			<description>
+				Returns the wrapped script value as a Godot [String] using direct typed access.
+			</description>
+		</method>
+		<method name="to_binary" qualifiers="const">
+			<return type="PackedByteArray" />
+			<description>
+				Returns the wrapped script value as a Godot [PackedByteArray] using direct typed access.
+			</description>
+		</method>
+		<method name="to_native" qualifiers="const">
+			<return type="Variant" />
+			<description>
+				Converts the script value to the closest Godot [Variant] representation.
+				Primitive values, strings, binary values, and script native Godot values are converted directly. Binary values become [PackedByteArray]. If the value cannot be represented directly, Puerts keeps it wrapped so you can continue to access it through [PuertsScriptValue].
+				If conversion fails, this method returns [code]null[/code].
+				[b]Note:[/b] Prefer a more specific conversion method when you already know the expected type. For example, use [method to_int], [method to_float], [method to_string], [method to_binary], or [method unwrap_native] when those methods match your data. [method to_native] performs additional type checks so it can handle many value kinds, which makes it more flexible but also more expensive than a direct conversion.
+				[codeblocks]
+				[gdscript]
+				var vec_value := env.eval("new Vector2(3, 4)")
+				var vec: Vector2 = vec_value.to_native()
+				print(vec.length()) # 5
+				[/gdscript]
+				[/codeblocks]
+			</description>
+		</method>
+		<method name="unwrap_native" qualifiers="const">
+			<return type="Variant" />
+			<description>
+				Returns the original Godot value wrapped inside the script value.
+				Use this when the script side is holding a native Godot object or a static-bound built-in value such as [code]Vector2[/code]. This includes values passed into Puerts earlier and built-in values created through [code]load_type()[/code]. If unwrapping fails, this method returns [code]null[/code].
+			</description>
+		</method>
+		<method name="get_property" qualifiers="const">
+			<return type="PuertsScriptValue" />
+			<param index="0" name="name" type="StringName" />
+			<description>
+				Returns the property named [param name] from the wrapped object.
+				The property value stays wrapped as a new [PuertsScriptValue].
+			</description>
+		</method>
+		<method name="set_property">
+			<return type="void" />
+			<param index="0" name="name" type="StringName" />
+			<param index="1" name="value" type="Variant" />
+			<description>
+				Sets the property named [param name] on the wrapped object to [param value].
+				The [Variant] is converted to a script value before assignment.
+			</description>
+		</method>
+		<method name="call" qualifiers="const">
+			<return type="PuertsScriptValue" />
+			<param index="0" name="args" type="Array" />
+			<description>
+				Calls the wrapped value as a function with [param args].
+				Arguments are converted from Godot [Variant] values to script values. If the wrapped value is not callable, or if the call throws an exception, this method returns [code]null[/code] and records the error on the parent environment.
+			</description>
+		</method>
+		<method name="call_method" qualifiers="const">
+			<return type="PuertsScriptValue" />
+			<param index="0" name="name" type="StringName" />
+			<param index="1" name="args" type="Array" />
+			<description>
+				Calls the method named [param name] on the wrapped object with [param args].
+				The wrapped object is used as the receiver, so script-side [code]this[/code] semantics stay intact. If the property is missing or is not callable, this method returns [code]null[/code] and records an error on the parent environment.
+			</description>
+		</method>
+	</methods>
+</class>

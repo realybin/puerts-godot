@@ -1,0 +1,25 @@
+[tool.ruff]
+extend-include = ["*SConstruct"]
+line-length = 120
+target-version = "py38"
+
+[tool.ruff.lint]
+extend-select = [
+    "I", # isort
+]
+
+[tool.ruff.lint.per-file-ignores]
+"SConstruct" = [
+    "F821", # Undefined name injected by SCons at runtime.
+]
+
+[tool.codespell]
+enable-colors = true
+write-changes = true
+check-hidden = true
+quiet-level = 3
+builtin = ["clear", "rare", "en-GB_to_en-US"]
+ignore-words-list = [
+    "findn",
+    "thirdparty",
+]

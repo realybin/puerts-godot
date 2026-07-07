@@ -1,0 +1,10 @@
+[submodule "godot-cpp"]
+	path = godot-cpp
+	url = https://github.com/godotengine/godot-cpp
+	branch = 4.2
+[submodule "thirdparty/puerts"]
+	path = thirdparty/puerts
+	url = https://github.com/Tencent/puerts
+[submodule "thirdparty/EASTL"]
+	path = thirdparty/EASTL
+	url = https://github.com/electronicarts/EASTL

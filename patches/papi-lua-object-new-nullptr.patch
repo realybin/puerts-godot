@@ -1,0 +1,30 @@
+Subject: [PATCH] fix: crash on linux if not get error
+---
+Index: unity/native/papi-lua/source/CppObjectMapperLua.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/unity/native/papi-lua/source/CppObjectMapperLua.cpp b/unity/native/papi-lua/source/CppObjectMapperLua.cpp
+--- a/unity/native/papi-lua/source/CppObjectMapperLua.cpp	(revision a9a5564ed295897cba1e8a57f5021905df72233f)
++++ b/unity/native/papi-lua/source/CppObjectMapperLua.cpp	(date 1780571705201)
+@@ -564,12 +564,18 @@
+     {
+         puerts::ScriptClassDefinition* class_definition = static_cast<puerts::ScriptClassDefinition*>(lua_touserdata(L, lua_upvalueindex(1)));
+         pesapi_callback_info__ callback_info{L, 1, 0, class_definition->Data, 0, 0};
+-        CppObjectMapper::Get(L)->BindCppObject(L, class_definition, class_definition->Initialize(&g_pesapi_ffi, reinterpret_cast<pesapi_callback_info>(&callback_info)), false);
++        void* ptr = class_definition->Initialize(&g_pesapi_ffi, reinterpret_cast<pesapi_callback_info>(&callback_info));
+         if (callback_info.HasError)
+         {
+             lua_pushvalue(L, callback_info.ErrorMsgIdx);
+             return lua_error(L);
+         }
++        if (ptr == nullptr)
++        {
++            // oom or crash on linux
++            return 0;
++        }
++        CppObjectMapper::Get(L)->BindCppObject(L, class_definition, ptr, false);
+         return 1;
+     }
+ 

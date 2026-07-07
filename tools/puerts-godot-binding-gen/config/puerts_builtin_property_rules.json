@@ -1,0 +1,35 @@
+{
+	"custom_properties": [
+		{ "class": "Rect2", "name": "end", "type": "Vector2", "kind": "method", "getter": "get_end", "setter": "set_end" },
+		{ "class": "Rect2i", "name": "end", "type": "Vector2i", "kind": "method", "getter": "get_end", "setter": "set_end" },
+		{ "class": "AABB", "name": "end", "type": "Vector3", "kind": "method", "getter": "get_end", "setter": "set_end" },
+
+		{ "class": "Transform2D", "name": "x", "type": "Vector2", "kind": "member_expr", "member_expr": "columns[0]" },
+		{ "class": "Transform2D", "name": "y", "type": "Vector2", "kind": "member_expr", "member_expr": "columns[1]" },
+		{ "class": "Transform2D", "name": "origin", "type": "Vector2", "kind": "member_expr", "member_expr": "columns[2]" },
+
+		{ "class": "Plane", "name": "x", "type": "float", "kind": "member_expr", "member_expr": "normal.x" },
+		{ "class": "Plane", "name": "y", "type": "float", "kind": "member_expr", "member_expr": "normal.y" },
+		{ "class": "Plane", "name": "z", "type": "float", "kind": "member_expr", "member_expr": "normal.z" },
+
+		{ "class": "Basis", "name": "x", "type": "Vector3", "kind": "indexed_method", "getter": "get_column", "setter": "set_column", "index": 0 },
+		{ "class": "Basis", "name": "y", "type": "Vector3", "kind": "indexed_method", "getter": "get_column", "setter": "set_column", "index": 1 },
+		{ "class": "Basis", "name": "z", "type": "Vector3", "kind": "indexed_method", "getter": "get_column", "setter": "set_column", "index": 2 },
+
+		{ "class": "Projection", "name": "x", "type": "Vector4", "kind": "member_expr", "member_expr": "columns[0]" },
+		{ "class": "Projection", "name": "y", "type": "Vector4", "kind": "member_expr", "member_expr": "columns[1]" },
+		{ "class": "Projection", "name": "z", "type": "Vector4", "kind": "member_expr", "member_expr": "columns[2]" },
+		{ "class": "Projection", "name": "w", "type": "Vector4", "kind": "member_expr", "member_expr": "columns[3]" },
+
+		{ "class": "Color", "name": "r8", "type": "int", "kind": "method", "getter": "get_r8", "setter": "set_r8" },
+		{ "class": "Color", "name": "g8", "type": "int", "kind": "method", "getter": "get_g8", "setter": "set_g8" },
+		{ "class": "Color", "name": "b8", "type": "int", "kind": "method", "getter": "get_b8", "setter": "set_b8" },
+		{ "class": "Color", "name": "a8", "type": "int", "kind": "method", "getter": "get_a8", "setter": "set_a8" },
+		{ "class": "Color", "name": "h", "type": "float", "kind": "method", "getter": "get_h", "setter": "set_h" },
+		{ "class": "Color", "name": "s", "type": "float", "kind": "method", "getter": "get_s", "setter": "set_s" },
+		{ "class": "Color", "name": "v", "type": "float", "kind": "method", "getter": "get_v", "setter": "set_v" },
+		{ "class": "Color", "name": "ok_hsl_h", "type": "float", "kind": "method", "getter": "get_ok_hsl_h", "setter": "set_ok_hsl_h" },
+		{ "class": "Color", "name": "ok_hsl_s", "type": "float", "kind": "method", "getter": "get_ok_hsl_s", "setter": "set_ok_hsl_s" },
+		{ "class": "Color", "name": "ok_hsl_l", "type": "float", "kind": "method", "getter": "get_ok_hsl_l", "setter": "set_ok_hsl_l" }
+	]
+}
