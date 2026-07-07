@@ -55,6 +55,10 @@ static func _cleanup_dual_envs_and_return(error: String, env_a: Object, env_b: O
 	return error
 
 
+static func _backend_has_low_memory_notification(backend_name: String) -> bool:
+	return backend_name == "quickjs" or backend_name == "v8" or backend_name == "nodejs"
+
+
 static func _extract_script_id_array(env: Object, backend_name: String, ids_value: Variant, label: String):
 	var ids_native = ids_value.to_native()
 	if ids_native is Array:
@@ -92,7 +96,7 @@ static func _pump_backend_gc(env: Object, backend: Object, attempts: int = 8) ->
 		if backend_id == "v8" or backend_id == "nodejs":
 			env.eval("(function () { if (typeof gc === 'function') { gc(); } return 0; })()")
 		env.low_memory_notification()
-		if backend != null and backend.supports_tick():
+		if backend_id == "v8" or backend_id == "nodejs":
 			env.tick()
 
 
@@ -330,7 +334,7 @@ static func run_godot_holds_js_gc_suite(backend: Object, backend_info: Dictionar
 	var backend_name: String = backend_info["name"]
 	if backend_info["language"] != "ecmascript":
 		return skip("%s godot_holds_js_gc requires an ECMAScript backend" % backend_name)
-	if not backend.supports_low_memory_notification():
+	if not _backend_has_low_memory_notification(backend_name):
 		return skip("%s godot_holds_js_gc requires low_memory_notification support" % backend_name)
 
 	var created = create_environment(backend, backend_name)
@@ -386,7 +390,7 @@ static func run_js_refcounted_gc_suite(backend: Object, backend_info: Dictionary
 	var backend_name: String = backend_info["name"]
 	if backend_info["language"] != "ecmascript":
 		return skip("%s js_gc requires an ECMAScript backend" % backend_name)
-	if not backend.supports_low_memory_notification():
+	if not _backend_has_low_memory_notification(backend_name):
 		return skip("%s js_gc requires low_memory_notification support" % backend_name)
 
 	var created = create_environment(backend, backend_name)
@@ -442,7 +446,7 @@ static func run_js_refcounted_gc_suite(backend: Object, backend_info: Dictionary
 
 static func run_non_refcounted_unbind_suite(backend: Object, backend_info: Dictionary):
 	var backend_name: String = backend_info["name"]
-	if not backend.supports_low_memory_notification():
+	if not _backend_has_low_memory_notification(backend_name):
 		return skip("%s non_ref_unbind requires low_memory_notification support" % backend_name)
 
 	var created = create_environment(backend, backend_name)

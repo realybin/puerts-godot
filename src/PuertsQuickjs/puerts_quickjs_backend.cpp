@@ -58,19 +58,10 @@ const PuertsBackendDescriptor puerts_quickjs_descriptor = {
 using namespace godot;
 
 void PuertsQuickjsBackend::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("is_available"), &PuertsQuickjsBackend::is_available);
 	ClassDB::bind_method(D_METHOD("get_backend_id"), &PuertsQuickjsBackend::get_backend_id);
 	ClassDB::bind_method(D_METHOD("get_backend_name"), &PuertsQuickjsBackend::get_backend_name);
 	ClassDB::bind_method(D_METHOD("get_language_id"), &PuertsQuickjsBackend::get_language_id);
-	ClassDB::bind_method(D_METHOD("supports_tick"), &PuertsQuickjsBackend::supports_tick);
-	ClassDB::bind_method(D_METHOD("supports_debugger"), &PuertsQuickjsBackend::supports_debugger);
-	ClassDB::bind_method(D_METHOD("supports_low_memory_notification"), &PuertsQuickjsBackend::supports_low_memory_notification);
-	ClassDB::bind_method(D_METHOD("supports_terminate_execution"), &PuertsQuickjsBackend::supports_terminate_execution);
 	ClassDB::bind_method(D_METHOD("_puerts_get_functions_ptr"), &PuertsQuickjsBackend::_puerts_get_functions_ptr);
-}
-
-bool PuertsQuickjsBackend::is_available() const {
-	return puerts_backend_resource::is_available(puerts_quickjs_descriptor);
 }
 
 godot::StringName PuertsQuickjsBackend::get_backend_id() const {
@@ -83,22 +74,6 @@ godot::String PuertsQuickjsBackend::get_backend_name() const {
 
 godot::StringName PuertsQuickjsBackend::get_language_id() const {
 	return puerts_backend_resource::get_language_id(puerts_quickjs_descriptor);
-}
-
-bool PuertsQuickjsBackend::supports_tick() const {
-	return puerts_backend_resource::supports_tick(puerts_quickjs_descriptor);
-}
-
-bool PuertsQuickjsBackend::supports_debugger() const {
-	return puerts_backend_resource::supports_debugger(puerts_quickjs_descriptor);
-}
-
-bool PuertsQuickjsBackend::supports_low_memory_notification() const {
-	return puerts_backend_resource::supports_low_memory_notification(puerts_quickjs_descriptor);
-}
-
-bool PuertsQuickjsBackend::supports_terminate_execution() const {
-	return puerts_backend_resource::supports_terminate_execution(puerts_quickjs_descriptor);
 }
 
 uint64_t PuertsQuickjsBackend::_puerts_get_functions_ptr() const {

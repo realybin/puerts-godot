@@ -7,12 +7,6 @@
 		Instantiate [PuertsQuickjsBackend] and pass it to [method PuertsEnvironment.initialize] to create a Puerts environment backed by QuickJS.
 	</description>
 	<methods>
-		<method name="is_available" qualifiers="const">
-			<return type="bool" />
-			<description>
-				Returns whether this backend is available in the current build.
-			</description>
-		</method>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />
 			<description>
@@ -29,30 +23,6 @@
 			<return type="StringName" />
 			<description>
 				Returns the language identifier, [code]ecmascript[/code].
-			</description>
-		</method>
-		<method name="supports_tick" qualifiers="const">
-			<return type="bool" />
-			<description>
-				Returns [code]false[/code] because the QuickJS backend does not require [method PuertsEnvironment.tick].
-			</description>
-		</method>
-		<method name="supports_debugger" qualifiers="const">
-			<return type="bool" />
-			<description>
-				Returns [code]false[/code] because the QuickJS backend does not expose remote debugging here.
-			</description>
-		</method>
-		<method name="supports_low_memory_notification" qualifiers="const">
-			<return type="bool" />
-			<description>
-				Returns [code]true[/code] because the QuickJS backend supports low-memory notifications.
-			</description>
-		</method>
-		<method name="supports_terminate_execution" qualifiers="const">
-			<return type="bool" />
-			<description>
-				Returns [code]false[/code] because the QuickJS backend does not support forced script termination.
 			</description>
 		</method>
 		<method name="_puerts_get_functions_ptr" qualifiers="const">

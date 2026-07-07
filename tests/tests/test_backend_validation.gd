@@ -80,37 +80,3 @@ func test_environment_validation(case_data: Dictionary) -> void:
 	assert_string_contains(last_error, case_data["expected_message"])
 	assert_false(env.is_alive(), "%s environment alive after failure" % case_data["label"])
 	env.dispose()
-
-
-func test_backend_metadata_cases() -> Array:
-	return backend_parameters()
-
-
-func test_backend_metadata(entry: Dictionary) -> void:
-	var backend_info: Dictionary = entry["info"]
-	var backend = entry["backend"]
-	var backend_name: String = backend_info["name"]
-
-	assert_eq(backend.get_backend_id(), backend_name, "%s backend id" % backend_name)
-	assert_eq(backend.get_language_id(), backend_info["language"], "%s language id" % backend_name)
-
-	var created := TestSupport.create_environment(backend, backend_name)
-	assert_true(bool(created["ok"]), "%s environment initialize" % backend_name)
-	if bool(created["ok"]):
-		var env: Object = created["env"]
-		assert_true(env.is_alive(), "%s environment alive after initialize" % backend_name)
-
-		env.tick()
-		if not backend.supports_tick():
-			assert_string_contains(TestSupport.env_last_error(env), "does not support tick.")
-
-		env.low_memory_notification()
-		if not backend.supports_low_memory_notification():
-			assert_string_contains(TestSupport.env_last_error(env), "does not support low memory notification.")
-
-		env.terminate_execution()
-		if not backend.supports_terminate_execution():
-			assert_string_contains(TestSupport.env_last_error(env), "does not support terminate execution.")
-
-		env.dispose()
-		assert_false(env.is_alive(), "%s environment dispose" % backend_name)

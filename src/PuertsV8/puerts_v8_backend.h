@@ -16,14 +16,9 @@ protected:
 	static void _bind_methods();
 
 public:
-	[[nodiscard]] bool is_available() const;
 	[[nodiscard]] godot::StringName get_backend_id() const;
 	[[nodiscard]] godot::String get_backend_name() const;
 	[[nodiscard]] godot::StringName get_language_id() const;
-	[[nodiscard]] bool supports_tick() const;
-	[[nodiscard]] bool supports_debugger() const;
-	[[nodiscard]] bool supports_low_memory_notification() const;
-	[[nodiscard]] bool supports_terminate_execution() const;
 	[[nodiscard]] uint64_t _puerts_get_functions_ptr() const;
 };
 

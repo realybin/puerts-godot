@@ -16,6 +16,10 @@ const _CONNECT_TIMEOUT_MS = 1000
 const _POLL_INTERVAL_MS = 25
 
 
+static func _backend_has_debugger(backend_name: String) -> bool:
+	return backend_name == "v8" or backend_name == "nodejs"
+
+
 static func _debug_port_for(backend_info: Dictionary) -> int:
 	var backend_index = TestSupport.BACKENDS.find(backend_info)
 	if backend_index < 0:
@@ -52,7 +56,7 @@ static func _wait_for_tcp_connect(port: int) -> String:
 
 static func run_debugger_open_suite(backend: Object, backend_info: Dictionary) -> Variant:
 	var backend_name: String = backend_info["name"]
-	if not backend.supports_debugger():
+	if not _backend_has_debugger(backend_name):
 		return skip("%s backend does not support debugger" % backend_name)
 
 	var created = create_environment(backend, backend_name)
@@ -72,7 +76,7 @@ static func run_debugger_open_suite(backend: Object, backend_info: Dictionary) -
 
 static func run_debugger_close_suite(backend: Object, backend_info: Dictionary) -> Variant:
 	var backend_name: String = backend_info["name"]
-	if not backend.supports_debugger():
+	if not _backend_has_debugger(backend_name):
 		return skip("%s backend does not support debugger" % backend_name)
 
 	var created = create_environment(backend, backend_name)

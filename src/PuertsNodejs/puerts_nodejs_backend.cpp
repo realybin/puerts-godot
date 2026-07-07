@@ -84,19 +84,10 @@ const PuertsBackendDescriptor puerts_nodejs_descriptor = {
 using namespace godot;
 
 void PuertsNodejsBackend::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("is_available"), &PuertsNodejsBackend::is_available);
 	ClassDB::bind_method(D_METHOD("get_backend_id"), &PuertsNodejsBackend::get_backend_id);
 	ClassDB::bind_method(D_METHOD("get_backend_name"), &PuertsNodejsBackend::get_backend_name);
 	ClassDB::bind_method(D_METHOD("get_language_id"), &PuertsNodejsBackend::get_language_id);
-	ClassDB::bind_method(D_METHOD("supports_tick"), &PuertsNodejsBackend::supports_tick);
-	ClassDB::bind_method(D_METHOD("supports_debugger"), &PuertsNodejsBackend::supports_debugger);
-	ClassDB::bind_method(D_METHOD("supports_low_memory_notification"), &PuertsNodejsBackend::supports_low_memory_notification);
-	ClassDB::bind_method(D_METHOD("supports_terminate_execution"), &PuertsNodejsBackend::supports_terminate_execution);
 	ClassDB::bind_method(D_METHOD("_puerts_get_functions_ptr"), &PuertsNodejsBackend::_puerts_get_functions_ptr);
-}
-
-bool PuertsNodejsBackend::is_available() const {
-	return puerts_backend_resource::is_available(puerts_nodejs_descriptor);
 }
 
 godot::StringName PuertsNodejsBackend::get_backend_id() const {
@@ -109,22 +100,6 @@ godot::String PuertsNodejsBackend::get_backend_name() const {
 
 godot::StringName PuertsNodejsBackend::get_language_id() const {
 	return puerts_backend_resource::get_language_id(puerts_nodejs_descriptor);
-}
-
-bool PuertsNodejsBackend::supports_tick() const {
-	return puerts_backend_resource::supports_tick(puerts_nodejs_descriptor);
-}
-
-bool PuertsNodejsBackend::supports_debugger() const {
-	return puerts_backend_resource::supports_debugger(puerts_nodejs_descriptor);
-}
-
-bool PuertsNodejsBackend::supports_low_memory_notification() const {
-	return puerts_backend_resource::supports_low_memory_notification(puerts_nodejs_descriptor);
-}
-
-bool PuertsNodejsBackend::supports_terminate_execution() const {
-	return puerts_backend_resource::supports_terminate_execution(puerts_nodejs_descriptor);
 }
 
 uint64_t PuertsNodejsBackend::_puerts_get_functions_ptr() const {

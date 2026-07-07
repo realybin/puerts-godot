@@ -17,8 +17,6 @@ static func collect_available_backends() -> Array:
 		var backend = TestSupport.create_backend(backend_info["class_name"])
 		if backend == null:
 			continue
-		if not bool(backend.call("is_available")):
-			continue
 
 		available.append({
 			"info": backend_info,

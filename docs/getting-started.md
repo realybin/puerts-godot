@@ -51,7 +51,7 @@ More backends see [build.md](./build.md)
 - CreateInstance `PuertsV8Backend`
 - Initialize `PuertsStringNameCachePool`
 - Execute `eval` and get a result
-- Tick in `_process` if supported when debugger attached
+- Tick in `_process` when using V8/Node.js debugger integration
 - Dispose in `_exit_tree`
 
 ```gdscript
@@ -61,9 +61,6 @@ var _env: PuertsEnvironment
 
 func _ready() -> void:
 	var backend := PuertsV8Backend.new()
-	if not backend.is_available():
-		push_error("Puerts backend not available: %s" % backend.get_backend_id())
-		return
 
 	var pool := PuertsStringNameCachePool.new()
 	var pool_err := pool.initialize(PuertsStringNameCachePool.POLICY_HASH_MAP, 512)
@@ -91,7 +88,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if _env == null or not _env.is_alive():
 		return
-	_env.tick() # if debugger is attached
+	_env.tick() # V8/Node.js debugger/event-loop tick
 
 func _exit_tree() -> void:
 	if _env != null:
@@ -103,6 +100,8 @@ func _exit_tree() -> void:
 See api reference in godot.
 
 ## Supported backends and capabilities
+
+Capability checks are based on the backend function table exposed to `PuertsEnvironment`; unsupported environment calls emit an error through the configured error callback.
 
 | Backend                | Language     | Supported Capabilities                                               | Not Supported Capabilities                                           |
 |------------------------|--------------|----------------------------------------------------------------------|----------------------------------------------------------------------|

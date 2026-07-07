@@ -84,19 +84,10 @@ const PuertsBackendDescriptor puerts_v8_descriptor = {
 using namespace godot;
 
 void PuertsV8Backend::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("is_available"), &PuertsV8Backend::is_available);
 	ClassDB::bind_method(D_METHOD("get_backend_id"), &PuertsV8Backend::get_backend_id);
 	ClassDB::bind_method(D_METHOD("get_backend_name"), &PuertsV8Backend::get_backend_name);
 	ClassDB::bind_method(D_METHOD("get_language_id"), &PuertsV8Backend::get_language_id);
-	ClassDB::bind_method(D_METHOD("supports_tick"), &PuertsV8Backend::supports_tick);
-	ClassDB::bind_method(D_METHOD("supports_debugger"), &PuertsV8Backend::supports_debugger);
-	ClassDB::bind_method(D_METHOD("supports_low_memory_notification"), &PuertsV8Backend::supports_low_memory_notification);
-	ClassDB::bind_method(D_METHOD("supports_terminate_execution"), &PuertsV8Backend::supports_terminate_execution);
 	ClassDB::bind_method(D_METHOD("_puerts_get_functions_ptr"), &PuertsV8Backend::_puerts_get_functions_ptr);
-}
-
-bool PuertsV8Backend::is_available() const {
-	return puerts_backend_resource::is_available(puerts_v8_descriptor);
 }
 
 godot::StringName PuertsV8Backend::get_backend_id() const {
@@ -109,22 +100,6 @@ godot::String PuertsV8Backend::get_backend_name() const {
 
 godot::StringName PuertsV8Backend::get_language_id() const {
 	return puerts_backend_resource::get_language_id(puerts_v8_descriptor);
-}
-
-bool PuertsV8Backend::supports_tick() const {
-	return puerts_backend_resource::supports_tick(puerts_v8_descriptor);
-}
-
-bool PuertsV8Backend::supports_debugger() const {
-	return puerts_backend_resource::supports_debugger(puerts_v8_descriptor);
-}
-
-bool PuertsV8Backend::supports_low_memory_notification() const {
-	return puerts_backend_resource::supports_low_memory_notification(puerts_v8_descriptor);
-}
-
-bool PuertsV8Backend::supports_terminate_execution() const {
-	return puerts_backend_resource::supports_terminate_execution(puerts_v8_descriptor);
 }
 
 uint64_t PuertsV8Backend::_puerts_get_functions_ptr() const {

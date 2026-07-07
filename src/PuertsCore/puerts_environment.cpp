@@ -68,17 +68,6 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		return ERR_INVALID_PARAMETER;
 	}
 
-	const StringName backend_is_available_method("is_available");
-	const Variant available_variant = p_backend->call(backend_is_available_method);
-	if (available_variant.get_type() != Variant::BOOL) {
-		log_error("Puerts backend is_available() must return bool.");
-		return ERR_UNCONFIGURED;
-	}
-	if (!static_cast<bool>(available_variant)) {
-		log_error("Puerts backend is not available.");
-		return ERR_UNAVAILABLE;
-	}
-
 	const StringName backend_functions_ptr_method("_puerts_get_functions_ptr");
 	const Variant functions_ptr_variant = p_backend->call(backend_functions_ptr_method);
 	if (functions_ptr_variant.get_type() != Variant::INT) {

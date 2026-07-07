@@ -53,19 +53,10 @@ const PuertsBackendDescriptor puerts_lua_descriptor = {
 using namespace godot;
 
 void PuertsLuaBackend::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("is_available"), &PuertsLuaBackend::is_available);
 	ClassDB::bind_method(D_METHOD("get_backend_id"), &PuertsLuaBackend::get_backend_id);
 	ClassDB::bind_method(D_METHOD("get_backend_name"), &PuertsLuaBackend::get_backend_name);
 	ClassDB::bind_method(D_METHOD("get_language_id"), &PuertsLuaBackend::get_language_id);
-	ClassDB::bind_method(D_METHOD("supports_tick"), &PuertsLuaBackend::supports_tick);
-	ClassDB::bind_method(D_METHOD("supports_debugger"), &PuertsLuaBackend::supports_debugger);
-	ClassDB::bind_method(D_METHOD("supports_low_memory_notification"), &PuertsLuaBackend::supports_low_memory_notification);
-	ClassDB::bind_method(D_METHOD("supports_terminate_execution"), &PuertsLuaBackend::supports_terminate_execution);
 	ClassDB::bind_method(D_METHOD("_puerts_get_functions_ptr"), &PuertsLuaBackend::_puerts_get_functions_ptr);
-}
-
-bool PuertsLuaBackend::is_available() const {
-	return puerts_backend_resource::is_available(puerts_lua_descriptor);
 }
 
 godot::StringName PuertsLuaBackend::get_backend_id() const {
@@ -78,22 +69,6 @@ godot::String PuertsLuaBackend::get_backend_name() const {
 
 godot::StringName PuertsLuaBackend::get_language_id() const {
 	return puerts_backend_resource::get_language_id(puerts_lua_descriptor);
-}
-
-bool PuertsLuaBackend::supports_tick() const {
-	return puerts_backend_resource::supports_tick(puerts_lua_descriptor);
-}
-
-bool PuertsLuaBackend::supports_debugger() const {
-	return puerts_backend_resource::supports_debugger(puerts_lua_descriptor);
-}
-
-bool PuertsLuaBackend::supports_low_memory_notification() const {
-	return puerts_backend_resource::supports_low_memory_notification(puerts_lua_descriptor);
-}
-
-bool PuertsLuaBackend::supports_terminate_execution() const {
-	return puerts_backend_resource::supports_terminate_execution(puerts_lua_descriptor);
 }
 
 uint64_t PuertsLuaBackend::_puerts_get_functions_ptr() const {

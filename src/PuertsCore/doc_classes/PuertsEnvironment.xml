@@ -32,7 +32,7 @@
 			<description>
 				Initializes the environment with [param backend] and [param string_name_cache_pool].
 				[param string_name_cache_pool] must be initialized before calling this method.
-				The backend must expose the Puerts function table and report itself as available. If initialization fails, this method returns an [enum Error] value and emits messages through the log callbacks configured by [method set_error_callback], [method set_warn_callback], and [method set_info_callback]. Calling this method on an already initialized environment first disposes the previous runtime.
+				The backend must expose the Puerts function table. If initialization fails, this method returns an [enum Error] value and emits messages through the log callbacks configured by [method set_error_callback], [method set_warn_callback], and [method set_info_callback]. Calling this method on an already initialized environment first disposes the previous runtime.
 			</description>
 		</method>
 		<method name="dispose">
@@ -115,7 +115,7 @@
 			<return type="void" />
 			<description>
 				Runs one backend update step.
-				Call this from your frame loop only when the selected backend reports support for ticking, for example through [method PuertsV8Backend.supports_tick] or [method PuertsNodejsBackend.supports_tick].
+				Call this from your frame loop for backends that implement ticking, such as V8 and Node.js.
 			</description>
 		</method>
 		<method name="low_memory_notification">
@@ -150,7 +150,7 @@
 			<return type="void" />
 			<description>
 				Requests that the backend stop the currently running script.
-				Only some backends implement forced termination. Check the backend capability flag before relying on this behavior.
+				Only some backends implement forced termination. Unsupported backends emit an error through the configured error callback.
 			</description>
 		</method>
 	</methods>
