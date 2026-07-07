@@ -6,6 +6,10 @@
 
 `puerts-godot` is a Godot GDExtension integration for puerts.
 
+Showcase:
+
+https://github.com/user-attachments/assets/1b401fd2-9c58-437e-a60d-0d9e39dfaa18
+
 It provides:
 
 - Run ECMAScript, Lua, or other supported language scripts in Godot through `puerts`
