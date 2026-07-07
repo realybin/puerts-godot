@@ -95,4 +95,5 @@ jobs:
         with:
           name: puerts-godot-all
           pattern: puerts-godot-*
+          separate-directories: 'true'
           delete-merged: true
