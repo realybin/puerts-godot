@@ -72,16 +72,19 @@ func _process(delta: float) -> void:
 
 ## Supported backends
 
-| Backend | Windows | macOS | Linux | Android | iOS | Web |
-|---------|---------|-------|-------|---------|-----|-----|
-| V8+     | Yes     | Yes*  | Yes   | ?       | ?   | x   |
-| Nodejs+ | Yes     | Yes*  | Yes   | ?       | ?   | x   |
-| Quickjs | Yes     | Yes*  | Yes   | ?       | ?   | ?   |
-| Lua     | Yes     | Yes*  | Yes   | ?       | ?   | ?   |
+| Backend         | V8+  | Nodejs+ | Quickjs | Lua  |
+|-----------------|------|---------|---------|------|
+| Windows(x86_64) | Yes  | Yes     | Yes     | Yes  |
+| Linux(x86_64)   | Yes  | Yes     | Yes     | Yes  |
+| macOS(arm64)    | Yes* | Yes*    | Yes*    | Yes* |
+| Android(armv8)  | Yes  | Yes     | Yes     | Yes  |
+| iOS             | ?    | ?       | ?       | ?    |
+| Web(wasm32)     | x    | x       | Yes     | Yes  |
+
 
 +: Use one of them, do not use V8 both Nodejs in the same process, especially in linux, it may cause some issues, pr wellcome.
 
-*: CI passes on macOS, but not tested on real devices yet.
+*: CI passes on macOS, but not tested on real devices yet. (no device on hand)
 
 ?: Not tested yet due to lack of devices or time
 
@@ -127,6 +130,12 @@ DCO is required, please sign off your commits with `git commit -s` or `git commi
 4. clang-format is required, so make a sure format before submitting a PR
 5. Separate changes into multiple pull requests if it's too big, we do not accept big PRs
 6. We prioritize human-made contributions. Please understand that with our limited time, **AI-generated issues and pull requests may be closed without review**.
+
+## Lifecycle
+
+We follow [Godot’s Release Support Timeline](https://docs.godotengine.org/en/stable/about/release_policy.html#release-support-timeline).
+
+By default, we support versions labeled **Partial support**. Versions marked **No support (end of life)** are not supported.
 
 ## Versioning
 

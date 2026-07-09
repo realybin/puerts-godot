@@ -23,12 +23,16 @@ res://puerts_v8.gdextension
 ```ini
 [configuration]
 entry_symbol = "puerts_core_library_init"
-compatibility_minimum = "4.4"
+compatibility_minimum = "4.5"
 reloadable = true
 
 [libraries]
 windows.debug.x86_64 = "res://bin/PuertsCore.windows.template_debug.x86_64.dll"
 windows.editor.x86_64 = "res://bin/PuertsCore.windows.template_debug.x86_64.dll"
+[dependencies]
+windows.debug.arm64 = {
+                      "res://bin/PuertsCore.dll": ""
+}
 ```
 
 `puerts_v8.gdextension` for `PuertsV8Backend`
@@ -36,13 +40,20 @@ windows.editor.x86_64 = "res://bin/PuertsCore.windows.template_debug.x86_64.dll"
 ```ini
 [configuration]
 entry_symbol = "puerts_v8_library_init"
-compatibility_minimum = "4.4"
+compatibility_minimum = "4.5"
 reloadable = true
 
 [libraries]
 windows.debug.x86_64 = "res://bin/PuertsV8.windows.template_debug.x86_64.dll"
 windows.editor.x86_64 = "res://bin/PuertsV8.windows.template_debug.x86_64.dll"
+[dependencies]
+windows.debug.arm64 = {
+                      "res://bin/PapiV8.dll": ""
+}
 ```
+
+> You need to add a dependencies section if the backend has dependencies; otherwise, the GDExtension may fail to load,
+> especially if you encounter an error like `Could not find type "PuertsEnvironment" in the current scope`.
 
 More backends see [build.md](./build.md)
 
