@@ -5,23 +5,21 @@
 
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/core/error_macros.hpp>
 #include <godot_cpp/core/object.hpp>
 
 using namespace godot;
 
-uint64_t PuertsBridgeRegistry::make_handle(uint32_t p_index, uint32_t p_generation) {
-	return (static_cast<uint64_t>(p_generation) << 32) | static_cast<uint64_t>(p_index + 1);
+void *PuertsBridgeRegistry::make_handle(uint32_t p_handle_id) {
+	return reinterpret_cast<void *>(static_cast<uintptr_t>(p_handle_id));
 }
 
-bool PuertsBridgeRegistry::parse_handle(void *p_handle, uint32_t &r_index, uint32_t &r_generation) {
+bool PuertsBridgeRegistry::parse_handle(void *p_handle, uint32_t &r_handle_id) {
 	const auto raw = reinterpret_cast<uintptr_t>(p_handle);
-	const auto slot = static_cast<uint32_t>(raw & 0xffffffffULL);
-	if (slot == 0) {
+	if (raw == 0 || raw > UINT32_MAX) {
 		return false;
 	}
-
-	r_index = slot - 1;
-	r_generation = static_cast<uint32_t>(raw >> 32);
+	r_handle_id = static_cast<uint32_t>(raw);
 	return true;
 }
 
@@ -51,14 +49,22 @@ uint32_t PuertsBridgeRegistry::allocate() {
 }
 
 PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle, uint32_t *r_index) {
-	uint32_t index = 0;
-	uint32_t generation = 0;
-	if (!parse_handle(p_handle, index, generation) || index >= entries_.size()) {
+	uint32_t handle_id = 0;
+	if (!parse_handle(p_handle, handle_id)) {
 		return nullptr;
 	}
 
+	auto found = handle_slots_.find(handle_id);
+	if (found == handle_slots_.end()) {
+		return nullptr;
+	}
+
+	const uint32_t index = found->second;
+	if (index >= entries_.size()) {
+		return nullptr;
+	}
 	Entry &entry = entries_[index];
-	if (entry.kind == Kind::Free || entry.generation != generation) {
+	if (entry.kind == Kind::Free || entry.handle_id != handle_id) {
 		return nullptr;
 	}
 
@@ -69,14 +75,22 @@ PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle, uint32_t
 }
 
 const PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle, uint32_t *r_index) const {
-	uint32_t index = 0;
-	uint32_t generation = 0;
-	if (!parse_handle(p_handle, index, generation) || index >= entries_.size()) {
+	uint32_t handle_id = 0;
+	if (!parse_handle(p_handle, handle_id)) {
 		return nullptr;
 	}
 
+	auto found = handle_slots_.find(handle_id);
+	if (found == handle_slots_.end()) {
+		return nullptr;
+	}
+
+	const uint32_t index = found->second;
+	if (index >= entries_.size()) {
+		return nullptr;
+	}
 	const Entry &entry = entries_[index];
-	if (entry.kind == Kind::Free || entry.generation != generation) {
+	if (entry.kind == Kind::Free || entry.handle_id != handle_id) {
 		return nullptr;
 	}
 
@@ -101,16 +115,16 @@ void PuertsBridgeRegistry::unbind_index(const Entry &p_entry) {
 void PuertsBridgeRegistry::release_slot(uint32_t p_index) {
 	Entry &entry = entries_[p_index];
 	unbind_index(entry);
+	if (entry.handle_id != 0) {
+		handle_slots_.erase(entry.handle_id);
+	}
 	entry.kind = Kind::Free;
 	entry.ownership = Ownership::Borrowed;
+	entry.handle_id = 0;
 	entry.object_id = ObjectID();
 	entry.object_ptr = 0;
 	entry.value = Variant();
 	entry.type_id = nullptr;
-	++entry.generation;
-	if (entry.generation == 0) {
-		entry.generation = 1;
-	}
 	free_slots_.push_back(p_index);
 }
 
@@ -124,7 +138,10 @@ Object *PuertsBridgeRegistry::object_from(const Entry &p_entry) const {
 	}
 
 	Object *object = ObjectDB::get_instance(p_entry.object_id);
-	return reinterpret_cast<uintptr_t>(object) == p_entry.object_ptr ? object : nullptr;
+	if (reinterpret_cast<uintptr_t>(object) == p_entry.object_ptr) {
+		return object;
+	}
+	return nullptr;
 }
 
 Variant PuertsBridgeRegistry::variant_from(const Entry &p_entry) const {
@@ -148,14 +165,18 @@ void *PuertsBridgeRegistry::store_object(Object *p_object, const void *p_type_id
 
 	const uint32_t index = allocate();
 	Entry &entry = entries_[index];
+	const uint32_t handle_id = next_handle_id_++;
+	ERR_FAIL_COND_V(handle_id == 0, nullptr);
 	entry.kind = Kind::Object;
 	entry.ownership = Object::cast_to<RefCounted>(p_object) != nullptr ? Ownership::Strong : p_ownership;
+	entry.handle_id = handle_id;
 	entry.object_id = p_object->get_instance_id();
 	entry.object_ptr = reinterpret_cast<uintptr_t>(p_object);
 	entry.value = entry.ownership == Ownership::Strong ? Variant(p_object) : Variant();
 	entry.type_id = p_type_id;
+	handle_slots_[handle_id] = index;
 	bind_index(entry, index);
-	return reinterpret_cast<void *>(make_handle(index, entry.generation));
+	return make_handle(handle_id);
 }
 
 void PuertsBridgeRegistry::clear() {
@@ -170,7 +191,9 @@ void PuertsBridgeRegistry::clear() {
 
 	entries_.clear();
 	free_slots_.clear();
+	handle_slots_.clear();
 	object_slots_.clear();
+	next_handle_id_ = 1;
 
 	for (Object *object : script_objects) {
 		memdelete(object);
@@ -190,11 +213,14 @@ void *PuertsBridgeRegistry::box_variant(const Variant &p_value, const void *p_ty
 	Entry &entry = entries_[index];
 	entry.kind = Kind::Variant;
 	entry.ownership = Ownership::Strong;
+	entry.handle_id = next_handle_id_++;
+	ERR_FAIL_COND_V(entry.handle_id == 0, nullptr);
 	entry.object_id = ObjectID();
 	entry.object_ptr = 0;
 	entry.value = p_value;
 	entry.type_id = p_type_id;
-	return reinterpret_cast<void *>(make_handle(index, entry.generation));
+	handle_slots_[entry.handle_id] = index;
+	return make_handle(entry.handle_id);
 }
 
 bool PuertsBridgeRegistry::find_object(Object *p_object, void *&r_handle, const void *&r_type_id) {
@@ -211,7 +237,7 @@ bool PuertsBridgeRegistry::find_object(Object *p_object, void *&r_handle, const 
 
 	const uint32_t index = found->second;
 	const Entry &entry = entries_[index];
-	r_handle = reinterpret_cast<void *>(make_handle(index, entry.generation));
+	r_handle = make_handle(entry.handle_id);
 	r_type_id = entry.type_id;
 	return true;
 }

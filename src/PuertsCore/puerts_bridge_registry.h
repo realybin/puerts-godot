@@ -43,7 +43,7 @@ private:
 	struct Entry {
 		Kind kind = Kind::Free;
 		Ownership ownership = Ownership::Borrowed;
-		uint32_t generation = 1;
+		uint32_t handle_id = 0;
 		godot::ObjectID object_id;
 		uintptr_t object_ptr = 0;
 		godot::Variant value;
@@ -68,10 +68,12 @@ private:
 
 	puerts_eastl::vector<Entry> entries_;
 	puerts_eastl::vector<uint32_t> free_slots_;
+	puerts_eastl::hash_map<uint32_t, uint32_t> handle_slots_;
 	puerts_eastl::hash_map<ObjectKey, uint32_t, ObjectKeyHash> object_slots_;
+	uint32_t next_handle_id_ = 1;
 
-	[[nodiscard]] static uint64_t make_handle(uint32_t p_index, uint32_t p_generation);
-	static bool parse_handle(void *p_handle, uint32_t &r_index, uint32_t &r_generation);
+	[[nodiscard]] static void *make_handle(uint32_t p_handle_id);
+	static bool parse_handle(void *p_handle, uint32_t &r_handle_id);
 	[[nodiscard]] static ObjectKey key_for(const Entry &p_entry);
 	[[nodiscard]] static ObjectKey key_for(godot::Object *p_object);
 
