@@ -100,12 +100,12 @@ inline void aabb_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::AABB> instance = puerts::internal::resolve_bound_instance<godot::AABB>(apis, info, context);
+	puerts::internal::receiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector3>::write(apis, info, context.env, context.environment, instance.ptr->get_end());
+	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.ptr->get_end());
 }
 
 inline void aabb_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -114,12 +114,12 @@ inline void aabb_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::AABB> instance = puerts::internal::resolve_bound_instance<godot::AABB>(apis, info, context);
+	puerts::internal::receiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector3>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector3>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -134,12 +134,12 @@ inline void basis_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Basis> instance = puerts::internal::resolve_bound_instance<godot::Basis>(apis, info, context);
+	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector3>::write(apis, info, context.env, context.environment, instance.ptr->get_column(0));
+	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.ptr->get_column(0));
 }
 
 inline void basis_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -148,12 +148,12 @@ inline void basis_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Basis> instance = puerts::internal::resolve_bound_instance<godot::Basis>(apis, info, context);
+	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector3>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector3>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -168,12 +168,12 @@ inline void basis_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Basis> instance = puerts::internal::resolve_bound_instance<godot::Basis>(apis, info, context);
+	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector3>::write(apis, info, context.env, context.environment, instance.ptr->get_column(1));
+	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.ptr->get_column(1));
 }
 
 inline void basis_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -182,12 +182,12 @@ inline void basis_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Basis> instance = puerts::internal::resolve_bound_instance<godot::Basis>(apis, info, context);
+	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector3>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector3>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -202,12 +202,12 @@ inline void basis_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Basis> instance = puerts::internal::resolve_bound_instance<godot::Basis>(apis, info, context);
+	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector3>::write(apis, info, context.env, context.environment, instance.ptr->get_column(2));
+	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.ptr->get_column(2));
 }
 
 inline void basis_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -216,12 +216,12 @@ inline void basis_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Basis> instance = puerts::internal::resolve_bound_instance<godot::Basis>(apis, info, context);
+	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector3>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector3>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -236,12 +236,12 @@ inline void color_r8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<int64_t>::write(apis, info, context.env, context.environment, instance.ptr->get_r8());
+	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.ptr->get_r8());
 }
 
 inline void color_r8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -250,12 +250,12 @@ inline void color_r8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, int64_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, int64_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -270,12 +270,12 @@ inline void color_g8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<int64_t>::write(apis, info, context.env, context.environment, instance.ptr->get_g8());
+	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.ptr->get_g8());
 }
 
 inline void color_g8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -284,12 +284,12 @@ inline void color_g8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, int64_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, int64_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -304,12 +304,12 @@ inline void color_b8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<int64_t>::write(apis, info, context.env, context.environment, instance.ptr->get_b8());
+	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.ptr->get_b8());
 }
 
 inline void color_b8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -318,12 +318,12 @@ inline void color_b8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, int64_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, int64_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -338,12 +338,12 @@ inline void color_a8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<int64_t>::write(apis, info, context.env, context.environment, instance.ptr->get_a8());
+	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.ptr->get_a8());
 }
 
 inline void color_a8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -352,12 +352,12 @@ inline void color_a8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, int64_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, int64_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -372,12 +372,12 @@ inline void color_h_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::real_t>::write(apis, info, context.env, context.environment, instance.ptr->get_h());
+	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.ptr->get_h());
 }
 
 inline void color_h_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -386,12 +386,12 @@ inline void color_h_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::real_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::real_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -406,12 +406,12 @@ inline void color_s_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::real_t>::write(apis, info, context.env, context.environment, instance.ptr->get_s());
+	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.ptr->get_s());
 }
 
 inline void color_s_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -420,12 +420,12 @@ inline void color_s_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::real_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::real_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -440,12 +440,12 @@ inline void color_v_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::real_t>::write(apis, info, context.env, context.environment, instance.ptr->get_v());
+	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.ptr->get_v());
 }
 
 inline void color_v_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -454,12 +454,12 @@ inline void color_v_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Color> instance = puerts::internal::resolve_bound_instance<godot::Color>(apis, info, context);
+	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::real_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::real_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -474,12 +474,12 @@ inline void plane_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Plane> instance = puerts::internal::resolve_bound_instance<godot::Plane>(apis, info, context);
+	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::real_t>::write(apis, info, context.env, context.environment, instance.ptr->normal.x);
+	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.ptr->normal.x);
 }
 
 inline void plane_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -488,12 +488,12 @@ inline void plane_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Plane> instance = puerts::internal::resolve_bound_instance<godot::Plane>(apis, info, context);
+	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::real_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::real_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -508,12 +508,12 @@ inline void plane_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Plane> instance = puerts::internal::resolve_bound_instance<godot::Plane>(apis, info, context);
+	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::real_t>::write(apis, info, context.env, context.environment, instance.ptr->normal.y);
+	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.ptr->normal.y);
 }
 
 inline void plane_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -522,12 +522,12 @@ inline void plane_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Plane> instance = puerts::internal::resolve_bound_instance<godot::Plane>(apis, info, context);
+	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::real_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::real_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -542,12 +542,12 @@ inline void plane_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Plane> instance = puerts::internal::resolve_bound_instance<godot::Plane>(apis, info, context);
+	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::real_t>::write(apis, info, context.env, context.environment, instance.ptr->normal.z);
+	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.ptr->normal.z);
 }
 
 inline void plane_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -556,12 +556,12 @@ inline void plane_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Plane> instance = puerts::internal::resolve_bound_instance<godot::Plane>(apis, info, context);
+	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::real_t>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::real_t>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -576,12 +576,12 @@ inline void projection_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector4>::write(apis, info, context.env, context.environment, instance.ptr->columns[0]);
+	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.ptr->columns[0]);
 }
 
 inline void projection_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -590,12 +590,12 @@ inline void projection_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector4>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector4>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -610,12 +610,12 @@ inline void projection_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector4>::write(apis, info, context.env, context.environment, instance.ptr->columns[1]);
+	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.ptr->columns[1]);
 }
 
 inline void projection_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -624,12 +624,12 @@ inline void projection_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector4>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector4>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -644,12 +644,12 @@ inline void projection_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector4>::write(apis, info, context.env, context.environment, instance.ptr->columns[2]);
+	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.ptr->columns[2]);
 }
 
 inline void projection_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -658,12 +658,12 @@ inline void projection_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector4>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector4>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -678,12 +678,12 @@ inline void projection_w_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector4>::write(apis, info, context.env, context.environment, instance.ptr->columns[3]);
+	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.ptr->columns[3]);
 }
 
 inline void projection_w_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -692,12 +692,12 @@ inline void projection_w_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Projection> instance = puerts::internal::resolve_bound_instance<godot::Projection>(apis, info, context);
+	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector4>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector4>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -712,12 +712,12 @@ inline void rect2_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info in
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Rect2> instance = puerts::internal::resolve_bound_instance<godot::Rect2>(apis, info, context);
+	puerts::internal::receiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector2>::write(apis, info, context.env, context.environment, instance.ptr->get_end());
+	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.ptr->get_end());
 }
 
 inline void rect2_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -726,12 +726,12 @@ inline void rect2_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info in
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Rect2> instance = puerts::internal::resolve_bound_instance<godot::Rect2>(apis, info, context);
+	puerts::internal::receiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector2>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector2>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -746,12 +746,12 @@ inline void rect2i_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info i
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Rect2i> instance = puerts::internal::resolve_bound_instance<godot::Rect2i>(apis, info, context);
+	puerts::internal::receiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector2i>::write(apis, info, context.env, context.environment, instance.ptr->get_end());
+	puerts::internal::write_return<godot::Vector2i>(apis, info, context.env, context.environment, instance.ptr->get_end());
 }
 
 inline void rect2i_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -760,12 +760,12 @@ inline void rect2i_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info i
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Rect2i> instance = puerts::internal::resolve_bound_instance<godot::Rect2i>(apis, info, context);
+	puerts::internal::receiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector2i>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector2i>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -780,12 +780,12 @@ inline void transform2d_x_getter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Transform2D> instance = puerts::internal::resolve_bound_instance<godot::Transform2D>(apis, info, context);
+	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector2>::write(apis, info, context.env, context.environment, instance.ptr->columns[0]);
+	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.ptr->columns[0]);
 }
 
 inline void transform2d_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -794,12 +794,12 @@ inline void transform2d_x_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Transform2D> instance = puerts::internal::resolve_bound_instance<godot::Transform2D>(apis, info, context);
+	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector2>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector2>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -814,12 +814,12 @@ inline void transform2d_y_getter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Transform2D> instance = puerts::internal::resolve_bound_instance<godot::Transform2D>(apis, info, context);
+	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector2>::write(apis, info, context.env, context.environment, instance.ptr->columns[1]);
+	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.ptr->columns[1]);
 }
 
 inline void transform2d_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -828,12 +828,12 @@ inline void transform2d_y_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Transform2D> instance = puerts::internal::resolve_bound_instance<godot::Transform2D>(apis, info, context);
+	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector2>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector2>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}
@@ -848,12 +848,12 @@ inline void transform2d_origin_getter_generated(pesapi_ffi *apis, pesapi_callbac
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Transform2D> instance = puerts::internal::resolve_bound_instance<godot::Transform2D>(apis, info, context);
+	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::return_converter<godot::Vector2>::write(apis, info, context.env, context.environment, instance.ptr->columns[2]);
+	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.ptr->columns[2]);
 }
 
 inline void transform2d_origin_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -862,12 +862,12 @@ inline void transform2d_origin_setter_generated(pesapi_ffi *apis, pesapi_callbac
 		return;
 	}
 
-	puerts::internal::bound_instance<godot::Transform2D> instance = puerts::internal::resolve_bound_instance<godot::Transform2D>(apis, info, context);
+	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	auto value = puerts::internal::convert_invocation_argument<false, godot::Vector2>(apis, info, context, 0);
+	auto value = puerts::internal::convert_arg<false, godot::Vector2>(apis, info, context, 0);
 	if (!value.has_value()) {
 		return;
 	}

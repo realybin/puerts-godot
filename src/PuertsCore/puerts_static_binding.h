@@ -88,61 +88,30 @@ struct constructor_binding_spec {
 	pesapi_finalize finalize = nullptr;
 };
 
-struct static_binding_access {
-	static godot::Variant script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) {
-		return p_environment->script_to_variant(p_env, p_value);
-	}
+inline godot::Variant script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) {
+	return p_environment->script_to_variant(p_env, p_value);
+}
 
-	static pesapi_value variant_to_script(PuertsEnvironment *p_environment, pesapi_env p_env, const godot::Variant &p_value) {
-		return p_environment->variant_to_script(p_env, p_value);
-	}
-
-	static bool add_variant_return(
-			pesapi_ffi *p_apis,
-			pesapi_callback_info p_info,
-			pesapi_env p_env,
-			PuertsEnvironment *p_environment,
-			const godot::Variant &p_value) {
-		bool converted = false;
-		godot::String error_message;
-		pesapi_value script_value = p_environment->variant_to_script(p_env, p_value, &converted, &error_message);
-		if (!converted) {
-			if (error_message.is_empty()) {
-				error_message = "Failed to convert Variant to script value.";
-			}
-			godot::CharString message = error_message.utf8();
-			p_apis->throw_by_string(p_info, message.get_data());
-			return false;
+inline bool return_variant(
+		pesapi_ffi *p_apis,
+		pesapi_callback_info p_info,
+		pesapi_env p_env,
+		PuertsEnvironment *p_environment,
+		const godot::Variant &p_value) {
+	bool converted = false;
+	godot::String error_message;
+	pesapi_value script_value = p_environment->variant_to_script(p_env, p_value, &converted, &error_message);
+	if (!converted) {
+		if (error_message.is_empty()) {
+			error_message = "Failed to convert Variant to script value.";
 		}
-		p_apis->add_return(p_info, script_value);
-		return true;
-	}
-
-	static bool try_resolve_native_object_variant(
-			PuertsEnvironment *p_environment,
-			void *p_handle,
-			const void *p_type_id,
-			const PuertsTypeRegister::TypeInfo *p_type_info,
-			godot::Variant &r_value) {
-		if (p_environment == nullptr || p_environment->env_private_ == nullptr || p_handle == nullptr || p_type_id == nullptr) {
-			return false;
-		}
-
-		if (p_environment->env_private_->bridge != nullptr &&
-				p_environment->env_private_->bridge->get_variant(p_handle, p_type_id, r_value)) {
-			return true;
-		}
-
-		if (p_type_info != nullptr &&
-				p_type_info->kind == PuertsTypeRegister::TypeInfo::Kind::STATIC_BOUND &&
-				p_type_info->native_to_variant != nullptr) {
-			r_value = p_type_info->native_to_variant(p_handle);
-			return true;
-		}
-
+		godot::CharString message = error_message.utf8();
+		p_apis->throw_by_string(p_info, message.get_data());
 		return false;
 	}
-};
+	p_apis->add_return(p_info, script_value);
+	return true;
+}
 
 namespace internal {
 
@@ -204,7 +173,7 @@ struct native_to_variant_resolver<T, eastl::enable_if_t<has_type_info_v<T> && go
 	}
 };
 
-inline const PuertsTypeRegister::TypeInfo *resolve_type_info(const void *p_type_id) {
+inline const PuertsTypeRegister::TypeInfo *find_type(const void *p_type_id) {
 	return PuertsTypeRegister::get_singleton().get_type_by_id(p_type_id);
 }
 
@@ -219,64 +188,78 @@ inline bool is_assignable_from(const PuertsTypeRegister::TypeInfo *p_type_info, 
 }
 
 template <typename T>
-inline bool is_assignable_from(const void *p_type_id) {
-	return is_assignable_from(resolve_type_info(p_type_id), static_type_id<T>::get());
-}
-
-template <typename T>
 inline bool is_assignable_from(const PuertsTypeRegister::TypeInfo *p_type_info) {
 	return is_assignable_from(p_type_info, static_type_id<T>::get());
 }
 
-template <typename T>
-T *unwrap_native_object(pesapi_ffi *apis, pesapi_env env, pesapi_value value, pesapi_callback_info info) {
-	const void *type_id = apis->get_native_object_typeid(env, value);
-	if (type_id == nullptr || !is_assignable_from<T>(type_id)) {
-		apis->throw_by_string(info, "Native object type does not match the bound signature.");
+inline const PuertsTypeRegister::TypeInfo *arg_type(callback_context::arg_native_state &p_state) {
+	if (p_state.native_type_id == nullptr) {
 		return nullptr;
 	}
+	if (!p_state.native_type_info_loaded) {
+		p_state.native_type_info = find_type(p_state.native_type_id);
+		p_state.native_type_info_loaded = true;
+	}
+	return static_cast<const PuertsTypeRegister::TypeInfo *>(p_state.native_type_info);
+}
 
-	void *ptr = apis->get_native_object_ptr(env, value);
-	if (ptr == nullptr) {
-		apis->throw_by_string(info, "Native object pointer is null.");
-		return nullptr;
+inline const godot::Variant &arg_variant(
+		callback_context::arg_native_state &p_state,
+		PuertsEnvironment *p_environment,
+		pesapi_env p_env,
+		pesapi_value p_value) {
+	if (!p_state.bridged_variant_loaded) {
+		p_state.bridged_variant = puerts::script_to_variant(p_environment, p_env, p_value);
+		p_state.bridged_variant_loaded = true;
+	}
+	return p_state.bridged_variant;
+}
+
+inline bool read_native_variant(
+		callback_context &p_context,
+		void *p_handle,
+		const void *p_type_id,
+		const PuertsTypeRegister::TypeInfo *p_type_info,
+		godot::Variant &r_value) {
+	if (p_handle == nullptr || p_type_id == nullptr) {
+		return false;
 	}
 
-	return static_cast<T *>(ptr);
+	PuertsBridgeRegistry *bridge = p_context.env_private->bridge;
+	if (bridge != nullptr && bridge->get_variant(p_handle, p_type_id, r_value)) {
+		return true;
+	}
+
+	if (p_type_info != nullptr &&
+			p_type_info->kind == PuertsTypeRegister::TypeInfo::Kind::STATIC_BOUND &&
+			p_type_info->native_to_variant != nullptr) {
+		r_value = p_type_info->native_to_variant(p_handle);
+		return true;
+	}
+
+	return false;
 }
 
 template <typename T>
-T *probe_native_object(pesapi_ffi *apis, pesapi_env env, pesapi_value value) {
-	const void *type_id = apis->get_native_object_typeid(env, value);
-	if (type_id == nullptr || !is_assignable_from<T>(type_id)) {
-		return nullptr;
-	}
-
-	return static_cast<T *>(apis->get_native_object_ptr(env, value));
-}
-
-template <typename T>
-using converted_argument = eastl::optional<bare_type<T>>;
+using maybe_arg = eastl::optional<bare_type<T>>;
 
 template <typename... Args>
-using invocation_arguments = eastl::tuple<bare_type<Args>...>;
+using arg_tuple = eastl::tuple<bare_type<Args>...>;
 
 template <typename T>
-converted_argument<T> convert_variant_bound_argument(
+maybe_arg<T> convert_variant_arg(
 		pesapi_ffi *apis,
-		pesapi_env env,
-		PuertsEnvironment *environment,
-		pesapi_value value,
-		pesapi_callback_info info = nullptr,
-		callback_context::arg_native_state *p_arg_native_state = nullptr) {
+		pesapi_callback_info info,
+		callback_context &context,
+		int p_index) {
 	static_assert(!is_nonconst_lvalue_ref_v<T>, "Non-const reference arguments are not supported.");
-	auto reject_argument_type = [&]() -> converted_argument<T> {
+	auto reject_argument_type = [&]() -> maybe_arg<T> {
 		if (info != nullptr) {
 			apis->throw_by_string(info, "Argument type does not match the bound signature.");
 		}
 		return {};
 	};
-	auto cast_variant = [&](const godot::Variant &p_variant) -> converted_argument<T> {
+	auto cast_variant = [&](const godot::Variant &p_variant) -> maybe_arg<T> {
 		if constexpr (godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
 			const auto actual_type = static_cast<GDExtensionVariantType>(p_variant.get_type());
 			const auto expected_type = static_cast<GDExtensionVariantType>(godot::GetTypeInfo<T>::VARIANT_TYPE);
@@ -289,142 +272,52 @@ converted_argument<T> convert_variant_bound_argument(
 		return godot::VariantCaster<T>::cast(p_variant);
 	};
 
-	void *native_handle = nullptr;
-	const void *type_id = nullptr;
-	const PuertsTypeRegister::TypeInfo *type_info = nullptr;
-	if (apis != nullptr) {
-		const bool has_cached_native_state = p_arg_native_state != nullptr && p_arg_native_state->loaded;
-		native_handle = has_cached_native_state ? p_arg_native_state->native_handle : apis->get_native_object_ptr(env, value);
-		const bool looks_like_object = (has_cached_native_state ? p_arg_native_state->is_object : apis->is_object(env, value)) || native_handle != nullptr;
-		if (!looks_like_object) {
-			if (p_arg_native_state != nullptr) {
-				if (!p_arg_native_state->bridged_variant_loaded) {
-					p_arg_native_state->bridged_variant = static_binding_access::script_to_variant(environment, env, value);
-					p_arg_native_state->bridged_variant_loaded = true;
-				}
-				return cast_variant(p_arg_native_state->bridged_variant);
-			}
-			return cast_variant(static_binding_access::script_to_variant(environment, env, value));
-		}
+	pesapi_value value = context.get_arg(p_index);
+	callback_context::arg_native_state &native_state = *context.get_arg_native_state(p_index);
+	if (!native_state.is_object && native_state.native_handle == nullptr) {
+		return cast_variant(arg_variant(native_state, context.environment, context.env, value));
+	}
 
-		type_id = has_cached_native_state ? p_arg_native_state->native_type_id : apis->get_native_object_typeid(env, value);
+	const void *type_id = native_state.native_type_id;
+	if constexpr (godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
+			godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
+		if (type_id == nullptr) {
+			return reject_argument_type();
+		}
+	}
+
+	const PuertsTypeRegister::TypeInfo *type_info = arg_type(native_state);
+	if (type_info != nullptr) {
 		if constexpr (godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
 				godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
-			if (type_id == nullptr) {
+			if (type_info->kind == PuertsTypeRegister::TypeInfo::Kind::OBJECT_CLASS) {
 				return reject_argument_type();
 			}
-		}
-
-		if (type_id != nullptr) {
-			if (p_arg_native_state != nullptr) {
-				if (!p_arg_native_state->native_type_info_loaded) {
-					p_arg_native_state->native_type_info = resolve_type_info(type_id);
-					p_arg_native_state->native_type_info_loaded = true;
-				}
-				type_info = static_cast<const PuertsTypeRegister::TypeInfo *>(p_arg_native_state->native_type_info);
-			} else {
-				type_info = resolve_type_info(type_id);
-			}
-			if (type_info != nullptr) {
-				if constexpr (godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
-						godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
-					if (type_info->kind == PuertsTypeRegister::TypeInfo::Kind::OBJECT_CLASS) {
-						return reject_argument_type();
-					}
-				}
-				if constexpr (godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
-						godot::GetTypeInfo<T>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
-					if (type_info->kind == PuertsTypeRegister::TypeInfo::Kind::STATIC_BOUND && type_info->variant_type != godot::Variant::NIL) {
-						const auto actual_type = static_cast<GDExtensionVariantType>(type_info->variant_type);
-						const auto expected_type = static_cast<GDExtensionVariantType>(godot::GetTypeInfo<T>::VARIANT_TYPE);
-						if (!godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type)) {
-							return reject_argument_type();
-						}
-					}
+			if (type_info->kind == PuertsTypeRegister::TypeInfo::Kind::STATIC_BOUND && type_info->variant_type != godot::Variant::NIL) {
+				const auto actual_type = static_cast<GDExtensionVariantType>(type_info->variant_type);
+				const auto expected_type = static_cast<GDExtensionVariantType>(godot::GetTypeInfo<T>::VARIANT_TYPE);
+				if (!godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type)) {
+					return reject_argument_type();
 				}
 			}
-
-			godot::Variant native_variant;
-			if (static_binding_access::try_resolve_native_object_variant(environment, native_handle, type_id, type_info, native_variant)) {
-				return cast_variant(native_variant);
-			}
 		}
 	}
 
-	if (p_arg_native_state != nullptr) {
-		if (!p_arg_native_state->bridged_variant_loaded) {
-			p_arg_native_state->bridged_variant = static_binding_access::script_to_variant(environment, env, value);
-			p_arg_native_state->bridged_variant_loaded = true;
-		}
-		return cast_variant(p_arg_native_state->bridged_variant);
-	}
-	return cast_variant(static_binding_access::script_to_variant(environment, env, value));
-}
-
-template <typename T, eastl::enable_if_t<eastl::is_pointer_v<bare_type<T>>, int> = 0>
-converted_argument<T> convert_native_bound_argument(
-		pesapi_ffi *apis,
-		pesapi_env env,
-		pesapi_value value,
-		callback_context::arg_native_state *p_arg_native_state = nullptr,
-		pesapi_callback_info info = nullptr);
-
-template <typename T, eastl::enable_if_t<!eastl::is_pointer_v<bare_type<T>>, int> = 0>
-converted_argument<T> convert_native_bound_argument(
-		pesapi_ffi *apis,
-		pesapi_env env,
-		pesapi_value value,
-		callback_context::arg_native_state *p_arg_native_state = nullptr,
-		pesapi_callback_info info = nullptr);
-
-template <bool Probe, typename T>
-converted_argument<T> convert_invocation_argument(
-		pesapi_ffi *apis,
-		pesapi_callback_info info,
-		callback_context &context,
-		int p_index) {
-	pesapi_value value = context.get_arg(p_index);
-	auto *arg_native_state = context.get_arg_native_state(p_index);
-	if constexpr (has_type_info_v<T>) {
-		if constexpr (Probe) {
-			return convert_variant_bound_argument<T>(apis, context.env, context.environment, value, nullptr, arg_native_state);
-		}
-		return convert_variant_bound_argument<T>(apis, context.env, context.environment, value, info, arg_native_state);
+	godot::Variant resolved_variant;
+	if (read_native_variant(context, native_state.native_handle, type_id, type_info, resolved_variant)) {
+		return cast_variant(resolved_variant);
 	}
 
-	if constexpr (Probe) {
-		return convert_native_bound_argument<T>(apis, context.env, value, arg_native_state);
-	}
-	return convert_native_bound_argument<T>(apis, context.env, value, arg_native_state, info);
+	return cast_variant(arg_variant(native_state, context.environment, context.env, value));
 }
 
 template <typename Target>
-Target *resolve_native_argument_ptr(
+Target *native_arg_ptr(
 		pesapi_ffi *apis,
-		pesapi_env env,
-		pesapi_value value,
-		callback_context::arg_native_state *p_arg_native_state = nullptr,
+		callback_context::arg_native_state &p_arg_native_state,
 		pesapi_callback_info info = nullptr) {
-	bool has_cached_native_state = false;
-	if (p_arg_native_state != nullptr) {
-		has_cached_native_state = p_arg_native_state->loaded;
-	}
-	if (!has_cached_native_state) {
-		if (info != nullptr) {
-			return unwrap_native_object<Target>(apis, env, value, info);
-		}
-		return probe_native_object<Target>(apis, env, value);
-	}
-
-	const void *type_id = p_arg_native_state->native_type_id;
-	const PuertsTypeRegister::TypeInfo *type_info = nullptr;
-	if (type_id != nullptr) {
-		if (!p_arg_native_state->native_type_info_loaded) {
-			p_arg_native_state->native_type_info = resolve_type_info(type_id);
-			p_arg_native_state->native_type_info_loaded = true;
-		}
-		type_info = static_cast<const PuertsTypeRegister::TypeInfo *>(p_arg_native_state->native_type_info);
-	}
+	const void *type_id = p_arg_native_state.native_type_id;
+	const PuertsTypeRegister::TypeInfo *type_info = arg_type(p_arg_native_state);
 	if (type_id == nullptr || type_info == nullptr || !is_assignable_from<Target>(type_info)) {
 		if (info != nullptr) {
 			apis->throw_by_string(info, "Native object type does not match the bound signature.");
@@ -432,7 +325,7 @@ Target *resolve_native_argument_ptr(
 		return nullptr;
 	}
 
-	void *ptr = p_arg_native_state->native_handle;
+	void *ptr = p_arg_native_state.native_handle;
 	if (ptr == nullptr) {
 		if (info != nullptr) {
 			apis->throw_by_string(info, "Native object pointer is null.");
@@ -443,41 +336,40 @@ Target *resolve_native_argument_ptr(
 	return static_cast<Target *>(ptr);
 }
 
-template <typename T, eastl::enable_if_t<eastl::is_pointer_v<bare_type<T>>, int>>
-converted_argument<T> convert_native_bound_argument(
+template <typename T>
+maybe_arg<T> convert_native_arg(
 		pesapi_ffi *apis,
-		pesapi_env env,
-		pesapi_value value,
-		callback_context::arg_native_state *p_arg_native_state,
+		callback_context::arg_native_state &p_arg_native_state,
 		pesapi_callback_info info) {
 	static_assert(!is_nonconst_lvalue_ref_v<T>, "Non-const reference arguments are not supported.");
-	using bare_argument_type = bare_type<T>;
-	using target_type = eastl::remove_cv_t<eastl::remove_pointer_t<bare_argument_type>>;
-	target_type *ptr = resolve_native_argument_ptr<target_type>(apis, env, value, p_arg_native_state, info);
+	using argument_type = bare_type<T>;
+	using target_type = eastl::conditional_t<
+			eastl::is_pointer_v<argument_type>,
+			eastl::remove_cv_t<eastl::remove_pointer_t<argument_type>>,
+			argument_type>;
+	target_type *ptr = native_arg_ptr<target_type>(apis, p_arg_native_state, info);
 	if (ptr == nullptr) {
 		return {};
 	}
-	return converted_argument<T>(static_cast<bare_argument_type>(ptr));
-}
-
-template <typename T, eastl::enable_if_t<!eastl::is_pointer_v<bare_type<T>>, int>>
-converted_argument<T> convert_native_bound_argument(
-		pesapi_ffi *apis,
-		pesapi_env env,
-		pesapi_value value,
-		callback_context::arg_native_state *p_arg_native_state,
-		pesapi_callback_info info) {
-	static_assert(!is_nonconst_lvalue_ref_v<T>, "Non-const reference arguments are not supported.");
-	using target_type = bare_type<T>;
-	target_type *ptr = resolve_native_argument_ptr<target_type>(apis, env, value, p_arg_native_state, info);
-	if (ptr == nullptr) {
-		return {};
+	if constexpr (eastl::is_pointer_v<argument_type>) {
+		return maybe_arg<T>(static_cast<argument_type>(ptr));
+	} else {
+		return maybe_arg<T>(*ptr);
 	}
-	return converted_argument<T>(*ptr);
 }
 
-template <typename R, typename Enable = void>
-struct return_converter;
+template <bool Probe, typename T>
+maybe_arg<T> convert_arg(
+		pesapi_ffi *apis,
+		pesapi_callback_info info,
+		callback_context &context,
+		int p_index) {
+	pesapi_callback_info error_info = Probe ? nullptr : info;
+	if constexpr (has_type_info_v<T>) {
+		return convert_variant_arg<T>(apis, error_info, context, p_index);
+	}
+	return convert_native_arg<T>(apis, *context.get_arg_native_state(p_index), error_info);
+}
 
 template <typename T>
 inline void add_variant_return_value(
@@ -486,7 +378,7 @@ inline void add_variant_return_value(
 		pesapi_env env,
 		PuertsEnvironment *environment,
 		T &&value) {
-	static_binding_access::add_variant_return(apis, info, env, environment, godot::Variant(eastl::forward<T>(value)));
+	puerts::return_variant(apis, info, env, environment, godot::Variant(eastl::forward<T>(value)));
 }
 
 template <typename T>
@@ -500,100 +392,93 @@ inline void add_native_owned_return(
 }
 
 template <typename R>
-struct return_converter<R, eastl::enable_if_t<eastl::is_void_v<R>>> {
-	static void write(pesapi_ffi *, pesapi_callback_info, pesapi_env, PuertsEnvironment *, void *) {}
-};
-
-template <typename R>
-struct return_converter<R, eastl::enable_if_t<!eastl::is_void_v<R>>> {
-	static void write(pesapi_ffi *apis, pesapi_callback_info info, pesapi_env env, PuertsEnvironment *environment, const R &value) {
-		using target_type = bare_type<R>;
-		if constexpr (eastl::is_same_v<target_type, bool>) {
-			apis->add_return(info, apis->create_boolean(env, value));
-			return;
-		}
-
-		if constexpr (eastl::is_integral_v<target_type>) {
-			if constexpr (eastl::is_signed_v<target_type>) {
-				const auto int_value = static_cast<int64_t>(value);
-				if (int_value >= INT32_MIN && int_value <= INT32_MAX) {
-					apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(int_value)));
-				} else {
-					apis->add_return(info, apis->create_int64(env, int_value));
-				}
-			} else {
-				const auto int_value = static_cast<uint64_t>(value);
-				if (int_value <= static_cast<uint64_t>(INT32_MAX)) {
-					apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(int_value)));
-				} else if (int_value <= static_cast<uint64_t>(INT64_MAX)) {
-					apis->add_return(info, apis->create_int64(env, static_cast<int64_t>(int_value)));
-				} else {
-					apis->add_return(info, apis->create_uint64(env, int_value));
-				}
-			}
-			return;
-		}
-
-		if constexpr (eastl::is_floating_point_v<target_type>) {
-			apis->add_return(info, apis->create_double(env, static_cast<double>(value)));
-			return;
-		}
-
-		if constexpr (is_string_like_v<R> || is_binary_like_v<R>) {
-			add_variant_return_value(apis, info, env, environment, value);
-			return;
-		}
-
-		if constexpr (has_type_info_v<R>) {
-			if constexpr (godot::GetTypeInfo<R>::VARIANT_TYPE == GDEXTENSION_VARIANT_TYPE_OBJECT ||
-					godot::GetTypeInfo<R>::VARIANT_TYPE == GDEXTENSION_VARIANT_TYPE_NIL) {
-				add_variant_return_value(apis, info, env, environment, value);
-			} else if constexpr (!eastl::is_arithmetic_v<target_type>) {
-				const bool has_static_type_registration =
-						resolve_type_info(static_type_id<target_type>::get()) != nullptr;
-				if (has_static_type_registration) {
-					add_native_owned_return(apis, info, env, value);
-				} else {
-					// Generic value types like TypedArray<T> may not have dedicated static bindings.
-					// Return them through Variant to preserve engine-backed behavior in script.
-					add_variant_return_value(apis, info, env, environment, value);
-				}
-			}
-			return;
-		}
-
-		if constexpr (eastl::is_pointer_v<R>) {
-			if (value == nullptr) {
-				apis->add_return(info, apis->create_null(env));
-				return;
-			}
-			using pointee_type = eastl::remove_cv_t<eastl::remove_pointer_t<R>>;
-			apis->add_return(info, apis->native_object_to_value(env, static_type_id<pointee_type>::get(), const_cast<pointee_type *>(value), false));
-			return;
-		}
-
-		if constexpr (eastl::is_lvalue_reference_v<R>) {
-			apis->add_return(info, apis->native_object_to_value(env, static_type_id<target_type>::get(), const_cast<target_type *>(&value), false));
-			return;
-		}
-
-		add_native_owned_return(apis, info, env, value);
+void write_return(pesapi_ffi *apis, pesapi_callback_info info, pesapi_env env, PuertsEnvironment *environment, const R &value) {
+	using target_type = bare_type<R>;
+	if constexpr (eastl::is_same_v<target_type, bool>) {
+		apis->add_return(info, apis->create_boolean(env, value));
+		return;
 	}
-};
+
+	if constexpr (eastl::is_integral_v<target_type>) {
+		if constexpr (eastl::is_signed_v<target_type>) {
+			const auto int_value = static_cast<int64_t>(value);
+			if (int_value >= INT32_MIN && int_value <= INT32_MAX) {
+				apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(int_value)));
+			} else {
+				apis->add_return(info, apis->create_int64(env, int_value));
+			}
+		} else {
+			const auto int_value = static_cast<uint64_t>(value);
+			if (int_value <= static_cast<uint64_t>(INT32_MAX)) {
+				apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(int_value)));
+			} else if (int_value <= static_cast<uint64_t>(INT64_MAX)) {
+				apis->add_return(info, apis->create_int64(env, static_cast<int64_t>(int_value)));
+			} else {
+				apis->add_return(info, apis->create_uint64(env, int_value));
+			}
+		}
+		return;
+	}
+
+	if constexpr (eastl::is_floating_point_v<target_type>) {
+		apis->add_return(info, apis->create_double(env, static_cast<double>(value)));
+		return;
+	}
+
+	if constexpr (is_string_like_v<R> || is_binary_like_v<R>) {
+		add_variant_return_value(apis, info, env, environment, value);
+		return;
+	}
+
+	if constexpr (has_type_info_v<R>) {
+		if constexpr (godot::GetTypeInfo<R>::VARIANT_TYPE == GDEXTENSION_VARIANT_TYPE_OBJECT ||
+				godot::GetTypeInfo<R>::VARIANT_TYPE == GDEXTENSION_VARIANT_TYPE_NIL) {
+			add_variant_return_value(apis, info, env, environment, value);
+		} else if constexpr (!eastl::is_arithmetic_v<target_type>) {
+			const bool has_static_type_registration =
+					find_type(static_type_id<target_type>::get()) != nullptr;
+			if (has_static_type_registration) {
+				add_native_owned_return(apis, info, env, value);
+			} else {
+				// Generic value types like TypedArray<T> may not have dedicated static bindings.
+				// Return them through Variant to preserve engine-backed behavior in script.
+				add_variant_return_value(apis, info, env, environment, value);
+			}
+		}
+		return;
+	}
+
+	if constexpr (eastl::is_pointer_v<R>) {
+		if (value == nullptr) {
+			apis->add_return(info, apis->create_null(env));
+			return;
+		}
+		using pointee_type = eastl::remove_cv_t<eastl::remove_pointer_t<R>>;
+		apis->add_return(info, apis->native_object_to_value(env, static_type_id<pointee_type>::get(), const_cast<pointee_type *>(value), false));
+		return;
+	}
+
+	if constexpr (eastl::is_lvalue_reference_v<R>) {
+		apis->add_return(info, apis->native_object_to_value(env, static_type_id<target_type>::get(), const_cast<target_type *>(&value), false));
+		return;
+	}
+
+	add_native_owned_return(apis, info, env, value);
+}
 
 template <typename T, typename = void>
-struct use_bound_storage : eastl::false_type {};
+struct is_boxed_receiver : eastl::false_type {};
 
 template <typename T>
-struct use_bound_storage<T, eastl::enable_if_t<has_type_info_v<bare_type<T>>>> : eastl::bool_constant<
+struct is_boxed_receiver<T, eastl::enable_if_t<has_type_info_v<bare_type<T>>>> : eastl::bool_constant<
 																						 godot::GetTypeInfo<bare_type<T>>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
 																						 godot::GetTypeInfo<bare_type<T>>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL> {};
 
 template <typename T, bool UseStorage>
-struct bound_instance_impl;
+struct receiver_impl;
 
 template <typename T>
-struct bound_instance_impl<T, true> {
+struct receiver_impl<T, true> {
 	using target_type = bare_type<T>;
 
 	// Builtin variants are copied into local storage and written back after mutation.
@@ -602,17 +487,17 @@ struct bound_instance_impl<T, true> {
 	callback_context *context = nullptr;
 	void *boxed_handle = nullptr;
 
-	bound_instance_impl() = default;
-	bound_instance_impl(const bound_instance_impl &) = delete;
-	bound_instance_impl &operator=(const bound_instance_impl &) = delete;
+	receiver_impl() = default;
+	receiver_impl(const receiver_impl &) = delete;
+	receiver_impl &operator=(const receiver_impl &) = delete;
 
-	bound_instance_impl(bound_instance_impl &&p_other) noexcept :
+	receiver_impl(receiver_impl &&p_other) noexcept :
 			storage(eastl::move(p_other.storage)),
 			ptr(p_other.ptr == &p_other.storage ? &storage : p_other.ptr),
 			context(p_other.context),
 			boxed_handle(p_other.boxed_handle) {}
 
-	bound_instance_impl &operator=(bound_instance_impl &&p_other) noexcept {
+	receiver_impl &operator=(receiver_impl &&p_other) noexcept {
 		if (this != &p_other) {
 			storage = eastl::move(p_other.storage);
 			ptr = p_other.ptr == &p_other.storage ? &storage : p_other.ptr;
@@ -627,42 +512,23 @@ struct bound_instance_impl<T, true> {
 	}
 
 	void write_back() const {
-		if constexpr (has_type_info_v<target_type>) {
-			if constexpr (godot::GetTypeInfo<target_type>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
-					godot::GetTypeInfo<target_type>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
-				if (boxed_handle != nullptr && context != nullptr && context->env_private != nullptr && context->env_private->bridge != nullptr) {
-					context->env_private->bridge->set_box(boxed_handle, godot::Variant(storage));
-				}
-			}
+		if (boxed_handle != nullptr) {
+			context->env_private->bridge->set_box(boxed_handle, godot::Variant(storage));
 		}
 	}
 };
 
 template <typename T>
-struct bound_instance_impl<T, false> {
+struct receiver_impl<T, false> {
 	using target_type = bare_type<T>;
 
 	target_type *ptr = nullptr;
-	callback_context *context = nullptr;
-	void *boxed_handle = nullptr;
 
-	bound_instance_impl() = default;
-	bound_instance_impl(const bound_instance_impl &) = delete;
-	bound_instance_impl &operator=(const bound_instance_impl &) = delete;
-
-	bound_instance_impl(bound_instance_impl &&p_other) noexcept :
-			ptr(p_other.ptr),
-			context(p_other.context),
-			boxed_handle(p_other.boxed_handle) {}
-
-	bound_instance_impl &operator=(bound_instance_impl &&p_other) noexcept {
-		if (this != &p_other) {
-			ptr = p_other.ptr;
-			context = p_other.context;
-			boxed_handle = p_other.boxed_handle;
-		}
-		return *this;
-	}
+	receiver_impl() = default;
+	receiver_impl(const receiver_impl &) = delete;
+	receiver_impl &operator=(const receiver_impl &) = delete;
+	receiver_impl(receiver_impl &&) noexcept = default;
+	receiver_impl &operator=(receiver_impl &&) noexcept = default;
 
 	[[nodiscard]] bool is_valid() const {
 		return ptr != nullptr;
@@ -672,12 +538,14 @@ struct bound_instance_impl<T, false> {
 };
 
 template <typename T>
-using bound_instance = bound_instance_impl<T, use_bound_storage<T>::value>;
+using receiver = receiver_impl<T, is_boxed_receiver<T>::value>;
 
 template <typename T>
-bound_instance<T> resolve_bound_instance(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
-	bound_instance<T> instance;
-	instance.context = &context;
+receiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
+	receiver<T> instance;
+	if constexpr (is_boxed_receiver<T>::value) {
+		instance.context = &context;
+	}
 
 	void *holder = context.get_holder_ptr();
 	if (holder == nullptr) {
@@ -686,29 +554,29 @@ bound_instance<T> resolve_bound_instance(pesapi_ffi *apis, pesapi_callback_info 
 	}
 	if (const void *holder_type_id = context.get_holder_typeid(); holder_type_id != nullptr) {
 		if (!context.holder_type_info_loaded) {
-			context.holder_type_info = resolve_type_info(holder_type_id);
+			context.holder_type_info = find_type(holder_type_id);
 			context.holder_type_info_loaded = true;
 		}
 
 		const auto *holder_type_info = static_cast<const PuertsTypeRegister::TypeInfo *>(context.holder_type_info);
-		if (holder_type_info == nullptr || !is_assignable_from<typename bound_instance<T>::target_type>(holder_type_info)) {
+		if (holder_type_info == nullptr || !is_assignable_from<typename receiver<T>::target_type>(holder_type_info)) {
 			apis->throw_by_string(info, "Native object type does not match the bound signature.");
 			return instance;
 		}
 	}
 
-	if constexpr (has_type_info_v<typename bound_instance<T>::target_type>) {
-		if constexpr (godot::GetTypeInfo<typename bound_instance<T>::target_type>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
-				godot::GetTypeInfo<typename bound_instance<T>::target_type>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
+	if constexpr (has_type_info_v<typename receiver<T>::target_type>) {
+		if constexpr (godot::GetTypeInfo<typename receiver<T>::target_type>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_OBJECT &&
+				godot::GetTypeInfo<typename receiver<T>::target_type>::VARIANT_TYPE != GDEXTENSION_VARIANT_TYPE_NIL) {
 			if (context.env_private != nullptr && context.env_private->bridge != nullptr) {
 				// Boxed builtin receivers come from the bridge; direct native returns use the raw pointer path below.
 				if (const godot::Variant *boxed_variant = context.get_holder_boxed_variant(); boxed_variant != nullptr) {
 					const auto actual_type = static_cast<GDExtensionVariantType>(boxed_variant->get_type());
-					const auto expected_type = static_cast<GDExtensionVariantType>(godot::GetTypeInfo<typename bound_instance<T>::target_type>::VARIANT_TYPE);
+					const auto expected_type = static_cast<GDExtensionVariantType>(godot::GetTypeInfo<typename receiver<T>::target_type>::VARIANT_TYPE);
 					if (actual_type != GDEXTENSION_VARIANT_TYPE_NIL &&
 							godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type) &&
-							godot::VariantObjectClassChecker<typename bound_instance<T>::target_type>::check(*boxed_variant)) {
-						instance.storage = godot::VariantCaster<typename bound_instance<T>::target_type>::cast(*boxed_variant);
+							godot::VariantObjectClassChecker<typename receiver<T>::target_type>::check(*boxed_variant)) {
+						instance.storage = godot::VariantCaster<typename receiver<T>::target_type>::cast(*boxed_variant);
 						instance.ptr = &instance.storage;
 						instance.boxed_handle = holder;
 						return instance;
@@ -721,70 +589,53 @@ bound_instance<T> resolve_bound_instance(pesapi_ffi *apis, pesapi_callback_info 
 		}
 	}
 
-	if constexpr (eastl::is_base_of_v<godot::Object, typename bound_instance<T>::target_type>) {
+	if constexpr (eastl::is_base_of_v<godot::Object, typename receiver<T>::target_type>) {
 		if (context.env_private != nullptr && context.env_private->bridge != nullptr) {
 			if (godot::Object *resolved = context.env_private->bridge->get_object(holder); resolved != nullptr) {
-				auto *typed = godot::Object::cast_to<typename bound_instance<T>::target_type>(resolved);
+				auto *typed = godot::Object::cast_to<typename receiver<T>::target_type>(resolved);
 				if (typed == nullptr) {
 					apis->throw_by_string(info, "Native object type does not match the bound signature.");
 					return instance;
 				}
 				instance.ptr = typed;
-				instance.boxed_handle = holder;
 				return instance;
 			}
 		}
 	}
 
-	instance.ptr = static_cast<typename bound_instance<T>::target_type *>(holder);
+	instance.ptr = static_cast<typename receiver<T>::target_type *>(holder);
 	return instance;
 }
 
 template <bool Probe, size_t I, typename... Args>
-bool decode_invocation_arguments(
+bool read_args_at(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
 		callback_context &context,
-		invocation_arguments<Args...> &r_args) {
+		arg_tuple<Args...> &r_args) {
 	if constexpr (I == sizeof...(Args)) {
 		return true;
 	} else {
 		using arg_type = typename eastl::tuple_element<I, eastl::tuple<Args...>>::type;
-		auto converted = convert_invocation_argument<Probe, arg_type>(apis, info, context, static_cast<int>(I));
+		auto converted = convert_arg<Probe, arg_type>(apis, info, context, static_cast<int>(I));
 		if (!converted.has_value()) {
 			return false;
 		}
 		eastl::get<I>(r_args) = eastl::move(*converted);
-		return decode_invocation_arguments<Probe, I + 1, Args...>(apis, info, context, r_args);
+		return read_args_at<Probe, I + 1, Args...>(apis, info, context, r_args);
 	}
 }
 
 template <bool Probe, typename... Args>
-eastl::optional<invocation_arguments<Args...>> read_invocation_arguments_mode(
+eastl::optional<arg_tuple<Args...>> read_args(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
 		callback_context &context) {
-	invocation_arguments<Args...> args{};
-	if (!decode_invocation_arguments<Probe, 0, Args...>(apis, info, context, args)) {
+	arg_tuple<Args...> args{};
+	if (!read_args_at<Probe, 0, Args...>(apis, info, context, args)) {
 		return {};
 	}
 	return args;
-}
-
-template <typename... Args>
-eastl::optional<invocation_arguments<Args...>> probe_invocation_arguments(
-		pesapi_ffi *apis,
-		pesapi_callback_info info,
-		callback_context &context) {
-	return read_invocation_arguments_mode<true, Args...>(apis, info, context);
-}
-
-template <typename... Args>
-eastl::optional<invocation_arguments<Args...>> read_invocation_arguments(
-		pesapi_ffi *apis,
-		pesapi_callback_info info,
-		callback_context &context) {
-	return read_invocation_arguments_mode<false, Args...>(apis, info, context);
 }
 
 template <typename... Args>
@@ -796,94 +647,52 @@ bool check_arity(callback_context &context) {
 	return true;
 }
 
-template <auto Function, typename... Args, size_t... Is>
-decltype(auto) invoke_static_callable(const invocation_arguments<Args...> &args, eastl::index_sequence<Is...>) {
-	return Function(eastl::get<Is>(args)...);
-}
-
-template <auto Method, typename C, typename... Args, size_t... Is>
-decltype(auto) invoke_member_callable(C *p_instance, const invocation_arguments<Args...> &args, eastl::index_sequence<Is...>) {
-	return (p_instance->*Method)(eastl::get<Is>(args)...);
-}
-
-template <auto Function, typename C, typename... Args, size_t... Is>
-decltype(auto) invoke_extension_callable(C *p_instance, const invocation_arguments<Args...> &args, eastl::index_sequence<Is...>) {
-	return Function(*p_instance, eastl::get<Is>(args)...);
-}
-
-template <typename... Args, typename InvokeFn>
-void invoke_arguments_strict(
+template <auto Function, typename R, typename... Args, size_t... Is>
+void call_function_and_return(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
 		callback_context &context,
-		InvokeFn &&p_invoke) {
-	auto args = read_invocation_arguments<Args...>(apis, info, context);
-	if (!args.has_value()) {
-		return;
-	}
-	p_invoke(*args);
-}
-
-template <typename... Args, typename InvokeFn>
-bool invoke_arguments_probe(
-		pesapi_ffi *apis,
-		pesapi_callback_info info,
-		callback_context &context,
-		InvokeFn &&p_invoke) {
-	if (context.arg_count != static_cast<int>(sizeof...(Args))) {
-		return false;
-	}
-	auto args = probe_invocation_arguments<Args...>(apis, info, context);
-	if (!args.has_value()) {
-		return false;
-	}
-	p_invoke(*args);
-	return true;
-}
-
-template <auto Function, typename R, typename... Args>
-void invoke_static_and_write(
-		pesapi_ffi *apis,
-		pesapi_callback_info info,
-		callback_context &context,
-		const invocation_arguments<Args...> &args) {
+		const arg_tuple<Args...> &args,
+		eastl::index_sequence<Is...>) {
 	if constexpr (eastl::is_void_v<R>) {
-		(void)invoke_static_callable<Function, Args...>(args, eastl::index_sequence_for<Args...>{});
+		(void)Function(eastl::get<Is>(args)...);
 	} else {
-		return_converter<R>::write(apis, info, context.env, context.environment, invoke_static_callable<Function, Args...>(args, eastl::index_sequence_for<Args...>{}));
+		write_return<R>(apis, info, context.env, context.environment, Function(eastl::get<Is>(args)...));
 	}
 }
 
-template <auto Method, typename C, typename R, typename... Args>
-void invoke_member_and_write(
+template <auto Method, typename C, typename R, typename... Args, size_t... Is>
+void call_member_and_return(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
 		callback_context &context,
 		C *instance,
-		const invocation_arguments<Args...> &args) {
+		const arg_tuple<Args...> &args,
+		eastl::index_sequence<Is...>) {
 	if constexpr (eastl::is_void_v<R>) {
-		(void)invoke_member_callable<Method, C, Args...>(instance, args, eastl::index_sequence_for<Args...>{});
+		(void)(instance->*Method)(eastl::get<Is>(args)...);
 	} else {
-		return_converter<R>::write(apis, info, context.env, context.environment, invoke_member_callable<Method, C, Args...>(instance, args, eastl::index_sequence_for<Args...>{}));
+		write_return<R>(apis, info, context.env, context.environment, (instance->*Method)(eastl::get<Is>(args)...));
 	}
 }
 
-template <auto Function, typename C, typename R, typename... Args>
-void invoke_extension_and_write(
+template <auto Function, typename C, typename R, typename... Args, size_t... Is>
+void call_extension_and_return(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
 		callback_context &context,
 		C *instance,
-		const invocation_arguments<Args...> &args) {
+		const arg_tuple<Args...> &args,
+		eastl::index_sequence<Is...>) {
 	if constexpr (eastl::is_void_v<R>) {
-		(void)invoke_extension_callable<Function, C, Args...>(instance, args, eastl::index_sequence_for<Args...>{});
+		(void)Function(*instance, eastl::get<Is>(args)...);
 	} else {
-		return_converter<R>::write(apis, info, context.env, context.environment, invoke_extension_callable<Function, C, Args...>(instance, args, eastl::index_sequence_for<Args...>{}));
+		write_return<R>(apis, info, context.env, context.environment, Function(*instance, eastl::get<Is>(args)...));
 	}
 }
 
 template <typename C, bool Probe, bool WriteBack, typename... Args, typename InvokeFn>
-bool invoke_bound_instance_with_arguments(
+bool call_receiver_method(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
 		callback_context &context,
@@ -894,7 +703,7 @@ bool invoke_bound_instance_with_arguments(
 		}
 	}
 
-	bound_instance<C> instance = resolve_bound_instance<C>(apis, info, context);
+	receiver<C> instance = resolve_receiver<C>(apis, info, context);
 	if (!instance.is_valid()) {
 		if constexpr (Probe) {
 			return true;
@@ -902,7 +711,7 @@ bool invoke_bound_instance_with_arguments(
 		return false;
 	}
 
-	auto args = read_invocation_arguments_mode<Probe, Args...>(apis, info, context);
+	auto args = read_args<Probe, Args...>(apis, info, context);
 	if (!args.has_value()) {
 		return false;
 	}
@@ -924,15 +733,16 @@ struct static_function_wrapper<Function> {
 	template <bool Probe>
 	static bool invoke_core(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
 		if constexpr (Probe) {
-			return invoke_arguments_probe<Args...>(apis, info, context, [&](const invocation_arguments<Args...> &args) {
-				invoke_static_and_write<Function, R, Args...>(apis, info, context, args);
-			});
-		} else {
-			invoke_arguments_strict<Args...>(apis, info, context, [&](const invocation_arguments<Args...> &args) {
-				invoke_static_and_write<Function, R, Args...>(apis, info, context, args);
-			});
-			return true;
+			if (context.arg_count != arity) {
+				return false;
+			}
 		}
+		auto args = read_args<Probe, Args...>(apis, info, context);
+		if (!args.has_value()) {
+			return false;
+		}
+		call_function_and_return<Function, R, Args...>(apis, info, context, *args, eastl::index_sequence_for<Args...>{});
+		return true;
 	}
 
 	static bool try_invoke_with_context(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
@@ -957,8 +767,8 @@ struct member_function_wrapper<Method> {
 
 	template <bool Probe>
 	static bool invoke_core(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
-		return invoke_bound_instance_with_arguments<C, Probe, true, Args...>(apis, info, context, [&](C *instance, const invocation_arguments<Args...> &args) {
-			invoke_member_and_write<Method, C, R, Args...>(apis, info, context, instance, args);
+		return call_receiver_method<C, Probe, true, Args...>(apis, info, context, [&](C *instance, const arg_tuple<Args...> &args) {
+			call_member_and_return<Method, C, R, Args...>(apis, info, context, instance, args, eastl::index_sequence_for<Args...>{});
 		});
 	}
 
@@ -984,8 +794,8 @@ struct extension_method_wrapper<Method, eastl::enable_if_t<!eastl::is_const_v<C>
 
 	template <bool Probe>
 	static bool invoke_core(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
-		return invoke_bound_instance_with_arguments<C, Probe, true, Args...>(apis, info, context, [&](C *instance, const invocation_arguments<Args...> &args) {
-			invoke_extension_and_write<Method, C, R, Args...>(apis, info, context, instance, args);
+		return call_receiver_method<C, Probe, true, Args...>(apis, info, context, [&](C *instance, const arg_tuple<Args...> &args) {
+			call_extension_and_return<Method, C, R, Args...>(apis, info, context, instance, args, eastl::index_sequence_for<Args...>{});
 		});
 	}
 
@@ -1008,8 +818,8 @@ struct extension_method_wrapper<Method, void> {
 
 	template <bool Probe>
 	static bool invoke_core(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
-		return invoke_bound_instance_with_arguments<C, Probe, false, Args...>(apis, info, context, [&](C *instance, const invocation_arguments<Args...> &args) {
-			invoke_extension_and_write<Method, C, R, Args...>(apis, info, context, instance, args);
+		return call_receiver_method<C, Probe, false, Args...>(apis, info, context, [&](C *instance, const arg_tuple<Args...> &args) {
+			call_extension_and_return<Method, C, R, Args...>(apis, info, context, instance, args, eastl::index_sequence_for<Args...>{});
 		});
 	}
 
@@ -1032,8 +842,8 @@ struct member_function_wrapper<Method> {
 
 	template <bool Probe>
 	static bool invoke_core(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context) {
-		return invoke_bound_instance_with_arguments<C, Probe, false, Args...>(apis, info, context, [&](C *instance, const invocation_arguments<Args...> &args) {
-			invoke_member_and_write<Method, C, R, Args...>(apis, info, context, instance, args);
+		return call_receiver_method<C, Probe, false, Args...>(apis, info, context, [&](C *instance, const arg_tuple<Args...> &args) {
+			call_member_and_return<Method, C, R, Args...>(apis, info, context, instance, args, eastl::index_sequence_for<Args...>{});
 		});
 	}
 
@@ -1058,15 +868,16 @@ struct constructor_wrapper {
 	template <bool Probe>
 	static bool invoke_core(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context, void *&r_instance) {
 		if constexpr (Probe) {
-			return invoke_arguments_probe<Args...>(apis, info, context, [&](const invocation_arguments<Args...> &args) {
-				r_instance = construct(args, context, eastl::index_sequence_for<Args...>{});
-			});
-		} else {
-			invoke_arguments_strict<Args...>(apis, info, context, [&](const invocation_arguments<Args...> &args) {
-				r_instance = construct(args, context, eastl::index_sequence_for<Args...>{});
-			});
-			return true;
+			if (context.arg_count != arity) {
+				return false;
+			}
 		}
+		auto args = read_args<Probe, Args...>(apis, info, context);
+		if (!args.has_value()) {
+			return false;
+		}
+		r_instance = construct(*args, context, eastl::index_sequence_for<Args...>{});
+		return true;
 	}
 
 	static bool try_invoke_with_context(pesapi_ffi *apis, pesapi_callback_info info, callback_context &context, void *&r_instance) {
@@ -1098,7 +909,7 @@ private:
 	}
 
 	template <size_t... Is>
-	static void *construct(const invocation_arguments<Args...> &args, callback_context &context, eastl::index_sequence<Is...>) {
+	static void *construct(const arg_tuple<Args...> &args, callback_context &context, eastl::index_sequence<Is...>) {
 		if constexpr (eastl::is_base_of_v<godot::Object, T>) {
 			if constexpr (sizeof...(Args) == 0) {
 				T *object = construct_classdb_object<T>();
@@ -1161,7 +972,7 @@ struct vararg_member_method_wrapper {
 			return;
 		}
 
-		bound_instance<C> instance = resolve_bound_instance<C>(apis, info, context);
+		receiver<C> instance = resolve_receiver<C>(apis, info, context);
 		if (!instance.is_valid()) {
 			return;
 		}
@@ -1172,7 +983,7 @@ struct vararg_member_method_wrapper {
 		arg_ptrs.reserve(static_cast<size_t>(context.arg_count));
 
 		for (int i = 0; i < context.arg_count; ++i) {
-			auto converted = convert_invocation_argument<false, godot::Variant>(apis, info, context, i);
+			auto converted = convert_arg<false, godot::Variant>(apis, info, context, i);
 			if (!converted.has_value()) {
 				return;
 			}
@@ -1201,9 +1012,9 @@ struct vararg_member_method_wrapper {
 
 		if constexpr (!eastl::is_void_v<R>) {
 			if constexpr (eastl::is_same_v<bare_type<R>, godot::Variant>) {
-				return_converter<R>::write(apis, info, context.env, context.environment, result);
+				write_return<R>(apis, info, context.env, context.environment, result);
 			} else {
-				return_converter<R>::write(apis, info, context.env, context.environment, godot::VariantCaster<R>::cast(result));
+				write_return<R>(apis, info, context.env, context.environment, godot::VariantCaster<R>::cast(result));
 			}
 		}
 
@@ -1222,12 +1033,12 @@ struct property_wrapper<Member> {
 			return;
 		}
 
-		bound_instance<C> instance = resolve_bound_instance<C>(apis, info, context);
+		receiver<C> instance = resolve_receiver<C>(apis, info, context);
 		if (!instance.is_valid()) {
 			return;
 		}
 
-		return_converter<V>::write(apis, info, context.env, context.environment, instance.ptr->*Member);
+		write_return<V>(apis, info, context.env, context.environment, instance.ptr->*Member);
 	}
 
 	static void setter(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -1236,12 +1047,12 @@ struct property_wrapper<Member> {
 			return;
 		}
 
-		bound_instance<C> instance = resolve_bound_instance<C>(apis, info, context);
+		receiver<C> instance = resolve_receiver<C>(apis, info, context);
 		if (!instance.is_valid()) {
 			return;
 		}
 
-		auto value = convert_invocation_argument<false, V>(apis, info, context, 0);
+		auto value = convert_arg<false, V>(apis, info, context, 0);
 		if (!value.has_value()) {
 			return;
 		}
@@ -1297,7 +1108,7 @@ struct signal_property_wrapper {
 			return;
 		}
 
-		bound_instance<C> instance = resolve_bound_instance<C>(apis, info, context);
+		receiver<C> instance = resolve_receiver<C>(apis, info, context);
 		if (!instance.is_valid() || instance.ptr == nullptr) {
 			return;
 		}
@@ -1310,7 +1121,7 @@ struct signal_property_wrapper {
 			return;
 		}
 
-		static_binding_access::add_variant_return(
+		puerts::return_variant(
 				apis,
 				info,
 				context.env,

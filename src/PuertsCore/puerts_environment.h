@@ -22,9 +22,11 @@ class PuertsScriptValue;
 class PuertsBridgeRegistry;
 struct PuertsEnvPrivate;
 class PuertsTypeRegister;
+class PuertsEnvironment;
 namespace puerts {
-struct static_binding_access;
-}
+godot::Variant script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
+bool return_variant(pesapi_ffi *p_apis, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
+} //namespace puerts
 
 class PuertsEnvironment : public godot::RefCounted {
 	GDCLASS(PuertsEnvironment, godot::RefCounted)
@@ -69,7 +71,8 @@ public:
 private:
 	friend class PuertsScriptValue;
 	friend class PuertsTypeRegister;
-	friend struct puerts::static_binding_access;
+	friend godot::Variant puerts::script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
+	friend bool puerts::return_variant(pesapi_ffi *p_apis, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 
 	void log_error(const godot::String &p_message);
 	void log_warn(const godot::String &p_message);

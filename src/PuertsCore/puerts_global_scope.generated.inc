@@ -127,7 +127,7 @@ inline void puerts_global_scope_singleton_getter_generated(pesapi_ffi *apis, pes
 		apis->add_return(info, apis->create_null(context.env));
 		return;
 	}
-	puerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, godot::Variant(singleton));
+	puerts::return_variant(apis, info, context.env, context.environment, godot::Variant(singleton));
 }
 
 inline void puerts_global_scope_utility_max_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -146,12 +146,12 @@ inline void puerts_global_scope_utility_max_generated(pesapi_ffi *apis, pesapi_c
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant result;
 	utility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);
-	puerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, result);
+	puerts::return_variant(apis, info, context.env, context.environment, result);
 }
 
 inline void puerts_global_scope_utility_min_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -170,12 +170,12 @@ inline void puerts_global_scope_utility_min_generated(pesapi_ffi *apis, pesapi_c
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant result;
 	utility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);
-	puerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, result);
+	puerts::return_variant(apis, info, context.env, context.environment, result);
 }
 
 inline void puerts_global_scope_utility_str_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -194,12 +194,12 @@ inline void puerts_global_scope_utility_str_generated(pesapi_ffi *apis, pesapi_c
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::String result;
 	utility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);
-	puerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, godot::Variant(result));
+	puerts::return_variant(apis, info, context.env, context.environment, godot::Variant(result));
 }
 
 inline void puerts_global_scope_utility_print_generated(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -218,7 +218,7 @@ inline void puerts_global_scope_utility_print_generated(pesapi_ffi *apis, pesapi
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -241,7 +241,7 @@ inline void puerts_global_scope_utility_print_rich_generated(pesapi_ffi *apis, p
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -264,7 +264,7 @@ inline void puerts_global_scope_utility_printerr_generated(pesapi_ffi *apis, pes
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -287,7 +287,7 @@ inline void puerts_global_scope_utility_printt_generated(pesapi_ffi *apis, pesap
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -310,7 +310,7 @@ inline void puerts_global_scope_utility_prints_generated(pesapi_ffi *apis, pesap
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -333,7 +333,7 @@ inline void puerts_global_scope_utility_printraw_generated(pesapi_ffi *apis, pes
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -356,7 +356,7 @@ inline void puerts_global_scope_utility_print_verbose_generated(pesapi_ffi *apis
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -379,7 +379,7 @@ inline void puerts_global_scope_utility_push_error_generated(pesapi_ffi *apis, p
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -402,7 +402,7 @@ inline void puerts_global_scope_utility_push_warning_generated(pesapi_ffi *apis,
 	arg_ptrs.resize(static_cast<size_t>(context.arg_count));
 	for (int i = 0; i < context.arg_count; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	godot::Variant ignored_result;
@@ -429,7 +429,7 @@ inline void puerts_global_scope_utility_is_instance_valid_generated(pesapi_ffi *
 	arg_ptrs.resize(1);
 	for (int i = 0; i < 1; ++i) {
 		const size_t index = static_cast<size_t>(i);
-		args[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));
+		args[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));
 		arg_ptrs[index] = &args[index];
 	}
 	bool result = false;

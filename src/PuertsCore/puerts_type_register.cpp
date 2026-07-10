@@ -142,7 +142,7 @@ void fill_runtime_arguments(
 		r_arg_ptrs[i] = &r_values[i];
 	}
 	for (int i = 0; i < argc; ++i) {
-		r_values[i + p_offset] = puerts::static_binding_access::script_to_variant(
+		r_values[i + p_offset] = puerts::script_to_variant(
 				p_context.environment,
 				p_context.env,
 				p_context.get_arg(i));
@@ -176,79 +176,20 @@ String format_reflected_call_error(const String &p_target_name, const GDExtensio
 	}
 }
 
-String format_reflected_property_assignment_error(const TypeInfo::PropertyData *p_property, const Variant &p_value) {
-	if (p_property == nullptr) {
-		return "Reflected property metadata is missing.";
-	}
-
-	if (p_property->variant_type != Variant::NIL) {
-		const auto expected_type = static_cast<GDExtensionVariantType>(p_property->variant_type);
-		const auto actual_type = static_cast<GDExtensionVariantType>(p_value.get_type());
-		if (!godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type)) {
-			return "Property type does not match the reflected signature: " + String(p_property->name);
-		}
-	}
-
-	if (p_property->variant_type == Variant::OBJECT && p_property->class_name != StringName()) {
-		Object *object = p_value;
-		if (object != nullptr && !object->is_class(p_property->class_name)) {
-			return "Property type does not match the reflected signature: " + String(p_property->name);
-		}
-	}
-
-	return {};
-}
-
-bool call_reflected_instance_method(
-		Object *p_object,
-		TypeInfo::MethodData *p_method,
-		puerts::internal::callback_context &p_context,
-		Variant &r_result,
-		String &r_error) {
-	if (p_object == nullptr) {
-		r_error = "Reflected method target is missing.";
-		return false;
-	}
-	if (p_method == nullptr) {
-		r_error = "Reflected method metadata is missing.";
-		return false;
-	}
-	if (p_method->method_bind == nullptr) {
-		p_method->method_bind = internal::gdextension_interface_classdb_get_method_bind(
-				static_cast<GDExtensionConstStringNamePtr>(p_method->owner_class_name._native_ptr()),
-				static_cast<GDExtensionConstStringNamePtr>(p_method->name._native_ptr()),
-				p_method->compatibility_hash);
-		if (p_method->method_bind == nullptr) {
-			r_error = "MethodBind not found: " + String(p_method->owner_class_name) + "." + String(p_method->name);
-			return false;
-		}
-	}
-
-	LocalVector<Variant, int32_t> args;
-	LocalVector<const Variant *, int32_t, true> arg_ptrs;
-	fill_runtime_arguments(args, arg_ptrs, p_context);
-	GDExtensionCallError call_error{ GDEXTENSION_CALL_OK, 0, 0 };
-	internal::gdextension_interface_object_method_bind_call(
-			p_method->method_bind,
-			p_object->_owner,
-			reinterpret_cast<const GDExtensionConstVariantPtr *>(arg_ptrs.ptr()),
-			arg_ptrs.size(),
-			r_result._native_ptr(),
-			&call_error);
-	if (call_error.error != GDEXTENSION_CALL_OK) {
-		r_error = format_reflected_call_error(String(p_method->owner_class_name) + "." + String(p_method->name), call_error);
-		return false;
-	}
-	return true;
-}
-
 Object *resolve_holder_object(puerts::internal::callback_context &p_context) {
 	void *holder = p_context.get_holder_ptr();
 	if (holder == nullptr) {
 		return nullptr;
 	}
 	const void *holder_type_id = p_context.get_holder_typeid();
-	const TypeInfo *holder_type = holder_type_id != nullptr ? PuertsTypeRegister::get_singleton().get_type_by_id(holder_type_id) : nullptr;
+	const TypeInfo *holder_type = nullptr;
+	if (holder_type_id != nullptr) {
+		if (!p_context.holder_type_info_loaded) {
+			p_context.holder_type_info = PuertsTypeRegister::get_singleton().get_type_by_id(holder_type_id);
+			p_context.holder_type_info_loaded = true;
+		}
+		holder_type = static_cast<const TypeInfo *>(p_context.holder_type_info);
+	}
 	if (holder_type != nullptr && holder_type->kind == TypeInfo::Kind::STATIC_BOUND &&
 			holder_type->variant_type == Variant::OBJECT) {
 		// Static-bound Object-derived instances carry native Object* directly.
@@ -256,20 +197,10 @@ Object *resolve_holder_object(puerts::internal::callback_context &p_context) {
 	}
 
 	// Reflected Object/ClassDB instances carry bridge handles.
-	return p_context.env_private != nullptr && p_context.env_private->bridge != nullptr
-			? p_context.env_private->bridge->get_object(holder)
-			: nullptr;
+	return p_context.env_private->bridge->get_object(holder);
 }
 
-bool call_reflected_static_method(TypeInfo::MethodData *p_method, puerts::internal::callback_context &p_context, Variant &r_result, String &r_error) {
-	if (p_method == nullptr) {
-		r_error = "Static method metadata is missing.";
-		return false;
-	}
-	if (p_method->owner_class_name == StringName()) {
-		r_error = "Static method owner type is missing.";
-		return false;
-	}
+bool call_reflected_method(Object *p_object, TypeInfo::MethodData *p_method, puerts::internal::callback_context &p_context, Variant &r_result, String &r_error) {
 	if (p_method->method_bind == nullptr) {
 		p_method->method_bind = internal::gdextension_interface_classdb_get_method_bind(
 				static_cast<GDExtensionConstStringNamePtr>(p_method->owner_class_name._native_ptr()),
@@ -287,7 +218,7 @@ bool call_reflected_static_method(TypeInfo::MethodData *p_method, puerts::intern
 	GDExtensionCallError call_error{ GDEXTENSION_CALL_OK, 0, 0 };
 	internal::gdextension_interface_object_method_bind_call(
 			p_method->method_bind,
-			nullptr,
+			p_object != nullptr ? p_object->_owner : nullptr,
 			reinterpret_cast<const GDExtensionConstVariantPtr *>(arg_ptrs.ptr()),
 			arg_ptrs.size(),
 			r_result._native_ptr(),
@@ -845,12 +776,12 @@ void PuertsTypeRegister::object_method_callback(struct pesapi_ffi *apis, pesapi_
 
 	Variant result;
 	String call_error;
-	if (!call_reflected_instance_method(object, method, context, result, call_error)) {
+	if (!call_reflected_method(object, method, context, result, call_error)) {
 		CharString message = call_error.utf8();
 		apis->throw_by_string(info, message.get_data());
 		return;
 	}
-	puerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, result);
+	puerts::return_variant(apis, info, context.env, context.environment, result);
 }
 
 void PuertsTypeRegister::object_static_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -862,13 +793,13 @@ void PuertsTypeRegister::object_static_method_callback(struct pesapi_ffi *apis, 
 
 	Variant result;
 	String call_error;
-	if (!call_reflected_static_method(method, context, result, call_error)) {
+	if (!call_reflected_method(nullptr, method, context, result, call_error)) {
 		CharString message = call_error.utf8();
 		apis->throw_by_string(info, message.get_data());
 		return;
 	}
 
-	puerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, result);
+	puerts::return_variant(apis, info, context.env, context.environment, result);
 }
 
 void PuertsTypeRegister::object_property_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -884,7 +815,7 @@ void PuertsTypeRegister::object_property_getter_callback(struct pesapi_ffi *apis
 		return;
 	}
 
-	puerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, object->get(property->name));
+	puerts::return_variant(apis, info, context.env, context.environment, object->get(property->name));
 }
 
 void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -904,12 +835,25 @@ void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis
 		return;
 	}
 
-	const Variant property_value = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(0));
-	const String validation_error = format_reflected_property_assignment_error(property, property_value);
-	if (!validation_error.is_empty()) {
-		CharString message = validation_error.utf8();
+	const Variant property_value = puerts::script_to_variant(context.environment, context.env, context.get_arg(0));
+	auto reject_type = [&]() {
+		CharString message = String("Property type does not match the reflected signature: " + String(property->name)).utf8();
 		apis->throw_by_string(info, message.get_data());
-		return;
+	};
+	if (property->variant_type != Variant::NIL) {
+		const auto actual_type = static_cast<GDExtensionVariantType>(property_value.get_type());
+		const auto expected_type = static_cast<GDExtensionVariantType>(property->variant_type);
+		if (!godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type)) {
+			reject_type();
+			return;
+		}
+	}
+	if (property->variant_type == Variant::OBJECT && property->class_name != StringName()) {
+		Object *object_value = property_value;
+		if (object_value != nullptr && !object_value->is_class(property->class_name)) {
+			reject_type();
+			return;
+		}
 	}
 	object->set(property->name, property_value);
 }
@@ -932,7 +876,7 @@ void PuertsTypeRegister::object_signal_getter_callback(struct pesapi_ffi *apis, 
 		return;
 	}
 
-	puerts::static_binding_access::add_variant_return(
+	puerts::return_variant(
 			apis,
 			info,
 			context.env,

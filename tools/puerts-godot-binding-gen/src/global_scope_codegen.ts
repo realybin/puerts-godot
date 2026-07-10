@@ -72,7 +72,7 @@ function pushVariantArgs(lines: string[], argCountExpr: string): void {
 	lines.push(`\targ_ptrs.resize(static_cast<size_t>(${argCountExpr}));`);
 	lines.push(`\tfor (int i = 0; i < ${argCountExpr}; ++i) {`);
 	lines.push("\t\tconst size_t index = static_cast<size_t>(i);");
-	lines.push("\t\targs[index] = puerts::static_binding_access::script_to_variant(context.environment, context.env, context.get_arg(i));");
+	lines.push("\t\targs[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));");
 	lines.push("\t\targ_ptrs[index] = &args[index];");
 	lines.push("\t}");
 }
@@ -98,11 +98,11 @@ function buildVarargUtilityHelper(fn: ApiMethod): string {
 	if (returnType === "String") {
 		lines.push("\tgodot::String result;");
 		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);");
-		lines.push("\tpuerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, godot::Variant(result));");
+		lines.push("\tpuerts::return_variant(apis, info, context.env, context.environment, godot::Variant(result));");
 	} else if (returnType === "Variant") {
 		lines.push("\tgodot::Variant result;");
 		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);");
-		lines.push("\tpuerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, result);");
+		lines.push("\tpuerts::return_variant(apis, info, context.env, context.environment, result);");
 	} else {
 		lines.push("\tgodot::Variant ignored_result;");
 		lines.push("\tutility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);");
@@ -245,7 +245,7 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	lines.push("\t\tapis->add_return(info, apis->create_null(context.env));");
 	lines.push("\t\treturn;");
 	lines.push("\t}");
-	lines.push("\tpuerts::static_binding_access::add_variant_return(apis, info, context.env, context.environment, godot::Variant(singleton));");
+	lines.push("\tpuerts::return_variant(apis, info, context.env, context.environment, godot::Variant(singleton));");
 	lines.push("}");
 	for (const binding of utilityBindings) {
 		if (binding.helperCode) {
