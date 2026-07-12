@@ -59,6 +59,7 @@ public:
 
 private:
 	bool initialized_ = false;
+	void reset_storage();
 };
 
 VARIANT_ENUM_CAST(PuertsStringNameCachePool::Policy);

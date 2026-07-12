@@ -8,6 +8,8 @@
 #include "puerts_eastl.h"
 #include "puerts_string_name_cache_pool.h"
 
+#include <cstdint>
+
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
@@ -25,6 +27,7 @@ class PuertsTypeRegister;
 class PuertsEnvironment;
 namespace puerts {
 godot::Variant script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
+bool native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
 bool return_variant(pesapi_ffi *p_apis, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 } //namespace puerts
 
@@ -36,7 +39,12 @@ class PuertsEnvironment : public godot::RefCounted {
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_env_ref env_ref_ = nullptr;
 	PuertsEnvPrivate *env_private_ = nullptr;
-	puerts_eastl::hash_set<uint64_t> script_value_ids_;
+	bool disposing_ = false;
+	bool dispose_requested_ = false;
+	uint32_t active_operations_ = 0;
+	puerts_eastl::hash_set<PuertsScriptValue *> script_values_;
+	puerts_eastl::hash_map<void *, PuertsScriptValue *> cached_script_values_;
+	uintptr_t next_script_value_cache_id_ = 1;
 	godot::Callable error_callback_;
 	godot::Callable warn_callback_;
 	godot::Callable info_callback_;
@@ -69,9 +77,23 @@ public:
 	void terminate_execution();
 
 private:
+	class operation_scope {
+	public:
+		explicit operation_scope(PuertsEnvironment *p_environment);
+		~operation_scope();
+
+		operation_scope(const operation_scope &) = delete;
+		operation_scope &operator=(const operation_scope &) = delete;
+
+	private:
+		PuertsEnvironment *environment_ = nullptr;
+		godot::Ref<PuertsEnvironment> keep_alive_;
+	};
+
 	friend class PuertsScriptValue;
 	friend class PuertsTypeRegister;
 	friend godot::Variant puerts::script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
+	friend bool puerts::native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
 	friend bool puerts::return_variant(pesapi_ffi *p_apis, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 
 	void log_error(const godot::String &p_message);
@@ -88,13 +110,18 @@ private:
 			bool *r_success = nullptr,
 			godot::String *r_error_message = nullptr);
 	godot::Variant script_to_variant(pesapi_env p_env, pesapi_value p_value);
+	bool native_to_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value);
 	godot::Ref<PuertsScriptValue> create_script_value(pesapi_env p_env, pesapi_value p_value);
 	godot::String read_exception(pesapi_scope p_scope) const;
 	godot::String read_string(pesapi_env p_env, pesapi_value p_value) const;
 	godot::PackedByteArray read_binary(pesapi_env p_env, pesapi_value p_value) const;
-	bool can_use_backend_function(const void *p_function, const godot::String &p_error_message);
-	void register_script_value(godot::ObjectID p_id);
-	void unregister_script_value(godot::ObjectID p_id);
+	bool can_use_backend_function(bool p_supported, const godot::String &p_error_message);
+	void end_operation();
+	void dispose_internal();
+	void *take_script_value_cache_token();
+	bool is_script_value_cache_token(void *p_token) const;
+	void register_script_value(PuertsScriptValue *p_value);
+	void unregister_script_value(PuertsScriptValue *p_value);
 	void invalidate_script_values();
 	godot::Ref<PuertsStringNameCachePool> string_name_cache_pool_;
 };

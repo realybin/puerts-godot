@@ -97,6 +97,15 @@ static func run_script_value_api_suite(env: Object, backend: Object, backend_inf
 	if bool_value.to_bool() != true:
 		return "%s script value to_bool expected=true actual=%s" % [backend_name, str(bool_value.to_bool())]
 
+	var variadic_sum = env.eval(
+		"return function(...) local sum = 0; for i = 1, select('#', ...) do sum = sum + select(i, ...) end; return sum end"
+		if is_lua else
+		"(...args) => args.reduce((sum, value) => sum + value, 0)"
+	)
+	var sum_result: Variant = _native(variadic_sum.call([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+	if sum_result != 55:
+		return "%s script value overflow arguments expected=55 actual=%s" % [backend_name, str(sum_result)]
+
 	var binary_bytes = PackedByteArray([1, 2, 3, 4])
 	env.set_global("binary_payload", binary_bytes)
 	var binary_value = env.get_global("binary_payload")
@@ -314,6 +323,23 @@ static func run_object_graph_suite(backend: Object, backend_info: Dictionary) ->
 			result = "%s cached global reload is invalid: %s" % [backend_name, TestSupport.env_last_error(env)]
 		elif cached_global_again.get_instance_id() != cached_global.get_instance_id():
 			result = "%s global script value cache expected same instance id" % backend_name
+		else:
+			cached_global = null
+			cached_global_again = null
+			var rebuilt_global = env.get_global("cached_global")
+			var rebuilt_global_again = env.get_global("cached_global")
+			if rebuilt_global == null or not rebuilt_global.is_valid():
+				result = "%s rebuilt global cache is invalid" % backend_name
+			elif rebuilt_global_again.get_instance_id() != rebuilt_global.get_instance_id():
+				result = "%s rebuilt global cache expected same instance id" % backend_name
+			elif backend_info["language"] != "lua":
+				env.eval("Object.freeze(cached_global)")
+				rebuilt_global = null
+				rebuilt_global_again = null
+				var unrelated_global = env.eval("({ unrelated: true })")
+				var frozen_global = env.get_global("cached_global")
+				if unrelated_global == null or frozen_global == null or _native(frozen_global.get_property("value")) != 9:
+					result = "%s frozen global cache identity mismatch" % backend_name
 
 	var object_value: Variant = null
 	if result.is_empty():

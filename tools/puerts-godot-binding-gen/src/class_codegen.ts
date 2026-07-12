@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import { normalizeOperators } from "../../puerts-godot-operator-model/index.js";
-import { mapCtorType, mapMethodArgType, mapMethodReturnType, methodPointerExprFromApi } from "./type_mapping.js";
+import { mapApiMethodReturnType, mapCtorType, mapMethodArgType, mapMethodReturnType, methodPointerExprFromApi } from "./type_mapping.js";
 import { sanitizeIdentifier, toSnakeCase } from "./text_utils.js";
 import type {
 	ApiClassLike,
@@ -31,6 +31,10 @@ function isBuiltinClass(cls: ApiClassLike): cls is ApiBuiltinClass {
 	return "operators" in cls;
 }
 
+function parameterDeclaration(type: string, name: string): string {
+	return `${type}${/[&*]$/.test(type) ? "" : " "}${name}`;
+}
+
 function pushOperatorBindings(
 	cls: ApiClassLike,
 	bindingLines: string[],
@@ -49,8 +53,8 @@ function pushOperatorBindings(
 		const returnType = mapMethodReturnType(operator.returnType);
 		const argDecl =
 			operator.kind === "unary"
-				? `${mapMethodArgType(operator.leftType)} value`
-				: `${mapMethodArgType(operator.leftType)} left, ${mapMethodArgType(operator.rightType ?? "Variant")} right`;
+				? parameterDeclaration(mapMethodArgType(operator.leftType), "value")
+				: `${parameterDeclaration(mapMethodArgType(operator.leftType), "left")}, ${parameterDeclaration(mapMethodArgType(operator.rightType ?? "Variant"), "right")}`;
 		const invokeArgs = operator.kind === "unary" ? "value" : "left, right";
 		helpers.push(
 			`inline ${returnType} ${wrapperName}(${argDecl}) {\n` +
@@ -251,8 +255,9 @@ export function generateClassBinding(
 
 		const symbol = `puerts_vararg_method_name_${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(method.name)}`;
 		varargNameDefs.push(`inline constexpr char ${symbol}[] = "${method.name}";`);
+		const writeBack = method.is_const ? ", false" : "";
 		bindingLines.push(
-			`\t\t\t.method("${method.name}", puerts::make_vararg_method<godot::${className}, ${mapMethodReturnType(method.return_type)}, ${symbol}, ${(method.arguments ?? []).length}>())`,
+			`\t\t\t.method("${method.name}", puerts::make_vararg_method<godot::${className}, ${mapApiMethodReturnType(method)}, ${symbol}, ${(method.arguments ?? []).length}${writeBack}>())`,
 		);
 		emittedMethodNames.add(method.name);
 	}

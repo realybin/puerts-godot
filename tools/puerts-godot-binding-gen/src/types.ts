@@ -15,6 +15,10 @@ export type ApiMethod = {
 	is_vararg?: boolean;
 	hash?: number;
 	return_type?: string;
+	return_value?: {
+		type: string;
+		meta?: string;
+	};
 	arguments?: ApiArgument[];
 };
 

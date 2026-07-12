@@ -66,8 +66,8 @@ function pushCallbackContext(lines: string[]): void {
 }
 
 function pushVariantArgs(lines: string[], argCountExpr: string): void {
-	lines.push("\tpuerts_eastl::vector<godot::Variant> args;");
-	lines.push("\tpuerts_eastl::vector<const godot::Variant *> arg_ptrs;");
+	lines.push("\tpuerts_eastl::fixed_vector<godot::Variant, puerts::internal::INLINE_ARGUMENT_COUNT> args;");
+	lines.push("\tpuerts_eastl::fixed_vector<const godot::Variant *, puerts::internal::INLINE_ARGUMENT_COUNT> arg_ptrs;");
 	lines.push(`\targs.resize(static_cast<size_t>(${argCountExpr}));`);
 	lines.push(`\targ_ptrs.resize(static_cast<size_t>(${argCountExpr}));`);
 	lines.push(`\tfor (int i = 0; i < ${argCountExpr}; ++i) {`);

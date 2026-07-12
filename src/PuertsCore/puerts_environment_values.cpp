@@ -6,7 +6,6 @@
 #include "puerts_bridge_registry.h"
 #include "puerts_runtime.h"
 #include "puerts_script_value.h"
-#include "puerts_script_value_cache.h"
 #include "puerts_type_register.h"
 
 #include <godot_cpp/core/error_macros.hpp>
@@ -15,63 +14,25 @@
 
 using namespace godot;
 
-namespace {
-
-Ref<PuertsScriptValue> reuse_cached_script_value(puerts::script_value_cache::Entry *p_cache_entry) {
-	if (p_cache_entry == nullptr || !p_cache_entry->wrapper_id.is_valid()) {
-		return {};
-	}
-
-	Object *object = ObjectDB::get_instance(p_cache_entry->wrapper_id);
-	auto *script_value = Object::cast_to<PuertsScriptValue>(object);
-	if (script_value == nullptr || !script_value->is_valid()) {
-		return {};
-	}
-
-	Ref<PuertsScriptValue> cached_value = Variant(script_value);
-	return cached_value;
-}
-
-void release_stale_cached_script_value(
-		pesapi_ffi *p_ffi,
-		pesapi_env p_env,
-		pesapi_value p_value,
-		puerts::script_value_cache::Entry *p_cache_entry) {
-	if (p_cache_entry == nullptr) {
-		return;
-	}
-
-	p_ffi->set_private(p_env, p_value, nullptr);
-	if (p_cache_entry->value_ref != nullptr) {
-		puerts::script_value_cache::clear_value_ref_link(p_ffi, p_cache_entry->value_ref);
-		p_ffi->release_value_ref(p_cache_entry->value_ref);
-	}
-	puerts::script_value_cache::unregister_entry(p_cache_entry);
-	memdelete(p_cache_entry);
-}
-
-} // namespace
-
 Ref<PuertsScriptValue> PuertsEnvironment::eval(const String &p_code, const StringName &p_chunk_name) {
 	if (!is_alive()) {
 		log_error("Puerts environment is not initialized.");
 		return {};
 	}
 
-	pesapi_scope scope = ffi_->open_scope(env_ref_);
-	pesapi_env env = ffi_->get_env_from_ref(env_ref_);
+	operation_scope operation(this);
+	puerts::internal::env_scope scope(ffi_, env_ref_);
+	pesapi_env env = scope.get_env();
 	CharString code_utf8 = p_code.utf8();
 	const CharString &chunk_name_utf8 = get_cached_utf8(p_chunk_name);
 	pesapi_value result = ffi_->eval(env, reinterpret_cast<const uint8_t *>(code_utf8.get_data()), code_utf8.length(), chunk_name_utf8.get_data());
 
-	if (ffi_->has_caught(scope)) {
-		log_error(read_exception(scope));
-		ffi_->close_scope(scope);
+	if (ffi_->has_caught(scope.get_scope())) {
+		log_error(read_exception(scope.get_scope()));
 		return {};
 	}
 
 	Ref<PuertsScriptValue> value = create_script_value(env, result);
-	ffi_->close_scope(scope);
 	return value;
 }
 
@@ -81,22 +42,20 @@ void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_va
 		return;
 	}
 
-	pesapi_scope scope = ffi_->open_scope(env_ref_);
-	pesapi_env env = ffi_->get_env_from_ref(env_ref_);
+	operation_scope operation(this);
+	puerts::internal::env_scope scope(ffi_, env_ref_);
+	pesapi_env env = scope.get_env();
 	const CharString &name_utf8 = get_cached_utf8(p_name);
 	bool converted = false;
 	pesapi_value script_value = variant_to_script(env, p_value, &converted, nullptr);
 	if (!converted) {
-		ffi_->close_scope(scope);
 		return;
 	}
 	ffi_->set_property(env, ffi_->global(env), name_utf8.get_data(), script_value);
-	if (ffi_->has_caught(scope)) {
-		log_error(read_exception(scope));
-		ffi_->close_scope(scope);
+	if (ffi_->has_caught(scope.get_scope())) {
+		log_error(read_exception(scope.get_scope()));
 		return;
 	}
-	ffi_->close_scope(scope);
 }
 
 Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
@@ -105,8 +64,9 @@ Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
 		return {};
 	}
 
-	pesapi_scope scope = ffi_->open_scope(env_ref_);
-	pesapi_env env = ffi_->get_env_from_ref(env_ref_);
+	operation_scope operation(this);
+	puerts::internal::env_scope scope(ffi_, env_ref_);
+	pesapi_env env = scope.get_env();
 	const CharString &name_utf8 = get_cached_utf8(p_name);
 	pesapi_value value = ffi_->get_property(env, ffi_->global(env), name_utf8.get_data());
 	// Backends differ here:
@@ -115,13 +75,11 @@ Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
 	// - some may leave a stale caught flag while still returning a usable value
 	// Treat only the "no value" case as a hard global read failure.
 	if (value == nullptr) {
-		log_error(read_exception(scope));
-		ffi_->close_scope(scope);
+		log_error(read_exception(scope.get_scope()));
 		return {};
 	}
 
 	Ref<PuertsScriptValue> result = create_script_value(env, value);
-	ffi_->close_scope(scope);
 	return result;
 }
 
@@ -247,18 +205,12 @@ Variant PuertsEnvironment::script_to_variant(pesapi_env p_env, pesapi_value p_va
 		return read_binary(p_env, p_value);
 	}
 #endif
-	PuertsBridgeRegistry *bridge = env_private_->bridge;
-	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
 	void *handle = ffi_->get_native_object_ptr(p_env, p_value);
 	if (handle != nullptr) {
 		if (const void *type_id = ffi_->get_native_object_typeid(p_env, p_value); type_id != nullptr) {
 			Variant native_value;
-			if (bridge->get_variant(handle, type_id, native_value)) {
+			if (native_to_variant(handle, type_id, native_value)) {
 				return native_value;
-			}
-			auto *type_info = type_register.get_type_by_id(type_id);
-			if (type_info != nullptr && type_info->kind == PuertsTypeRegister::TypeInfo::Kind::STATIC_BOUND && type_info->native_to_variant != nullptr) {
-				return type_info->native_to_variant(handle);
 			}
 		}
 	}
@@ -266,62 +218,73 @@ Variant PuertsEnvironment::script_to_variant(pesapi_env p_env, pesapi_value p_va
 	return create_script_value(p_env, p_value);
 }
 
+bool PuertsEnvironment::native_to_variant(void *p_handle, const void *p_type_id, Variant &r_value) {
+	if (env_private_->bridge->get_variant(p_handle, p_type_id, r_value)) {
+		return true;
+	}
+	if (PuertsBridgeRegistry::is_handle(p_handle)) {
+		return false;
+	}
+	auto *type_info = PuertsTypeRegister::get_singleton().get_type_by_id(p_type_id);
+	if (type_info == nullptr || type_info->kind != PuertsTypeRegister::TypeInfo::Kind::STATIC_BOUND || type_info->native_to_variant == nullptr) {
+		return false;
+	}
+	r_value = type_info->native_to_variant(p_handle);
+	return true;
+}
+
+bool puerts::native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, Variant &r_value) {
+	return p_environment->native_to_variant(p_handle, p_type_id, r_value);
+}
+
 Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, pesapi_value p_value) {
-	auto make_script_value_wrapper = [this](pesapi_value_ref p_value_ref, puerts::script_value_cache::Entry *p_cache_entry = nullptr) -> Ref<PuertsScriptValue> {
-		if (p_value_ref == nullptr) {
-			return {};
-		}
-
-		Ref<PuertsScriptValue> script_value;
-		script_value.instantiate();
-		Ref environment_ref(this);
-		script_value->initialize(environment_ref, ffi_, p_value_ref);
-		if (p_cache_entry != nullptr) {
-			p_cache_entry->wrapper_id = ObjectID(script_value->get_instance_id());
-		}
-		register_script_value(ObjectID(script_value->get_instance_id()));
-		return script_value;
-	};
-
-	if (puerts::script_value_cache::can_attach_cache_entry(ffi_, p_env, p_value)) {
+	bool cacheable = p_value != nullptr && ffi_->is_object(p_env, p_value);
+	if (!cacheable && p_value != nullptr) {
+		cacheable = ffi_->get_native_object_ptr(p_env, p_value) != nullptr &&
+				ffi_->get_native_object_typeid(p_env, p_value) != nullptr;
+	}
+	void *cache_token = nullptr;
+	if (cacheable) {
 		void *private_ptr = nullptr;
 		if (ffi_->get_private(p_env, p_value, &private_ptr)) {
-			if (auto *cache_entry = puerts::script_value_cache::entry_from_raw_ptr(private_ptr); cache_entry != nullptr) {
-				Ref<PuertsScriptValue> cached_value = reuse_cached_script_value(cache_entry);
-				if (cached_value.is_valid()) {
-					return cached_value;
-				}
-
-				release_stale_cached_script_value(ffi_, p_env, p_value, cache_entry);
+			auto cached = cached_script_values_.find(private_ptr);
+			if (cached != cached_script_values_.end()) {
+				return Ref<PuertsScriptValue>(cached->second);
+			}
+			if (is_script_value_cache_token(private_ptr)) {
+				cache_token = private_ptr;
 			}
 		}
-
-		pesapi_value_ref value_ref = ffi_->create_value_ref(p_env, p_value, 1);
-		if (value_ref == nullptr) {
-			return {};
-		}
-
-		auto *cache_entry = memnew(puerts::script_value_cache::Entry);
-		cache_entry->value_ref = value_ref;
-		puerts::script_value_cache::register_entry(cache_entry);
-
-		uint32_t field_count = 0;
-		void **fields = ffi_->get_ref_internal_fields(value_ref, &field_count);
-		(void)field_count;
-		fields[0] = cache_entry;
-
-		if (!ffi_->set_private(p_env, p_value, cache_entry)) {
-			fields[0] = nullptr;
-			puerts::script_value_cache::unregister_entry(cache_entry);
-			memdelete(cache_entry);
-			ffi_->release_value_ref(value_ref);
-			return make_script_value_wrapper(ffi_->create_value_ref(p_env, p_value, 0));
-		}
-
-		return make_script_value_wrapper(value_ref, cache_entry);
 	}
 
-	return make_script_value_wrapper(ffi_->create_value_ref(p_env, p_value, 0));
+	pesapi_value_ref value_ref = ffi_->create_value_ref(p_env, p_value, 0);
+	if (value_ref == nullptr) {
+		return {};
+	}
+
+	Ref<PuertsScriptValue> script_value;
+	script_value.instantiate();
+	script_value->initialize(this, ffi_, value_ref);
+	register_script_value(script_value.ptr());
+	if (cacheable) {
+		const bool attach_token = cache_token == nullptr;
+		if (attach_token) {
+			cache_token = take_script_value_cache_token();
+		}
+		if (cache_token != nullptr) {
+			cached_script_values_[cache_token] = script_value.ptr();
+			void *attached_token = nullptr;
+			const bool attached = !attach_token ||
+					(ffi_->set_private(p_env, p_value, cache_token) &&
+							ffi_->get_private(p_env, p_value, &attached_token) && attached_token == cache_token);
+			if (attached) {
+				script_value->cache_token_ = cache_token;
+			} else {
+				cached_script_values_.erase(cache_token);
+			}
+		}
+	}
+	return script_value;
 }
 
 String PuertsEnvironment::read_exception(pesapi_scope p_scope) const {

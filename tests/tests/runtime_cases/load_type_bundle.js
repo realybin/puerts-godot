@@ -107,6 +107,10 @@
 			if (error) {
 				return error;
 			}
+			error = expect(obj.call("get_instance_id") === obj.get_instance_id(), "object vararg return mismatch");
+			if (error) {
+				return error;
+			}
 			const scriptChanged = obj.script_changed;
 			error = expect(
 				typeof scriptChanged === "object" &&
@@ -121,6 +125,31 @@
 			error = expectThrows(() => {
 				ObjectType.ConnectFlags.CONNECT_DEFERRED = 99;
 			}, "read-only", "object reflected enum readonly");
+			if (error) {
+				return error;
+			}
+
+			const GraphNode = load_type("GraphNode");
+			const GradientTexture2D = load_type("GradientTexture2D");
+			const Color = load_type("Color");
+			const graphNode = new GraphNode();
+			const slotIcon = new GradientTexture2D();
+			graphNode.set_slot(
+				0,
+				true,
+				1,
+				new Color(1, 0, 0, 1),
+				true,
+				2,
+				new Color(0, 1, 0, 1),
+				slotIcon,
+				slotIcon,
+				true
+			);
+			error = expect(
+				graphNode.is_slot_enabled_left(0) && graphNode.is_slot_enabled_right(0),
+				"reflected overflow arguments mismatch"
+			);
 			if (error) {
 				return error;
 			}

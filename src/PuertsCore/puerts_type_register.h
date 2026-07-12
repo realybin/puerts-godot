@@ -30,7 +30,6 @@ struct PuertsStringNameEqual {
 
 namespace puerts_type_register_internal {
 class TypeInfoFactory;
-class RegistryBinder;
 } //namespace puerts_type_register_internal
 
 class PuertsTypeRegister {
@@ -39,7 +38,6 @@ public:
 		enum class Kind {
 			OBJECT_CLASS,
 			STATIC_BOUND,
-			ENUM_GROUP,
 		};
 
 		struct MethodData {
@@ -97,7 +95,6 @@ public:
 
 private:
 	friend class puerts_type_register_internal::TypeInfoFactory;
-	friend class puerts_type_register_internal::RegistryBinder;
 
 	PuertsTypeRegister();
 	~PuertsTypeRegister();
@@ -113,17 +110,15 @@ private:
 	static void integer_constant_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void read_only_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 
-	TypeInfo *build_object_type(const godot::StringName &p_name);
 	void store_type(TypeInfo *p_type_info);
 	bool resolve_base_type(TypeInfo *p_type_info);
 	void register_type(TypeInfo *p_type_info);
 
 	pesapi_registry_api reg_api_{};
 	pesapi_registry registry_ = nullptr;
-	pesapi_class_not_found_callback on_type_not_found_ = nullptr;
 	puerts_eastl::hash_map<godot::StringName, TypeInfo *, PuertsStringNameHash, PuertsStringNameEqual> types_by_name_;
 	puerts_eastl::hash_map<godot::StringName, TypeInfo *, PuertsStringNameHash, PuertsStringNameEqual> object_types_by_name_;
-	puerts_eastl::hash_map<uint64_t, TypeInfo *> types_by_id_;
+	puerts_eastl::hash_map<const void *, TypeInfo *> types_by_id_;
 	TypeInfo *builtin_types_by_variant_[godot::Variant::VARIANT_MAX] = {};
 	puerts_eastl::vector<TypeInfo *> owned_types_;
 };

@@ -6,6 +6,8 @@ extends "res://tests/support/backend_test_case.gd"
 const LifecycleSuite = preload("res://tests/suites/lifecycle_suite.gd")
 
 const LIFECYCLE_CASES = [
+	"reentrant_dispose",
+	"coercion_dispose",
 	"dispose_invalidation",
 	"environment_release",
 	"environment_owned_objects_release",
@@ -32,6 +34,10 @@ func test_lifecycle_release_suite(case_data: Dictionary) -> void:
 	var result: Variant
 
 	match case_name:
+		"reentrant_dispose":
+			result = LifecycleSuite.run_reentrant_dispose_suite(backend, backend_info)
+		"coercion_dispose":
+			result = LifecycleSuite.run_coercion_dispose_suite(backend, backend_info)
 		"dispose_invalidation":
 			result = LifecycleSuite.run_dispose_invalidation_suite(backend, backend_info)
 		"environment_release":

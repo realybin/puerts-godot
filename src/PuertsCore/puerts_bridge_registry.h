@@ -23,9 +23,9 @@ public:
 	[[nodiscard]] const godot::Variant *get_box(void *p_handle) const;
 	bool get_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value) const;
 	bool set_box(void *p_handle, const godot::Variant &p_value);
-	[[nodiscard]] bool is_object(void *p_handle) const;
-	[[nodiscard]] godot::Object *get_object(void *p_handle) const;
+	bool get_object(void *p_handle, godot::Object *&r_object) const;
 	bool release(void *p_handle);
+	[[nodiscard]] static bool is_handle(void *p_handle);
 
 private:
 	enum class Kind {
@@ -34,56 +34,31 @@ private:
 		Variant,
 	};
 
-	enum class Ownership {
-		Borrowed,
-		Script,
-		Strong,
-	};
-
 	struct Entry {
 		Kind kind = Kind::Free;
-		Ownership ownership = Ownership::Borrowed;
+		bool script_owned = false;
 		uint32_t handle_id = 0;
 		godot::ObjectID object_id;
-		uintptr_t object_ptr = 0;
 		godot::Variant value;
 		const void *type_id = nullptr;
-	};
-
-	struct ObjectKey {
-		uint64_t id = 0;
-		uintptr_t ptr = 0;
-
-		bool operator==(const ObjectKey &p_other) const {
-			return id == p_other.id && ptr == p_other.ptr;
-		}
-	};
-
-	struct ObjectKeyHash {
-		size_t operator()(const ObjectKey &p_key) const {
-			const uint64_t mixed = p_key.id ^ (static_cast<uint64_t>(p_key.ptr) * 0x9e3779b97f4a7c15ULL);
-			return static_cast<size_t>(mixed);
-		}
 	};
 
 	puerts_eastl::vector<Entry> entries_;
 	puerts_eastl::vector<uint32_t> free_slots_;
 	puerts_eastl::hash_map<uint32_t, uint32_t> handle_slots_;
-	puerts_eastl::hash_map<ObjectKey, uint32_t, ObjectKeyHash> object_slots_;
+	puerts_eastl::hash_map<uint64_t, uint32_t> object_slots_;
 	uint32_t next_handle_id_ = 1;
 
 	[[nodiscard]] static void *make_handle(uint32_t p_handle_id);
 	static bool parse_handle(void *p_handle, uint32_t &r_handle_id);
-	[[nodiscard]] static ObjectKey key_for(const Entry &p_entry);
-	[[nodiscard]] static ObjectKey key_for(godot::Object *p_object);
+	[[nodiscard]] static uint64_t key_for(godot::Object *p_object);
+	uint32_t take_handle_id();
 
 	uint32_t allocate();
 	Entry *find(void *p_handle, uint32_t *r_index = nullptr);
 	const Entry *find(void *p_handle, uint32_t *r_index = nullptr) const;
-	void bind_index(const Entry &p_entry, uint32_t p_index);
-	void unbind_index(const Entry &p_entry);
 	void release_slot(uint32_t p_index);
-	void *store_object(godot::Object *p_object, const void *p_type_id, Ownership p_ownership);
+	void *store_object(godot::Object *p_object, const void *p_type_id, bool p_script_owned);
 	[[nodiscard]] godot::Object *object_from(const Entry &p_entry) const;
 	[[nodiscard]] godot::Variant variant_from(const Entry &p_entry) const;
 };

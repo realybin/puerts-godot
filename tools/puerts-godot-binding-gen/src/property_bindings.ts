@@ -12,22 +12,22 @@ function makePropertyHelperBaseName(className: string, propertyName: string): st
 
 function buildPropertyGetterExpr(rule: PropertyRule): string {
 	if (rule.kind === "method") {
-		return `instance.ptr->${rule.getter!}()`;
+		return `instance.get()->${rule.getter!}()`;
 	}
 	if (rule.kind === "indexed_method") {
-		return `instance.ptr->${rule.getter!}(${rule.index!})`;
+		return `instance.get()->${rule.getter!}(${rule.index!})`;
 	}
-	return `instance.ptr->${rule.member_expr!}`;
+	return `instance.get()->${rule.member_expr!}`;
 }
 
 function buildPropertySetterStatement(rule: PropertyRule): string {
 	if (rule.kind === "method") {
-		return `instance.ptr->${rule.setter!}(eastl::move(*value));`;
+		return `instance.get()->${rule.setter!}(eastl::move(value));`;
 	}
 	if (rule.kind === "indexed_method") {
-		return `instance.ptr->${rule.setter!}(${rule.index!}, eastl::move(*value));`;
+		return `instance.get()->${rule.setter!}(${rule.index!}, eastl::move(value));`;
 	}
-	return `instance.ptr->${rule.member_expr!} = eastl::move(*value);`;
+	return `instance.get()->${rule.member_expr!} = eastl::move(value);`;
 }
 
 function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; setterName: string; code: string } {
@@ -40,8 +40,8 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 
 	const code = [
 		`inline void ${getterName}(pesapi_ffi *apis, pesapi_callback_info info) {`,
-		"\tpuerts::internal::callback_context context;",
-		"\tif (!puerts::internal::resolve_context(apis, info, context)) {",
+		"\tpuerts::internal::callback_context context(apis, info);",
+		"\tif (!context.require()) {",
 		"\t\treturn;",
 		"\t}",
 		"",
@@ -54,8 +54,8 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 		"}",
 		"",
 		`inline void ${setterName}(pesapi_ffi *apis, pesapi_callback_info info) {`,
-		"\tpuerts::internal::callback_context context;",
-		`\tif (!puerts::internal::resolve_context(apis, info, context) || !puerts::internal::check_arity<${typeName}>(context)) {`,
+		"\tpuerts::internal::callback_context context(apis, info);",
+		`\tif (!context.require() || !puerts::internal::check_arity<${typeName}>(context)) {`,
 		"\t\treturn;",
 		"\t}",
 		"",
@@ -64,12 +64,12 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\tauto value = puerts::internal::convert_arg<false, ${typeName}>(apis, info, context, 0);`,
-		"\tif (!value.has_value()) {",
+		`\tif (!puerts::internal::convert_arg_with<false, ${typeName}>(apis, info, context, 0, [&](auto &&value) {`,
+		`\t\t${setterStmt}`,
+		"\t})) {",
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\t${setterStmt}`,
 		"\tinstance.write_back();",
 		"}",
 	].join("\n");

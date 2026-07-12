@@ -110,6 +110,10 @@ root.load_type = {
 		if err ~= "" then
 			return err
 		end
+		err = expect(obj:call("get_instance_id") == obj:get_instance_id(), "object vararg return mismatch")
+		if err ~= "" then
+			return err
+		end
 		local script_changed = obj.script_changed
 		err = expect(
 			script_changed ~= nil and
@@ -124,6 +128,31 @@ root.load_type = {
 		err = expect_throws(function()
 			ObjectType.ConnectFlags.CONNECT_DEFERRED = 99
 		end, "read-only", "object reflected enum readonly")
+		if err ~= "" then
+			return err
+		end
+
+		local GraphNode = load_type("GraphNode")
+		local GradientTexture2D = load_type("GradientTexture2D")
+		local Color = load_type("Color")
+		local graph_node = GraphNode()
+		local slot_icon = GradientTexture2D()
+		graph_node:set_slot(
+			0,
+			true,
+			1,
+			Color(1, 0, 0, 1),
+			true,
+			2,
+			Color(0, 1, 0, 1),
+			slot_icon,
+			slot_icon,
+			true
+		)
+		err = expect(
+			graph_node:is_slot_enabled_left(0) and graph_node:is_slot_enabled_right(0),
+			"reflected overflow arguments mismatch"
+		)
 		if err ~= "" then
 			return err
 		end

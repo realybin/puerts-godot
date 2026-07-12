@@ -7,7 +7,6 @@
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/object_id.hpp>
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/string.hpp>
@@ -21,9 +20,10 @@ class PuertsEnvironment;
 class PuertsScriptValue : public godot::RefCounted {
 	GDCLASS(PuertsScriptValue, godot::RefCounted)
 
-	godot::ObjectID environment_id_;
+	PuertsEnvironment *environment_ = nullptr;
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_value_ref value_ref_ = nullptr;
+	void *cache_token_ = nullptr;
 
 protected:
 	static void _bind_methods();
@@ -60,12 +60,19 @@ public:
 private:
 	friend class PuertsEnvironment;
 
-	void initialize(const godot::Ref<PuertsEnvironment> &p_environment, pesapi_ffi *p_ffi, pesapi_value_ref p_value_ref);
+	void initialize(PuertsEnvironment *p_environment, pesapi_ffi *p_ffi, pesapi_value_ref p_value_ref);
 	void release_value_ref();
-	bool resolve(pesapi_scope &r_scope, pesapi_env &r_env, pesapi_value &r_value) const;
-	bool ensure_live_native_object_receiver(const godot::Ref<PuertsEnvironment> &p_environment, pesapi_env p_env, pesapi_value p_value) const;
+	template <typename Result, typename Function>
+	Result with_value(Result p_fallback, Function &&p_function, bool p_may_reenter = false) const;
+	godot::Ref<PuertsScriptValue> call_script_function(
+			PuertsEnvironment *p_environment,
+			pesapi_scope p_scope,
+			pesapi_env p_env,
+			pesapi_value p_function,
+			pesapi_value p_receiver,
+			const godot::Array &p_args) const;
+	bool ensure_live_native_object_receiver(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) const;
 	[[nodiscard]] PuertsEnvironment *get_environment() const;
-	[[nodiscard]] godot::Ref<PuertsEnvironment> get_environment_ref() const;
 };
 
 #endif // PUERTS_GODOT_PUERTS_SCRIPT_VALUE_H

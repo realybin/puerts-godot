@@ -6,6 +6,7 @@
 
 #include <EASTL/allocator_malloc.h>
 #include <EASTL/fixed_hash_map.h>
+#include <EASTL/fixed_vector.h>
 #include <EASTL/functional.h>
 #include <EASTL/hash_map.h>
 #include <EASTL/hash_set.h>
@@ -17,6 +18,9 @@ using allocator = eastl::allocator_malloc;
 
 template <typename T>
 using vector = eastl::vector<T, allocator>;
+
+template <typename T, size_t node_count, bool enable_overflow = true>
+using fixed_vector = eastl::fixed_vector<T, node_count, enable_overflow, allocator>;
 
 template <typename Key, typename Value, typename Hash = eastl::hash<Key>, typename Predicate = eastl::equal_to<Key>, bool CacheHashCode = false>
 using hash_map = eastl::hash_map<Key, Value, Hash, Predicate, allocator, CacheHashCode>;

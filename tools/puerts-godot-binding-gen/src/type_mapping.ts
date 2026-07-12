@@ -90,6 +90,10 @@ export function mapMethodReturnType(typeName?: string): string {
 	});
 }
 
+export function mapApiMethodReturnType(method: ApiMethod): string {
+	return mapMethodReturnType(method.return_type ?? method.return_value?.type);
+}
+
 export function mapMethodArgType(typeName: string): string {
 	return mapParsedType(parseApiType(typeName), {
 		voidType: "",
@@ -108,7 +112,7 @@ export function methodPointerExprFromApi(className: string, method: ApiMethod): 
 		.map((a) => mapMethodArgType(a.type))
 		.filter(Boolean)
 		.join(", ");
-	const returnType = mapMethodReturnType(method.return_type);
+	const returnType = mapApiMethodReturnType(method);
 	if (method.is_static) {
 		return `static_cast<${returnType} (*)(${args})>(&godot::${className}::${method.name})`;
 	}

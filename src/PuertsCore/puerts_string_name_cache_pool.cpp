@@ -3,7 +3,6 @@
 
 #include "puerts_string_name_cache_pool.h"
 
-#include <godot_cpp/core/error_macros.hpp>
 #include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/variant/string.hpp>
 
@@ -22,45 +21,23 @@ void PuertsStringNameCachePool::_bind_methods() {
 }
 
 Error PuertsStringNameCachePool::initialize(Policy p_policy, int32_t p_capacity) {
+	reset_storage();
 	policy_ = p_policy;
 	capacity_ = MAX(1, p_capacity);
 	if (policy_ == POLICY_FIXED_HASH_MAP) {
 		capacity_ = FIXED_HASH_MAP_MAX_CAPACITY;
+		fixed_hash_map_cache_ = memnew(FixedHashMap);
 	}
 	initialized_ = true;
-	if (policy_ == POLICY_HASH_MAP) {
-		if (hash_map_cache_ != nullptr) {
-			memdelete(hash_map_cache_);
-			hash_map_cache_ = nullptr;
-		}
-		if (fixed_hash_map_cache_ != nullptr) {
-			memdelete(fixed_hash_map_cache_);
-			fixed_hash_map_cache_ = nullptr;
-		}
-	} else if (policy_ == POLICY_FIXED_HASH_MAP) {
-		if (hash_map_cache_ != nullptr) {
-			memdelete(hash_map_cache_);
-			hash_map_cache_ = nullptr;
-		}
-		if (fixed_hash_map_cache_ == nullptr) {
-			fixed_hash_map_cache_ = memnew(FixedHashMap);
-		}
-		fixed_hash_map_cache_->clear();
-	} else {
-		if (hash_map_cache_ != nullptr) {
-			memdelete(hash_map_cache_);
-			hash_map_cache_ = nullptr;
-		}
-		if (fixed_hash_map_cache_ != nullptr) {
-			memdelete(fixed_hash_map_cache_);
-			fixed_hash_map_cache_ = nullptr;
-		}
-		no_cache_scratch_utf8_ = CharString();
-	}
 	return OK;
 }
 
 PuertsStringNameCachePool::~PuertsStringNameCachePool() {
+	reset_storage();
+	initialized_ = false;
+}
+
+void PuertsStringNameCachePool::reset_storage() {
 	if (hash_map_cache_ != nullptr) {
 		memdelete(hash_map_cache_);
 		hash_map_cache_ = nullptr;
@@ -69,7 +46,7 @@ PuertsStringNameCachePool::~PuertsStringNameCachePool() {
 		memdelete(fixed_hash_map_cache_);
 		fixed_hash_map_cache_ = nullptr;
 	}
-	initialized_ = false;
+	no_cache_scratch_utf8_ = CharString();
 }
 
 bool PuertsStringNameCachePool::is_initialized() const {
@@ -81,35 +58,11 @@ void PuertsStringNameCachePool::clear() {
 		return;
 	}
 
-	if (policy_ == POLICY_HASH_MAP) {
-		if (hash_map_cache_ != nullptr) {
-			memdelete(hash_map_cache_);
-			hash_map_cache_ = nullptr;
-		}
-		if (fixed_hash_map_cache_ != nullptr) {
-			memdelete(fixed_hash_map_cache_);
-			fixed_hash_map_cache_ = nullptr;
-		}
-		return;
-	}
-	if (policy_ == POLICY_FIXED_HASH_MAP) {
-		if (hash_map_cache_ != nullptr) {
-			memdelete(hash_map_cache_);
-			hash_map_cache_ = nullptr;
-		}
-		if (fixed_hash_map_cache_ == nullptr) {
-			fixed_hash_map_cache_ = memnew(FixedHashMap);
-		}
-		fixed_hash_map_cache_->clear();
-		return;
-	}
 	if (hash_map_cache_ != nullptr) {
-		memdelete(hash_map_cache_);
-		hash_map_cache_ = nullptr;
+		hash_map_cache_->clear();
 	}
 	if (fixed_hash_map_cache_ != nullptr) {
-		memdelete(fixed_hash_map_cache_);
-		fixed_hash_map_cache_ = nullptr;
+		fixed_hash_map_cache_->clear();
 	}
 	no_cache_scratch_utf8_ = CharString();
 }
@@ -144,7 +97,6 @@ const CharString &PuertsStringNameCachePool::get_cached_utf8(const StringName &p
 		return inserted.first->second;
 	}
 	if (policy_ == POLICY_FIXED_HASH_MAP) {
-		ERR_FAIL_COND_V_MSG(fixed_hash_map_cache_ == nullptr, empty_utf8, "Fixed-hash StringName cache storage is unexpectedly missing.");
 		if (auto existing = fixed_hash_map_cache_->find(p_name); existing != fixed_hash_map_cache_->end()) {
 			return existing->second;
 		}

@@ -24,6 +24,21 @@ constexpr char log_info_property_name[] = "log_info";
 
 } // namespace
 
+PuertsEnvironment::operation_scope::operation_scope(PuertsEnvironment *p_environment) {
+	if (p_environment == nullptr || !p_environment->is_alive()) {
+		return;
+	}
+	environment_ = p_environment;
+	keep_alive_ = Ref<PuertsEnvironment>(p_environment);
+	++environment_->active_operations_;
+}
+
+PuertsEnvironment::operation_scope::~operation_scope() {
+	if (environment_ != nullptr) {
+		environment_->end_operation();
+	}
+}
+
 void PuertsEnvironment::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "backend", "string_name_cache_pool"), &PuertsEnvironment::initialize);
 	ClassDB::bind_method(D_METHOD("dispose"), &PuertsEnvironment::dispose);
@@ -44,10 +59,14 @@ void PuertsEnvironment::_bind_methods() {
 }
 
 PuertsEnvironment::~PuertsEnvironment() {
-	dispose();
+	dispose_internal();
 }
 
 Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNameCachePool> &p_string_name_cache_pool) {
+	if (disposing_ || active_operations_ != 0) {
+		log_error("Puerts environment is being disposed.");
+		return ERR_BUSY;
+	}
 	dispose();
 
 	if (p_backend == nullptr) {
@@ -107,8 +126,8 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		return ERR_CANT_CREATE;
 	}
 
-	pesapi_scope scope = ffi_->open_scope(env_ref_);
-	pesapi_env env = ffi_->get_env_from_ref(env_ref_);
+	puerts::internal::env_scope scope(ffi_, env_ref_);
+	pesapi_env env = scope.get_env();
 	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
 	ffi_->set_registry(env, type_register.get_registry());
 
@@ -126,7 +145,6 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 	ffi_->set_property(env, ffi_->global(env), log_warn_property_name, log_warn);
 	pesapi_value log_info = ffi_->create_function(env, &PuertsEnvironment::script_log_info_callback, nullptr, nullptr);
 	ffi_->set_property(env, ffi_->global(env), log_info_property_name, log_info);
-	ffi_->close_scope(scope);
 
 	backend_functions_ = functions;
 	backend_ref_ = Ref(backend_refcounted);
@@ -135,14 +153,40 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 }
 
 void PuertsEnvironment::dispose() {
+	if (disposing_) {
+		return;
+	}
+	if (active_operations_ != 0) {
+		dispose_requested_ = true;
+		return;
+	}
+	Ref<PuertsEnvironment> keep_alive(this);
+	dispose_internal();
+}
+
+void PuertsEnvironment::end_operation() {
+	--active_operations_;
+	if (active_operations_ == 0 && dispose_requested_) {
+		dispose_internal();
+	}
+}
+
+void PuertsEnvironment::dispose_internal() {
+	if (disposing_) {
+		return;
+	}
+	disposing_ = true;
+	dispose_requested_ = false;
+	if (env_private_ != nullptr) {
+		env_private_->alive = false;
+	}
 	invalidate_script_values();
 
-	if (env_ref_ != nullptr && ffi_ != nullptr && env_private_ != nullptr) {
-		env_private_->alive = false;
-		pesapi_scope scope = ffi_->open_scope(env_ref_);
-		pesapi_env env = ffi_->get_env_from_ref(env_ref_);
-		ffi_->set_env_private(env, nullptr);
-		ffi_->close_scope(scope);
+	if (env_private_ != nullptr) {
+		{
+			puerts::internal::env_scope scope(ffi_, env_ref_);
+			ffi_->set_env_private(scope.get_env(), nullptr);
+		}
 
 		env_private_->bridge->clear();
 		memdelete(env_private_->bridge);
@@ -151,7 +195,7 @@ void PuertsEnvironment::dispose() {
 		env_private_ = nullptr;
 	}
 
-	if (env_ref_ != nullptr && backend_functions_ != nullptr && backend_functions_->destroy_env_ref != nullptr) {
+	if (env_ref_ != nullptr) {
 		backend_functions_->destroy_env_ref(env_ref_);
 	}
 
@@ -160,12 +204,13 @@ void PuertsEnvironment::dispose() {
 	backend_functions_ = nullptr;
 	backend_ref_.unref();
 	string_name_cache_pool_.unref();
+	cached_script_values_.clear();
+	next_script_value_cache_id_ = 1;
+	disposing_ = false;
 }
 
 bool PuertsEnvironment::is_alive() const {
-	return ffi_ != nullptr && env_ref_ != nullptr && backend_ref_.is_valid() && backend_functions_ != nullptr &&
-			env_private_ != nullptr && env_private_->alive && env_private_->bridge != nullptr &&
-			string_name_cache_pool_.is_valid();
+	return !disposing_ && !dispose_requested_ && env_private_ != nullptr && env_private_->alive;
 }
 
 Object *PuertsEnvironment::get_backend() const {
@@ -185,44 +230,50 @@ void PuertsEnvironment::set_info_callback(const Callable &p_callback) {
 }
 
 void PuertsEnvironment::tick() {
-	if (!can_use_backend_function(backend_functions_ != nullptr ? reinterpret_cast<const void *>(backend_functions_->tick) : nullptr, "Puerts backend does not support tick.")) {
+	if (!can_use_backend_function(is_alive() && backend_functions_->tick != nullptr, "Puerts backend does not support tick.")) {
 		return;
 	}
+	operation_scope operation(this);
 	backend_functions_->tick(env_ref_);
 }
 
 void PuertsEnvironment::low_memory_notification() {
-	if (!can_use_backend_function(backend_functions_ != nullptr ? reinterpret_cast<const void *>(backend_functions_->low_memory_notification) : nullptr, "Puerts backend does not support low memory notification.")) {
+	if (!can_use_backend_function(is_alive() && backend_functions_->low_memory_notification != nullptr, "Puerts backend does not support low memory notification.")) {
 		return;
 	}
+	operation_scope operation(this);
 	backend_functions_->low_memory_notification(env_ref_);
 }
 
 void PuertsEnvironment::open_debugger(int32_t p_port) {
-	if (!can_use_backend_function(backend_functions_ != nullptr ? reinterpret_cast<const void *>(backend_functions_->open_debugger) : nullptr, "Puerts backend does not support remote debugging.")) {
+	if (!can_use_backend_function(is_alive() && backend_functions_->open_debugger != nullptr, "Puerts backend does not support remote debugging.")) {
 		return;
 	}
+	operation_scope operation(this);
 	backend_functions_->open_debugger(env_ref_, p_port);
 }
 
 bool PuertsEnvironment::debugger_tick() {
-	if (!can_use_backend_function(backend_functions_ != nullptr ? reinterpret_cast<const void *>(backend_functions_->debugger_tick) : nullptr, "Puerts backend does not support debugger tick.")) {
+	if (!can_use_backend_function(is_alive() && backend_functions_->debugger_tick != nullptr, "Puerts backend does not support debugger tick.")) {
 		return false;
 	}
+	operation_scope operation(this);
 	return backend_functions_->debugger_tick(env_ref_);
 }
 
 void PuertsEnvironment::close_debugger() {
-	if (!can_use_backend_function(backend_functions_ != nullptr ? reinterpret_cast<const void *>(backend_functions_->close_debugger) : nullptr, "Puerts backend does not support remote debugging.")) {
+	if (!can_use_backend_function(is_alive() && backend_functions_->close_debugger != nullptr, "Puerts backend does not support remote debugging.")) {
 		return;
 	}
+	operation_scope operation(this);
 	backend_functions_->close_debugger(env_ref_);
 }
 
 void PuertsEnvironment::terminate_execution() {
-	if (!can_use_backend_function(backend_functions_ != nullptr ? reinterpret_cast<const void *>(backend_functions_->terminate_execution) : nullptr, "Puerts backend does not support terminate execution.")) {
+	if (!can_use_backend_function(is_alive() && backend_functions_->terminate_execution != nullptr, "Puerts backend does not support terminate execution.")) {
 		return;
 	}
+	operation_scope operation(this);
 	backend_functions_->terminate_execution(env_ref_);
 }
 
@@ -281,52 +332,58 @@ void PuertsEnvironment::script_log_info_callback(struct pesapi_ffi *apis, pesapi
 
 const CharString &PuertsEnvironment::get_cached_utf8(const StringName &p_name) {
 	static const CharString empty_utf8;
-	if (p_name.is_empty() || string_name_cache_pool_.is_null()) {
+	if (p_name.is_empty()) {
 		return empty_utf8;
 	}
 	return string_name_cache_pool_->get_cached_utf8(p_name);
 }
 
-bool PuertsEnvironment::can_use_backend_function(const void *p_function, const String &p_error_message) {
+bool PuertsEnvironment::can_use_backend_function(bool p_supported, const String &p_error_message) {
+	if (p_supported) {
+		return true;
+	}
 	if (!is_alive()) {
 		log_error("Puerts environment is not initialized.");
 		return false;
 	}
-	if (p_function == nullptr) {
-		log_error(p_error_message);
-		return false;
-	}
-	return true;
+	log_error(p_error_message);
+	return false;
 }
 
-void PuertsEnvironment::register_script_value(ObjectID p_id) {
-	if (p_id.is_valid()) {
-		script_value_ids_.insert(p_id);
+void *PuertsEnvironment::take_script_value_cache_token() {
+	if (next_script_value_cache_id_ > (UINTPTR_MAX >> 1U)) {
+		return nullptr;
 	}
+	return reinterpret_cast<void *>((next_script_value_cache_id_++ << 1U) | 1U);
 }
 
-void PuertsEnvironment::unregister_script_value(ObjectID p_id) {
-	if (p_id.is_valid()) {
-		script_value_ids_.erase(p_id);
-	}
+bool PuertsEnvironment::is_script_value_cache_token(void *p_token) const {
+	const uintptr_t raw = reinterpret_cast<uintptr_t>(p_token);
+	const uintptr_t id = raw >> 1U;
+	return (raw & 1U) != 0 && id != 0 && id < next_script_value_cache_id_;
+}
+
+void PuertsEnvironment::register_script_value(PuertsScriptValue *p_value) {
+	script_values_.insert(p_value);
+}
+
+void PuertsEnvironment::unregister_script_value(PuertsScriptValue *p_value) {
+	script_values_.erase(p_value);
 }
 
 void PuertsEnvironment::invalidate_script_values() {
-	if (script_value_ids_.empty()) {
+	if (script_values_.empty()) {
 		return;
 	}
 
-	puerts_eastl::vector<uint64_t> ids;
-	ids.reserve(script_value_ids_.size());
-	for (unsigned long long script_value_id : script_value_ids_) {
-		ids.push_back(script_value_id);
+	puerts_eastl::vector<Ref<PuertsScriptValue>> values;
+	values.reserve(script_values_.size());
+	for (PuertsScriptValue *value : script_values_) {
+		values.push_back(Ref<PuertsScriptValue>(value));
 	}
-	script_value_ids_.clear();
-	for (const uint64_t raw_id : ids) {
-		Object *object = ObjectDB::get_instance(ObjectID(raw_id));
-		auto *script_value = Object::cast_to<PuertsScriptValue>(object);
-		if (script_value != nullptr) {
-			script_value->release_value_ref();
-		}
+	script_values_.clear();
+	for (const Ref<PuertsScriptValue> &value : values) {
+		value->release_value_ref();
 	}
+	cached_script_values_.clear();
 }

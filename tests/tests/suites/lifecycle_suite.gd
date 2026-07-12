@@ -100,6 +100,53 @@ static func _pump_backend_gc(env: Object, backend: Object, attempts: int = 8) ->
 			env.tick()
 
 
+static func run_reentrant_dispose_suite(backend: Object, backend_info: Dictionary) -> String:
+	var backend_name: String = backend_info["name"]
+	var created: Dictionary = create_environment(backend, backend_name)
+	if not bool(created["ok"]):
+		return str(created["error"])
+	var env: Object = created["env"]
+	var callback_state := {"count": 0}
+	env.set_error_callback(func(_message: String):
+		callback_state["count"] += 1
+		env.dispose()
+	)
+
+	var value = env.eval(script_for(backend_info, "error('reentrant dispose')", "throw new Error('reentrant dispose')"))
+	env.set_error_callback(Callable())
+	if value != null:
+		return "%s reentrant dispose expected null eval result" % backend_name
+	if env.is_alive():
+		return "%s reentrant dispose expected environment dead" % backend_name
+	if callback_state["count"] != 1:
+		return "%s reentrant dispose expected one error callback actual=%d" % [backend_name, callback_state["count"]]
+	return ""
+
+
+static func run_coercion_dispose_suite(backend: Object, backend_info: Dictionary):
+	var backend_name: String = backend_info["name"]
+	if backend_info["language"] != "ecmascript":
+		return skip("%s coercion dispose requires an ECMAScript backend" % backend_name)
+	var created: Dictionary = create_environment(backend, backend_name)
+	if not bool(created["ok"]):
+		return str(created["error"])
+	var env: Object = created["env"]
+	env.set_global("dispose_environment", env)
+	var value = env.eval("({ toString() { dispose_environment.dispose(); return 'coerced'; } })")
+	if value == null or not value.is_valid():
+		_dispose_env_if_alive(env)
+		return "%s coercion dispose setup failed" % backend_name
+
+	var text: String = value.to_string()
+	if text != "coerced":
+		return "%s coercion dispose expected=coerced actual=%s" % [backend_name, text]
+	if env.is_alive():
+		return "%s coercion dispose expected environment dead" % backend_name
+	if value.is_valid():
+		return "%s coercion dispose expected source value invalid" % backend_name
+	return ""
+
+
 static func run_dispose_invalidation_suite(backend: Object, backend_info: Dictionary) -> String:
 	var backend_name: String = backend_info["name"]
 	var is_lua: bool = backend_info["language"] == "lua"
@@ -402,7 +449,7 @@ static func run_js_refcounted_gc_suite(backend: Object, backend_info: Dictionary
 	var tracker: WeakObjectTracker = WeakObjectTracker.new()
 
 	var ids_value = env.eval(
-		"(function () { const RefCounted = load_type('RefCounted'); const objectCount = 37; globalThis.__gc_test_objs = []; const ids = []; for (let i = 0; i < objectCount; i++) { const obj = new RefCounted(); globalThis.__gc_test_objs.push(obj); ids.push(obj.get_instance_id()); } return ids; })()"
+		"(function () { const RefCounted = load_type('RefCounted'); const ObjectType = load_type('Object'); const objectCount = 37; globalThis.__gc_test_objs = []; const ids = []; for (let i = 0; i < objectCount; i++) { const obj = new RefCounted(); globalThis.__gc_test_objs.push(obj); ids.push(obj.get_instance_id()); } const staticObject = new ObjectType(); globalThis.__gc_test_objs.push(staticObject); ids.push(staticObject.get_instance_id()); return ids; })()"
 	)
 	if ids_value == null or not ids_value.is_valid():
 		result = "%s js_gc setup eval failed: %s" % [backend_name, TestSupport.env_last_error(env)]
