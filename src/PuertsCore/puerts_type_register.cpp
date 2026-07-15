@@ -97,10 +97,10 @@ uint32_t get_method_compatibility_hash(const Dictionary &p_method_dict) {
 
 Object *instantiate_reflected_object(const TypeInfo *p_type_info, String &r_error) {
 #if GODOT_VERSION_MAJOR > 4 || (GODOT_VERSION_MAJOR == 4 && GODOT_VERSION_MINOR >= 4)
-	GDExtensionObjectPtr native_object = godot::internal::gdextension_interface_classdb_construct_object2(
+	GDExtensionObjectPtr native_object = godot::gdextension_interface::classdb_construct_object2(
 			static_cast<GDExtensionConstStringNamePtr>(p_type_info->class_name._native_ptr()));
 #else
-	GDExtensionObjectPtr native_object = godot::internal::gdextension_interface_classdb_construct_object(
+	GDExtensionObjectPtr native_object = godot::gdextension_interface::classdb_construct_object(
 			static_cast<GDExtensionConstStringNamePtr>(p_type_info->class_name._native_ptr()));
 #endif
 	Object *object = native_object != nullptr ? internal::get_object_instance_binding(native_object) : nullptr;
@@ -166,7 +166,7 @@ Object *resolve_holder_object(puerts::internal::callback_context &p_context) {
 
 bool call_reflected_method(Object *p_object, TypeInfo::MethodData *p_method, puerts::internal::callback_context &p_context, Variant &r_result, String &r_error) {
 	if (p_method->method_bind == nullptr) {
-		p_method->method_bind = internal::gdextension_interface_classdb_get_method_bind(
+		p_method->method_bind = godot::gdextension_interface::classdb_get_method_bind(
 				static_cast<GDExtensionConstStringNamePtr>(p_method->owner_class_name._native_ptr()),
 				static_cast<GDExtensionConstStringNamePtr>(p_method->name._native_ptr()),
 				p_method->compatibility_hash);
@@ -180,7 +180,7 @@ bool call_reflected_method(Object *p_object, TypeInfo::MethodData *p_method, pue
 	RuntimeArgumentPointers arg_ptrs;
 	fill_runtime_arguments(args, arg_ptrs, p_context);
 	GDExtensionCallError call_error{ GDEXTENSION_CALL_OK, 0, 0 };
-	internal::gdextension_interface_object_method_bind_call(
+	godot::gdextension_interface::object_method_bind_call(
 			p_method->method_bind,
 			p_object != nullptr ? p_object->_owner : nullptr,
 			reinterpret_cast<const GDExtensionConstVariantPtr *>(arg_ptrs.data()),
@@ -695,7 +695,7 @@ void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis
 	if (property->variant_type != Variant::NIL) {
 		const auto actual_type = static_cast<GDExtensionVariantType>(property_value.get_type());
 		const auto expected_type = static_cast<GDExtensionVariantType>(property->variant_type);
-		if (!godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type)) {
+		if (!godot::gdextension_interface::variant_can_convert_strict(actual_type, expected_type)) {
 			reject_type();
 			return;
 		}

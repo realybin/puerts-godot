@@ -248,7 +248,7 @@ bool convert_variant_arg_with(
 		if constexpr (gdextension_variant_type_v<T> != GDEXTENSION_VARIANT_TYPE_NIL) {
 			const auto actual_type = static_cast<GDExtensionVariantType>(p_variant.get_type());
 			const auto expected_type = gdextension_variant_type_v<T>;
-			if (!godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type) ||
+			if (!godot::gdextension_interface::variant_can_convert_strict(actual_type, expected_type) ||
 					!godot::VariantObjectClassChecker<T>::check(p_variant)) {
 				return reject_argument_type();
 			}
@@ -538,7 +538,7 @@ receiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, callba
 				const auto actual_type = static_cast<GDExtensionVariantType>(boxed_variant->get_type());
 				const auto expected_type = gdextension_variant_type_v<typename receiver<T>::target_type>;
 				if (actual_type != GDEXTENSION_VARIANT_TYPE_NIL &&
-						godot::internal::gdextension_interface_variant_can_convert_strict(actual_type, expected_type) &&
+						godot::gdextension_interface::variant_can_convert_strict(actual_type, expected_type) &&
 						godot::VariantObjectClassChecker<typename receiver<T>::target_type>::check(*boxed_variant)) {
 					instance.storage = godot::VariantCaster<typename receiver<T>::target_type>::cast(*boxed_variant);
 					instance.boxed_handle = holder;
@@ -809,10 +809,10 @@ private:
 	template <typename TObject>
 	static TObject *construct_classdb_object() {
 #if GODOT_VERSION_MAJOR > 4 || (GODOT_VERSION_MAJOR == 4 && GODOT_VERSION_MINOR >= 4)
-		GDExtensionObjectPtr native_object = godot::internal::gdextension_interface_classdb_construct_object2(
+		GDExtensionObjectPtr native_object = godot::gdextension_interface::classdb_construct_object2(
 				static_cast<GDExtensionConstStringNamePtr>(script_type_name<TObject>::value()._native_ptr()));
 #else
-		GDExtensionObjectPtr native_object = godot::internal::gdextension_interface_classdb_construct_object(
+		GDExtensionObjectPtr native_object = godot::gdextension_interface::classdb_construct_object(
 				static_cast<GDExtensionConstStringNamePtr>(script_type_name<TObject>::value()._native_ptr()));
 #endif
 		godot::Object *object = native_object != nullptr ? godot::internal::get_object_instance_binding(native_object) : nullptr;

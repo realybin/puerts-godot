@@ -73,5 +73,7 @@ jobs:
       arch: ${{ matrix.target.arch }}
       target_type: ${{ matrix.target_type }}
       float_precision: ${{ matrix.float_precision }}
+      api_version: "4.7"
+      godot_version: "4.7.0"
       run_tests: true
       save_cache: ${{ github.event_name == 'push' }}

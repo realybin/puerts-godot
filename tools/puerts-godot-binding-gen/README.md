@@ -33,12 +33,31 @@ node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --clas
 node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --all-builtin --output ./output/all_builtin_bindings.generated.inc
 ```
 
-## Replace
+## Generate versioned project bindings
+
+First generate the `godot-cpp` headers for the same API version from the project
+root, then build this generator:
 
 ```bash
-npm run generate:puerts-all
-copy /Y output\\puerts_builtin_bindings.generated.inc ..\\..\\src\\PuertsCore\\puerts_builtin_bindings.generated.inc
+scons api_version=4.5 godot-cpp/gen/include/godot_cpp/core/version.hpp
+cd tools/puerts-godot-binding-gen
+npm ci
+npm run build
 ```
+
+Run these three commands to update the project bindings for Godot 4.5:
+
+```bash
+node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-5.json --godot-version-macro 4.5 --classes-json ./config/puerts_builtin_classes.json --output ../../src/PuertsCore/puerts_builtin_bindings.4_5.generated.inc
+node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-5.json --godot-version-macro 4.5 --classes-json ./config/puerts_object_profile_classes.json --output ../../src/PuertsCore/puerts_object_profile_bindings.4_5.generated.inc
+node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-5.json --godot-version-macro 4.5 --target globalscope --output ../../src/PuertsCore/puerts_global_scope.4_5.generated.inc
+```
+
+For Godot 4.6, use `api_version=4.6`, `extension_api-4-6.json`, macro
+`4.6`, and suffix `4_6`. For Godot 4.7, use `api_version=4.7`,
+`extension_api.json`, macro `4.7`, and suffix `4_7`. Each generated file wraps
+its contents in the corresponding `GODOT_VERSION_MAJOR` and
+`GODOT_VERSION_MINOR` condition and is committed to the repository.
 
 ## NPM shortcuts
 

@@ -30,10 +30,14 @@ on:
         required: false
         type: boolean
         default: false
+      api_version:
+        required: false
+        type: string
+        default: "4.7"
       godot_version:
         required: false
         type: string
-        default: "4.6.2"
+        default: "4.7.0"
       artifact_name:
         required: false
         type: string
@@ -45,7 +49,7 @@ on:
 
 jobs:
   build:
-    name: build and test
+    name: build and test (Godot ${{ inputs.api_version }})
     runs-on: ${{ inputs.runner }}
 
     steps:
@@ -100,7 +104,7 @@ jobs:
         uses: ./godot-cpp/.github/actions/godot-cache-restore
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
-          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}
+          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}_api-${{ inputs.api_version }}
 
       - name: Build GDExtension
         shell: bash
@@ -111,7 +115,7 @@ jobs:
           if [ "${{ inputs.platform }}" = "ios" ]; then
             extra_scons_args="ios_min_version=16.0"
           fi
-          scons target=${{ inputs.target_type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float_precision }} ${extra_scons_args}
+          scons target=${{ inputs.target_type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float_precision }} api_version=${{ inputs.api_version }} ${extra_scons_args}
 
       - name: Copy nodejs dependencies
         if: ${{ inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux' || inputs.platform == 'ios' }}
@@ -126,7 +130,7 @@ jobs:
         uses: ./godot-cpp/.github/actions/godot-cache-save
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
-          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}
+          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}_api-${{ inputs.api_version }}
 
       - name: Setup Godot
         if: ${{ inputs.run_tests && (inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux') }}
@@ -169,6 +173,6 @@ jobs:
         if: ${{ inputs.upload_artifact }}
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ inputs.artifact_name != '' && inputs.artifact_name || format('puerts-godot-{0}-{1}-{2}-{3}', inputs.platform, inputs.arch, inputs.float_precision, inputs.target_type) }}
+          name: ${{ inputs.artifact_name != '' && inputs.artifact_name || format('puerts-godot-{0}-{1}-{2}-{3}-godot-{4}', inputs.platform, inputs.arch, inputs.float_precision, inputs.target_type, inputs.api_version) }}
           path: |
             ${{ github.workspace }}/bin/**

@@ -23,7 +23,10 @@ More details in
 - [register_types.cpp](../src/PuertsCore/register_types.cpp)
 - [puerts_builtin_binding.cpp](../src/PuertsCore/puerts_builtin_binding.cpp)
 - [puerts_builtin_binding.h](../src/PuertsCore/puerts_builtin_binding.h)
-- [puerts_builtin_bindings.generated.inc](../src/PuertsCore/puerts_builtin_bindings.generated.inc)
+- Versioned generated built-in bindings for
+  [Godot 4.5](../src/PuertsCore/puerts_builtin_bindings.4_5.generated.inc),
+  [Godot 4.6](../src/PuertsCore/puerts_builtin_bindings.4_6.generated.inc), and
+  [Godot 4.7](../src/PuertsCore/puerts_builtin_bindings.4_7.generated.inc)
 
 ## Minimal example
 

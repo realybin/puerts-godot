@@ -132,6 +132,7 @@ function resolveClassSelection(argv: {
 export function parseArgs(argv: string[]): CliArgs {
 	let input = "";
 	let output = "";
+	let godotVersionMacro = "";
 	let classesArg = "";
 	let classesJson = "";
 	let classesFromPuertsFile = "";
@@ -150,6 +151,10 @@ export function parseArgs(argv: string[]): CliArgs {
 				break;
 			case "--output":
 				output = readOptionValue(argv, i, token);
+				i += 1;
+				break;
+			case "--godot-version-macro":
+				godotVersionMacro = readOptionValue(argv, i, token);
 				i += 1;
 				break;
 			case "--classes":
@@ -188,8 +193,11 @@ export function parseArgs(argv: string[]): CliArgs {
 
 	if (!input || !output) {
 		throw new Error(
-			"Usage: node dist/index.js --input <extension_api.json> --output <output.inc> [--classes A,B,C | --classes-json <classes.json> | --classes-from-puerts-file <puerts_builtin_binding.cpp> | --all-builtin] [--class-source builtin|classes] [--register-function <identifier>]",
+			"Usage: node dist/index.js --input <extension_api.json> --output <output.inc> [--godot-version-macro <major.minor>] [--classes A,B,C | --classes-json <classes.json> | --classes-from-puerts-file <puerts_builtin_binding.cpp> | --all-builtin] [--class-source builtin|classes] [--register-function <identifier>]",
 		);
+	}
+	if (godotVersionMacro && !/^\d+\.\d+$/.test(godotVersionMacro)) {
+		throw new Error(`Invalid --godot-version-macro value: ${godotVersionMacro}. Expected <major>.<minor>.`);
 	}
 
 	if (target === "globalscope" && registerFunction === DEFAULT_REGISTER_FUNCTION) {
@@ -212,6 +220,7 @@ export function parseArgs(argv: string[]): CliArgs {
 	return {
 		input,
 		output,
+		godotVersionMacro,
 		classNames: selection.classNames,
 		propertyRulesJson,
 		classSource: selection.classSource,

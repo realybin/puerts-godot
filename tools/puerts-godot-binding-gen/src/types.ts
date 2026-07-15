@@ -94,6 +94,7 @@ export type GenerateTarget = "classes" | "globalscope";
 export type CliArgs = {
 	input: string;
 	output: string;
+	godotVersionMacro: string;
 	classNames: string[];
 	propertyRulesJson: string;
 	classSource: ClassSource;
