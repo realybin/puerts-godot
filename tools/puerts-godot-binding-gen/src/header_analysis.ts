@@ -7,9 +7,11 @@ import { join } from "node:path";
 import { escapeRegex, stripCppComments, toSnakeCase } from "./text_utils.js";
 import type { ClassSource, HeaderAnalysis } from "./types.js";
 
+const CPP_QUOTED_LITERAL_PATTERN = String.raw`(?:"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*')`;
+
 export function countMethodOverloadsInHeader(cleanedHeader: string, methodName: string): number {
 	const re = new RegExp(
-		`(?:^|\\n)[ \\t]*(static\\s+)?([A-Za-z0-9_:<>,*&~][A-Za-z0-9_:<>,*&~ \\t]*)\\b(?:[A-Za-z_][A-Za-z0-9_]*::)?${escapeRegex(methodName)}\\s*\\(([^;{}]*)\\)\\s*(const\\s*)?(?:;|\\{)`,
+		`(?:^|\\n)[ \\t]*(static\\s+)?([A-Za-z0-9_:<>,*&~][A-Za-z0-9_:<>,*&~ \\t]*)\\b(?:[A-Za-z_][A-Za-z0-9_]*::)?${escapeRegex(methodName)}\\s*\\(((?:${CPP_QUOTED_LITERAL_PATTERN}|[^;{}"'])*)\\)\\s*(const\\s*)?(?:;|\\{)`,
 		"g",
 	);
 	const signatures = new Set<string>();

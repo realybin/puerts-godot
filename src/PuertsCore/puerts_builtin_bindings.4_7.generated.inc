@@ -2716,6 +2716,7 @@ inline void register_string_name_type_generated() {
 			.method("is_subsequence_ofn", puerts::make_method<&godot::StringName::is_subsequence_ofn>())
 			.method("bigrams", puerts::make_method<&godot::StringName::bigrams>())
 			.method("similarity", puerts::make_method<&godot::StringName::similarity>())
+			.method("format", puerts::make_method<&godot::StringName::format>())
 			.method("replace", puerts::make_method<&godot::StringName::replace>())
 			.method("replacen", puerts::make_method<&godot::StringName::replacen>())
 			.method("replace_char", puerts::make_method<&godot::StringName::replace_char>())
