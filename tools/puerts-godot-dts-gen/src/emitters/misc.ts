@@ -58,10 +58,13 @@ export function emitGodotModuleNamedExports(api: ApiData): string[] {
 	const out: string[] = [];
 	const exported = new Set<string>();
 	for (const spec of NATIVE_PRIMITIVE_TYPE_SPECS) {
+		exported.add(spec.alias);
 		out.push(`\texport type ${spec.alias} = godot.${spec.alias};`);
 	}
+	exported.add("Real");
 	out.push("\texport type Real = godot.Real;");
 	exported.add("GlobalScope");
+	out.push("\texport type GlobalScope = godot.GlobalScope;");
 	out.push("\texport const GlobalScope: typeof godot.GlobalScope;");
 	for (const builtin of api.builtin_classes) {
 		if (NON_CLASS_BUILTIN_NAMES.has(builtin.name)) {
@@ -72,6 +75,7 @@ export function emitGodotModuleNamedExports(api: ApiData): string[] {
 			continue;
 		}
 		exported.add(name);
+		out.push(`\texport type ${name} = godot.${name};`);
 		out.push(`\texport const ${name}: typeof godot.${name};`);
 	}
 	for (const cls of api.classes) {
@@ -80,6 +84,7 @@ export function emitGodotModuleNamedExports(api: ApiData): string[] {
 			continue;
 		}
 		exported.add(name);
+		out.push(`\texport type ${name} = godot.${name};`);
 		out.push(`\texport const ${name}: typeof godot.${name};`);
 	}
 	return out;
