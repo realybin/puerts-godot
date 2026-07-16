@@ -4,8 +4,10 @@
 import type { ApiData, ApiMethod } from "../api-types.js";
 import type { Context } from "../context.js";
 import { NON_CLASS_BUILTIN_NAMES } from "../constants.js";
+import { NATIVE_PRIMITIVE_TYPE_SPECS } from "../native-primitive-types.js";
 import { sanitizeIdentifier } from "../naming.js";
 import { mapType } from "../type-mapper.js";
+import { emitGlobalEnums } from "./enum.js";
 import { emitMethodSignature } from "./method.js";
 
 function groupMethodsByName(functions: ApiMethod[]): ApiMethod[][] {
@@ -36,28 +38,29 @@ export function emitGlobalScope(api: ApiData, ctx: Context): string[] {
 	for (const singleton of api.singletons) {
 		out.push(`\tstatic readonly ${sanitizeIdentifier(singleton.name)}: ${mapType(singleton.type, ctx)};`);
 	}
-	for (const enumDef of api.global_enums) {
-		if (enumDef.name.startsWith("Variant.")) {
-			continue;
-		}
-		out.push(`\tstatic readonly ${sanitizeIdentifier(enumDef.name)}: typeof godot.${sanitizeIdentifier(enumDef.name)};`);
+	out.push("}");
+	out.push("namespace GlobalScope {");
+	for (const line of emitGlobalEnums(api.global_enums)) {
+		out.push(`\t${line}`);
 	}
-	out.push("\tstatic readonly Variant: {");
-	out.push("\t\treadonly Type: typeof godot.Variant.Type;");
-	out.push("\t\treadonly Operator: typeof godot.Variant.Operator;");
-	out.push("\t};");
 	out.push("}");
 	return out;
 }
 
 export function buildVariantUnion(ctx: Context): string {
 	const builtinVariants = [...ctx.emittedBuiltinNames].sort().join(" | ");
-	return builtinVariants ? `null | boolean | number | string | ${builtinVariants} | Object` : "null | boolean | number | string | Object";
+	return builtinVariants
+		? `null | Bool | Int | Float | String | ${builtinVariants} | Object`
+		: "null | Bool | Int | Float | String | Object";
 }
 
 export function emitGodotModuleNamedExports(api: ApiData): string[] {
 	const out: string[] = [];
 	const exported = new Set<string>();
+	for (const spec of NATIVE_PRIMITIVE_TYPE_SPECS) {
+		out.push(`\texport type ${spec.alias} = godot.${spec.alias};`);
+	}
+	out.push("\texport type Real = godot.Real;");
 	exported.add("GlobalScope");
 	out.push("\texport const GlobalScope: typeof godot.GlobalScope;");
 	for (const builtin of api.builtin_classes) {

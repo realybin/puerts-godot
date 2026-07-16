@@ -1,21 +1,33 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 realybin and contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
+import type { ApiType } from "./api-types.js";
 import type { Context } from "./context.js";
+import { nativePrimitiveAlias } from "./native-primitive-types.js";
 import { cleanTypeName, sanitizeIdentifier, splitUnionCandidates } from "./naming.js";
 
-function mapPrimitiveType(name: string): string | null {
+function mapPrimitiveType(name: string, meta: string | undefined): string | null {
+	const isNumericPrimitive = /^(?:u?int(?:8|16|32|64)?(?:_t)?|float|double|real_t)$/.test(name);
+	const metaAlias = isNumericPrimitive ? nativePrimitiveAlias(meta) : null;
+	if (metaAlias) {
+		return metaAlias;
+	}
+
 	switch (name) {
 		case "void":
 			return "void";
 		case "Nil":
 			return "null";
 		case "bool":
-			return "boolean";
+			return "Bool";
 		case "int":
+			return "Int";
 		case "float":
+			return "Float";
 		case "double":
+			return "Float64";
 		case "real_t":
+			return "Real";
 		case "int8_t":
 		case "uint8_t":
 		case "int16_t":
@@ -24,11 +36,12 @@ function mapPrimitiveType(name: string): string | null {
 		case "uint32_t":
 		case "int64_t":
 		case "uint64_t":
+		case "char32_t":
+			return nativePrimitiveAlias(name);
 		case "ObjectID":
-		case "RID_OwnerBase":
-			return "number";
+			return "UInt64";
 		case "String":
-			return "string";
+			return "String";
 		case "Variant":
 			return "Variant";
 		case "Array":
@@ -40,21 +53,22 @@ function mapPrimitiveType(name: string): string | null {
 	}
 }
 
-function mapEnumRef(raw: string): string {
+function mapEnumRef(raw: string, ctx: Context): string {
 	const payload = raw.replace(/^enum::/, "").replace(/^bitfield::/, "");
-	return payload
+	const mapped = payload
 		.split(".")
 		.map((part) => sanitizeIdentifier(part))
 		.join(".");
+	return ctx.globalEnumNames.has(payload) ? `GlobalScope.${mapped}` : mapped;
 }
 
-function mapSingleType(rawType: string, ctx: Context): string {
+function mapSingleType(rawType: string, ctx: Context, meta?: string): string {
 	const original = cleanTypeName(rawType);
 	if (original.startsWith("enum::")) {
-		return mapEnumRef(original);
+		return mapEnumRef(original, ctx);
 	}
 	if (original.startsWith("bitfield::")) {
-		return "number";
+		return "Bitfield";
 	}
 	if (original.startsWith("typedarray::")) {
 		const inner = cleanTypeName(original.slice("typedarray::".length));
@@ -64,32 +78,37 @@ function mapSingleType(rawType: string, ctx: Context): string {
 		return "any";
 	}
 
-	const primitive = mapPrimitiveType(original);
+	const primitive = mapPrimitiveType(original, meta);
 	if (primitive) {
 		return primitive;
 	}
 	if (ctx.knownClassNames.has(original) || ctx.knownBuiltinNames.has(original)) {
 		return original;
 	}
-	if (/^(u?int|float|double)\d*_t?$/.test(original)) {
-		return "number";
+	const nativeAlias = nativePrimitiveAlias(original);
+	if (nativeAlias) {
+		return nativeAlias;
 	}
 	return "any";
 }
 
-export function mapType(rawType: string | undefined, ctx: Context): string {
+export function mapType(rawType: string | undefined, ctx: Context, meta?: string): string {
 	if (!rawType) {
 		return "void";
 	}
 	const parts = splitUnionCandidates(cleanTypeName(rawType));
-	const mapped = [...new Set(parts.map((part) => mapSingleType(part, ctx)))];
+	const mapped = [...new Set(parts.map((part) => mapSingleType(part, ctx, parts.length === 1 ? meta : undefined)))];
 	return mapped.length === 1 ? mapped[0] : mapped.join(" | ");
+}
+
+export function mapApiType(apiType: ApiType, ctx: Context): string {
+	return mapType(apiType.type, ctx, apiType.meta);
 }
 
 export function widenArgumentType(rawType: string, mappedType: string): string {
 	const t = cleanTypeName(rawType);
 	if (t === "StringName" || t === "NodePath") {
-		return `${mappedType} | string`;
+		return `${mappedType} | String`;
 	}
 	if (t === "PackedByteArray") {
 		return `${mappedType} | Uint8Array | ArrayBuffer`;

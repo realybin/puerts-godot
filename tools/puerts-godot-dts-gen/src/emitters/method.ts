@@ -4,11 +4,11 @@
 import type { ApiArgument, ApiMethod } from "../api-types.js";
 import type { Context } from "../context.js";
 import { sanitizeIdentifier } from "../naming.js";
-import { mapType, widenArgumentType } from "../type-mapper.js";
+import { mapApiType, mapType, widenArgumentType } from "../type-mapper.js";
 
 function methodReturnType(method: ApiMethod, ctx: Context): string {
 	if (method.return_value?.type) {
-		return mapType(method.return_value.type, ctx);
+		return mapApiType(method.return_value, ctx);
 	}
 	return mapType(method.return_type, ctx);
 }
@@ -16,7 +16,7 @@ function methodReturnType(method: ApiMethod, ctx: Context): string {
 export function emitArgumentList(args: ApiArgument[] | undefined, ctx: Context): string[] {
 	return (args ?? []).map((arg, index) => {
 		const name = sanitizeIdentifier(arg.name || `arg${index}`);
-		const mapped = mapType(arg.type, ctx);
+		const mapped = mapApiType(arg, ctx);
 		const widened = widenArgumentType(arg.type, mapped);
 		const optional = arg.default_value !== undefined ? "?" : "";
 		return `${name}${optional}: ${widened}`;

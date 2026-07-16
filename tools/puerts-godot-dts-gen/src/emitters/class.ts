@@ -5,7 +5,7 @@ import { normalizeOperators } from "../../../puerts-godot-operator-model/index.j
 import type { ApiBuiltinClass, ApiClass, ApiMethod } from "../api-types.js";
 import type { Context } from "../context.js";
 import { sanitizeIdentifier } from "../naming.js";
-import { mapType } from "../type-mapper.js";
+import { mapApiType, mapType } from "../type-mapper.js";
 import { collectEnumConstantNames, emitNestedEnums } from "./enum.js";
 import { emitArgumentList, emitMethodSignature } from "./method.js";
 
@@ -52,7 +52,7 @@ export function emitObjectClass(classDef: ApiClass, ctx: Context): string[] {
 	for (const property of classDef.properties ?? []) {
 		const propertyName = sanitizeIdentifier(property.name);
 		const readonly = !property.setter ? "readonly " : "";
-		out.push(`\t${readonly}${propertyName}: ${mapType(property.type, ctx)};`);
+		out.push(`\t${readonly}${propertyName}: ${mapApiType(property, ctx)};`);
 	}
 	for (const signal of classDef.signals ?? []) {
 		out.push(`\treadonly ${sanitizeIdentifier(signal.name)}: Signal;`);
@@ -62,7 +62,7 @@ export function emitObjectClass(classDef: ApiClass, ctx: Context): string[] {
 		if (enumConstantNames.has(constant.name)) {
 			continue;
 		}
-		const typeName = constant.type ? mapType(constant.type, ctx) : "number";
+		const typeName = constant.type ? mapType(constant.type, ctx, constant.meta) : "Int64";
 		out.push(`\tstatic readonly ${sanitizeIdentifier(constant.name)}: ${typeName};`);
 	}
 	out.push(...emitMethods(classDef.methods, ctx));
@@ -85,14 +85,14 @@ export function emitBuiltinClass(builtin: ApiBuiltinClass, ctx: Context): string
 		}
 	}
 	for (const member of builtin.members ?? []) {
-		out.push(`\t${sanitizeIdentifier(member.name)}: ${mapType(member.type, ctx)};`);
+		out.push(`\t${sanitizeIdentifier(member.name)}: ${mapApiType(member, ctx)};`);
 	}
 	const enumConstantNames = collectEnumConstantNames(builtin.enums);
 	for (const constant of builtin.constants ?? []) {
 		if (enumConstantNames.has(constant.name)) {
 			continue;
 		}
-		const typeName = constant.type ? mapType(constant.type, ctx) : "number";
+		const typeName = constant.type ? mapType(constant.type, ctx, constant.meta) : "Int64";
 		out.push(`\tstatic readonly ${sanitizeIdentifier(constant.name)}: ${typeName};`);
 	}
 	out.push(...emitOperatorMethods(builtin, ctx));

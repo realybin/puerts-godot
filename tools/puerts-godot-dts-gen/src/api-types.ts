@@ -1,9 +1,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 realybin and contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-export type ApiArgument = {
-	name: string;
+export type ApiType = {
 	type: string;
+	meta?: string;
+};
+
+export type ApiArgument = ApiType & {
+	name: string;
 	default_value?: string;
 };
 
@@ -12,7 +16,7 @@ export type ApiMethod = {
 	is_static?: boolean;
 	is_vararg?: boolean;
 	return_type?: string;
-	return_value?: { type: string };
+	return_value?: ApiType;
 	arguments?: ApiArgument[];
 };
 
@@ -22,9 +26,8 @@ export type ApiOperator = {
 	return_type: string;
 };
 
-export type ApiProperty = {
+export type ApiProperty = ApiType & {
 	name: string;
-	type: string;
 	setter?: string;
 	getter?: string;
 };
@@ -32,6 +35,7 @@ export type ApiProperty = {
 export type ApiConstant = {
 	name: string;
 	type?: string;
+	meta?: string;
 	value: number | string;
 };
 
@@ -67,7 +71,7 @@ export type ApiBuiltinClass = {
 	constructors?: Array<{ arguments?: ApiArgument[] }>;
 	methods?: ApiMethod[];
 	operators?: ApiOperator[];
-	members?: Array<{ name: string; type: string }>;
+	members?: Array<ApiType & { name: string }>;
 	constants?: ApiConstant[];
 	enums?: ApiEnum[];
 };
@@ -80,6 +84,7 @@ export type ApiData = {
 		version_status?: string;
 		version_build?: string;
 		version_full_name?: string;
+		precision?: string;
 	};
 	classes: ApiClass[];
 	builtin_classes: ApiBuiltinClass[];

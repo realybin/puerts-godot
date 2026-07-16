@@ -5,9 +5,8 @@ import type { ApiData } from "./api-types.js";
 import { resolveApiVersion } from "./api-version.js";
 import type { Context } from "./context.js";
 import { NON_CLASS_BUILTIN_NAMES } from "./constants.js";
-import { sanitizeIdentifier } from "./naming.js";
+import { emitNativePrimitiveAliases } from "./native-primitive-types.js";
 import { emitBuiltinClass, emitObjectClass } from "./emitters/class.js";
-import { emitGlobalEnums } from "./emitters/enum.js";
 import { buildVariantUnion, emitGlobalScope, emitGodotModuleNamedExports } from "./emitters/misc.js";
 
 export function generate(api: ApiData): string {
@@ -15,6 +14,8 @@ export function generate(api: ApiData): string {
 		knownClassNames: new Set(api.classes.map((c) => c.name)),
 		knownBuiltinNames: new Set(api.builtin_classes.map((b) => b.name)),
 		emittedBuiltinNames: new Set(api.builtin_classes.map((b) => b.name).filter((name) => !NON_CLASS_BUILTIN_NAMES.has(name))),
+		globalEnumNames: new Set(api.global_enums.map((enumDef) => enumDef.name)),
+		precision: api.header?.precision,
 	};
 
 	const lines: string[] = [];
@@ -24,23 +25,13 @@ export function generate(api: ApiData): string {
 	lines.push(`// api_version: ${resolveApiVersion(api)}`);
 	lines.push("");
 	lines.push("declare namespace godot {");
-	lines.push(`\ttype Variant = ${buildVariantUnion(ctx)};`);
-	lines.push("\tfunction load_type<T = any>(name: string): T;");
-	lines.push("");
-
-	for (const constant of api.global_constants) {
-		lines.push(`\tconst ${sanitizeIdentifier(constant.name)}: number;`);
-	}
-	if (api.global_constants.length > 0) {
-		lines.push("");
-	}
-
-	for (const line of emitGlobalEnums(api.global_enums)) {
+	for (const line of emitNativePrimitiveAliases(ctx.precision)) {
 		lines.push(`\t${line}`);
 	}
-	if (api.global_enums.length > 0) {
-		lines.push("");
-	}
+	lines.push("");
+	lines.push(`\ttype Variant = ${buildVariantUnion(ctx)};`);
+	lines.push("\tfunction load_type<T = any>(name: String): T;");
+	lines.push("");
 
 	for (const line of emitGlobalScope(api, ctx)) {
 		lines.push(`\t${line}`);
@@ -66,7 +57,7 @@ export function generate(api: ApiData): string {
 
 	lines.push("}");
 	lines.push("");
-	lines.push("declare function load_type<T = any>(name: string): T;");
+	lines.push("declare function load_type<T = any>(name: godot.String): T;");
 	lines.push("");
 	lines.push('declare module "godot" {');
 	lines.push("\texport const load_type: typeof globalThis.load_type;");

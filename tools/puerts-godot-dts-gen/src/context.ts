@@ -5,4 +5,6 @@ export type Context = {
 	knownClassNames: Set<string>;
 	knownBuiltinNames: Set<string>;
 	emittedBuiltinNames: Set<string>;
+	globalEnumNames: Set<string>;
+	precision?: string;
 };
