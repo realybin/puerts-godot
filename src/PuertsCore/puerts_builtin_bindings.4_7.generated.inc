@@ -1150,6 +1150,18 @@ inline bool basis_op_in_11_generated(const godot::Basis &left, const godot::Dict
 inline bool basis_op_in_12_generated(const godot::Basis &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Basis basis_identity_constant_generated() {
+	return { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+}
+inline godot::Basis basis_flip_x_constant_generated() {
+	return { -1, 0, 0, 0, 1, 0, 0, 0, 1 };
+}
+inline godot::Basis basis_flip_y_constant_generated() {
+	return { 1, 0, 0, 0, -1, 0, 0, 0, 1 };
+}
+inline godot::Basis basis_flip_z_constant_generated() {
+	return { 1, 0, 0, 0, 1, 0, 0, 0, -1 };
+}
 inline void register_basis_type_generated() {
 	puerts::define_class<godot::Basis>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&basis_op_eq_0_generated>(), puerts::make_overload<&basis_op_eq_8_generated>()))
@@ -1158,6 +1170,10 @@ inline void register_basis_type_generated() {
 			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&basis_op_mul_3_generated>(), puerts::make_overload<&basis_op_mul_5_generated>(), puerts::make_overload<&basis_op_mul_7_generated>(), puerts::make_overload<&basis_op_mul_10_generated>()))
 			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&basis_op_div_4_generated>(), puerts::make_overload<&basis_op_div_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&basis_op_in_11_generated>(), puerts::make_overload<&basis_op_in_12_generated>()))
+			.static_property("IDENTITY", puerts::make_value_constant<&basis_identity_constant_generated>())
+			.static_property("FLIP_X", puerts::make_value_constant<&basis_flip_x_constant_generated>())
+			.static_property("FLIP_Y", puerts::make_value_constant<&basis_flip_y_constant_generated>())
+			.static_property("FLIP_Z", puerts::make_value_constant<&basis_flip_z_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Basis>(),
 					puerts::make_constructor_overload<godot::Basis, const godot::Basis &>(),
@@ -1303,6 +1319,444 @@ inline bool color_op_in_16_generated(const godot::Color &left, const godot::Arra
 inline bool color_op_in_17_generated(const godot::Color &left, const godot::PackedColorArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Color color_alice_blue_constant_generated() {
+	return { 0.9411765, 0.972549, 1, 1 };
+}
+inline godot::Color color_antique_white_constant_generated() {
+	return { 0.98039216, 0.92156863, 0.84313726, 1 };
+}
+inline godot::Color color_aqua_constant_generated() {
+	return { 0, 1, 1, 1 };
+}
+inline godot::Color color_aquamarine_constant_generated() {
+	return { 0.49803922, 1, 0.83137256, 1 };
+}
+inline godot::Color color_azure_constant_generated() {
+	return { 0.9411765, 1, 1, 1 };
+}
+inline godot::Color color_beige_constant_generated() {
+	return { 0.9607843, 0.9607843, 0.8627451, 1 };
+}
+inline godot::Color color_bisque_constant_generated() {
+	return { 1, 0.89411765, 0.76862746, 1 };
+}
+inline godot::Color color_black_constant_generated() {
+	return { 0, 0, 0, 1 };
+}
+inline godot::Color color_blanched_almond_constant_generated() {
+	return { 1, 0.92156863, 0.8039216, 1 };
+}
+inline godot::Color color_blue_constant_generated() {
+	return { 0, 0, 1, 1 };
+}
+inline godot::Color color_blue_violet_constant_generated() {
+	return { 0.5411765, 0.16862746, 0.8862745, 1 };
+}
+inline godot::Color color_brown_constant_generated() {
+	return { 0.64705884, 0.16470589, 0.16470589, 1 };
+}
+inline godot::Color color_burlywood_constant_generated() {
+	return { 0.87058824, 0.72156864, 0.5294118, 1 };
+}
+inline godot::Color color_cadet_blue_constant_generated() {
+	return { 0.37254903, 0.61960787, 0.627451, 1 };
+}
+inline godot::Color color_chartreuse_constant_generated() {
+	return { 0.49803922, 1, 0, 1 };
+}
+inline godot::Color color_chocolate_constant_generated() {
+	return { 0.8235294, 0.4117647, 0.11764706, 1 };
+}
+inline godot::Color color_coral_constant_generated() {
+	return { 1, 0.49803922, 0.3137255, 1 };
+}
+inline godot::Color color_cornflower_blue_constant_generated() {
+	return { 0.39215687, 0.58431375, 0.92941177, 1 };
+}
+inline godot::Color color_cornsilk_constant_generated() {
+	return { 1, 0.972549, 0.8627451, 1 };
+}
+inline godot::Color color_crimson_constant_generated() {
+	return { 0.8627451, 0.078431375, 0.23529412, 1 };
+}
+inline godot::Color color_cyan_constant_generated() {
+	return { 0, 1, 1, 1 };
+}
+inline godot::Color color_dark_blue_constant_generated() {
+	return { 0, 0, 0.54509807, 1 };
+}
+inline godot::Color color_dark_cyan_constant_generated() {
+	return { 0, 0.54509807, 0.54509807, 1 };
+}
+inline godot::Color color_dark_goldenrod_constant_generated() {
+	return { 0.72156864, 0.5254902, 0.043137256, 1 };
+}
+inline godot::Color color_dark_gray_constant_generated() {
+	return { 0.6627451, 0.6627451, 0.6627451, 1 };
+}
+inline godot::Color color_dark_green_constant_generated() {
+	return { 0, 0.39215687, 0, 1 };
+}
+inline godot::Color color_dark_khaki_constant_generated() {
+	return { 0.7411765, 0.7176471, 0.41960785, 1 };
+}
+inline godot::Color color_dark_magenta_constant_generated() {
+	return { 0.54509807, 0, 0.54509807, 1 };
+}
+inline godot::Color color_dark_olive_green_constant_generated() {
+	return { 0.33333334, 0.41960785, 0.18431373, 1 };
+}
+inline godot::Color color_dark_orange_constant_generated() {
+	return { 1, 0.54901963, 0, 1 };
+}
+inline godot::Color color_dark_orchid_constant_generated() {
+	return { 0.6, 0.19607843, 0.8, 1 };
+}
+inline godot::Color color_dark_red_constant_generated() {
+	return { 0.54509807, 0, 0, 1 };
+}
+inline godot::Color color_dark_salmon_constant_generated() {
+	return { 0.9137255, 0.5882353, 0.47843137, 1 };
+}
+inline godot::Color color_dark_sea_green_constant_generated() {
+	return { 0.56078434, 0.7372549, 0.56078434, 1 };
+}
+inline godot::Color color_dark_slate_blue_constant_generated() {
+	return { 0.28235295, 0.23921569, 0.54509807, 1 };
+}
+inline godot::Color color_dark_slate_gray_constant_generated() {
+	return { 0.18431373, 0.30980393, 0.30980393, 1 };
+}
+inline godot::Color color_dark_turquoise_constant_generated() {
+	return { 0, 0.80784315, 0.81960785, 1 };
+}
+inline godot::Color color_dark_violet_constant_generated() {
+	return { 0.5803922, 0, 0.827451, 1 };
+}
+inline godot::Color color_deep_pink_constant_generated() {
+	return { 1, 0.078431375, 0.5764706, 1 };
+}
+inline godot::Color color_deep_sky_blue_constant_generated() {
+	return { 0, 0.7490196, 1, 1 };
+}
+inline godot::Color color_dim_gray_constant_generated() {
+	return { 0.4117647, 0.4117647, 0.4117647, 1 };
+}
+inline godot::Color color_dodger_blue_constant_generated() {
+	return { 0.11764706, 0.5647059, 1, 1 };
+}
+inline godot::Color color_firebrick_constant_generated() {
+	return { 0.69803923, 0.13333334, 0.13333334, 1 };
+}
+inline godot::Color color_floral_white_constant_generated() {
+	return { 1, 0.98039216, 0.9411765, 1 };
+}
+inline godot::Color color_forest_green_constant_generated() {
+	return { 0.13333334, 0.54509807, 0.13333334, 1 };
+}
+inline godot::Color color_fuchsia_constant_generated() {
+	return { 1, 0, 1, 1 };
+}
+inline godot::Color color_gainsboro_constant_generated() {
+	return { 0.8627451, 0.8627451, 0.8627451, 1 };
+}
+inline godot::Color color_ghost_white_constant_generated() {
+	return { 0.972549, 0.972549, 1, 1 };
+}
+inline godot::Color color_gold_constant_generated() {
+	return { 1, 0.84313726, 0, 1 };
+}
+inline godot::Color color_goldenrod_constant_generated() {
+	return { 0.85490197, 0.64705884, 0.1254902, 1 };
+}
+inline godot::Color color_gray_constant_generated() {
+	return { 0.74509805, 0.74509805, 0.74509805, 1 };
+}
+inline godot::Color color_green_constant_generated() {
+	return { 0, 1, 0, 1 };
+}
+inline godot::Color color_green_yellow_constant_generated() {
+	return { 0.6784314, 1, 0.18431373, 1 };
+}
+inline godot::Color color_honeydew_constant_generated() {
+	return { 0.9411765, 1, 0.9411765, 1 };
+}
+inline godot::Color color_hot_pink_constant_generated() {
+	return { 1, 0.4117647, 0.7058824, 1 };
+}
+inline godot::Color color_indian_red_constant_generated() {
+	return { 0.8039216, 0.36078432, 0.36078432, 1 };
+}
+inline godot::Color color_indigo_constant_generated() {
+	return { 0.29411766, 0, 0.50980395, 1 };
+}
+inline godot::Color color_ivory_constant_generated() {
+	return { 1, 1, 0.9411765, 1 };
+}
+inline godot::Color color_khaki_constant_generated() {
+	return { 0.9411765, 0.9019608, 0.54901963, 1 };
+}
+inline godot::Color color_lavender_constant_generated() {
+	return { 0.9019608, 0.9019608, 0.98039216, 1 };
+}
+inline godot::Color color_lavender_blush_constant_generated() {
+	return { 1, 0.9411765, 0.9607843, 1 };
+}
+inline godot::Color color_lawn_green_constant_generated() {
+	return { 0.4862745, 0.9882353, 0, 1 };
+}
+inline godot::Color color_lemon_chiffon_constant_generated() {
+	return { 1, 0.98039216, 0.8039216, 1 };
+}
+inline godot::Color color_light_blue_constant_generated() {
+	return { 0.6784314, 0.84705883, 0.9019608, 1 };
+}
+inline godot::Color color_light_coral_constant_generated() {
+	return { 0.9411765, 0.5019608, 0.5019608, 1 };
+}
+inline godot::Color color_light_cyan_constant_generated() {
+	return { 0.8784314, 1, 1, 1 };
+}
+inline godot::Color color_light_goldenrod_constant_generated() {
+	return { 0.98039216, 0.98039216, 0.8235294, 1 };
+}
+inline godot::Color color_light_gray_constant_generated() {
+	return { 0.827451, 0.827451, 0.827451, 1 };
+}
+inline godot::Color color_light_green_constant_generated() {
+	return { 0.5647059, 0.93333334, 0.5647059, 1 };
+}
+inline godot::Color color_light_pink_constant_generated() {
+	return { 1, 0.7137255, 0.75686276, 1 };
+}
+inline godot::Color color_light_salmon_constant_generated() {
+	return { 1, 0.627451, 0.47843137, 1 };
+}
+inline godot::Color color_light_sea_green_constant_generated() {
+	return { 0.1254902, 0.69803923, 0.6666667, 1 };
+}
+inline godot::Color color_light_sky_blue_constant_generated() {
+	return { 0.5294118, 0.80784315, 0.98039216, 1 };
+}
+inline godot::Color color_light_slate_gray_constant_generated() {
+	return { 0.46666667, 0.53333336, 0.6, 1 };
+}
+inline godot::Color color_light_steel_blue_constant_generated() {
+	return { 0.6901961, 0.76862746, 0.87058824, 1 };
+}
+inline godot::Color color_light_yellow_constant_generated() {
+	return { 1, 1, 0.8784314, 1 };
+}
+inline godot::Color color_lime_constant_generated() {
+	return { 0, 1, 0, 1 };
+}
+inline godot::Color color_lime_green_constant_generated() {
+	return { 0.19607843, 0.8039216, 0.19607843, 1 };
+}
+inline godot::Color color_linen_constant_generated() {
+	return { 0.98039216, 0.9411765, 0.9019608, 1 };
+}
+inline godot::Color color_magenta_constant_generated() {
+	return { 1, 0, 1, 1 };
+}
+inline godot::Color color_maroon_constant_generated() {
+	return { 0.6901961, 0.1882353, 0.3764706, 1 };
+}
+inline godot::Color color_medium_aquamarine_constant_generated() {
+	return { 0.4, 0.8039216, 0.6666667, 1 };
+}
+inline godot::Color color_medium_blue_constant_generated() {
+	return { 0, 0, 0.8039216, 1 };
+}
+inline godot::Color color_medium_orchid_constant_generated() {
+	return { 0.7294118, 0.33333334, 0.827451, 1 };
+}
+inline godot::Color color_medium_purple_constant_generated() {
+	return { 0.5764706, 0.4392157, 0.85882354, 1 };
+}
+inline godot::Color color_medium_sea_green_constant_generated() {
+	return { 0.23529412, 0.7019608, 0.44313726, 1 };
+}
+inline godot::Color color_medium_slate_blue_constant_generated() {
+	return { 0.48235294, 0.40784314, 0.93333334, 1 };
+}
+inline godot::Color color_medium_spring_green_constant_generated() {
+	return { 0, 0.98039216, 0.6039216, 1 };
+}
+inline godot::Color color_medium_turquoise_constant_generated() {
+	return { 0.28235295, 0.81960785, 0.8, 1 };
+}
+inline godot::Color color_medium_violet_red_constant_generated() {
+	return { 0.78039217, 0.08235294, 0.52156866, 1 };
+}
+inline godot::Color color_midnight_blue_constant_generated() {
+	return { 0.09803922, 0.09803922, 0.4392157, 1 };
+}
+inline godot::Color color_mint_cream_constant_generated() {
+	return { 0.9607843, 1, 0.98039216, 1 };
+}
+inline godot::Color color_misty_rose_constant_generated() {
+	return { 1, 0.89411765, 0.88235295, 1 };
+}
+inline godot::Color color_moccasin_constant_generated() {
+	return { 1, 0.89411765, 0.70980394, 1 };
+}
+inline godot::Color color_navajo_white_constant_generated() {
+	return { 1, 0.87058824, 0.6784314, 1 };
+}
+inline godot::Color color_navy_blue_constant_generated() {
+	return { 0, 0, 0.5019608, 1 };
+}
+inline godot::Color color_old_lace_constant_generated() {
+	return { 0.99215686, 0.9607843, 0.9019608, 1 };
+}
+inline godot::Color color_olive_constant_generated() {
+	return { 0.5019608, 0.5019608, 0, 1 };
+}
+inline godot::Color color_olive_drab_constant_generated() {
+	return { 0.41960785, 0.5568628, 0.13725491, 1 };
+}
+inline godot::Color color_orange_constant_generated() {
+	return { 1, 0.64705884, 0, 1 };
+}
+inline godot::Color color_orange_red_constant_generated() {
+	return { 1, 0.27058825, 0, 1 };
+}
+inline godot::Color color_orchid_constant_generated() {
+	return { 0.85490197, 0.4392157, 0.8392157, 1 };
+}
+inline godot::Color color_pale_goldenrod_constant_generated() {
+	return { 0.93333334, 0.9098039, 0.6666667, 1 };
+}
+inline godot::Color color_pale_green_constant_generated() {
+	return { 0.59607846, 0.9843137, 0.59607846, 1 };
+}
+inline godot::Color color_pale_turquoise_constant_generated() {
+	return { 0.6862745, 0.93333334, 0.93333334, 1 };
+}
+inline godot::Color color_pale_violet_red_constant_generated() {
+	return { 0.85882354, 0.4392157, 0.5764706, 1 };
+}
+inline godot::Color color_papaya_whip_constant_generated() {
+	return { 1, 0.9372549, 0.8352941, 1 };
+}
+inline godot::Color color_peach_puff_constant_generated() {
+	return { 1, 0.85490197, 0.7254902, 1 };
+}
+inline godot::Color color_peru_constant_generated() {
+	return { 0.8039216, 0.52156866, 0.24705882, 1 };
+}
+inline godot::Color color_pink_constant_generated() {
+	return { 1, 0.7529412, 0.79607844, 1 };
+}
+inline godot::Color color_plum_constant_generated() {
+	return { 0.8666667, 0.627451, 0.8666667, 1 };
+}
+inline godot::Color color_powder_blue_constant_generated() {
+	return { 0.6901961, 0.8784314, 0.9019608, 1 };
+}
+inline godot::Color color_purple_constant_generated() {
+	return { 0.627451, 0.1254902, 0.9411765, 1 };
+}
+inline godot::Color color_rebecca_purple_constant_generated() {
+	return { 0.4, 0.2, 0.6, 1 };
+}
+inline godot::Color color_red_constant_generated() {
+	return { 1, 0, 0, 1 };
+}
+inline godot::Color color_rosy_brown_constant_generated() {
+	return { 0.7372549, 0.56078434, 0.56078434, 1 };
+}
+inline godot::Color color_royal_blue_constant_generated() {
+	return { 0.25490198, 0.4117647, 0.88235295, 1 };
+}
+inline godot::Color color_saddle_brown_constant_generated() {
+	return { 0.54509807, 0.27058825, 0.07450981, 1 };
+}
+inline godot::Color color_salmon_constant_generated() {
+	return { 0.98039216, 0.5019608, 0.44705883, 1 };
+}
+inline godot::Color color_sandy_brown_constant_generated() {
+	return { 0.95686275, 0.6431373, 0.3764706, 1 };
+}
+inline godot::Color color_sea_green_constant_generated() {
+	return { 0.18039216, 0.54509807, 0.34117648, 1 };
+}
+inline godot::Color color_seashell_constant_generated() {
+	return { 1, 0.9607843, 0.93333334, 1 };
+}
+inline godot::Color color_sienna_constant_generated() {
+	return { 0.627451, 0.32156864, 0.1764706, 1 };
+}
+inline godot::Color color_silver_constant_generated() {
+	return { 0.7529412, 0.7529412, 0.7529412, 1 };
+}
+inline godot::Color color_sky_blue_constant_generated() {
+	return { 0.5294118, 0.80784315, 0.92156863, 1 };
+}
+inline godot::Color color_slate_blue_constant_generated() {
+	return { 0.41568628, 0.3529412, 0.8039216, 1 };
+}
+inline godot::Color color_slate_gray_constant_generated() {
+	return { 0.4392157, 0.5019608, 0.5647059, 1 };
+}
+inline godot::Color color_snow_constant_generated() {
+	return { 1, 0.98039216, 0.98039216, 1 };
+}
+inline godot::Color color_spring_green_constant_generated() {
+	return { 0, 1, 0.49803922, 1 };
+}
+inline godot::Color color_steel_blue_constant_generated() {
+	return { 0.27450982, 0.50980395, 0.7058824, 1 };
+}
+inline godot::Color color_tan_constant_generated() {
+	return { 0.8235294, 0.7058824, 0.54901963, 1 };
+}
+inline godot::Color color_teal_constant_generated() {
+	return { 0, 0.5019608, 0.5019608, 1 };
+}
+inline godot::Color color_thistle_constant_generated() {
+	return { 0.84705883, 0.7490196, 0.84705883, 1 };
+}
+inline godot::Color color_tomato_constant_generated() {
+	return { 1, 0.3882353, 0.2784314, 1 };
+}
+inline godot::Color color_transparent_constant_generated() {
+	return { 1, 1, 1, 0 };
+}
+inline godot::Color color_turquoise_constant_generated() {
+	return { 0.2509804, 0.8784314, 0.8156863, 1 };
+}
+inline godot::Color color_violet_constant_generated() {
+	return { 0.93333334, 0.50980395, 0.93333334, 1 };
+}
+inline godot::Color color_web_gray_constant_generated() {
+	return { 0.5019608, 0.5019608, 0.5019608, 1 };
+}
+inline godot::Color color_web_green_constant_generated() {
+	return { 0, 0.5019608, 0, 1 };
+}
+inline godot::Color color_web_maroon_constant_generated() {
+	return { 0.5019608, 0, 0, 1 };
+}
+inline godot::Color color_web_purple_constant_generated() {
+	return { 0.5019608, 0, 0.5019608, 1 };
+}
+inline godot::Color color_wheat_constant_generated() {
+	return { 0.9607843, 0.87058824, 0.7019608, 1 };
+}
+inline godot::Color color_white_constant_generated() {
+	return { 1, 1, 1, 1 };
+}
+inline godot::Color color_white_smoke_constant_generated() {
+	return { 0.9607843, 0.9607843, 0.9607843, 1 };
+}
+inline godot::Color color_yellow_constant_generated() {
+	return { 1, 1, 0, 1 };
+}
+inline godot::Color color_yellow_green_constant_generated() {
+	return { 0.6039216, 0.8039216, 0.19607843, 1 };
+}
 inline void register_color_type_generated() {
 	puerts::define_class<godot::Color>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&color_op_eq_0_generated>(), puerts::make_overload<&color_op_eq_9_generated>()))
@@ -1315,6 +1769,152 @@ inline void register_color_type_generated() {
 			.function("op_Add", puerts::make_function<&color_op_add_11_generated>())
 			.function("op_Sub", puerts::make_function<&color_op_sub_12_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&color_op_in_15_generated>(), puerts::make_overload<&color_op_in_16_generated>(), puerts::make_overload<&color_op_in_17_generated>()))
+			.static_property("ALICE_BLUE", puerts::make_value_constant<&color_alice_blue_constant_generated>())
+			.static_property("ANTIQUE_WHITE", puerts::make_value_constant<&color_antique_white_constant_generated>())
+			.static_property("AQUA", puerts::make_value_constant<&color_aqua_constant_generated>())
+			.static_property("AQUAMARINE", puerts::make_value_constant<&color_aquamarine_constant_generated>())
+			.static_property("AZURE", puerts::make_value_constant<&color_azure_constant_generated>())
+			.static_property("BEIGE", puerts::make_value_constant<&color_beige_constant_generated>())
+			.static_property("BISQUE", puerts::make_value_constant<&color_bisque_constant_generated>())
+			.static_property("BLACK", puerts::make_value_constant<&color_black_constant_generated>())
+			.static_property("BLANCHED_ALMOND", puerts::make_value_constant<&color_blanched_almond_constant_generated>())
+			.static_property("BLUE", puerts::make_value_constant<&color_blue_constant_generated>())
+			.static_property("BLUE_VIOLET", puerts::make_value_constant<&color_blue_violet_constant_generated>())
+			.static_property("BROWN", puerts::make_value_constant<&color_brown_constant_generated>())
+			.static_property("BURLYWOOD", puerts::make_value_constant<&color_burlywood_constant_generated>())
+			.static_property("CADET_BLUE", puerts::make_value_constant<&color_cadet_blue_constant_generated>())
+			.static_property("CHARTREUSE", puerts::make_value_constant<&color_chartreuse_constant_generated>())
+			.static_property("CHOCOLATE", puerts::make_value_constant<&color_chocolate_constant_generated>())
+			.static_property("CORAL", puerts::make_value_constant<&color_coral_constant_generated>())
+			.static_property("CORNFLOWER_BLUE", puerts::make_value_constant<&color_cornflower_blue_constant_generated>())
+			.static_property("CORNSILK", puerts::make_value_constant<&color_cornsilk_constant_generated>())
+			.static_property("CRIMSON", puerts::make_value_constant<&color_crimson_constant_generated>())
+			.static_property("CYAN", puerts::make_value_constant<&color_cyan_constant_generated>())
+			.static_property("DARK_BLUE", puerts::make_value_constant<&color_dark_blue_constant_generated>())
+			.static_property("DARK_CYAN", puerts::make_value_constant<&color_dark_cyan_constant_generated>())
+			.static_property("DARK_GOLDENROD", puerts::make_value_constant<&color_dark_goldenrod_constant_generated>())
+			.static_property("DARK_GRAY", puerts::make_value_constant<&color_dark_gray_constant_generated>())
+			.static_property("DARK_GREEN", puerts::make_value_constant<&color_dark_green_constant_generated>())
+			.static_property("DARK_KHAKI", puerts::make_value_constant<&color_dark_khaki_constant_generated>())
+			.static_property("DARK_MAGENTA", puerts::make_value_constant<&color_dark_magenta_constant_generated>())
+			.static_property("DARK_OLIVE_GREEN", puerts::make_value_constant<&color_dark_olive_green_constant_generated>())
+			.static_property("DARK_ORANGE", puerts::make_value_constant<&color_dark_orange_constant_generated>())
+			.static_property("DARK_ORCHID", puerts::make_value_constant<&color_dark_orchid_constant_generated>())
+			.static_property("DARK_RED", puerts::make_value_constant<&color_dark_red_constant_generated>())
+			.static_property("DARK_SALMON", puerts::make_value_constant<&color_dark_salmon_constant_generated>())
+			.static_property("DARK_SEA_GREEN", puerts::make_value_constant<&color_dark_sea_green_constant_generated>())
+			.static_property("DARK_SLATE_BLUE", puerts::make_value_constant<&color_dark_slate_blue_constant_generated>())
+			.static_property("DARK_SLATE_GRAY", puerts::make_value_constant<&color_dark_slate_gray_constant_generated>())
+			.static_property("DARK_TURQUOISE", puerts::make_value_constant<&color_dark_turquoise_constant_generated>())
+			.static_property("DARK_VIOLET", puerts::make_value_constant<&color_dark_violet_constant_generated>())
+			.static_property("DEEP_PINK", puerts::make_value_constant<&color_deep_pink_constant_generated>())
+			.static_property("DEEP_SKY_BLUE", puerts::make_value_constant<&color_deep_sky_blue_constant_generated>())
+			.static_property("DIM_GRAY", puerts::make_value_constant<&color_dim_gray_constant_generated>())
+			.static_property("DODGER_BLUE", puerts::make_value_constant<&color_dodger_blue_constant_generated>())
+			.static_property("FIREBRICK", puerts::make_value_constant<&color_firebrick_constant_generated>())
+			.static_property("FLORAL_WHITE", puerts::make_value_constant<&color_floral_white_constant_generated>())
+			.static_property("FOREST_GREEN", puerts::make_value_constant<&color_forest_green_constant_generated>())
+			.static_property("FUCHSIA", puerts::make_value_constant<&color_fuchsia_constant_generated>())
+			.static_property("GAINSBORO", puerts::make_value_constant<&color_gainsboro_constant_generated>())
+			.static_property("GHOST_WHITE", puerts::make_value_constant<&color_ghost_white_constant_generated>())
+			.static_property("GOLD", puerts::make_value_constant<&color_gold_constant_generated>())
+			.static_property("GOLDENROD", puerts::make_value_constant<&color_goldenrod_constant_generated>())
+			.static_property("GRAY", puerts::make_value_constant<&color_gray_constant_generated>())
+			.static_property("GREEN", puerts::make_value_constant<&color_green_constant_generated>())
+			.static_property("GREEN_YELLOW", puerts::make_value_constant<&color_green_yellow_constant_generated>())
+			.static_property("HONEYDEW", puerts::make_value_constant<&color_honeydew_constant_generated>())
+			.static_property("HOT_PINK", puerts::make_value_constant<&color_hot_pink_constant_generated>())
+			.static_property("INDIAN_RED", puerts::make_value_constant<&color_indian_red_constant_generated>())
+			.static_property("INDIGO", puerts::make_value_constant<&color_indigo_constant_generated>())
+			.static_property("IVORY", puerts::make_value_constant<&color_ivory_constant_generated>())
+			.static_property("KHAKI", puerts::make_value_constant<&color_khaki_constant_generated>())
+			.static_property("LAVENDER", puerts::make_value_constant<&color_lavender_constant_generated>())
+			.static_property("LAVENDER_BLUSH", puerts::make_value_constant<&color_lavender_blush_constant_generated>())
+			.static_property("LAWN_GREEN", puerts::make_value_constant<&color_lawn_green_constant_generated>())
+			.static_property("LEMON_CHIFFON", puerts::make_value_constant<&color_lemon_chiffon_constant_generated>())
+			.static_property("LIGHT_BLUE", puerts::make_value_constant<&color_light_blue_constant_generated>())
+			.static_property("LIGHT_CORAL", puerts::make_value_constant<&color_light_coral_constant_generated>())
+			.static_property("LIGHT_CYAN", puerts::make_value_constant<&color_light_cyan_constant_generated>())
+			.static_property("LIGHT_GOLDENROD", puerts::make_value_constant<&color_light_goldenrod_constant_generated>())
+			.static_property("LIGHT_GRAY", puerts::make_value_constant<&color_light_gray_constant_generated>())
+			.static_property("LIGHT_GREEN", puerts::make_value_constant<&color_light_green_constant_generated>())
+			.static_property("LIGHT_PINK", puerts::make_value_constant<&color_light_pink_constant_generated>())
+			.static_property("LIGHT_SALMON", puerts::make_value_constant<&color_light_salmon_constant_generated>())
+			.static_property("LIGHT_SEA_GREEN", puerts::make_value_constant<&color_light_sea_green_constant_generated>())
+			.static_property("LIGHT_SKY_BLUE", puerts::make_value_constant<&color_light_sky_blue_constant_generated>())
+			.static_property("LIGHT_SLATE_GRAY", puerts::make_value_constant<&color_light_slate_gray_constant_generated>())
+			.static_property("LIGHT_STEEL_BLUE", puerts::make_value_constant<&color_light_steel_blue_constant_generated>())
+			.static_property("LIGHT_YELLOW", puerts::make_value_constant<&color_light_yellow_constant_generated>())
+			.static_property("LIME", puerts::make_value_constant<&color_lime_constant_generated>())
+			.static_property("LIME_GREEN", puerts::make_value_constant<&color_lime_green_constant_generated>())
+			.static_property("LINEN", puerts::make_value_constant<&color_linen_constant_generated>())
+			.static_property("MAGENTA", puerts::make_value_constant<&color_magenta_constant_generated>())
+			.static_property("MAROON", puerts::make_value_constant<&color_maroon_constant_generated>())
+			.static_property("MEDIUM_AQUAMARINE", puerts::make_value_constant<&color_medium_aquamarine_constant_generated>())
+			.static_property("MEDIUM_BLUE", puerts::make_value_constant<&color_medium_blue_constant_generated>())
+			.static_property("MEDIUM_ORCHID", puerts::make_value_constant<&color_medium_orchid_constant_generated>())
+			.static_property("MEDIUM_PURPLE", puerts::make_value_constant<&color_medium_purple_constant_generated>())
+			.static_property("MEDIUM_SEA_GREEN", puerts::make_value_constant<&color_medium_sea_green_constant_generated>())
+			.static_property("MEDIUM_SLATE_BLUE", puerts::make_value_constant<&color_medium_slate_blue_constant_generated>())
+			.static_property("MEDIUM_SPRING_GREEN", puerts::make_value_constant<&color_medium_spring_green_constant_generated>())
+			.static_property("MEDIUM_TURQUOISE", puerts::make_value_constant<&color_medium_turquoise_constant_generated>())
+			.static_property("MEDIUM_VIOLET_RED", puerts::make_value_constant<&color_medium_violet_red_constant_generated>())
+			.static_property("MIDNIGHT_BLUE", puerts::make_value_constant<&color_midnight_blue_constant_generated>())
+			.static_property("MINT_CREAM", puerts::make_value_constant<&color_mint_cream_constant_generated>())
+			.static_property("MISTY_ROSE", puerts::make_value_constant<&color_misty_rose_constant_generated>())
+			.static_property("MOCCASIN", puerts::make_value_constant<&color_moccasin_constant_generated>())
+			.static_property("NAVAJO_WHITE", puerts::make_value_constant<&color_navajo_white_constant_generated>())
+			.static_property("NAVY_BLUE", puerts::make_value_constant<&color_navy_blue_constant_generated>())
+			.static_property("OLD_LACE", puerts::make_value_constant<&color_old_lace_constant_generated>())
+			.static_property("OLIVE", puerts::make_value_constant<&color_olive_constant_generated>())
+			.static_property("OLIVE_DRAB", puerts::make_value_constant<&color_olive_drab_constant_generated>())
+			.static_property("ORANGE", puerts::make_value_constant<&color_orange_constant_generated>())
+			.static_property("ORANGE_RED", puerts::make_value_constant<&color_orange_red_constant_generated>())
+			.static_property("ORCHID", puerts::make_value_constant<&color_orchid_constant_generated>())
+			.static_property("PALE_GOLDENROD", puerts::make_value_constant<&color_pale_goldenrod_constant_generated>())
+			.static_property("PALE_GREEN", puerts::make_value_constant<&color_pale_green_constant_generated>())
+			.static_property("PALE_TURQUOISE", puerts::make_value_constant<&color_pale_turquoise_constant_generated>())
+			.static_property("PALE_VIOLET_RED", puerts::make_value_constant<&color_pale_violet_red_constant_generated>())
+			.static_property("PAPAYA_WHIP", puerts::make_value_constant<&color_papaya_whip_constant_generated>())
+			.static_property("PEACH_PUFF", puerts::make_value_constant<&color_peach_puff_constant_generated>())
+			.static_property("PERU", puerts::make_value_constant<&color_peru_constant_generated>())
+			.static_property("PINK", puerts::make_value_constant<&color_pink_constant_generated>())
+			.static_property("PLUM", puerts::make_value_constant<&color_plum_constant_generated>())
+			.static_property("POWDER_BLUE", puerts::make_value_constant<&color_powder_blue_constant_generated>())
+			.static_property("PURPLE", puerts::make_value_constant<&color_purple_constant_generated>())
+			.static_property("REBECCA_PURPLE", puerts::make_value_constant<&color_rebecca_purple_constant_generated>())
+			.static_property("RED", puerts::make_value_constant<&color_red_constant_generated>())
+			.static_property("ROSY_BROWN", puerts::make_value_constant<&color_rosy_brown_constant_generated>())
+			.static_property("ROYAL_BLUE", puerts::make_value_constant<&color_royal_blue_constant_generated>())
+			.static_property("SADDLE_BROWN", puerts::make_value_constant<&color_saddle_brown_constant_generated>())
+			.static_property("SALMON", puerts::make_value_constant<&color_salmon_constant_generated>())
+			.static_property("SANDY_BROWN", puerts::make_value_constant<&color_sandy_brown_constant_generated>())
+			.static_property("SEA_GREEN", puerts::make_value_constant<&color_sea_green_constant_generated>())
+			.static_property("SEASHELL", puerts::make_value_constant<&color_seashell_constant_generated>())
+			.static_property("SIENNA", puerts::make_value_constant<&color_sienna_constant_generated>())
+			.static_property("SILVER", puerts::make_value_constant<&color_silver_constant_generated>())
+			.static_property("SKY_BLUE", puerts::make_value_constant<&color_sky_blue_constant_generated>())
+			.static_property("SLATE_BLUE", puerts::make_value_constant<&color_slate_blue_constant_generated>())
+			.static_property("SLATE_GRAY", puerts::make_value_constant<&color_slate_gray_constant_generated>())
+			.static_property("SNOW", puerts::make_value_constant<&color_snow_constant_generated>())
+			.static_property("SPRING_GREEN", puerts::make_value_constant<&color_spring_green_constant_generated>())
+			.static_property("STEEL_BLUE", puerts::make_value_constant<&color_steel_blue_constant_generated>())
+			.static_property("TAN", puerts::make_value_constant<&color_tan_constant_generated>())
+			.static_property("TEAL", puerts::make_value_constant<&color_teal_constant_generated>())
+			.static_property("THISTLE", puerts::make_value_constant<&color_thistle_constant_generated>())
+			.static_property("TOMATO", puerts::make_value_constant<&color_tomato_constant_generated>())
+			.static_property("TRANSPARENT", puerts::make_value_constant<&color_transparent_constant_generated>())
+			.static_property("TURQUOISE", puerts::make_value_constant<&color_turquoise_constant_generated>())
+			.static_property("VIOLET", puerts::make_value_constant<&color_violet_constant_generated>())
+			.static_property("WEB_GRAY", puerts::make_value_constant<&color_web_gray_constant_generated>())
+			.static_property("WEB_GREEN", puerts::make_value_constant<&color_web_green_constant_generated>())
+			.static_property("WEB_MAROON", puerts::make_value_constant<&color_web_maroon_constant_generated>())
+			.static_property("WEB_PURPLE", puerts::make_value_constant<&color_web_purple_constant_generated>())
+			.static_property("WHEAT", puerts::make_value_constant<&color_wheat_constant_generated>())
+			.static_property("WHITE", puerts::make_value_constant<&color_white_constant_generated>())
+			.static_property("WHITE_SMOKE", puerts::make_value_constant<&color_white_smoke_constant_generated>())
+			.static_property("YELLOW", puerts::make_value_constant<&color_yellow_constant_generated>())
+			.static_property("YELLOW_GREEN", puerts::make_value_constant<&color_yellow_green_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Color>(),
 					puerts::make_constructor_overload<godot::Color, const godot::Color &>(),
@@ -2096,6 +2696,15 @@ inline bool plane_op_in_8_generated(const godot::Plane &left, const godot::Dicti
 inline bool plane_op_in_9_generated(const godot::Plane &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Plane plane_plane_yz_constant_generated() {
+	return { 1, 0, 0, 0 };
+}
+inline godot::Plane plane_plane_xz_constant_generated() {
+	return { 0, 1, 0, 0 };
+}
+inline godot::Plane plane_plane_xy_constant_generated() {
+	return { 0, 0, 1, 0 };
+}
 inline void register_plane_type_generated() {
 	puerts::define_class<godot::Plane>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&plane_op_eq_0_generated>(), puerts::make_overload<&plane_op_eq_5_generated>()))
@@ -2105,6 +2714,9 @@ inline void register_plane_type_generated() {
 			.function("op_Not", puerts::make_function<&plane_op_not_4_generated>())
 			.function("op_Mul", puerts::make_function<&plane_op_mul_7_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&plane_op_in_8_generated>(), puerts::make_overload<&plane_op_in_9_generated>()))
+			.static_property("PLANE_YZ", puerts::make_value_constant<&plane_plane_yz_constant_generated>())
+			.static_property("PLANE_XZ", puerts::make_value_constant<&plane_plane_xz_constant_generated>())
+			.static_property("PLANE_XY", puerts::make_value_constant<&plane_plane_xy_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Plane>(),
 					puerts::make_constructor_overload<godot::Plane, const godot::Plane &>(),
@@ -2158,6 +2770,12 @@ inline bool projection_op_in_7_generated(const godot::Projection &left, const go
 inline bool projection_op_in_8_generated(const godot::Projection &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Projection projection_identity_constant_generated() {
+	return { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+}
+inline godot::Projection projection_zero_constant_generated() {
+	return { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+}
 inline void register_projection_type_generated() {
 	puerts::define_class<godot::Projection>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&projection_op_eq_0_generated>(), puerts::make_overload<&projection_op_eq_4_generated>()))
@@ -2165,6 +2783,8 @@ inline void register_projection_type_generated() {
 			.function("op_Not", puerts::make_function<&projection_op_not_2_generated>())
 			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&projection_op_mul_3_generated>(), puerts::make_overload<&projection_op_mul_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&projection_op_in_7_generated>(), puerts::make_overload<&projection_op_in_8_generated>()))
+			.static_property("IDENTITY", puerts::make_value_constant<&projection_identity_constant_generated>())
+			.static_property("ZERO", puerts::make_value_constant<&projection_zero_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Projection>(),
 					puerts::make_constructor_overload<godot::Projection, const godot::Projection &>(),
@@ -2254,6 +2874,9 @@ inline bool quaternion_op_in_15_generated(const godot::Quaternion &left, const g
 inline bool quaternion_op_in_16_generated(const godot::Quaternion &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Quaternion quaternion_identity_constant_generated() {
+	return { 0, 0, 0, 1 };
+}
 inline void register_quaternion_type_generated() {
 	puerts::define_class<godot::Quaternion>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&quaternion_op_eq_0_generated>(), puerts::make_overload<&quaternion_op_eq_10_generated>()))
@@ -2266,6 +2889,7 @@ inline void register_quaternion_type_generated() {
 			.function("op_Add", puerts::make_function<&quaternion_op_add_12_generated>())
 			.function("op_Sub", puerts::make_function<&quaternion_op_sub_13_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&quaternion_op_in_15_generated>(), puerts::make_overload<&quaternion_op_in_16_generated>()))
+			.static_property("IDENTITY", puerts::make_value_constant<&quaternion_identity_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Quaternion>(),
 					puerts::make_constructor_overload<godot::Quaternion, const godot::Quaternion &>(),
@@ -2848,6 +3472,15 @@ inline bool transform2d_op_in_13_generated(const godot::Transform2D &left, const
 inline godot::PackedVector2Array transform2d_op_mul_14_generated(const godot::Transform2D &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::PackedVector2Array>(left, right);
 }
+inline godot::Transform2D transform2d_identity_constant_generated() {
+	return { 1, 0, 0, 1, 0, 0 };
+}
+inline godot::Transform2D transform2d_flip_x_constant_generated() {
+	return { -1, 0, 0, 1, 0, 0 };
+}
+inline godot::Transform2D transform2d_flip_y_constant_generated() {
+	return { 1, 0, 0, -1, 0, 0 };
+}
 inline void register_transform2d_type_generated() {
 	puerts::define_class<godot::Transform2D>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&transform2d_op_eq_0_generated>(), puerts::make_overload<&transform2d_op_eq_9_generated>()))
@@ -2856,6 +3489,9 @@ inline void register_transform2d_type_generated() {
 			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&transform2d_op_mul_3_generated>(), puerts::make_overload<&transform2d_op_mul_5_generated>(), puerts::make_overload<&transform2d_op_mul_7_generated>(), puerts::make_overload<&transform2d_op_mul_8_generated>(), puerts::make_overload<&transform2d_op_mul_11_generated>(), puerts::make_overload<&transform2d_op_mul_14_generated>()))
 			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&transform2d_op_div_4_generated>(), puerts::make_overload<&transform2d_op_div_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&transform2d_op_in_12_generated>(), puerts::make_overload<&transform2d_op_in_13_generated>()))
+			.static_property("IDENTITY", puerts::make_value_constant<&transform2d_identity_constant_generated>())
+			.static_property("FLIP_X", puerts::make_value_constant<&transform2d_flip_x_constant_generated>())
+			.static_property("FLIP_Y", puerts::make_value_constant<&transform2d_flip_y_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Transform2D>(),
 					puerts::make_constructor_overload<godot::Transform2D, const godot::Transform2D &>(),
@@ -2936,6 +3572,18 @@ inline bool transform3d_op_in_14_generated(const godot::Transform3D &left, const
 inline godot::PackedVector3Array transform3d_op_mul_15_generated(const godot::Transform3D &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::PackedVector3Array>(left, right);
 }
+inline godot::Transform3D transform3d_identity_constant_generated() {
+	return { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 };
+}
+inline godot::Transform3D transform3d_flip_x_constant_generated() {
+	return { -1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 };
+}
+inline godot::Transform3D transform3d_flip_y_constant_generated() {
+	return { 1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0 };
+}
+inline godot::Transform3D transform3d_flip_z_constant_generated() {
+	return { 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0 };
+}
 inline void register_transform3d_type_generated() {
 	puerts::define_class<godot::Transform3D>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&transform3d_op_eq_0_generated>(), puerts::make_overload<&transform3d_op_eq_10_generated>()))
@@ -2944,6 +3592,10 @@ inline void register_transform3d_type_generated() {
 			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&transform3d_op_mul_3_generated>(), puerts::make_overload<&transform3d_op_mul_5_generated>(), puerts::make_overload<&transform3d_op_mul_7_generated>(), puerts::make_overload<&transform3d_op_mul_8_generated>(), puerts::make_overload<&transform3d_op_mul_9_generated>(), puerts::make_overload<&transform3d_op_mul_12_generated>(), puerts::make_overload<&transform3d_op_mul_15_generated>()))
 			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&transform3d_op_div_4_generated>(), puerts::make_overload<&transform3d_op_div_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&transform3d_op_in_13_generated>(), puerts::make_overload<&transform3d_op_in_14_generated>()))
+			.static_property("IDENTITY", puerts::make_value_constant<&transform3d_identity_constant_generated>())
+			.static_property("FLIP_X", puerts::make_value_constant<&transform3d_flip_x_constant_generated>())
+			.static_property("FLIP_Y", puerts::make_value_constant<&transform3d_flip_y_constant_generated>())
+			.static_property("FLIP_Z", puerts::make_value_constant<&transform3d_flip_z_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Transform3D>(),
 					puerts::make_constructor_overload<godot::Transform3D, const godot::Transform3D &>(),
@@ -3036,6 +3688,27 @@ inline bool vector2_op_in_21_generated(const godot::Vector2 &left, const godot::
 inline bool vector2_op_in_22_generated(const godot::Vector2 &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Vector2 vector2_zero_constant_generated() {
+	return { 0, 0 };
+}
+inline godot::Vector2 vector2_one_constant_generated() {
+	return { 1, 1 };
+}
+inline godot::Vector2 vector2_inf_constant_generated() {
+	return { Math_INF, Math_INF };
+}
+inline godot::Vector2 vector2_left_constant_generated() {
+	return { -1, 0 };
+}
+inline godot::Vector2 vector2_right_constant_generated() {
+	return { 1, 0 };
+}
+inline godot::Vector2 vector2_up_constant_generated() {
+	return { 0, -1 };
+}
+inline godot::Vector2 vector2_down_constant_generated() {
+	return { 0, 1 };
+}
 inline void register_vector2_type_generated() {
 	puerts::define_class<godot::Vector2>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector2_op_eq_0_generated>(), puerts::make_overload<&vector2_op_eq_9_generated>()))
@@ -3052,6 +3725,13 @@ inline void register_vector2_type_generated() {
 			.function("op_Add", puerts::make_function<&vector2_op_add_15_generated>())
 			.function("op_Sub", puerts::make_function<&vector2_op_sub_16_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector2_op_in_20_generated>(), puerts::make_overload<&vector2_op_in_21_generated>(), puerts::make_overload<&vector2_op_in_22_generated>()))
+			.static_property("ZERO", puerts::make_value_constant<&vector2_zero_constant_generated>())
+			.static_property("ONE", puerts::make_value_constant<&vector2_one_constant_generated>())
+			.static_property("INF", puerts::make_value_constant<&vector2_inf_constant_generated>())
+			.static_property("LEFT", puerts::make_value_constant<&vector2_left_constant_generated>())
+			.static_property("RIGHT", puerts::make_value_constant<&vector2_right_constant_generated>())
+			.static_property("UP", puerts::make_value_constant<&vector2_up_constant_generated>())
+			.static_property("DOWN", puerts::make_value_constant<&vector2_down_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Vector2>(),
 					puerts::make_constructor_overload<godot::Vector2, const godot::Vector2 &>(),
@@ -3179,6 +3859,30 @@ inline bool vector2i_op_in_21_generated(const godot::Vector2i &left, const godot
 inline bool vector2i_op_in_22_generated(const godot::Vector2i &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Vector2i vector2i_zero_constant_generated() {
+	return { 0, 0 };
+}
+inline godot::Vector2i vector2i_one_constant_generated() {
+	return { 1, 1 };
+}
+inline godot::Vector2i vector2i_min_constant_generated() {
+	return { INT32_MIN, INT32_MIN };
+}
+inline godot::Vector2i vector2i_max_constant_generated() {
+	return { INT32_MAX, INT32_MAX };
+}
+inline godot::Vector2i vector2i_left_constant_generated() {
+	return { -1, 0 };
+}
+inline godot::Vector2i vector2i_right_constant_generated() {
+	return { 1, 0 };
+}
+inline godot::Vector2i vector2i_up_constant_generated() {
+	return { 0, -1 };
+}
+inline godot::Vector2i vector2i_down_constant_generated() {
+	return { 0, 1 };
+}
 inline void register_vector2i_type_generated() {
 	puerts::define_class<godot::Vector2i>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector2i_op_eq_0_generated>(), puerts::make_overload<&vector2i_op_eq_10_generated>()))
@@ -3196,6 +3900,14 @@ inline void register_vector2i_type_generated() {
 			.function("op_Add", puerts::make_function<&vector2i_op_add_16_generated>())
 			.function("op_Sub", puerts::make_function<&vector2i_op_sub_17_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector2i_op_in_21_generated>(), puerts::make_overload<&vector2i_op_in_22_generated>()))
+			.static_property("ZERO", puerts::make_value_constant<&vector2i_zero_constant_generated>())
+			.static_property("ONE", puerts::make_value_constant<&vector2i_one_constant_generated>())
+			.static_property("MIN", puerts::make_value_constant<&vector2i_min_constant_generated>())
+			.static_property("MAX", puerts::make_value_constant<&vector2i_max_constant_generated>())
+			.static_property("LEFT", puerts::make_value_constant<&vector2i_left_constant_generated>())
+			.static_property("RIGHT", puerts::make_value_constant<&vector2i_right_constant_generated>())
+			.static_property("UP", puerts::make_value_constant<&vector2i_up_constant_generated>())
+			.static_property("DOWN", puerts::make_value_constant<&vector2i_down_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Vector2i>(),
 					puerts::make_constructor_overload<godot::Vector2i, const godot::Vector2i &>(),
@@ -3298,6 +4010,51 @@ inline bool vector3_op_in_23_generated(const godot::Vector3 &left, const godot::
 inline bool vector3_op_in_24_generated(const godot::Vector3 &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Vector3 vector3_zero_constant_generated() {
+	return { 0, 0, 0 };
+}
+inline godot::Vector3 vector3_one_constant_generated() {
+	return { 1, 1, 1 };
+}
+inline godot::Vector3 vector3_inf_constant_generated() {
+	return { Math_INF, Math_INF, Math_INF };
+}
+inline godot::Vector3 vector3_left_constant_generated() {
+	return { -1, 0, 0 };
+}
+inline godot::Vector3 vector3_right_constant_generated() {
+	return { 1, 0, 0 };
+}
+inline godot::Vector3 vector3_up_constant_generated() {
+	return { 0, 1, 0 };
+}
+inline godot::Vector3 vector3_down_constant_generated() {
+	return { 0, -1, 0 };
+}
+inline godot::Vector3 vector3_forward_constant_generated() {
+	return { 0, 0, -1 };
+}
+inline godot::Vector3 vector3_back_constant_generated() {
+	return { 0, 0, 1 };
+}
+inline godot::Vector3 vector3_model_left_constant_generated() {
+	return { 1, 0, 0 };
+}
+inline godot::Vector3 vector3_model_right_constant_generated() {
+	return { -1, 0, 0 };
+}
+inline godot::Vector3 vector3_model_top_constant_generated() {
+	return { 0, 1, 0 };
+}
+inline godot::Vector3 vector3_model_bottom_constant_generated() {
+	return { 0, -1, 0 };
+}
+inline godot::Vector3 vector3_model_front_constant_generated() {
+	return { 0, 0, 1 };
+}
+inline godot::Vector3 vector3_model_rear_constant_generated() {
+	return { 0, 0, -1 };
+}
 inline void register_vector3_type_generated() {
 	puerts::define_class<godot::Vector3>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector3_op_eq_0_generated>(), puerts::make_overload<&vector3_op_eq_9_generated>()))
@@ -3314,6 +4071,21 @@ inline void register_vector3_type_generated() {
 			.function("op_Add", puerts::make_function<&vector3_op_add_15_generated>())
 			.function("op_Sub", puerts::make_function<&vector3_op_sub_16_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector3_op_in_22_generated>(), puerts::make_overload<&vector3_op_in_23_generated>(), puerts::make_overload<&vector3_op_in_24_generated>()))
+			.static_property("ZERO", puerts::make_value_constant<&vector3_zero_constant_generated>())
+			.static_property("ONE", puerts::make_value_constant<&vector3_one_constant_generated>())
+			.static_property("INF", puerts::make_value_constant<&vector3_inf_constant_generated>())
+			.static_property("LEFT", puerts::make_value_constant<&vector3_left_constant_generated>())
+			.static_property("RIGHT", puerts::make_value_constant<&vector3_right_constant_generated>())
+			.static_property("UP", puerts::make_value_constant<&vector3_up_constant_generated>())
+			.static_property("DOWN", puerts::make_value_constant<&vector3_down_constant_generated>())
+			.static_property("FORWARD", puerts::make_value_constant<&vector3_forward_constant_generated>())
+			.static_property("BACK", puerts::make_value_constant<&vector3_back_constant_generated>())
+			.static_property("MODEL_LEFT", puerts::make_value_constant<&vector3_model_left_constant_generated>())
+			.static_property("MODEL_RIGHT", puerts::make_value_constant<&vector3_model_right_constant_generated>())
+			.static_property("MODEL_TOP", puerts::make_value_constant<&vector3_model_top_constant_generated>())
+			.static_property("MODEL_BOTTOM", puerts::make_value_constant<&vector3_model_bottom_constant_generated>())
+			.static_property("MODEL_FRONT", puerts::make_value_constant<&vector3_model_front_constant_generated>())
+			.static_property("MODEL_REAR", puerts::make_value_constant<&vector3_model_rear_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Vector3>(),
 					puerts::make_constructor_overload<godot::Vector3, const godot::Vector3 &>(),
@@ -3442,6 +4214,36 @@ inline bool vector3i_op_in_21_generated(const godot::Vector3i &left, const godot
 inline bool vector3i_op_in_22_generated(const godot::Vector3i &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Vector3i vector3i_zero_constant_generated() {
+	return { 0, 0, 0 };
+}
+inline godot::Vector3i vector3i_one_constant_generated() {
+	return { 1, 1, 1 };
+}
+inline godot::Vector3i vector3i_min_constant_generated() {
+	return { INT32_MIN, INT32_MIN, INT32_MIN };
+}
+inline godot::Vector3i vector3i_max_constant_generated() {
+	return { INT32_MAX, INT32_MAX, INT32_MAX };
+}
+inline godot::Vector3i vector3i_left_constant_generated() {
+	return { -1, 0, 0 };
+}
+inline godot::Vector3i vector3i_right_constant_generated() {
+	return { 1, 0, 0 };
+}
+inline godot::Vector3i vector3i_up_constant_generated() {
+	return { 0, 1, 0 };
+}
+inline godot::Vector3i vector3i_down_constant_generated() {
+	return { 0, -1, 0 };
+}
+inline godot::Vector3i vector3i_forward_constant_generated() {
+	return { 0, 0, -1 };
+}
+inline godot::Vector3i vector3i_back_constant_generated() {
+	return { 0, 0, 1 };
+}
 inline void register_vector3i_type_generated() {
 	puerts::define_class<godot::Vector3i>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector3i_op_eq_0_generated>(), puerts::make_overload<&vector3i_op_eq_10_generated>()))
@@ -3459,6 +4261,16 @@ inline void register_vector3i_type_generated() {
 			.function("op_Add", puerts::make_function<&vector3i_op_add_16_generated>())
 			.function("op_Sub", puerts::make_function<&vector3i_op_sub_17_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector3i_op_in_21_generated>(), puerts::make_overload<&vector3i_op_in_22_generated>()))
+			.static_property("ZERO", puerts::make_value_constant<&vector3i_zero_constant_generated>())
+			.static_property("ONE", puerts::make_value_constant<&vector3i_one_constant_generated>())
+			.static_property("MIN", puerts::make_value_constant<&vector3i_min_constant_generated>())
+			.static_property("MAX", puerts::make_value_constant<&vector3i_max_constant_generated>())
+			.static_property("LEFT", puerts::make_value_constant<&vector3i_left_constant_generated>())
+			.static_property("RIGHT", puerts::make_value_constant<&vector3i_right_constant_generated>())
+			.static_property("UP", puerts::make_value_constant<&vector3i_up_constant_generated>())
+			.static_property("DOWN", puerts::make_value_constant<&vector3i_down_constant_generated>())
+			.static_property("FORWARD", puerts::make_value_constant<&vector3i_forward_constant_generated>())
+			.static_property("BACK", puerts::make_value_constant<&vector3i_back_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Vector3i>(),
 					puerts::make_constructor_overload<godot::Vector3i, const godot::Vector3i &>(),
@@ -3555,6 +4367,15 @@ inline bool vector4_op_in_21_generated(const godot::Vector4 &left, const godot::
 inline bool vector4_op_in_22_generated(const godot::Vector4 &left, const godot::PackedVector4Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Vector4 vector4_zero_constant_generated() {
+	return { 0, 0, 0, 0 };
+}
+inline godot::Vector4 vector4_one_constant_generated() {
+	return { 1, 1, 1, 1 };
+}
+inline godot::Vector4 vector4_inf_constant_generated() {
+	return { Math_INF, Math_INF, Math_INF, Math_INF };
+}
 inline void register_vector4_type_generated() {
 	puerts::define_class<godot::Vector4>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector4_op_eq_0_generated>(), puerts::make_overload<&vector4_op_eq_9_generated>()))
@@ -3571,6 +4392,9 @@ inline void register_vector4_type_generated() {
 			.function("op_Add", puerts::make_function<&vector4_op_add_15_generated>())
 			.function("op_Sub", puerts::make_function<&vector4_op_sub_16_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector4_op_in_20_generated>(), puerts::make_overload<&vector4_op_in_21_generated>(), puerts::make_overload<&vector4_op_in_22_generated>()))
+			.static_property("ZERO", puerts::make_value_constant<&vector4_zero_constant_generated>())
+			.static_property("ONE", puerts::make_value_constant<&vector4_one_constant_generated>())
+			.static_property("INF", puerts::make_value_constant<&vector4_inf_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Vector4>(),
 					puerts::make_constructor_overload<godot::Vector4, const godot::Vector4 &>(),
@@ -3684,6 +4508,18 @@ inline bool vector4i_op_in_21_generated(const godot::Vector4i &left, const godot
 inline bool vector4i_op_in_22_generated(const godot::Vector4i &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline godot::Vector4i vector4i_zero_constant_generated() {
+	return { 0, 0, 0, 0 };
+}
+inline godot::Vector4i vector4i_one_constant_generated() {
+	return { 1, 1, 1, 1 };
+}
+inline godot::Vector4i vector4i_min_constant_generated() {
+	return { INT32_MIN, INT32_MIN, INT32_MIN, INT32_MIN };
+}
+inline godot::Vector4i vector4i_max_constant_generated() {
+	return { INT32_MAX, INT32_MAX, INT32_MAX, INT32_MAX };
+}
 inline void register_vector4i_type_generated() {
 	puerts::define_class<godot::Vector4i>()
 			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector4i_op_eq_0_generated>(), puerts::make_overload<&vector4i_op_eq_10_generated>()))
@@ -3701,6 +4537,10 @@ inline void register_vector4i_type_generated() {
 			.function("op_Add", puerts::make_function<&vector4i_op_add_16_generated>())
 			.function("op_Sub", puerts::make_function<&vector4i_op_sub_17_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector4i_op_in_21_generated>(), puerts::make_overload<&vector4i_op_in_22_generated>()))
+			.static_property("ZERO", puerts::make_value_constant<&vector4i_zero_constant_generated>())
+			.static_property("ONE", puerts::make_value_constant<&vector4i_one_constant_generated>())
+			.static_property("MIN", puerts::make_value_constant<&vector4i_min_constant_generated>())
+			.static_property("MAX", puerts::make_value_constant<&vector4i_max_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Vector4i>(),
 					puerts::make_constructor_overload<godot::Vector4i, const godot::Vector4i &>(),

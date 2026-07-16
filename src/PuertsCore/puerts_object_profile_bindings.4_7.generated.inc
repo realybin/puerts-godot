@@ -32,8 +32,20 @@ inline constexpr char puerts_vararg_method_name_object_call[] = "call";
 inline constexpr char puerts_vararg_method_name_object_call_deferred[] = "call_deferred";
 inline constexpr char puerts_signal_name_object_script_changed[] = "script_changed";
 inline constexpr char puerts_signal_name_object_property_list_changed[] = "property_list_changed";
+inline int64_t object_notification_postinitialize_constant_generated() {
+	return 0;
+}
+inline int64_t object_notification_predelete_constant_generated() {
+	return 1;
+}
+inline int64_t object_notification_extension_reloaded_constant_generated() {
+	return 2;
+}
 inline void register_object_type_generated() {
 	puerts::define_class<godot::Object>()
+			.static_property("NOTIFICATION_POSTINITIALIZE", puerts::make_value_constant<&object_notification_postinitialize_constant_generated>())
+			.static_property("NOTIFICATION_PREDELETE", puerts::make_value_constant<&object_notification_predelete_constant_generated>())
+			.static_property("NOTIFICATION_EXTENSION_RELOADED", puerts::make_value_constant<&object_notification_extension_reloaded_constant_generated>())
 			.constructor<>()
 			.method("get_class", puerts::make_method<&godot::Object::get_class>())
 			.method("is_class", puerts::make_method<&godot::Object::is_class>())

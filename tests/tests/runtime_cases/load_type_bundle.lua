@@ -98,13 +98,24 @@ root.load_type = {
 		if err ~= "" then
 			return err
 		end
+		err = expect(NodeType.NOTIFICATION_READY == 13, "node reflected constant mismatch")
+		if err ~= "" then
+			return err
+		end
+		err = expect_throws(function()
+			NodeType.NOTIFICATION_READY = 99
+		end, "read-only", "node reflected constant readonly")
+		if err ~= "" then
+			return err
+		end
 
 		local ObjectType = load_type("Object")
 		local obj = ObjectType()
 		err = expect(
 			obj:get_class() == "Object" and
 				obj:has_signal("script_changed") and
-				ObjectType.ConnectFlags.CONNECT_DEFERRED == 1,
+				ObjectType.ConnectFlags.CONNECT_DEFERRED == 1 and
+				ObjectType.NOTIFICATION_PREDELETE == 1,
 			"object reflected binding mismatch"
 		)
 		if err ~= "" then
@@ -235,6 +246,19 @@ root.load_type = {
 
 		do
 			local Vector2 = load_type("Vector2")
+			err = expect(
+				Vector2.ZERO.x == 0 and Vector2.ZERO.y == 0 and Vector2.ONE.x == 1 and Vector2.ONE.y == 1,
+				"vector2 constants mismatch"
+			)
+			if err ~= "" then
+				return err
+			end
+			err = expect_throws(function()
+				Vector2.ZERO = nil
+			end, "read-only", "vector2 constant readonly")
+			if err ~= "" then
+				return err
+			end
 			err = expect(Vector2.Axis and Vector2.Axis.AXIS_X == 0 and Vector2.Axis.AXIS_Y == 1, "vector2 axis enum mismatch")
 			if err ~= "" then
 				return err
@@ -589,7 +613,22 @@ root.load_type = {
 			local Color = load_type("Color")
 			local c = Color(0.1, 0.2, 0.3, 0.4)
 			c.a = 1.0
-			err = expect(c.a == 1.0, "color property mismatch")
+			local white_with_alpha = Color(Color.WHITE, 0.5)
+			err = expect(
+				c.a == 1.0 and
+					white_with_alpha.r == 1.0 and
+					white_with_alpha.g == 1.0 and
+					white_with_alpha.b == 1.0 and
+					white_with_alpha.a == 0.5 and
+					Color.TRANSPARENT.a == 0.0,
+				"color property or constants mismatch"
+			)
+			if err ~= "" then
+				return err
+			end
+			err = expect_throws(function()
+				Color.WHITE = nil
+			end, "read-only", "color constant readonly")
 			if err ~= "" then
 				return err
 			end

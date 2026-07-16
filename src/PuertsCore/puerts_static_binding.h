@@ -1243,6 +1243,11 @@ property_binding_spec make_enum_constant() {
 	return property_binding_spec{ &internal::enum_constant_property_wrapper<ConstantValue>::getter, nullptr, nullptr, nullptr };
 }
 
+template <auto Getter>
+property_binding_spec make_value_constant() {
+	return property_binding_spec{ &internal::static_function_wrapper<Getter>::callback, nullptr, nullptr, nullptr };
+}
+
 template <typename EnumTag>
 property_binding_spec make_enum_group() {
 	return property_binding_spec{ &internal::enum_group_property_wrapper<EnumTag>::getter, nullptr, nullptr, nullptr };

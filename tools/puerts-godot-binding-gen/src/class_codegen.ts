@@ -7,6 +7,7 @@ import { sanitizeIdentifier, toSnakeCase } from "./text_utils.js";
 import type {
 	ApiClassLike,
 	ApiBuiltinClass,
+	ApiConstant,
 	ApiMethod,
 	BoundPropertyBinding,
 	ClassSource,
@@ -29,6 +30,55 @@ function signalNameSymbol(className: string, signalName: string): string {
 
 function isBuiltinClass(cls: ApiClassLike): cls is ApiBuiltinClass {
 	return "operators" in cls;
+}
+
+function collectEnumConstantNames(cls: ApiClassLike): Set<string> {
+	return new Set((cls.enums ?? []).flatMap((entry) => (entry.values ?? []).map((value) => value.name)));
+}
+
+function builtinConstantExpression(value: string): string {
+	return value
+		.trim()
+		.replace(/^[A-Za-z_][A-Za-z0-9_]*\(/, "{ ")
+		.replace(/\)$/, " }")
+		.replace(/-2147483648\b/g, "INT32_MIN")
+		.replace(/\b2147483647\b/g, "INT32_MAX")
+		.replace(/\binf\b/g, "Math_INF");
+}
+
+function constantExpression(constant: ApiConstant, classSource: ClassSource): string {
+	if (typeof constant.value === "number") {
+		return String(constant.value);
+	}
+	return classSource === "builtin" ? builtinConstantExpression(constant.value) : constant.value.trim();
+}
+
+function pushConstantBindings(
+	cls: ApiClassLike,
+	classSource: ClassSource,
+	bindingLines: string[],
+): string[] {
+	const helpers: string[] = [];
+	const enumConstantNames = collectEnumConstantNames(cls);
+	const classKey = sanitizeIdentifier(toSnakeCase(cls.name));
+
+	for (const constant of cls.constants ?? []) {
+		if (enumConstantNames.has(constant.name)) {
+			continue;
+		}
+
+		const constantKey = sanitizeIdentifier(toSnakeCase(constant.name));
+		const getterName = `${classKey}_${constantKey}_constant_generated`;
+		const returnType = constant.type ? mapMethodReturnType(constant.type) : "int64_t";
+		helpers.push(
+			`inline ${returnType} ${getterName}() {\n` +
+				`\treturn ${constantExpression(constant, classSource)};\n` +
+			`}`,
+		);
+		bindingLines.push(`\t\t\t.static_property("${constant.name}", puerts::make_value_constant<&${getterName}>())`);
+	}
+
+	return helpers;
 }
 
 function parameterDeclaration(type: string, name: string): string {
@@ -210,6 +260,7 @@ export function generateClassBinding(
 	const bindingLines: string[] = [];
 	const varargNameDefs: string[] = [];
 	const operatorHelpers = pushOperatorBindings(cls, bindingLines);
+	const constantHelpers = pushConstantBindings(cls, classSource, bindingLines);
 	const baseClassName = cls.inherits?.trim();
 
 	if (baseClassName && baseClassName !== className) {
@@ -299,7 +350,7 @@ export function generateClassBinding(
 	bindingLines.push("\t\t\t.register_type();");
 
 	const fnName = `register_${sanitizeIdentifier(toSnakeCase(className))}_type_generated`;
-	const prefixLines = [...varargNameDefs, ...operatorHelpers];
+	const prefixLines = [...varargNameDefs, ...operatorHelpers, ...constantHelpers];
 	const prefix = prefixLines.length > 0 ? `${prefixLines.join("\n")}\n` : "";
 	const code = `${prefix}inline void ${fnName}() {\n\tpuerts::define_class<godot::${className}>()\n${bindingLines.join("\n")}\n}\n`;
 	return { className, classSource, functionName: fnName, code };

@@ -95,13 +95,24 @@
 			if (error) {
 				return error;
 			}
+			error = expect(NodeType.NOTIFICATION_READY === 13, "node reflected constant mismatch");
+			if (error) {
+				return error;
+			}
+			error = expectThrows(() => {
+				NodeType.NOTIFICATION_READY = 99;
+			}, "read-only", "node reflected constant readonly");
+			if (error) {
+				return error;
+			}
 
 			const ObjectType = load_type("Object");
 			const obj = new ObjectType();
 			error = expect(
 				obj.get_class() === "Object" &&
 					obj.has_signal("script_changed") &&
-					ObjectType.ConnectFlags.CONNECT_DEFERRED === 1,
+					ObjectType.ConnectFlags.CONNECT_DEFERRED === 1 &&
+					ObjectType.NOTIFICATION_PREDELETE === 1,
 				"object reflected binding mismatch"
 			);
 			if (error) {
@@ -262,6 +273,19 @@
 
 			{
 				const Vector2 = load_type("Vector2");
+				error = expect(
+					Vector2.ZERO.x === 0 && Vector2.ZERO.y === 0 && Vector2.ONE.x === 1 && Vector2.ONE.y === 1,
+					"vector2 constants mismatch"
+				);
+				if (error) {
+					return error;
+				}
+				error = expectThrows(() => {
+					Vector2.ZERO = null;
+				}, "read-only", "vector2 constant readonly");
+				if (error) {
+					return error;
+				}
 				error = expect(
 					Vector2.Axis && Vector2.Axis.AXIS_X === 0 && Vector2.Axis.AXIS_Y === 1,
 					"vector2 axis enum mismatch"
@@ -621,7 +645,22 @@
 				const Color = load_type("Color");
 				const c = new Color(0.1, 0.2, 0.3, 0.4);
 				c.a = 1.0;
-				error = expect(c.a === 1.0, "color property mismatch");
+				const whiteWithAlpha = new Color(Color.WHITE, 0.5);
+				error = expect(
+					c.a === 1.0 &&
+						whiteWithAlpha.r === 1.0 &&
+						whiteWithAlpha.g === 1.0 &&
+						whiteWithAlpha.b === 1.0 &&
+						whiteWithAlpha.a === 0.5 &&
+						Color.TRANSPARENT.a === 0.0,
+					"color property or constants mismatch"
+				);
+				if (error) {
+					return error;
+				}
+				error = expectThrows(() => {
+					Color.WHITE = null;
+				}, "read-only", "color constant readonly");
 				if (error) {
 					return error;
 				}

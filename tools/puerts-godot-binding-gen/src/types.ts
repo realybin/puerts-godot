@@ -39,6 +39,12 @@ export type ApiEnum = {
 	values?: ApiEnumValue[];
 };
 
+export type ApiConstant = {
+	name: string;
+	type?: string;
+	value: number | string;
+};
+
 export type ApiSignal = {
 	name: string;
 	arguments?: ApiArgument[];
@@ -52,6 +58,7 @@ export type ApiBuiltinClass = {
 	methods?: ApiMethod[];
 	operators?: ApiOperator[];
 	members?: ApiArgument[];
+	constants?: ApiConstant[];
 	enums?: ApiEnum[];
 	signals?: ApiSignal[];
 };
@@ -61,6 +68,7 @@ export type ApiClass = {
 	is_instantiable?: boolean;
 	inherits?: string;
 	methods?: ApiMethod[];
+	constants?: ApiConstant[];
 	enums?: ApiEnum[];
 	signals?: ApiSignal[];
 	members?: ApiArgument[];
