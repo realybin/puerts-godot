@@ -673,25 +673,25 @@
 				const Transform2D = load_type("Transform2D");
 				const Vector2 = load_type("Vector2");
 
-				const sum = Vector2.op_Add(new Vector2(1.0, 2.0), new Vector2(3.0, 4.0));
-				error = expect(sum.x === 4.0 && sum.y === 6.0, "vector2 op_Add mismatch");
+				const sum = Vector2.op_Addition(new Vector2(1.0, 2.0), new Vector2(3.0, 4.0));
+				error = expect(sum.x === 4.0 && sum.y === 6.0, "vector2 op_Addition mismatch");
 				if (error) {
 					return error;
 				}
 
-				const scaled = Vector2.op_Mul(new Vector2(2.0, 3.0), 2.0);
-				error = expect(scaled.x === 4.0 && scaled.y === 6.0, "vector2 op_Mul mismatch");
+				const scaled = Vector2.op_Multiply(new Vector2(2.0, 3.0), 2.0);
+				error = expect(scaled.x === 4.0 && scaled.y === 6.0, "vector2 op_Multiply mismatch");
 				if (error) {
 					return error;
 				}
 
-				const negated = Vector2.op_Neg(new Vector2(2.0, -3.0));
-				error = expect(negated.x === -2.0 && negated.y === 3.0, "vector2 op_Neg mismatch");
+				const negated = Vector2.op_UnaryNegation(new Vector2(2.0, -3.0));
+				error = expect(negated.x === -2.0 && negated.y === 3.0, "vector2 op_UnaryNegation mismatch");
 				if (error) {
 					return error;
 				}
 
-				error = expect(Vector2.op_Eq(new Vector2(5.0, 6.0), new Vector2(5.0, 6.0)) === true, "vector2 op_Eq mismatch");
+				error = expect(Vector2.op_Equality(new Vector2(5.0, 6.0), new Vector2(5.0, 6.0)) === true, "vector2 op_Equality mismatch");
 				if (error) {
 					return error;
 				}
@@ -710,19 +710,19 @@
 					return error;
 				}
 
-				const merged = ArrayType.op_Add(arr, arr);
-				error = expect(merged.size() === 2 && merged.get(0).x === 8.0 && merged.get(1).y === 9.0, "array op_Add mismatch");
+				const merged = ArrayType.op_Addition(arr, arr);
+				error = expect(merged.size() === 2 && merged.get(0).x === 8.0 && merged.get(1).y === 9.0, "array op_Addition mismatch");
 				if (error) {
 					return error;
 				}
 
-				const tinted = Color.op_Mul(new Color(0.25, 0.5, 0.75, 1.0), 2.0);
-				error = expect(near(tinted.r, 0.5, 0.001) && near(tinted.g, 1.0, 0.001), "color op_Mul mismatch");
+				const tinted = Color.op_Multiply(new Color(0.25, 0.5, 0.75, 1.0), 2.0);
+				error = expect(near(tinted.r, 0.5, 0.001) && near(tinted.g, 1.0, 0.001), "color op_Multiply mismatch");
 				if (error) {
 					return error;
 				}
 
-				error = expect(typeof Vector2.op_Add === "function" && typeof Color.op_Mul === "function", "operator reflection mismatch");
+				error = expect(typeof Vector2.op_Addition === "function" && typeof Color.op_Multiply === "function", "operator reflection mismatch");
 				if (error) {
 					return error;
 				}

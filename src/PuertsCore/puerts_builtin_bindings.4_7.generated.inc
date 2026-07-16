@@ -932,22 +932,22 @@ inline void register_vector4i_axis_enum_generated() {
 			.register_type();
 }
 
-inline bool aabb_op_eq_0_generated(const godot::AABB &left, const godot::Variant &right) {
+inline bool aabb_op_equality_0_generated(const godot::AABB &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool aabb_op_ne_1_generated(const godot::AABB &left, const godot::Variant &right) {
+inline bool aabb_op_inequality_1_generated(const godot::AABB &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool aabb_op_not_2_generated(const godot::AABB &value) {
+inline bool aabb_op_logical_not_2_generated(const godot::AABB &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool aabb_op_eq_3_generated(const godot::AABB &left, const godot::AABB &right) {
+inline bool aabb_op_equality_3_generated(const godot::AABB &left, const godot::AABB &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool aabb_op_ne_4_generated(const godot::AABB &left, const godot::AABB &right) {
+inline bool aabb_op_inequality_4_generated(const godot::AABB &left, const godot::AABB &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::AABB aabb_op_mul_5_generated(const godot::AABB &left, const godot::Transform3D &right) {
+inline godot::AABB aabb_op_multiply_5_generated(const godot::AABB &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::AABB>(left, right);
 }
 inline bool aabb_op_in_6_generated(const godot::AABB &left, const godot::Dictionary &right) {
@@ -958,10 +958,10 @@ inline bool aabb_op_in_7_generated(const godot::AABB &left, const godot::Array &
 }
 inline void register_aabb_type_generated() {
 	puerts::define_class<godot::AABB>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&aabb_op_eq_0_generated>(), puerts::make_overload<&aabb_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&aabb_op_ne_1_generated>(), puerts::make_overload<&aabb_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&aabb_op_not_2_generated>())
-			.function("op_Mul", puerts::make_function<&aabb_op_mul_5_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&aabb_op_equality_0_generated>(), puerts::make_overload<&aabb_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&aabb_op_inequality_1_generated>(), puerts::make_overload<&aabb_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&aabb_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::make_function<&aabb_op_multiply_5_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&aabb_op_in_6_generated>(), puerts::make_overload<&aabb_op_in_7_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::AABB>(),
@@ -997,37 +997,37 @@ inline void register_aabb_type_generated() {
 			.property("size", puerts::make_property<&godot::AABB::size>())
 			.register_type();
 }
-inline bool array_op_eq_0_generated(const godot::Array &left, const godot::Variant &right) {
+inline bool array_op_equality_0_generated(const godot::Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool array_op_ne_1_generated(const godot::Array &left, const godot::Variant &right) {
+inline bool array_op_inequality_1_generated(const godot::Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool array_op_not_2_generated(const godot::Array &value) {
+inline bool array_op_logical_not_2_generated(const godot::Array &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool array_op_in_3_generated(const godot::Array &left, const godot::Dictionary &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool array_op_eq_4_generated(const godot::Array &left, const godot::Array &right) {
+inline bool array_op_equality_4_generated(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool array_op_ne_5_generated(const godot::Array &left, const godot::Array &right) {
+inline bool array_op_inequality_5_generated(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool array_op_lt_6_generated(const godot::Array &left, const godot::Array &right) {
+inline bool array_op_less_than_6_generated(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool array_op_le_7_generated(const godot::Array &left, const godot::Array &right) {
+inline bool array_op_less_than_or_equal_7_generated(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool array_op_gt_8_generated(const godot::Array &left, const godot::Array &right) {
+inline bool array_op_greater_than_8_generated(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool array_op_ge_9_generated(const godot::Array &left, const godot::Array &right) {
+inline bool array_op_greater_than_or_equal_9_generated(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::Array array_op_add_10_generated(const godot::Array &left, const godot::Array &right) {
+inline godot::Array array_op_addition_10_generated(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Array>(left, right);
 }
 inline bool array_op_in_11_generated(const godot::Array &left, const godot::Array &right) {
@@ -1035,15 +1035,15 @@ inline bool array_op_in_11_generated(const godot::Array &left, const godot::Arra
 }
 inline void register_array_type_generated() {
 	puerts::define_class<godot::Array>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&array_op_eq_0_generated>(), puerts::make_overload<&array_op_eq_4_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&array_op_ne_1_generated>(), puerts::make_overload<&array_op_ne_5_generated>()))
-			.function("op_Not", puerts::make_function<&array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&array_op_equality_0_generated>(), puerts::make_overload<&array_op_equality_4_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&array_op_inequality_1_generated>(), puerts::make_overload<&array_op_inequality_5_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&array_op_in_3_generated>(), puerts::make_overload<&array_op_in_11_generated>()))
-			.function("op_Lt", puerts::make_function<&array_op_lt_6_generated>())
-			.function("op_Le", puerts::make_function<&array_op_le_7_generated>())
-			.function("op_Gt", puerts::make_function<&array_op_gt_8_generated>())
-			.function("op_Ge", puerts::make_function<&array_op_ge_9_generated>())
-			.function("op_Add", puerts::make_function<&array_op_add_10_generated>())
+			.function("op_LessThan", puerts::make_function<&array_op_less_than_6_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&array_op_less_than_or_equal_7_generated>())
+			.function("op_GreaterThan", puerts::make_function<&array_op_greater_than_8_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&array_op_greater_than_or_equal_9_generated>())
+			.function("op_Addition", puerts::make_function<&array_op_addition_10_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Array>(),
 					puerts::make_constructor_overload<godot::Array, const godot::Array &>(),
@@ -1111,37 +1111,37 @@ inline void register_array_type_generated() {
 			.method("is_read_only", puerts::make_method<&godot::Array::is_read_only>())
 			.register_type();
 }
-inline bool basis_op_eq_0_generated(const godot::Basis &left, const godot::Variant &right) {
+inline bool basis_op_equality_0_generated(const godot::Basis &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool basis_op_ne_1_generated(const godot::Basis &left, const godot::Variant &right) {
+inline bool basis_op_inequality_1_generated(const godot::Basis &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool basis_op_not_2_generated(const godot::Basis &value) {
+inline bool basis_op_logical_not_2_generated(const godot::Basis &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Basis basis_op_mul_3_generated(const godot::Basis &left, int64_t right) {
+inline godot::Basis basis_op_multiply_3_generated(const godot::Basis &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Basis>(left, right);
 }
-inline godot::Basis basis_op_div_4_generated(const godot::Basis &left, int64_t right) {
+inline godot::Basis basis_op_division_4_generated(const godot::Basis &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Basis>(left, right);
 }
-inline godot::Basis basis_op_mul_5_generated(const godot::Basis &left, godot::real_t right) {
+inline godot::Basis basis_op_multiply_5_generated(const godot::Basis &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Basis>(left, right);
 }
-inline godot::Basis basis_op_div_6_generated(const godot::Basis &left, godot::real_t right) {
+inline godot::Basis basis_op_division_6_generated(const godot::Basis &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Basis>(left, right);
 }
-inline godot::Vector3 basis_op_mul_7_generated(const godot::Basis &left, const godot::Vector3 &right) {
+inline godot::Vector3 basis_op_multiply_7_generated(const godot::Basis &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline bool basis_op_eq_8_generated(const godot::Basis &left, const godot::Basis &right) {
+inline bool basis_op_equality_8_generated(const godot::Basis &left, const godot::Basis &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool basis_op_ne_9_generated(const godot::Basis &left, const godot::Basis &right) {
+inline bool basis_op_inequality_9_generated(const godot::Basis &left, const godot::Basis &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Basis basis_op_mul_10_generated(const godot::Basis &left, const godot::Basis &right) {
+inline godot::Basis basis_op_multiply_10_generated(const godot::Basis &left, const godot::Basis &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Basis>(left, right);
 }
 inline bool basis_op_in_11_generated(const godot::Basis &left, const godot::Dictionary &right) {
@@ -1164,11 +1164,11 @@ inline godot::Basis basis_flip_z_constant_generated() {
 }
 inline void register_basis_type_generated() {
 	puerts::define_class<godot::Basis>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&basis_op_eq_0_generated>(), puerts::make_overload<&basis_op_eq_8_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&basis_op_ne_1_generated>(), puerts::make_overload<&basis_op_ne_9_generated>()))
-			.function("op_Not", puerts::make_function<&basis_op_not_2_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&basis_op_mul_3_generated>(), puerts::make_overload<&basis_op_mul_5_generated>(), puerts::make_overload<&basis_op_mul_7_generated>(), puerts::make_overload<&basis_op_mul_10_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&basis_op_div_4_generated>(), puerts::make_overload<&basis_op_div_6_generated>()))
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&basis_op_equality_0_generated>(), puerts::make_overload<&basis_op_equality_8_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&basis_op_inequality_1_generated>(), puerts::make_overload<&basis_op_inequality_9_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&basis_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&basis_op_multiply_3_generated>(), puerts::make_overload<&basis_op_multiply_5_generated>(), puerts::make_overload<&basis_op_multiply_7_generated>(), puerts::make_overload<&basis_op_multiply_10_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&basis_op_division_4_generated>(), puerts::make_overload<&basis_op_division_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&basis_op_in_11_generated>(), puerts::make_overload<&basis_op_in_12_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&basis_identity_constant_generated>())
 			.static_property("FLIP_X", puerts::make_value_constant<&basis_flip_x_constant_generated>())
@@ -1211,19 +1211,19 @@ inline constexpr char puerts_vararg_method_name_callable_call_deferred[] = "call
 inline constexpr char puerts_vararg_method_name_callable_rpc[] = "rpc";
 inline constexpr char puerts_vararg_method_name_callable_rpc_id[] = "rpc_id";
 inline constexpr char puerts_vararg_method_name_callable_bind[] = "bind";
-inline bool callable_op_eq_0_generated(const godot::Callable &left, const godot::Variant &right) {
+inline bool callable_op_equality_0_generated(const godot::Callable &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool callable_op_ne_1_generated(const godot::Callable &left, const godot::Variant &right) {
+inline bool callable_op_inequality_1_generated(const godot::Callable &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool callable_op_not_2_generated(const godot::Callable &value) {
+inline bool callable_op_logical_not_2_generated(const godot::Callable &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool callable_op_eq_3_generated(const godot::Callable &left, const godot::Callable &right) {
+inline bool callable_op_equality_3_generated(const godot::Callable &left, const godot::Callable &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool callable_op_ne_4_generated(const godot::Callable &left, const godot::Callable &right) {
+inline bool callable_op_inequality_4_generated(const godot::Callable &left, const godot::Callable &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
 inline bool callable_op_in_5_generated(const godot::Callable &left, const godot::Dictionary &right) {
@@ -1234,9 +1234,9 @@ inline bool callable_op_in_6_generated(const godot::Callable &left, const godot:
 }
 inline void register_callable_type_generated() {
 	puerts::define_class<godot::Callable>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&callable_op_eq_0_generated>(), puerts::make_overload<&callable_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&callable_op_ne_1_generated>(), puerts::make_overload<&callable_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&callable_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&callable_op_equality_0_generated>(), puerts::make_overload<&callable_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&callable_op_inequality_1_generated>(), puerts::make_overload<&callable_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&callable_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&callable_op_in_5_generated>(), puerts::make_overload<&callable_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Callable>(),
@@ -1265,49 +1265,49 @@ inline void register_callable_type_generated() {
 			.method("bind", puerts::make_vararg_method<godot::Callable, godot::Callable, puerts_vararg_method_name_callable_bind, 0, false>())
 			.register_type();
 }
-inline bool color_op_eq_0_generated(const godot::Color &left, const godot::Variant &right) {
+inline bool color_op_equality_0_generated(const godot::Color &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool color_op_ne_1_generated(const godot::Color &left, const godot::Variant &right) {
+inline bool color_op_inequality_1_generated(const godot::Color &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Color color_op_neg_2_generated(const godot::Color &value) {
+inline godot::Color color_op_unary_negation_2_generated(const godot::Color &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Color>(value);
 }
-inline godot::Color color_op_pos_3_generated(const godot::Color &value) {
+inline godot::Color color_op_unary_plus_3_generated(const godot::Color &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Color>(value);
 }
-inline bool color_op_not_4_generated(const godot::Color &value) {
+inline bool color_op_logical_not_4_generated(const godot::Color &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Color color_op_mul_5_generated(const godot::Color &left, int64_t right) {
+inline godot::Color color_op_multiply_5_generated(const godot::Color &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Color>(left, right);
 }
-inline godot::Color color_op_div_6_generated(const godot::Color &left, int64_t right) {
+inline godot::Color color_op_division_6_generated(const godot::Color &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Color>(left, right);
 }
-inline godot::Color color_op_mul_7_generated(const godot::Color &left, godot::real_t right) {
+inline godot::Color color_op_multiply_7_generated(const godot::Color &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Color>(left, right);
 }
-inline godot::Color color_op_div_8_generated(const godot::Color &left, godot::real_t right) {
+inline godot::Color color_op_division_8_generated(const godot::Color &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Color>(left, right);
 }
-inline bool color_op_eq_9_generated(const godot::Color &left, const godot::Color &right) {
+inline bool color_op_equality_9_generated(const godot::Color &left, const godot::Color &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool color_op_ne_10_generated(const godot::Color &left, const godot::Color &right) {
+inline bool color_op_inequality_10_generated(const godot::Color &left, const godot::Color &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Color color_op_add_11_generated(const godot::Color &left, const godot::Color &right) {
+inline godot::Color color_op_addition_11_generated(const godot::Color &left, const godot::Color &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Color>(left, right);
 }
-inline godot::Color color_op_sub_12_generated(const godot::Color &left, const godot::Color &right) {
+inline godot::Color color_op_subtraction_12_generated(const godot::Color &left, const godot::Color &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Color>(left, right);
 }
-inline godot::Color color_op_mul_13_generated(const godot::Color &left, const godot::Color &right) {
+inline godot::Color color_op_multiply_13_generated(const godot::Color &left, const godot::Color &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Color>(left, right);
 }
-inline godot::Color color_op_div_14_generated(const godot::Color &left, const godot::Color &right) {
+inline godot::Color color_op_division_14_generated(const godot::Color &left, const godot::Color &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Color>(left, right);
 }
 inline bool color_op_in_15_generated(const godot::Color &left, const godot::Dictionary &right) {
@@ -1759,15 +1759,15 @@ inline godot::Color color_yellow_green_constant_generated() {
 }
 inline void register_color_type_generated() {
 	puerts::define_class<godot::Color>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&color_op_eq_0_generated>(), puerts::make_overload<&color_op_eq_9_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&color_op_ne_1_generated>(), puerts::make_overload<&color_op_ne_10_generated>()))
-			.function("op_Neg", puerts::make_function<&color_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&color_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&color_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&color_op_mul_5_generated>(), puerts::make_overload<&color_op_mul_7_generated>(), puerts::make_overload<&color_op_mul_13_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&color_op_div_6_generated>(), puerts::make_overload<&color_op_div_8_generated>(), puerts::make_overload<&color_op_div_14_generated>()))
-			.function("op_Add", puerts::make_function<&color_op_add_11_generated>())
-			.function("op_Sub", puerts::make_function<&color_op_sub_12_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&color_op_equality_0_generated>(), puerts::make_overload<&color_op_equality_9_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&color_op_inequality_1_generated>(), puerts::make_overload<&color_op_inequality_10_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&color_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&color_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&color_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&color_op_multiply_5_generated>(), puerts::make_overload<&color_op_multiply_7_generated>(), puerts::make_overload<&color_op_multiply_13_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&color_op_division_6_generated>(), puerts::make_overload<&color_op_division_8_generated>(), puerts::make_overload<&color_op_division_14_generated>()))
+			.function("op_Addition", puerts::make_function<&color_op_addition_11_generated>())
+			.function("op_Subtraction", puerts::make_function<&color_op_subtraction_12_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&color_op_in_15_generated>(), puerts::make_overload<&color_op_in_16_generated>(), puerts::make_overload<&color_op_in_17_generated>()))
 			.static_property("ALICE_BLUE", puerts::make_value_constant<&color_alice_blue_constant_generated>())
 			.static_property("ANTIQUE_WHITE", puerts::make_value_constant<&color_antique_white_constant_generated>())
@@ -1961,19 +1961,19 @@ inline void register_color_type_generated() {
 			.property("a", puerts::make_property<&godot::Color::a>())
 			.register_type();
 }
-inline bool dictionary_op_eq_0_generated(const godot::Dictionary &left, const godot::Variant &right) {
+inline bool dictionary_op_equality_0_generated(const godot::Dictionary &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool dictionary_op_ne_1_generated(const godot::Dictionary &left, const godot::Variant &right) {
+inline bool dictionary_op_inequality_1_generated(const godot::Dictionary &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool dictionary_op_not_2_generated(const godot::Dictionary &value) {
+inline bool dictionary_op_logical_not_2_generated(const godot::Dictionary &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool dictionary_op_eq_3_generated(const godot::Dictionary &left, const godot::Dictionary &right) {
+inline bool dictionary_op_equality_3_generated(const godot::Dictionary &left, const godot::Dictionary &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool dictionary_op_ne_4_generated(const godot::Dictionary &left, const godot::Dictionary &right) {
+inline bool dictionary_op_inequality_4_generated(const godot::Dictionary &left, const godot::Dictionary &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
 inline bool dictionary_op_in_5_generated(const godot::Dictionary &left, const godot::Dictionary &right) {
@@ -1984,9 +1984,9 @@ inline bool dictionary_op_in_6_generated(const godot::Dictionary &left, const go
 }
 inline void register_dictionary_type_generated() {
 	puerts::define_class<godot::Dictionary>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&dictionary_op_eq_0_generated>(), puerts::make_overload<&dictionary_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&dictionary_op_ne_1_generated>(), puerts::make_overload<&dictionary_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&dictionary_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&dictionary_op_equality_0_generated>(), puerts::make_overload<&dictionary_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&dictionary_op_inequality_1_generated>(), puerts::make_overload<&dictionary_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&dictionary_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&dictionary_op_in_5_generated>(), puerts::make_overload<&dictionary_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Dictionary>(),
@@ -2028,19 +2028,19 @@ inline void register_dictionary_type_generated() {
 			.method("recursive_equal", puerts::make_method<&godot::Dictionary::recursive_equal>())
 			.register_type();
 }
-inline bool node_path_op_eq_0_generated(const godot::NodePath &left, const godot::Variant &right) {
+inline bool node_path_op_equality_0_generated(const godot::NodePath &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool node_path_op_ne_1_generated(const godot::NodePath &left, const godot::Variant &right) {
+inline bool node_path_op_inequality_1_generated(const godot::NodePath &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool node_path_op_not_2_generated(const godot::NodePath &value) {
+inline bool node_path_op_logical_not_2_generated(const godot::NodePath &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool node_path_op_eq_3_generated(const godot::NodePath &left, const godot::NodePath &right) {
+inline bool node_path_op_equality_3_generated(const godot::NodePath &left, const godot::NodePath &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool node_path_op_ne_4_generated(const godot::NodePath &left, const godot::NodePath &right) {
+inline bool node_path_op_inequality_4_generated(const godot::NodePath &left, const godot::NodePath &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
 inline bool node_path_op_in_5_generated(const godot::NodePath &left, const godot::Dictionary &right) {
@@ -2051,9 +2051,9 @@ inline bool node_path_op_in_6_generated(const godot::NodePath &left, const godot
 }
 inline void register_node_path_type_generated() {
 	puerts::define_class<godot::NodePath>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&node_path_op_eq_0_generated>(), puerts::make_overload<&node_path_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&node_path_op_ne_1_generated>(), puerts::make_overload<&node_path_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&node_path_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&node_path_op_equality_0_generated>(), puerts::make_overload<&node_path_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&node_path_op_inequality_1_generated>(), puerts::make_overload<&node_path_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&node_path_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&node_path_op_in_5_generated>(), puerts::make_overload<&node_path_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::NodePath>(),
@@ -2072,13 +2072,13 @@ inline void register_node_path_type_generated() {
 			.method("is_empty", puerts::make_method<&godot::NodePath::is_empty>())
 			.register_type();
 }
-inline bool packed_byte_array_op_eq_0_generated(const godot::PackedByteArray &left, const godot::Variant &right) {
+inline bool packed_byte_array_op_equality_0_generated(const godot::PackedByteArray &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_byte_array_op_ne_1_generated(const godot::PackedByteArray &left, const godot::Variant &right) {
+inline bool packed_byte_array_op_inequality_1_generated(const godot::PackedByteArray &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_byte_array_op_not_2_generated(const godot::PackedByteArray &value) {
+inline bool packed_byte_array_op_logical_not_2_generated(const godot::PackedByteArray &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool packed_byte_array_op_in_3_generated(const godot::PackedByteArray &left, const godot::Dictionary &right) {
@@ -2087,22 +2087,22 @@ inline bool packed_byte_array_op_in_3_generated(const godot::PackedByteArray &le
 inline bool packed_byte_array_op_in_4_generated(const godot::PackedByteArray &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_byte_array_op_eq_5_generated(const godot::PackedByteArray &left, const godot::PackedByteArray &right) {
+inline bool packed_byte_array_op_equality_5_generated(const godot::PackedByteArray &left, const godot::PackedByteArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_byte_array_op_ne_6_generated(const godot::PackedByteArray &left, const godot::PackedByteArray &right) {
+inline bool packed_byte_array_op_inequality_6_generated(const godot::PackedByteArray &left, const godot::PackedByteArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedByteArray packed_byte_array_op_add_7_generated(const godot::PackedByteArray &left, const godot::PackedByteArray &right) {
+inline godot::PackedByteArray packed_byte_array_op_addition_7_generated(const godot::PackedByteArray &left, const godot::PackedByteArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedByteArray>(left, right);
 }
 inline void register_packed_byte_array_type_generated() {
 	puerts::define_class<godot::PackedByteArray>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_eq_0_generated>(), puerts::make_overload<&packed_byte_array_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_ne_1_generated>(), puerts::make_overload<&packed_byte_array_op_ne_6_generated>()))
-			.function("op_Not", puerts::make_function<&packed_byte_array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_equality_0_generated>(), puerts::make_overload<&packed_byte_array_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_inequality_1_generated>(), puerts::make_overload<&packed_byte_array_op_inequality_6_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_byte_array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_in_3_generated>(), puerts::make_overload<&packed_byte_array_op_in_4_generated>()))
-			.function("op_Add", puerts::make_function<&packed_byte_array_op_add_7_generated>())
+			.function("op_Addition", puerts::make_function<&packed_byte_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedByteArray>(),
 					puerts::make_constructor_overload<godot::PackedByteArray, const godot::PackedByteArray &>(),
@@ -2178,13 +2178,13 @@ inline void register_packed_byte_array_type_generated() {
 			.method("encode_var", puerts::make_method<&godot::PackedByteArray::encode_var>())
 			.register_type();
 }
-inline bool packed_color_array_op_eq_0_generated(const godot::PackedColorArray &left, const godot::Variant &right) {
+inline bool packed_color_array_op_equality_0_generated(const godot::PackedColorArray &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_color_array_op_ne_1_generated(const godot::PackedColorArray &left, const godot::Variant &right) {
+inline bool packed_color_array_op_inequality_1_generated(const godot::PackedColorArray &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_color_array_op_not_2_generated(const godot::PackedColorArray &value) {
+inline bool packed_color_array_op_logical_not_2_generated(const godot::PackedColorArray &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool packed_color_array_op_in_3_generated(const godot::PackedColorArray &left, const godot::Dictionary &right) {
@@ -2193,22 +2193,22 @@ inline bool packed_color_array_op_in_3_generated(const godot::PackedColorArray &
 inline bool packed_color_array_op_in_4_generated(const godot::PackedColorArray &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_color_array_op_eq_5_generated(const godot::PackedColorArray &left, const godot::PackedColorArray &right) {
+inline bool packed_color_array_op_equality_5_generated(const godot::PackedColorArray &left, const godot::PackedColorArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_color_array_op_ne_6_generated(const godot::PackedColorArray &left, const godot::PackedColorArray &right) {
+inline bool packed_color_array_op_inequality_6_generated(const godot::PackedColorArray &left, const godot::PackedColorArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedColorArray packed_color_array_op_add_7_generated(const godot::PackedColorArray &left, const godot::PackedColorArray &right) {
+inline godot::PackedColorArray packed_color_array_op_addition_7_generated(const godot::PackedColorArray &left, const godot::PackedColorArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedColorArray>(left, right);
 }
 inline void register_packed_color_array_type_generated() {
 	puerts::define_class<godot::PackedColorArray>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_eq_0_generated>(), puerts::make_overload<&packed_color_array_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_ne_1_generated>(), puerts::make_overload<&packed_color_array_op_ne_6_generated>()))
-			.function("op_Not", puerts::make_function<&packed_color_array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_equality_0_generated>(), puerts::make_overload<&packed_color_array_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_inequality_1_generated>(), puerts::make_overload<&packed_color_array_op_inequality_6_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_color_array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_in_3_generated>(), puerts::make_overload<&packed_color_array_op_in_4_generated>()))
-			.function("op_Add", puerts::make_function<&packed_color_array_op_add_7_generated>())
+			.function("op_Addition", puerts::make_function<&packed_color_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedColorArray>(),
 					puerts::make_constructor_overload<godot::PackedColorArray, const godot::PackedColorArray &>(),
@@ -2238,13 +2238,13 @@ inline void register_packed_color_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedColorArray::erase>())
 			.register_type();
 }
-inline bool packed_float32_array_op_eq_0_generated(const godot::PackedFloat32Array &left, const godot::Variant &right) {
+inline bool packed_float32_array_op_equality_0_generated(const godot::PackedFloat32Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_float32_array_op_ne_1_generated(const godot::PackedFloat32Array &left, const godot::Variant &right) {
+inline bool packed_float32_array_op_inequality_1_generated(const godot::PackedFloat32Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_float32_array_op_not_2_generated(const godot::PackedFloat32Array &value) {
+inline bool packed_float32_array_op_logical_not_2_generated(const godot::PackedFloat32Array &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool packed_float32_array_op_in_3_generated(const godot::PackedFloat32Array &left, const godot::Dictionary &right) {
@@ -2253,22 +2253,22 @@ inline bool packed_float32_array_op_in_3_generated(const godot::PackedFloat32Arr
 inline bool packed_float32_array_op_in_4_generated(const godot::PackedFloat32Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_float32_array_op_eq_5_generated(const godot::PackedFloat32Array &left, const godot::PackedFloat32Array &right) {
+inline bool packed_float32_array_op_equality_5_generated(const godot::PackedFloat32Array &left, const godot::PackedFloat32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_float32_array_op_ne_6_generated(const godot::PackedFloat32Array &left, const godot::PackedFloat32Array &right) {
+inline bool packed_float32_array_op_inequality_6_generated(const godot::PackedFloat32Array &left, const godot::PackedFloat32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedFloat32Array packed_float32_array_op_add_7_generated(const godot::PackedFloat32Array &left, const godot::PackedFloat32Array &right) {
+inline godot::PackedFloat32Array packed_float32_array_op_addition_7_generated(const godot::PackedFloat32Array &left, const godot::PackedFloat32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedFloat32Array>(left, right);
 }
 inline void register_packed_float32_array_type_generated() {
 	puerts::define_class<godot::PackedFloat32Array>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_eq_0_generated>(), puerts::make_overload<&packed_float32_array_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_ne_1_generated>(), puerts::make_overload<&packed_float32_array_op_ne_6_generated>()))
-			.function("op_Not", puerts::make_function<&packed_float32_array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_equality_0_generated>(), puerts::make_overload<&packed_float32_array_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_inequality_1_generated>(), puerts::make_overload<&packed_float32_array_op_inequality_6_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_float32_array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_in_3_generated>(), puerts::make_overload<&packed_float32_array_op_in_4_generated>()))
-			.function("op_Add", puerts::make_function<&packed_float32_array_op_add_7_generated>())
+			.function("op_Addition", puerts::make_function<&packed_float32_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedFloat32Array>(),
 					puerts::make_constructor_overload<godot::PackedFloat32Array, const godot::PackedFloat32Array &>(),
@@ -2298,13 +2298,13 @@ inline void register_packed_float32_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedFloat32Array::erase>())
 			.register_type();
 }
-inline bool packed_float64_array_op_eq_0_generated(const godot::PackedFloat64Array &left, const godot::Variant &right) {
+inline bool packed_float64_array_op_equality_0_generated(const godot::PackedFloat64Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_float64_array_op_ne_1_generated(const godot::PackedFloat64Array &left, const godot::Variant &right) {
+inline bool packed_float64_array_op_inequality_1_generated(const godot::PackedFloat64Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_float64_array_op_not_2_generated(const godot::PackedFloat64Array &value) {
+inline bool packed_float64_array_op_logical_not_2_generated(const godot::PackedFloat64Array &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool packed_float64_array_op_in_3_generated(const godot::PackedFloat64Array &left, const godot::Dictionary &right) {
@@ -2313,22 +2313,22 @@ inline bool packed_float64_array_op_in_3_generated(const godot::PackedFloat64Arr
 inline bool packed_float64_array_op_in_4_generated(const godot::PackedFloat64Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_float64_array_op_eq_5_generated(const godot::PackedFloat64Array &left, const godot::PackedFloat64Array &right) {
+inline bool packed_float64_array_op_equality_5_generated(const godot::PackedFloat64Array &left, const godot::PackedFloat64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_float64_array_op_ne_6_generated(const godot::PackedFloat64Array &left, const godot::PackedFloat64Array &right) {
+inline bool packed_float64_array_op_inequality_6_generated(const godot::PackedFloat64Array &left, const godot::PackedFloat64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedFloat64Array packed_float64_array_op_add_7_generated(const godot::PackedFloat64Array &left, const godot::PackedFloat64Array &right) {
+inline godot::PackedFloat64Array packed_float64_array_op_addition_7_generated(const godot::PackedFloat64Array &left, const godot::PackedFloat64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedFloat64Array>(left, right);
 }
 inline void register_packed_float64_array_type_generated() {
 	puerts::define_class<godot::PackedFloat64Array>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_eq_0_generated>(), puerts::make_overload<&packed_float64_array_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_ne_1_generated>(), puerts::make_overload<&packed_float64_array_op_ne_6_generated>()))
-			.function("op_Not", puerts::make_function<&packed_float64_array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_equality_0_generated>(), puerts::make_overload<&packed_float64_array_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_inequality_1_generated>(), puerts::make_overload<&packed_float64_array_op_inequality_6_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_float64_array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_in_3_generated>(), puerts::make_overload<&packed_float64_array_op_in_4_generated>()))
-			.function("op_Add", puerts::make_function<&packed_float64_array_op_add_7_generated>())
+			.function("op_Addition", puerts::make_function<&packed_float64_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedFloat64Array>(),
 					puerts::make_constructor_overload<godot::PackedFloat64Array, const godot::PackedFloat64Array &>(),
@@ -2358,13 +2358,13 @@ inline void register_packed_float64_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedFloat64Array::erase>())
 			.register_type();
 }
-inline bool packed_int32_array_op_eq_0_generated(const godot::PackedInt32Array &left, const godot::Variant &right) {
+inline bool packed_int32_array_op_equality_0_generated(const godot::PackedInt32Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_int32_array_op_ne_1_generated(const godot::PackedInt32Array &left, const godot::Variant &right) {
+inline bool packed_int32_array_op_inequality_1_generated(const godot::PackedInt32Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_int32_array_op_not_2_generated(const godot::PackedInt32Array &value) {
+inline bool packed_int32_array_op_logical_not_2_generated(const godot::PackedInt32Array &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool packed_int32_array_op_in_3_generated(const godot::PackedInt32Array &left, const godot::Dictionary &right) {
@@ -2373,22 +2373,22 @@ inline bool packed_int32_array_op_in_3_generated(const godot::PackedInt32Array &
 inline bool packed_int32_array_op_in_4_generated(const godot::PackedInt32Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_int32_array_op_eq_5_generated(const godot::PackedInt32Array &left, const godot::PackedInt32Array &right) {
+inline bool packed_int32_array_op_equality_5_generated(const godot::PackedInt32Array &left, const godot::PackedInt32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_int32_array_op_ne_6_generated(const godot::PackedInt32Array &left, const godot::PackedInt32Array &right) {
+inline bool packed_int32_array_op_inequality_6_generated(const godot::PackedInt32Array &left, const godot::PackedInt32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedInt32Array packed_int32_array_op_add_7_generated(const godot::PackedInt32Array &left, const godot::PackedInt32Array &right) {
+inline godot::PackedInt32Array packed_int32_array_op_addition_7_generated(const godot::PackedInt32Array &left, const godot::PackedInt32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedInt32Array>(left, right);
 }
 inline void register_packed_int32_array_type_generated() {
 	puerts::define_class<godot::PackedInt32Array>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_eq_0_generated>(), puerts::make_overload<&packed_int32_array_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_ne_1_generated>(), puerts::make_overload<&packed_int32_array_op_ne_6_generated>()))
-			.function("op_Not", puerts::make_function<&packed_int32_array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_equality_0_generated>(), puerts::make_overload<&packed_int32_array_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_inequality_1_generated>(), puerts::make_overload<&packed_int32_array_op_inequality_6_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_int32_array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_in_3_generated>(), puerts::make_overload<&packed_int32_array_op_in_4_generated>()))
-			.function("op_Add", puerts::make_function<&packed_int32_array_op_add_7_generated>())
+			.function("op_Addition", puerts::make_function<&packed_int32_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedInt32Array>(),
 					puerts::make_constructor_overload<godot::PackedInt32Array, const godot::PackedInt32Array &>(),
@@ -2418,13 +2418,13 @@ inline void register_packed_int32_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedInt32Array::erase>())
 			.register_type();
 }
-inline bool packed_int64_array_op_eq_0_generated(const godot::PackedInt64Array &left, const godot::Variant &right) {
+inline bool packed_int64_array_op_equality_0_generated(const godot::PackedInt64Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_int64_array_op_ne_1_generated(const godot::PackedInt64Array &left, const godot::Variant &right) {
+inline bool packed_int64_array_op_inequality_1_generated(const godot::PackedInt64Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_int64_array_op_not_2_generated(const godot::PackedInt64Array &value) {
+inline bool packed_int64_array_op_logical_not_2_generated(const godot::PackedInt64Array &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool packed_int64_array_op_in_3_generated(const godot::PackedInt64Array &left, const godot::Dictionary &right) {
@@ -2433,22 +2433,22 @@ inline bool packed_int64_array_op_in_3_generated(const godot::PackedInt64Array &
 inline bool packed_int64_array_op_in_4_generated(const godot::PackedInt64Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_int64_array_op_eq_5_generated(const godot::PackedInt64Array &left, const godot::PackedInt64Array &right) {
+inline bool packed_int64_array_op_equality_5_generated(const godot::PackedInt64Array &left, const godot::PackedInt64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_int64_array_op_ne_6_generated(const godot::PackedInt64Array &left, const godot::PackedInt64Array &right) {
+inline bool packed_int64_array_op_inequality_6_generated(const godot::PackedInt64Array &left, const godot::PackedInt64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedInt64Array packed_int64_array_op_add_7_generated(const godot::PackedInt64Array &left, const godot::PackedInt64Array &right) {
+inline godot::PackedInt64Array packed_int64_array_op_addition_7_generated(const godot::PackedInt64Array &left, const godot::PackedInt64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedInt64Array>(left, right);
 }
 inline void register_packed_int64_array_type_generated() {
 	puerts::define_class<godot::PackedInt64Array>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_eq_0_generated>(), puerts::make_overload<&packed_int64_array_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_ne_1_generated>(), puerts::make_overload<&packed_int64_array_op_ne_6_generated>()))
-			.function("op_Not", puerts::make_function<&packed_int64_array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_equality_0_generated>(), puerts::make_overload<&packed_int64_array_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_inequality_1_generated>(), puerts::make_overload<&packed_int64_array_op_inequality_6_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_int64_array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_in_3_generated>(), puerts::make_overload<&packed_int64_array_op_in_4_generated>()))
-			.function("op_Add", puerts::make_function<&packed_int64_array_op_add_7_generated>())
+			.function("op_Addition", puerts::make_function<&packed_int64_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedInt64Array>(),
 					puerts::make_constructor_overload<godot::PackedInt64Array, const godot::PackedInt64Array &>(),
@@ -2478,13 +2478,13 @@ inline void register_packed_int64_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedInt64Array::erase>())
 			.register_type();
 }
-inline bool packed_string_array_op_eq_0_generated(const godot::PackedStringArray &left, const godot::Variant &right) {
+inline bool packed_string_array_op_equality_0_generated(const godot::PackedStringArray &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_string_array_op_ne_1_generated(const godot::PackedStringArray &left, const godot::Variant &right) {
+inline bool packed_string_array_op_inequality_1_generated(const godot::PackedStringArray &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_string_array_op_not_2_generated(const godot::PackedStringArray &value) {
+inline bool packed_string_array_op_logical_not_2_generated(const godot::PackedStringArray &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
 inline bool packed_string_array_op_in_3_generated(const godot::PackedStringArray &left, const godot::Dictionary &right) {
@@ -2493,22 +2493,22 @@ inline bool packed_string_array_op_in_3_generated(const godot::PackedStringArray
 inline bool packed_string_array_op_in_4_generated(const godot::PackedStringArray &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_string_array_op_eq_5_generated(const godot::PackedStringArray &left, const godot::PackedStringArray &right) {
+inline bool packed_string_array_op_equality_5_generated(const godot::PackedStringArray &left, const godot::PackedStringArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_string_array_op_ne_6_generated(const godot::PackedStringArray &left, const godot::PackedStringArray &right) {
+inline bool packed_string_array_op_inequality_6_generated(const godot::PackedStringArray &left, const godot::PackedStringArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedStringArray packed_string_array_op_add_7_generated(const godot::PackedStringArray &left, const godot::PackedStringArray &right) {
+inline godot::PackedStringArray packed_string_array_op_addition_7_generated(const godot::PackedStringArray &left, const godot::PackedStringArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedStringArray>(left, right);
 }
 inline void register_packed_string_array_type_generated() {
 	puerts::define_class<godot::PackedStringArray>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_eq_0_generated>(), puerts::make_overload<&packed_string_array_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_ne_1_generated>(), puerts::make_overload<&packed_string_array_op_ne_6_generated>()))
-			.function("op_Not", puerts::make_function<&packed_string_array_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_equality_0_generated>(), puerts::make_overload<&packed_string_array_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_inequality_1_generated>(), puerts::make_overload<&packed_string_array_op_inequality_6_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_string_array_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_in_3_generated>(), puerts::make_overload<&packed_string_array_op_in_4_generated>()))
-			.function("op_Add", puerts::make_function<&packed_string_array_op_add_7_generated>())
+			.function("op_Addition", puerts::make_function<&packed_string_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedStringArray>(),
 					puerts::make_constructor_overload<godot::PackedStringArray, const godot::PackedStringArray &>(),
@@ -2538,16 +2538,16 @@ inline void register_packed_string_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedStringArray::erase>())
 			.register_type();
 }
-inline bool packed_vector2_array_op_eq_0_generated(const godot::PackedVector2Array &left, const godot::Variant &right) {
+inline bool packed_vector2_array_op_equality_0_generated(const godot::PackedVector2Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_vector2_array_op_ne_1_generated(const godot::PackedVector2Array &left, const godot::Variant &right) {
+inline bool packed_vector2_array_op_inequality_1_generated(const godot::PackedVector2Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_vector2_array_op_not_2_generated(const godot::PackedVector2Array &value) {
+inline bool packed_vector2_array_op_logical_not_2_generated(const godot::PackedVector2Array &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::PackedVector2Array packed_vector2_array_op_mul_3_generated(const godot::PackedVector2Array &left, const godot::Transform2D &right) {
+inline godot::PackedVector2Array packed_vector2_array_op_multiply_3_generated(const godot::PackedVector2Array &left, const godot::Transform2D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::PackedVector2Array>(left, right);
 }
 inline bool packed_vector2_array_op_in_4_generated(const godot::PackedVector2Array &left, const godot::Dictionary &right) {
@@ -2556,23 +2556,23 @@ inline bool packed_vector2_array_op_in_4_generated(const godot::PackedVector2Arr
 inline bool packed_vector2_array_op_in_5_generated(const godot::PackedVector2Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_vector2_array_op_eq_6_generated(const godot::PackedVector2Array &left, const godot::PackedVector2Array &right) {
+inline bool packed_vector2_array_op_equality_6_generated(const godot::PackedVector2Array &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_vector2_array_op_ne_7_generated(const godot::PackedVector2Array &left, const godot::PackedVector2Array &right) {
+inline bool packed_vector2_array_op_inequality_7_generated(const godot::PackedVector2Array &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedVector2Array packed_vector2_array_op_add_8_generated(const godot::PackedVector2Array &left, const godot::PackedVector2Array &right) {
+inline godot::PackedVector2Array packed_vector2_array_op_addition_8_generated(const godot::PackedVector2Array &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedVector2Array>(left, right);
 }
 inline void register_packed_vector2_array_type_generated() {
 	puerts::define_class<godot::PackedVector2Array>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_eq_0_generated>(), puerts::make_overload<&packed_vector2_array_op_eq_6_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_ne_1_generated>(), puerts::make_overload<&packed_vector2_array_op_ne_7_generated>()))
-			.function("op_Not", puerts::make_function<&packed_vector2_array_op_not_2_generated>())
-			.function("op_Mul", puerts::make_function<&packed_vector2_array_op_mul_3_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_equality_0_generated>(), puerts::make_overload<&packed_vector2_array_op_equality_6_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_inequality_1_generated>(), puerts::make_overload<&packed_vector2_array_op_inequality_7_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_vector2_array_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::make_function<&packed_vector2_array_op_multiply_3_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_in_4_generated>(), puerts::make_overload<&packed_vector2_array_op_in_5_generated>()))
-			.function("op_Add", puerts::make_function<&packed_vector2_array_op_add_8_generated>())
+			.function("op_Addition", puerts::make_function<&packed_vector2_array_op_addition_8_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedVector2Array>(),
 					puerts::make_constructor_overload<godot::PackedVector2Array, const godot::PackedVector2Array &>(),
@@ -2602,16 +2602,16 @@ inline void register_packed_vector2_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedVector2Array::erase>())
 			.register_type();
 }
-inline bool packed_vector3_array_op_eq_0_generated(const godot::PackedVector3Array &left, const godot::Variant &right) {
+inline bool packed_vector3_array_op_equality_0_generated(const godot::PackedVector3Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_vector3_array_op_ne_1_generated(const godot::PackedVector3Array &left, const godot::Variant &right) {
+inline bool packed_vector3_array_op_inequality_1_generated(const godot::PackedVector3Array &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool packed_vector3_array_op_not_2_generated(const godot::PackedVector3Array &value) {
+inline bool packed_vector3_array_op_logical_not_2_generated(const godot::PackedVector3Array &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::PackedVector3Array packed_vector3_array_op_mul_3_generated(const godot::PackedVector3Array &left, const godot::Transform3D &right) {
+inline godot::PackedVector3Array packed_vector3_array_op_multiply_3_generated(const godot::PackedVector3Array &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::PackedVector3Array>(left, right);
 }
 inline bool packed_vector3_array_op_in_4_generated(const godot::PackedVector3Array &left, const godot::Dictionary &right) {
@@ -2620,23 +2620,23 @@ inline bool packed_vector3_array_op_in_4_generated(const godot::PackedVector3Arr
 inline bool packed_vector3_array_op_in_5_generated(const godot::PackedVector3Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline bool packed_vector3_array_op_eq_6_generated(const godot::PackedVector3Array &left, const godot::PackedVector3Array &right) {
+inline bool packed_vector3_array_op_equality_6_generated(const godot::PackedVector3Array &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool packed_vector3_array_op_ne_7_generated(const godot::PackedVector3Array &left, const godot::PackedVector3Array &right) {
+inline bool packed_vector3_array_op_inequality_7_generated(const godot::PackedVector3Array &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::PackedVector3Array packed_vector3_array_op_add_8_generated(const godot::PackedVector3Array &left, const godot::PackedVector3Array &right) {
+inline godot::PackedVector3Array packed_vector3_array_op_addition_8_generated(const godot::PackedVector3Array &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedVector3Array>(left, right);
 }
 inline void register_packed_vector3_array_type_generated() {
 	puerts::define_class<godot::PackedVector3Array>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_eq_0_generated>(), puerts::make_overload<&packed_vector3_array_op_eq_6_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_ne_1_generated>(), puerts::make_overload<&packed_vector3_array_op_ne_7_generated>()))
-			.function("op_Not", puerts::make_function<&packed_vector3_array_op_not_2_generated>())
-			.function("op_Mul", puerts::make_function<&packed_vector3_array_op_mul_3_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_equality_0_generated>(), puerts::make_overload<&packed_vector3_array_op_equality_6_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_inequality_1_generated>(), puerts::make_overload<&packed_vector3_array_op_inequality_7_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&packed_vector3_array_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::make_function<&packed_vector3_array_op_multiply_3_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_in_4_generated>(), puerts::make_overload<&packed_vector3_array_op_in_5_generated>()))
-			.function("op_Add", puerts::make_function<&packed_vector3_array_op_add_8_generated>())
+			.function("op_Addition", puerts::make_function<&packed_vector3_array_op_addition_8_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedVector3Array>(),
 					puerts::make_constructor_overload<godot::PackedVector3Array, const godot::PackedVector3Array &>(),
@@ -2666,28 +2666,28 @@ inline void register_packed_vector3_array_type_generated() {
 			.method("erase", puerts::make_method<&godot::PackedVector3Array::erase>())
 			.register_type();
 }
-inline bool plane_op_eq_0_generated(const godot::Plane &left, const godot::Variant &right) {
+inline bool plane_op_equality_0_generated(const godot::Plane &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool plane_op_ne_1_generated(const godot::Plane &left, const godot::Variant &right) {
+inline bool plane_op_inequality_1_generated(const godot::Plane &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Plane plane_op_neg_2_generated(const godot::Plane &value) {
+inline godot::Plane plane_op_unary_negation_2_generated(const godot::Plane &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Plane>(value);
 }
-inline godot::Plane plane_op_pos_3_generated(const godot::Plane &value) {
+inline godot::Plane plane_op_unary_plus_3_generated(const godot::Plane &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Plane>(value);
 }
-inline bool plane_op_not_4_generated(const godot::Plane &value) {
+inline bool plane_op_logical_not_4_generated(const godot::Plane &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool plane_op_eq_5_generated(const godot::Plane &left, const godot::Plane &right) {
+inline bool plane_op_equality_5_generated(const godot::Plane &left, const godot::Plane &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool plane_op_ne_6_generated(const godot::Plane &left, const godot::Plane &right) {
+inline bool plane_op_inequality_6_generated(const godot::Plane &left, const godot::Plane &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Plane plane_op_mul_7_generated(const godot::Plane &left, const godot::Transform3D &right) {
+inline godot::Plane plane_op_multiply_7_generated(const godot::Plane &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Plane>(left, right);
 }
 inline bool plane_op_in_8_generated(const godot::Plane &left, const godot::Dictionary &right) {
@@ -2707,12 +2707,12 @@ inline godot::Plane plane_plane_xy_constant_generated() {
 }
 inline void register_plane_type_generated() {
 	puerts::define_class<godot::Plane>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&plane_op_eq_0_generated>(), puerts::make_overload<&plane_op_eq_5_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&plane_op_ne_1_generated>(), puerts::make_overload<&plane_op_ne_6_generated>()))
-			.function("op_Neg", puerts::make_function<&plane_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&plane_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&plane_op_not_4_generated>())
-			.function("op_Mul", puerts::make_function<&plane_op_mul_7_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&plane_op_equality_0_generated>(), puerts::make_overload<&plane_op_equality_5_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&plane_op_inequality_1_generated>(), puerts::make_overload<&plane_op_inequality_6_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&plane_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&plane_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&plane_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::make_function<&plane_op_multiply_7_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&plane_op_in_8_generated>(), puerts::make_overload<&plane_op_in_9_generated>()))
 			.static_property("PLANE_YZ", puerts::make_value_constant<&plane_plane_yz_constant_generated>())
 			.static_property("PLANE_XZ", puerts::make_value_constant<&plane_plane_xz_constant_generated>())
@@ -2743,25 +2743,25 @@ inline void register_plane_type_generated() {
 			.property("normal", puerts::make_property<&godot::Plane::normal>())
 			.register_type();
 }
-inline bool projection_op_eq_0_generated(const godot::Projection &left, const godot::Variant &right) {
+inline bool projection_op_equality_0_generated(const godot::Projection &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool projection_op_ne_1_generated(const godot::Projection &left, const godot::Variant &right) {
+inline bool projection_op_inequality_1_generated(const godot::Projection &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool projection_op_not_2_generated(const godot::Projection &value) {
+inline bool projection_op_logical_not_2_generated(const godot::Projection &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Vector4 projection_op_mul_3_generated(const godot::Projection &left, const godot::Vector4 &right) {
+inline godot::Vector4 projection_op_multiply_3_generated(const godot::Projection &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
-inline bool projection_op_eq_4_generated(const godot::Projection &left, const godot::Projection &right) {
+inline bool projection_op_equality_4_generated(const godot::Projection &left, const godot::Projection &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool projection_op_ne_5_generated(const godot::Projection &left, const godot::Projection &right) {
+inline bool projection_op_inequality_5_generated(const godot::Projection &left, const godot::Projection &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Projection projection_op_mul_6_generated(const godot::Projection &left, const godot::Projection &right) {
+inline godot::Projection projection_op_multiply_6_generated(const godot::Projection &left, const godot::Projection &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Projection>(left, right);
 }
 inline bool projection_op_in_7_generated(const godot::Projection &left, const godot::Dictionary &right) {
@@ -2778,10 +2778,10 @@ inline godot::Projection projection_zero_constant_generated() {
 }
 inline void register_projection_type_generated() {
 	puerts::define_class<godot::Projection>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&projection_op_eq_0_generated>(), puerts::make_overload<&projection_op_eq_4_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&projection_op_ne_1_generated>(), puerts::make_overload<&projection_op_ne_5_generated>()))
-			.function("op_Not", puerts::make_function<&projection_op_not_2_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&projection_op_mul_3_generated>(), puerts::make_overload<&projection_op_mul_6_generated>()))
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&projection_op_equality_0_generated>(), puerts::make_overload<&projection_op_equality_4_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&projection_op_inequality_1_generated>(), puerts::make_overload<&projection_op_inequality_5_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&projection_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&projection_op_multiply_3_generated>(), puerts::make_overload<&projection_op_multiply_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&projection_op_in_7_generated>(), puerts::make_overload<&projection_op_in_8_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&projection_identity_constant_generated>())
 			.static_property("ZERO", puerts::make_value_constant<&projection_zero_constant_generated>())
@@ -2823,49 +2823,49 @@ inline void register_projection_type_generated() {
 			.static_property("Planes", puerts::make_enum_group<puerts_generated_enum_tags::projection_planes_enum_tag_generated>())
 			.register_type();
 }
-inline bool quaternion_op_eq_0_generated(const godot::Quaternion &left, const godot::Variant &right) {
+inline bool quaternion_op_equality_0_generated(const godot::Quaternion &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool quaternion_op_ne_1_generated(const godot::Quaternion &left, const godot::Variant &right) {
+inline bool quaternion_op_inequality_1_generated(const godot::Quaternion &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Quaternion quaternion_op_neg_2_generated(const godot::Quaternion &value) {
+inline godot::Quaternion quaternion_op_unary_negation_2_generated(const godot::Quaternion &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Quaternion>(value);
 }
-inline godot::Quaternion quaternion_op_pos_3_generated(const godot::Quaternion &value) {
+inline godot::Quaternion quaternion_op_unary_plus_3_generated(const godot::Quaternion &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Quaternion>(value);
 }
-inline bool quaternion_op_not_4_generated(const godot::Quaternion &value) {
+inline bool quaternion_op_logical_not_4_generated(const godot::Quaternion &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Quaternion quaternion_op_mul_5_generated(const godot::Quaternion &left, int64_t right) {
+inline godot::Quaternion quaternion_op_multiply_5_generated(const godot::Quaternion &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Quaternion>(left, right);
 }
-inline godot::Quaternion quaternion_op_div_6_generated(const godot::Quaternion &left, int64_t right) {
+inline godot::Quaternion quaternion_op_division_6_generated(const godot::Quaternion &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Quaternion>(left, right);
 }
-inline godot::Quaternion quaternion_op_mul_7_generated(const godot::Quaternion &left, godot::real_t right) {
+inline godot::Quaternion quaternion_op_multiply_7_generated(const godot::Quaternion &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Quaternion>(left, right);
 }
-inline godot::Quaternion quaternion_op_div_8_generated(const godot::Quaternion &left, godot::real_t right) {
+inline godot::Quaternion quaternion_op_division_8_generated(const godot::Quaternion &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Quaternion>(left, right);
 }
-inline godot::Vector3 quaternion_op_mul_9_generated(const godot::Quaternion &left, const godot::Vector3 &right) {
+inline godot::Vector3 quaternion_op_multiply_9_generated(const godot::Quaternion &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline bool quaternion_op_eq_10_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
+inline bool quaternion_op_equality_10_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool quaternion_op_ne_11_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
+inline bool quaternion_op_inequality_11_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Quaternion quaternion_op_add_12_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
+inline godot::Quaternion quaternion_op_addition_12_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Quaternion>(left, right);
 }
-inline godot::Quaternion quaternion_op_sub_13_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
+inline godot::Quaternion quaternion_op_subtraction_13_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Quaternion>(left, right);
 }
-inline godot::Quaternion quaternion_op_mul_14_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
+inline godot::Quaternion quaternion_op_multiply_14_generated(const godot::Quaternion &left, const godot::Quaternion &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Quaternion>(left, right);
 }
 inline bool quaternion_op_in_15_generated(const godot::Quaternion &left, const godot::Dictionary &right) {
@@ -2879,15 +2879,15 @@ inline godot::Quaternion quaternion_identity_constant_generated() {
 }
 inline void register_quaternion_type_generated() {
 	puerts::define_class<godot::Quaternion>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&quaternion_op_eq_0_generated>(), puerts::make_overload<&quaternion_op_eq_10_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&quaternion_op_ne_1_generated>(), puerts::make_overload<&quaternion_op_ne_11_generated>()))
-			.function("op_Neg", puerts::make_function<&quaternion_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&quaternion_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&quaternion_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&quaternion_op_mul_5_generated>(), puerts::make_overload<&quaternion_op_mul_7_generated>(), puerts::make_overload<&quaternion_op_mul_9_generated>(), puerts::make_overload<&quaternion_op_mul_14_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&quaternion_op_div_6_generated>(), puerts::make_overload<&quaternion_op_div_8_generated>()))
-			.function("op_Add", puerts::make_function<&quaternion_op_add_12_generated>())
-			.function("op_Sub", puerts::make_function<&quaternion_op_sub_13_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&quaternion_op_equality_0_generated>(), puerts::make_overload<&quaternion_op_equality_10_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&quaternion_op_inequality_1_generated>(), puerts::make_overload<&quaternion_op_inequality_11_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&quaternion_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&quaternion_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&quaternion_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&quaternion_op_multiply_5_generated>(), puerts::make_overload<&quaternion_op_multiply_7_generated>(), puerts::make_overload<&quaternion_op_multiply_9_generated>(), puerts::make_overload<&quaternion_op_multiply_14_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&quaternion_op_division_6_generated>(), puerts::make_overload<&quaternion_op_division_8_generated>()))
+			.function("op_Addition", puerts::make_function<&quaternion_op_addition_12_generated>())
+			.function("op_Subtraction", puerts::make_function<&quaternion_op_subtraction_13_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&quaternion_op_in_15_generated>(), puerts::make_overload<&quaternion_op_in_16_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&quaternion_identity_constant_generated>())
 			.constructor(puerts::combine_constructors(
@@ -2922,22 +2922,22 @@ inline void register_quaternion_type_generated() {
 			.property("w", puerts::make_property<&godot::Quaternion::w>())
 			.register_type();
 }
-inline bool rect2_op_eq_0_generated(const godot::Rect2 &left, const godot::Variant &right) {
+inline bool rect2_op_equality_0_generated(const godot::Rect2 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool rect2_op_ne_1_generated(const godot::Rect2 &left, const godot::Variant &right) {
+inline bool rect2_op_inequality_1_generated(const godot::Rect2 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool rect2_op_not_2_generated(const godot::Rect2 &value) {
+inline bool rect2_op_logical_not_2_generated(const godot::Rect2 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool rect2_op_eq_3_generated(const godot::Rect2 &left, const godot::Rect2 &right) {
+inline bool rect2_op_equality_3_generated(const godot::Rect2 &left, const godot::Rect2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool rect2_op_ne_4_generated(const godot::Rect2 &left, const godot::Rect2 &right) {
+inline bool rect2_op_inequality_4_generated(const godot::Rect2 &left, const godot::Rect2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Rect2 rect2_op_mul_5_generated(const godot::Rect2 &left, const godot::Transform2D &right) {
+inline godot::Rect2 rect2_op_multiply_5_generated(const godot::Rect2 &left, const godot::Transform2D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Rect2>(left, right);
 }
 inline bool rect2_op_in_6_generated(const godot::Rect2 &left, const godot::Dictionary &right) {
@@ -2948,10 +2948,10 @@ inline bool rect2_op_in_7_generated(const godot::Rect2 &left, const godot::Array
 }
 inline void register_rect2_type_generated() {
 	puerts::define_class<godot::Rect2>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&rect2_op_eq_0_generated>(), puerts::make_overload<&rect2_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&rect2_op_ne_1_generated>(), puerts::make_overload<&rect2_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&rect2_op_not_2_generated>())
-			.function("op_Mul", puerts::make_function<&rect2_op_mul_5_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&rect2_op_equality_0_generated>(), puerts::make_overload<&rect2_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rect2_op_inequality_1_generated>(), puerts::make_overload<&rect2_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&rect2_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::make_function<&rect2_op_multiply_5_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&rect2_op_in_6_generated>(), puerts::make_overload<&rect2_op_in_7_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Rect2>(),
@@ -2980,19 +2980,19 @@ inline void register_rect2_type_generated() {
 			.property("size", puerts::make_property<&godot::Rect2::size>())
 			.register_type();
 }
-inline bool rect2i_op_eq_0_generated(const godot::Rect2i &left, const godot::Variant &right) {
+inline bool rect2i_op_equality_0_generated(const godot::Rect2i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool rect2i_op_ne_1_generated(const godot::Rect2i &left, const godot::Variant &right) {
+inline bool rect2i_op_inequality_1_generated(const godot::Rect2i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool rect2i_op_not_2_generated(const godot::Rect2i &value) {
+inline bool rect2i_op_logical_not_2_generated(const godot::Rect2i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool rect2i_op_eq_3_generated(const godot::Rect2i &left, const godot::Rect2i &right) {
+inline bool rect2i_op_equality_3_generated(const godot::Rect2i &left, const godot::Rect2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool rect2i_op_ne_4_generated(const godot::Rect2i &left, const godot::Rect2i &right) {
+inline bool rect2i_op_inequality_4_generated(const godot::Rect2i &left, const godot::Rect2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
 inline bool rect2i_op_in_5_generated(const godot::Rect2i &left, const godot::Dictionary &right) {
@@ -3003,9 +3003,9 @@ inline bool rect2i_op_in_6_generated(const godot::Rect2i &left, const godot::Arr
 }
 inline void register_rect2i_type_generated() {
 	puerts::define_class<godot::Rect2i>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&rect2i_op_eq_0_generated>(), puerts::make_overload<&rect2i_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&rect2i_op_ne_1_generated>(), puerts::make_overload<&rect2i_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&rect2i_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&rect2i_op_equality_0_generated>(), puerts::make_overload<&rect2i_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rect2i_op_inequality_1_generated>(), puerts::make_overload<&rect2i_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&rect2i_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&rect2i_op_in_5_generated>(), puerts::make_overload<&rect2i_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Rect2i>(),
@@ -3031,31 +3031,31 @@ inline void register_rect2i_type_generated() {
 			.property("size", puerts::make_property<&godot::Rect2i::size>())
 			.register_type();
 }
-inline bool rid_op_eq_0_generated(const godot::RID &left, const godot::Variant &right) {
+inline bool rid_op_equality_0_generated(const godot::RID &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool rid_op_ne_1_generated(const godot::RID &left, const godot::Variant &right) {
+inline bool rid_op_inequality_1_generated(const godot::RID &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool rid_op_not_2_generated(const godot::RID &value) {
+inline bool rid_op_logical_not_2_generated(const godot::RID &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool rid_op_eq_3_generated(const godot::RID &left, const godot::RID &right) {
+inline bool rid_op_equality_3_generated(const godot::RID &left, const godot::RID &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool rid_op_ne_4_generated(const godot::RID &left, const godot::RID &right) {
+inline bool rid_op_inequality_4_generated(const godot::RID &left, const godot::RID &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool rid_op_lt_5_generated(const godot::RID &left, const godot::RID &right) {
+inline bool rid_op_less_than_5_generated(const godot::RID &left, const godot::RID &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool rid_op_le_6_generated(const godot::RID &left, const godot::RID &right) {
+inline bool rid_op_less_than_or_equal_6_generated(const godot::RID &left, const godot::RID &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool rid_op_gt_7_generated(const godot::RID &left, const godot::RID &right) {
+inline bool rid_op_greater_than_7_generated(const godot::RID &left, const godot::RID &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool rid_op_ge_8_generated(const godot::RID &left, const godot::RID &right) {
+inline bool rid_op_greater_than_or_equal_8_generated(const godot::RID &left, const godot::RID &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
 inline bool rid_op_in_9_generated(const godot::RID &left, const godot::Dictionary &right) {
@@ -3066,13 +3066,13 @@ inline bool rid_op_in_10_generated(const godot::RID &left, const godot::Array &r
 }
 inline void register_rid_type_generated() {
 	puerts::define_class<godot::RID>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&rid_op_eq_0_generated>(), puerts::make_overload<&rid_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&rid_op_ne_1_generated>(), puerts::make_overload<&rid_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&rid_op_not_2_generated>())
-			.function("op_Lt", puerts::make_function<&rid_op_lt_5_generated>())
-			.function("op_Le", puerts::make_function<&rid_op_le_6_generated>())
-			.function("op_Gt", puerts::make_function<&rid_op_gt_7_generated>())
-			.function("op_Ge", puerts::make_function<&rid_op_ge_8_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&rid_op_equality_0_generated>(), puerts::make_overload<&rid_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rid_op_inequality_1_generated>(), puerts::make_overload<&rid_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&rid_op_logical_not_2_generated>())
+			.function("op_LessThan", puerts::make_function<&rid_op_less_than_5_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&rid_op_less_than_or_equal_6_generated>())
+			.function("op_GreaterThan", puerts::make_function<&rid_op_greater_than_7_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&rid_op_greater_than_or_equal_8_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&rid_op_in_9_generated>(), puerts::make_overload<&rid_op_in_10_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::RID>(),
@@ -3082,19 +3082,19 @@ inline void register_rid_type_generated() {
 			.register_type();
 }
 inline constexpr char puerts_vararg_method_name_signal_emit[] = "emit";
-inline bool signal_op_eq_0_generated(const godot::Signal &left, const godot::Variant &right) {
+inline bool signal_op_equality_0_generated(const godot::Signal &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool signal_op_ne_1_generated(const godot::Signal &left, const godot::Variant &right) {
+inline bool signal_op_inequality_1_generated(const godot::Signal &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool signal_op_not_2_generated(const godot::Signal &value) {
+inline bool signal_op_logical_not_2_generated(const godot::Signal &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline bool signal_op_eq_3_generated(const godot::Signal &left, const godot::Signal &right) {
+inline bool signal_op_equality_3_generated(const godot::Signal &left, const godot::Signal &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool signal_op_ne_4_generated(const godot::Signal &left, const godot::Signal &right) {
+inline bool signal_op_inequality_4_generated(const godot::Signal &left, const godot::Signal &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
 inline bool signal_op_in_5_generated(const godot::Signal &left, const godot::Dictionary &right) {
@@ -3105,9 +3105,9 @@ inline bool signal_op_in_6_generated(const godot::Signal &left, const godot::Arr
 }
 inline void register_signal_type_generated() {
 	puerts::define_class<godot::Signal>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&signal_op_eq_0_generated>(), puerts::make_overload<&signal_op_eq_3_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&signal_op_ne_1_generated>(), puerts::make_overload<&signal_op_ne_4_generated>()))
-			.function("op_Not", puerts::make_function<&signal_op_not_2_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&signal_op_equality_0_generated>(), puerts::make_overload<&signal_op_equality_3_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&signal_op_inequality_1_generated>(), puerts::make_overload<&signal_op_inequality_4_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&signal_op_logical_not_2_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&signal_op_in_5_generated>(), puerts::make_overload<&signal_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Signal>(),
@@ -3125,192 +3125,192 @@ inline void register_signal_type_generated() {
 			.method("emit", puerts::make_vararg_method<godot::Signal, void, puerts_vararg_method_name_signal_emit, 0, false>())
 			.register_type();
 }
-inline bool string_name_op_eq_0_generated(const godot::StringName &left, const godot::Variant &right) {
+inline bool string_name_op_equality_0_generated(const godot::StringName &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool string_name_op_ne_1_generated(const godot::StringName &left, const godot::Variant &right) {
+inline bool string_name_op_inequality_1_generated(const godot::StringName &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::String string_name_op_mod_2_generated(const godot::StringName &left, const godot::Variant &right) {
+inline godot::String string_name_op_modulus_2_generated(const godot::StringName &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline bool string_name_op_not_3_generated(const godot::StringName &value) {
+inline bool string_name_op_logical_not_3_generated(const godot::StringName &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::String string_name_op_mod_4_generated(const godot::StringName &left, bool right) {
+inline godot::String string_name_op_modulus_4_generated(const godot::StringName &left, bool right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_5_generated(const godot::StringName &left, int64_t right) {
+inline godot::String string_name_op_modulus_5_generated(const godot::StringName &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_6_generated(const godot::StringName &left, godot::real_t right) {
+inline godot::String string_name_op_modulus_6_generated(const godot::StringName &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline bool string_name_op_eq_7_generated(const godot::StringName &left, const godot::String &right) {
+inline bool string_name_op_equality_7_generated(const godot::StringName &left, const godot::String &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool string_name_op_ne_8_generated(const godot::StringName &left, const godot::String &right) {
+inline bool string_name_op_inequality_8_generated(const godot::StringName &left, const godot::String &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::String string_name_op_add_9_generated(const godot::StringName &left, const godot::String &right) {
+inline godot::String string_name_op_addition_9_generated(const godot::StringName &left, const godot::String &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_10_generated(const godot::StringName &left, const godot::String &right) {
+inline godot::String string_name_op_modulus_10_generated(const godot::StringName &left, const godot::String &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline bool string_name_op_in_11_generated(const godot::StringName &left, const godot::String &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::String string_name_op_mod_12_generated(const godot::StringName &left, const godot::Vector2 &right) {
+inline godot::String string_name_op_modulus_12_generated(const godot::StringName &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_13_generated(const godot::StringName &left, const godot::Vector2i &right) {
+inline godot::String string_name_op_modulus_13_generated(const godot::StringName &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_14_generated(const godot::StringName &left, const godot::Rect2 &right) {
+inline godot::String string_name_op_modulus_14_generated(const godot::StringName &left, const godot::Rect2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_15_generated(const godot::StringName &left, const godot::Rect2i &right) {
+inline godot::String string_name_op_modulus_15_generated(const godot::StringName &left, const godot::Rect2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_16_generated(const godot::StringName &left, const godot::Vector3 &right) {
+inline godot::String string_name_op_modulus_16_generated(const godot::StringName &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_17_generated(const godot::StringName &left, const godot::Vector3i &right) {
+inline godot::String string_name_op_modulus_17_generated(const godot::StringName &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_18_generated(const godot::StringName &left, const godot::Transform2D &right) {
+inline godot::String string_name_op_modulus_18_generated(const godot::StringName &left, const godot::Transform2D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_19_generated(const godot::StringName &left, const godot::Vector4 &right) {
+inline godot::String string_name_op_modulus_19_generated(const godot::StringName &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_20_generated(const godot::StringName &left, const godot::Vector4i &right) {
+inline godot::String string_name_op_modulus_20_generated(const godot::StringName &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_21_generated(const godot::StringName &left, const godot::Plane &right) {
+inline godot::String string_name_op_modulus_21_generated(const godot::StringName &left, const godot::Plane &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_22_generated(const godot::StringName &left, const godot::Quaternion &right) {
+inline godot::String string_name_op_modulus_22_generated(const godot::StringName &left, const godot::Quaternion &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_23_generated(const godot::StringName &left, const godot::AABB &right) {
+inline godot::String string_name_op_modulus_23_generated(const godot::StringName &left, const godot::AABB &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_24_generated(const godot::StringName &left, const godot::Basis &right) {
+inline godot::String string_name_op_modulus_24_generated(const godot::StringName &left, const godot::Basis &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_25_generated(const godot::StringName &left, const godot::Transform3D &right) {
+inline godot::String string_name_op_modulus_25_generated(const godot::StringName &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_26_generated(const godot::StringName &left, const godot::Projection &right) {
+inline godot::String string_name_op_modulus_26_generated(const godot::StringName &left, const godot::Projection &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_27_generated(const godot::StringName &left, const godot::Color &right) {
+inline godot::String string_name_op_modulus_27_generated(const godot::StringName &left, const godot::Color &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline bool string_name_op_eq_28_generated(const godot::StringName &left, const godot::StringName &right) {
+inline bool string_name_op_equality_28_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool string_name_op_ne_29_generated(const godot::StringName &left, const godot::StringName &right) {
+inline bool string_name_op_inequality_29_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool string_name_op_lt_30_generated(const godot::StringName &left, const godot::StringName &right) {
+inline bool string_name_op_less_than_30_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool string_name_op_le_31_generated(const godot::StringName &left, const godot::StringName &right) {
+inline bool string_name_op_less_than_or_equal_31_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool string_name_op_gt_32_generated(const godot::StringName &left, const godot::StringName &right) {
+inline bool string_name_op_greater_than_32_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool string_name_op_ge_33_generated(const godot::StringName &left, const godot::StringName &right) {
+inline bool string_name_op_greater_than_or_equal_33_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::String string_name_op_add_34_generated(const godot::StringName &left, const godot::StringName &right) {
+inline godot::String string_name_op_addition_34_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_35_generated(const godot::StringName &left, const godot::StringName &right) {
+inline godot::String string_name_op_modulus_35_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline bool string_name_op_in_36_generated(const godot::StringName &left, const godot::StringName &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::String string_name_op_mod_37_generated(const godot::StringName &left, const godot::NodePath &right) {
+inline godot::String string_name_op_modulus_37_generated(const godot::StringName &left, const godot::NodePath &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_38_generated(const godot::StringName &left, const godot::RID &right) {
+inline godot::String string_name_op_modulus_38_generated(const godot::StringName &left, const godot::RID &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_39_generated(const godot::StringName &left, godot::Object *right) {
+inline godot::String string_name_op_modulus_39_generated(const godot::StringName &left, godot::Object *right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline bool string_name_op_in_40_generated(const godot::StringName &left, godot::Object *right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::String string_name_op_mod_41_generated(const godot::StringName &left, const godot::Callable &right) {
+inline godot::String string_name_op_modulus_41_generated(const godot::StringName &left, const godot::Callable &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_42_generated(const godot::StringName &left, const godot::Signal &right) {
+inline godot::String string_name_op_modulus_42_generated(const godot::StringName &left, const godot::Signal &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_43_generated(const godot::StringName &left, const godot::Dictionary &right) {
+inline godot::String string_name_op_modulus_43_generated(const godot::StringName &left, const godot::Dictionary &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline bool string_name_op_in_44_generated(const godot::StringName &left, const godot::Dictionary &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::String string_name_op_mod_45_generated(const godot::StringName &left, const godot::Array &right) {
+inline godot::String string_name_op_modulus_45_generated(const godot::StringName &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline bool string_name_op_in_46_generated(const godot::StringName &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::String string_name_op_mod_47_generated(const godot::StringName &left, const godot::PackedByteArray &right) {
+inline godot::String string_name_op_modulus_47_generated(const godot::StringName &left, const godot::PackedByteArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_48_generated(const godot::StringName &left, const godot::PackedInt32Array &right) {
+inline godot::String string_name_op_modulus_48_generated(const godot::StringName &left, const godot::PackedInt32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_49_generated(const godot::StringName &left, const godot::PackedInt64Array &right) {
+inline godot::String string_name_op_modulus_49_generated(const godot::StringName &left, const godot::PackedInt64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_50_generated(const godot::StringName &left, const godot::PackedFloat32Array &right) {
+inline godot::String string_name_op_modulus_50_generated(const godot::StringName &left, const godot::PackedFloat32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_51_generated(const godot::StringName &left, const godot::PackedFloat64Array &right) {
+inline godot::String string_name_op_modulus_51_generated(const godot::StringName &left, const godot::PackedFloat64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_52_generated(const godot::StringName &left, const godot::PackedStringArray &right) {
+inline godot::String string_name_op_modulus_52_generated(const godot::StringName &left, const godot::PackedStringArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline bool string_name_op_in_53_generated(const godot::StringName &left, const godot::PackedStringArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::String string_name_op_mod_54_generated(const godot::StringName &left, const godot::PackedVector2Array &right) {
+inline godot::String string_name_op_modulus_54_generated(const godot::StringName &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_55_generated(const godot::StringName &left, const godot::PackedVector3Array &right) {
+inline godot::String string_name_op_modulus_55_generated(const godot::StringName &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_56_generated(const godot::StringName &left, const godot::PackedColorArray &right) {
+inline godot::String string_name_op_modulus_56_generated(const godot::StringName &left, const godot::PackedColorArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_mod_57_generated(const godot::StringName &left, const godot::PackedVector4Array &right) {
+inline godot::String string_name_op_modulus_57_generated(const godot::StringName &left, const godot::PackedVector4Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline void register_string_name_type_generated() {
 	puerts::define_class<godot::StringName>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&string_name_op_eq_0_generated>(), puerts::make_overload<&string_name_op_eq_7_generated>(), puerts::make_overload<&string_name_op_eq_28_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&string_name_op_ne_1_generated>(), puerts::make_overload<&string_name_op_ne_8_generated>(), puerts::make_overload<&string_name_op_ne_29_generated>()))
-			.function("op_Mod", puerts::combine_overloads(puerts::make_overload<&string_name_op_mod_2_generated>(), puerts::make_overload<&string_name_op_mod_4_generated>(), puerts::make_overload<&string_name_op_mod_5_generated>(), puerts::make_overload<&string_name_op_mod_6_generated>(), puerts::make_overload<&string_name_op_mod_10_generated>(), puerts::make_overload<&string_name_op_mod_12_generated>(), puerts::make_overload<&string_name_op_mod_13_generated>(), puerts::make_overload<&string_name_op_mod_14_generated>(), puerts::make_overload<&string_name_op_mod_15_generated>(), puerts::make_overload<&string_name_op_mod_16_generated>(), puerts::make_overload<&string_name_op_mod_17_generated>(), puerts::make_overload<&string_name_op_mod_18_generated>(), puerts::make_overload<&string_name_op_mod_19_generated>(), puerts::make_overload<&string_name_op_mod_20_generated>(), puerts::make_overload<&string_name_op_mod_21_generated>(), puerts::make_overload<&string_name_op_mod_22_generated>(), puerts::make_overload<&string_name_op_mod_23_generated>(), puerts::make_overload<&string_name_op_mod_24_generated>(), puerts::make_overload<&string_name_op_mod_25_generated>(), puerts::make_overload<&string_name_op_mod_26_generated>(), puerts::make_overload<&string_name_op_mod_27_generated>(), puerts::make_overload<&string_name_op_mod_35_generated>(), puerts::make_overload<&string_name_op_mod_37_generated>(), puerts::make_overload<&string_name_op_mod_38_generated>(), puerts::make_overload<&string_name_op_mod_39_generated>(), puerts::make_overload<&string_name_op_mod_41_generated>(), puerts::make_overload<&string_name_op_mod_42_generated>(), puerts::make_overload<&string_name_op_mod_43_generated>(), puerts::make_overload<&string_name_op_mod_45_generated>(), puerts::make_overload<&string_name_op_mod_47_generated>(), puerts::make_overload<&string_name_op_mod_48_generated>(), puerts::make_overload<&string_name_op_mod_49_generated>(), puerts::make_overload<&string_name_op_mod_50_generated>(), puerts::make_overload<&string_name_op_mod_51_generated>(), puerts::make_overload<&string_name_op_mod_52_generated>(), puerts::make_overload<&string_name_op_mod_54_generated>(), puerts::make_overload<&string_name_op_mod_55_generated>(), puerts::make_overload<&string_name_op_mod_56_generated>(), puerts::make_overload<&string_name_op_mod_57_generated>()))
-			.function("op_Not", puerts::make_function<&string_name_op_not_3_generated>())
-			.function("op_Add", puerts::combine_overloads(puerts::make_overload<&string_name_op_add_9_generated>(), puerts::make_overload<&string_name_op_add_34_generated>()))
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&string_name_op_equality_0_generated>(), puerts::make_overload<&string_name_op_equality_7_generated>(), puerts::make_overload<&string_name_op_equality_28_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&string_name_op_inequality_1_generated>(), puerts::make_overload<&string_name_op_inequality_8_generated>(), puerts::make_overload<&string_name_op_inequality_29_generated>()))
+			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&string_name_op_modulus_2_generated>(), puerts::make_overload<&string_name_op_modulus_4_generated>(), puerts::make_overload<&string_name_op_modulus_5_generated>(), puerts::make_overload<&string_name_op_modulus_6_generated>(), puerts::make_overload<&string_name_op_modulus_10_generated>(), puerts::make_overload<&string_name_op_modulus_12_generated>(), puerts::make_overload<&string_name_op_modulus_13_generated>(), puerts::make_overload<&string_name_op_modulus_14_generated>(), puerts::make_overload<&string_name_op_modulus_15_generated>(), puerts::make_overload<&string_name_op_modulus_16_generated>(), puerts::make_overload<&string_name_op_modulus_17_generated>(), puerts::make_overload<&string_name_op_modulus_18_generated>(), puerts::make_overload<&string_name_op_modulus_19_generated>(), puerts::make_overload<&string_name_op_modulus_20_generated>(), puerts::make_overload<&string_name_op_modulus_21_generated>(), puerts::make_overload<&string_name_op_modulus_22_generated>(), puerts::make_overload<&string_name_op_modulus_23_generated>(), puerts::make_overload<&string_name_op_modulus_24_generated>(), puerts::make_overload<&string_name_op_modulus_25_generated>(), puerts::make_overload<&string_name_op_modulus_26_generated>(), puerts::make_overload<&string_name_op_modulus_27_generated>(), puerts::make_overload<&string_name_op_modulus_35_generated>(), puerts::make_overload<&string_name_op_modulus_37_generated>(), puerts::make_overload<&string_name_op_modulus_38_generated>(), puerts::make_overload<&string_name_op_modulus_39_generated>(), puerts::make_overload<&string_name_op_modulus_41_generated>(), puerts::make_overload<&string_name_op_modulus_42_generated>(), puerts::make_overload<&string_name_op_modulus_43_generated>(), puerts::make_overload<&string_name_op_modulus_45_generated>(), puerts::make_overload<&string_name_op_modulus_47_generated>(), puerts::make_overload<&string_name_op_modulus_48_generated>(), puerts::make_overload<&string_name_op_modulus_49_generated>(), puerts::make_overload<&string_name_op_modulus_50_generated>(), puerts::make_overload<&string_name_op_modulus_51_generated>(), puerts::make_overload<&string_name_op_modulus_52_generated>(), puerts::make_overload<&string_name_op_modulus_54_generated>(), puerts::make_overload<&string_name_op_modulus_55_generated>(), puerts::make_overload<&string_name_op_modulus_56_generated>(), puerts::make_overload<&string_name_op_modulus_57_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&string_name_op_logical_not_3_generated>())
+			.function("op_Addition", puerts::combine_overloads(puerts::make_overload<&string_name_op_addition_9_generated>(), puerts::make_overload<&string_name_op_addition_34_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&string_name_op_in_11_generated>(), puerts::make_overload<&string_name_op_in_36_generated>(), puerts::make_overload<&string_name_op_in_40_generated>(), puerts::make_overload<&string_name_op_in_44_generated>(), puerts::make_overload<&string_name_op_in_46_generated>(), puerts::make_overload<&string_name_op_in_53_generated>()))
-			.function("op_Lt", puerts::make_function<&string_name_op_lt_30_generated>())
-			.function("op_Le", puerts::make_function<&string_name_op_le_31_generated>())
-			.function("op_Gt", puerts::make_function<&string_name_op_gt_32_generated>())
-			.function("op_Ge", puerts::make_function<&string_name_op_ge_33_generated>())
+			.function("op_LessThan", puerts::make_function<&string_name_op_less_than_30_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&string_name_op_less_than_or_equal_31_generated>())
+			.function("op_GreaterThan", puerts::make_function<&string_name_op_greater_than_32_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&string_name_op_greater_than_or_equal_33_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::StringName>(),
 					puerts::make_constructor_overload<godot::StringName, const godot::StringName &>(),
@@ -3427,40 +3427,40 @@ inline void register_string_name_type_generated() {
 			.method("hash", puerts::make_method<&godot::StringName::hash>())
 			.register_type();
 }
-inline bool transform2d_op_eq_0_generated(const godot::Transform2D &left, const godot::Variant &right) {
+inline bool transform2d_op_equality_0_generated(const godot::Transform2D &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool transform2d_op_ne_1_generated(const godot::Transform2D &left, const godot::Variant &right) {
+inline bool transform2d_op_inequality_1_generated(const godot::Transform2D &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool transform2d_op_not_2_generated(const godot::Transform2D &value) {
+inline bool transform2d_op_logical_not_2_generated(const godot::Transform2D &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Transform2D transform2d_op_mul_3_generated(const godot::Transform2D &left, int64_t right) {
+inline godot::Transform2D transform2d_op_multiply_3_generated(const godot::Transform2D &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform2D>(left, right);
 }
-inline godot::Transform2D transform2d_op_div_4_generated(const godot::Transform2D &left, int64_t right) {
+inline godot::Transform2D transform2d_op_division_4_generated(const godot::Transform2D &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform2D>(left, right);
 }
-inline godot::Transform2D transform2d_op_mul_5_generated(const godot::Transform2D &left, godot::real_t right) {
+inline godot::Transform2D transform2d_op_multiply_5_generated(const godot::Transform2D &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform2D>(left, right);
 }
-inline godot::Transform2D transform2d_op_div_6_generated(const godot::Transform2D &left, godot::real_t right) {
+inline godot::Transform2D transform2d_op_division_6_generated(const godot::Transform2D &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform2D>(left, right);
 }
-inline godot::Vector2 transform2d_op_mul_7_generated(const godot::Transform2D &left, const godot::Vector2 &right) {
+inline godot::Vector2 transform2d_op_multiply_7_generated(const godot::Transform2D &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
-inline godot::Rect2 transform2d_op_mul_8_generated(const godot::Transform2D &left, const godot::Rect2 &right) {
+inline godot::Rect2 transform2d_op_multiply_8_generated(const godot::Transform2D &left, const godot::Rect2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Rect2>(left, right);
 }
-inline bool transform2d_op_eq_9_generated(const godot::Transform2D &left, const godot::Transform2D &right) {
+inline bool transform2d_op_equality_9_generated(const godot::Transform2D &left, const godot::Transform2D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool transform2d_op_ne_10_generated(const godot::Transform2D &left, const godot::Transform2D &right) {
+inline bool transform2d_op_inequality_10_generated(const godot::Transform2D &left, const godot::Transform2D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Transform2D transform2d_op_mul_11_generated(const godot::Transform2D &left, const godot::Transform2D &right) {
+inline godot::Transform2D transform2d_op_multiply_11_generated(const godot::Transform2D &left, const godot::Transform2D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform2D>(left, right);
 }
 inline bool transform2d_op_in_12_generated(const godot::Transform2D &left, const godot::Dictionary &right) {
@@ -3469,7 +3469,7 @@ inline bool transform2d_op_in_12_generated(const godot::Transform2D &left, const
 inline bool transform2d_op_in_13_generated(const godot::Transform2D &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::PackedVector2Array transform2d_op_mul_14_generated(const godot::Transform2D &left, const godot::PackedVector2Array &right) {
+inline godot::PackedVector2Array transform2d_op_multiply_14_generated(const godot::Transform2D &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::PackedVector2Array>(left, right);
 }
 inline godot::Transform2D transform2d_identity_constant_generated() {
@@ -3483,11 +3483,11 @@ inline godot::Transform2D transform2d_flip_y_constant_generated() {
 }
 inline void register_transform2d_type_generated() {
 	puerts::define_class<godot::Transform2D>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&transform2d_op_eq_0_generated>(), puerts::make_overload<&transform2d_op_eq_9_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&transform2d_op_ne_1_generated>(), puerts::make_overload<&transform2d_op_ne_10_generated>()))
-			.function("op_Not", puerts::make_function<&transform2d_op_not_2_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&transform2d_op_mul_3_generated>(), puerts::make_overload<&transform2d_op_mul_5_generated>(), puerts::make_overload<&transform2d_op_mul_7_generated>(), puerts::make_overload<&transform2d_op_mul_8_generated>(), puerts::make_overload<&transform2d_op_mul_11_generated>(), puerts::make_overload<&transform2d_op_mul_14_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&transform2d_op_div_4_generated>(), puerts::make_overload<&transform2d_op_div_6_generated>()))
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&transform2d_op_equality_0_generated>(), puerts::make_overload<&transform2d_op_equality_9_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&transform2d_op_inequality_1_generated>(), puerts::make_overload<&transform2d_op_inequality_10_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&transform2d_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&transform2d_op_multiply_3_generated>(), puerts::make_overload<&transform2d_op_multiply_5_generated>(), puerts::make_overload<&transform2d_op_multiply_7_generated>(), puerts::make_overload<&transform2d_op_multiply_8_generated>(), puerts::make_overload<&transform2d_op_multiply_11_generated>(), puerts::make_overload<&transform2d_op_multiply_14_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&transform2d_op_division_4_generated>(), puerts::make_overload<&transform2d_op_division_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&transform2d_op_in_12_generated>(), puerts::make_overload<&transform2d_op_in_13_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&transform2d_identity_constant_generated>())
 			.static_property("FLIP_X", puerts::make_value_constant<&transform2d_flip_x_constant_generated>())
@@ -3524,43 +3524,43 @@ inline void register_transform2d_type_generated() {
 			.property("origin", &register_puerts_builtin_bindings_generated_generated_detail::transform2d_origin_getter_generated, &register_puerts_builtin_bindings_generated_generated_detail::transform2d_origin_setter_generated)
 			.register_type();
 }
-inline bool transform3d_op_eq_0_generated(const godot::Transform3D &left, const godot::Variant &right) {
+inline bool transform3d_op_equality_0_generated(const godot::Transform3D &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool transform3d_op_ne_1_generated(const godot::Transform3D &left, const godot::Variant &right) {
+inline bool transform3d_op_inequality_1_generated(const godot::Transform3D &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool transform3d_op_not_2_generated(const godot::Transform3D &value) {
+inline bool transform3d_op_logical_not_2_generated(const godot::Transform3D &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Transform3D transform3d_op_mul_3_generated(const godot::Transform3D &left, int64_t right) {
+inline godot::Transform3D transform3d_op_multiply_3_generated(const godot::Transform3D &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform3D>(left, right);
 }
-inline godot::Transform3D transform3d_op_div_4_generated(const godot::Transform3D &left, int64_t right) {
+inline godot::Transform3D transform3d_op_division_4_generated(const godot::Transform3D &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform3D>(left, right);
 }
-inline godot::Transform3D transform3d_op_mul_5_generated(const godot::Transform3D &left, godot::real_t right) {
+inline godot::Transform3D transform3d_op_multiply_5_generated(const godot::Transform3D &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform3D>(left, right);
 }
-inline godot::Transform3D transform3d_op_div_6_generated(const godot::Transform3D &left, godot::real_t right) {
+inline godot::Transform3D transform3d_op_division_6_generated(const godot::Transform3D &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform3D>(left, right);
 }
-inline godot::Vector3 transform3d_op_mul_7_generated(const godot::Transform3D &left, const godot::Vector3 &right) {
+inline godot::Vector3 transform3d_op_multiply_7_generated(const godot::Transform3D &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Plane transform3d_op_mul_8_generated(const godot::Transform3D &left, const godot::Plane &right) {
+inline godot::Plane transform3d_op_multiply_8_generated(const godot::Transform3D &left, const godot::Plane &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Plane>(left, right);
 }
-inline godot::AABB transform3d_op_mul_9_generated(const godot::Transform3D &left, const godot::AABB &right) {
+inline godot::AABB transform3d_op_multiply_9_generated(const godot::Transform3D &left, const godot::AABB &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::AABB>(left, right);
 }
-inline bool transform3d_op_eq_10_generated(const godot::Transform3D &left, const godot::Transform3D &right) {
+inline bool transform3d_op_equality_10_generated(const godot::Transform3D &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool transform3d_op_ne_11_generated(const godot::Transform3D &left, const godot::Transform3D &right) {
+inline bool transform3d_op_inequality_11_generated(const godot::Transform3D &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Transform3D transform3d_op_mul_12_generated(const godot::Transform3D &left, const godot::Transform3D &right) {
+inline godot::Transform3D transform3d_op_multiply_12_generated(const godot::Transform3D &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform3D>(left, right);
 }
 inline bool transform3d_op_in_13_generated(const godot::Transform3D &left, const godot::Dictionary &right) {
@@ -3569,7 +3569,7 @@ inline bool transform3d_op_in_13_generated(const godot::Transform3D &left, const
 inline bool transform3d_op_in_14_generated(const godot::Transform3D &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline godot::PackedVector3Array transform3d_op_mul_15_generated(const godot::Transform3D &left, const godot::PackedVector3Array &right) {
+inline godot::PackedVector3Array transform3d_op_multiply_15_generated(const godot::Transform3D &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::PackedVector3Array>(left, right);
 }
 inline godot::Transform3D transform3d_identity_constant_generated() {
@@ -3586,11 +3586,11 @@ inline godot::Transform3D transform3d_flip_z_constant_generated() {
 }
 inline void register_transform3d_type_generated() {
 	puerts::define_class<godot::Transform3D>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&transform3d_op_eq_0_generated>(), puerts::make_overload<&transform3d_op_eq_10_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&transform3d_op_ne_1_generated>(), puerts::make_overload<&transform3d_op_ne_11_generated>()))
-			.function("op_Not", puerts::make_function<&transform3d_op_not_2_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&transform3d_op_mul_3_generated>(), puerts::make_overload<&transform3d_op_mul_5_generated>(), puerts::make_overload<&transform3d_op_mul_7_generated>(), puerts::make_overload<&transform3d_op_mul_8_generated>(), puerts::make_overload<&transform3d_op_mul_9_generated>(), puerts::make_overload<&transform3d_op_mul_12_generated>(), puerts::make_overload<&transform3d_op_mul_15_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&transform3d_op_div_4_generated>(), puerts::make_overload<&transform3d_op_div_6_generated>()))
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&transform3d_op_equality_0_generated>(), puerts::make_overload<&transform3d_op_equality_10_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&transform3d_op_inequality_1_generated>(), puerts::make_overload<&transform3d_op_inequality_11_generated>()))
+			.function("op_LogicalNot", puerts::make_function<&transform3d_op_logical_not_2_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&transform3d_op_multiply_3_generated>(), puerts::make_overload<&transform3d_op_multiply_5_generated>(), puerts::make_overload<&transform3d_op_multiply_7_generated>(), puerts::make_overload<&transform3d_op_multiply_8_generated>(), puerts::make_overload<&transform3d_op_multiply_9_generated>(), puerts::make_overload<&transform3d_op_multiply_12_generated>(), puerts::make_overload<&transform3d_op_multiply_15_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&transform3d_op_division_4_generated>(), puerts::make_overload<&transform3d_op_division_6_generated>()))
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&transform3d_op_in_13_generated>(), puerts::make_overload<&transform3d_op_in_14_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&transform3d_identity_constant_generated>())
 			.static_property("FLIP_X", puerts::make_value_constant<&transform3d_flip_x_constant_generated>())
@@ -3619,64 +3619,64 @@ inline void register_transform3d_type_generated() {
 			.property("origin", puerts::make_property<&godot::Transform3D::origin>())
 			.register_type();
 }
-inline bool vector2_op_eq_0_generated(const godot::Vector2 &left, const godot::Variant &right) {
+inline bool vector2_op_equality_0_generated(const godot::Vector2 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector2_op_ne_1_generated(const godot::Vector2 &left, const godot::Variant &right) {
+inline bool vector2_op_inequality_1_generated(const godot::Vector2 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Vector2 vector2_op_neg_2_generated(const godot::Vector2 &value) {
+inline godot::Vector2 vector2_op_unary_negation_2_generated(const godot::Vector2 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Vector2>(value);
 }
-inline godot::Vector2 vector2_op_pos_3_generated(const godot::Vector2 &value) {
+inline godot::Vector2 vector2_op_unary_plus_3_generated(const godot::Vector2 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Vector2>(value);
 }
-inline bool vector2_op_not_4_generated(const godot::Vector2 &value) {
+inline bool vector2_op_logical_not_4_generated(const godot::Vector2 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Vector2 vector2_op_mul_5_generated(const godot::Vector2 &left, int64_t right) {
+inline godot::Vector2 vector2_op_multiply_5_generated(const godot::Vector2 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_div_6_generated(const godot::Vector2 &left, int64_t right) {
+inline godot::Vector2 vector2_op_division_6_generated(const godot::Vector2 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_mul_7_generated(const godot::Vector2 &left, godot::real_t right) {
+inline godot::Vector2 vector2_op_multiply_7_generated(const godot::Vector2 &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_div_8_generated(const godot::Vector2 &left, godot::real_t right) {
+inline godot::Vector2 vector2_op_division_8_generated(const godot::Vector2 &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2>(left, right);
 }
-inline bool vector2_op_eq_9_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline bool vector2_op_equality_9_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector2_op_ne_10_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline bool vector2_op_inequality_10_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool vector2_op_lt_11_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline bool vector2_op_less_than_11_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool vector2_op_le_12_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline bool vector2_op_less_than_or_equal_12_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool vector2_op_gt_13_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline bool vector2_op_greater_than_13_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool vector2_op_ge_14_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline bool vector2_op_greater_than_or_equal_14_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::Vector2 vector2_op_add_15_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline godot::Vector2 vector2_op_addition_15_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_sub_16_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline godot::Vector2 vector2_op_subtraction_16_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_mul_17_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline godot::Vector2 vector2_op_multiply_17_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_div_18_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
+inline godot::Vector2 vector2_op_division_18_generated(const godot::Vector2 &left, const godot::Vector2 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_mul_19_generated(const godot::Vector2 &left, const godot::Transform2D &right) {
+inline godot::Vector2 vector2_op_multiply_19_generated(const godot::Vector2 &left, const godot::Transform2D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
 inline bool vector2_op_in_20_generated(const godot::Vector2 &left, const godot::Dictionary &right) {
@@ -3711,19 +3711,19 @@ inline godot::Vector2 vector2_down_constant_generated() {
 }
 inline void register_vector2_type_generated() {
 	puerts::define_class<godot::Vector2>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector2_op_eq_0_generated>(), puerts::make_overload<&vector2_op_eq_9_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&vector2_op_ne_1_generated>(), puerts::make_overload<&vector2_op_ne_10_generated>()))
-			.function("op_Neg", puerts::make_function<&vector2_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&vector2_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&vector2_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&vector2_op_mul_5_generated>(), puerts::make_overload<&vector2_op_mul_7_generated>(), puerts::make_overload<&vector2_op_mul_17_generated>(), puerts::make_overload<&vector2_op_mul_19_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&vector2_op_div_6_generated>(), puerts::make_overload<&vector2_op_div_8_generated>(), puerts::make_overload<&vector2_op_div_18_generated>()))
-			.function("op_Lt", puerts::make_function<&vector2_op_lt_11_generated>())
-			.function("op_Le", puerts::make_function<&vector2_op_le_12_generated>())
-			.function("op_Gt", puerts::make_function<&vector2_op_gt_13_generated>())
-			.function("op_Ge", puerts::make_function<&vector2_op_ge_14_generated>())
-			.function("op_Add", puerts::make_function<&vector2_op_add_15_generated>())
-			.function("op_Sub", puerts::make_function<&vector2_op_sub_16_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector2_op_equality_0_generated>(), puerts::make_overload<&vector2_op_equality_9_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector2_op_inequality_1_generated>(), puerts::make_overload<&vector2_op_inequality_10_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&vector2_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&vector2_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&vector2_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector2_op_multiply_5_generated>(), puerts::make_overload<&vector2_op_multiply_7_generated>(), puerts::make_overload<&vector2_op_multiply_17_generated>(), puerts::make_overload<&vector2_op_multiply_19_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector2_op_division_6_generated>(), puerts::make_overload<&vector2_op_division_8_generated>(), puerts::make_overload<&vector2_op_division_18_generated>()))
+			.function("op_LessThan", puerts::make_function<&vector2_op_less_than_11_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&vector2_op_less_than_or_equal_12_generated>())
+			.function("op_GreaterThan", puerts::make_function<&vector2_op_greater_than_13_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&vector2_op_greater_than_or_equal_14_generated>())
+			.function("op_Addition", puerts::make_function<&vector2_op_addition_15_generated>())
+			.function("op_Subtraction", puerts::make_function<&vector2_op_subtraction_16_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector2_op_in_20_generated>(), puerts::make_overload<&vector2_op_in_21_generated>(), puerts::make_overload<&vector2_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector2_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector2_one_constant_generated>())
@@ -3790,67 +3790,67 @@ inline void register_vector2_type_generated() {
 			.static_property("Axis", puerts::make_enum_group<puerts_generated_enum_tags::vector2_axis_enum_tag_generated>())
 			.register_type();
 }
-inline bool vector2i_op_eq_0_generated(const godot::Vector2i &left, const godot::Variant &right) {
+inline bool vector2i_op_equality_0_generated(const godot::Vector2i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector2i_op_ne_1_generated(const godot::Vector2i &left, const godot::Variant &right) {
+inline bool vector2i_op_inequality_1_generated(const godot::Vector2i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Vector2i vector2i_op_neg_2_generated(const godot::Vector2i &value) {
+inline godot::Vector2i vector2i_op_unary_negation_2_generated(const godot::Vector2i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Vector2i>(value);
 }
-inline godot::Vector2i vector2i_op_pos_3_generated(const godot::Vector2i &value) {
+inline godot::Vector2i vector2i_op_unary_plus_3_generated(const godot::Vector2i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Vector2i>(value);
 }
-inline bool vector2i_op_not_4_generated(const godot::Vector2i &value) {
+inline bool vector2i_op_logical_not_4_generated(const godot::Vector2i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Vector2i vector2i_op_mul_5_generated(const godot::Vector2i &left, int64_t right) {
+inline godot::Vector2i vector2i_op_multiply_5_generated(const godot::Vector2i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2i>(left, right);
 }
-inline godot::Vector2i vector2i_op_div_6_generated(const godot::Vector2i &left, int64_t right) {
+inline godot::Vector2i vector2i_op_division_6_generated(const godot::Vector2i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2i>(left, right);
 }
-inline godot::Vector2i vector2i_op_mod_7_generated(const godot::Vector2i &left, int64_t right) {
+inline godot::Vector2i vector2i_op_modulus_7_generated(const godot::Vector2i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector2i>(left, right);
 }
-inline godot::Vector2 vector2i_op_mul_8_generated(const godot::Vector2i &left, godot::real_t right) {
+inline godot::Vector2 vector2i_op_multiply_8_generated(const godot::Vector2i &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2i_op_div_9_generated(const godot::Vector2i &left, godot::real_t right) {
+inline godot::Vector2 vector2i_op_division_9_generated(const godot::Vector2i &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2>(left, right);
 }
-inline bool vector2i_op_eq_10_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline bool vector2i_op_equality_10_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector2i_op_ne_11_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline bool vector2i_op_inequality_11_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool vector2i_op_lt_12_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline bool vector2i_op_less_than_12_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool vector2i_op_le_13_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline bool vector2i_op_less_than_or_equal_13_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool vector2i_op_gt_14_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline bool vector2i_op_greater_than_14_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool vector2i_op_ge_15_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline bool vector2i_op_greater_than_or_equal_15_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::Vector2i vector2i_op_add_16_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline godot::Vector2i vector2i_op_addition_16_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Vector2i>(left, right);
 }
-inline godot::Vector2i vector2i_op_sub_17_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline godot::Vector2i vector2i_op_subtraction_17_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Vector2i>(left, right);
 }
-inline godot::Vector2i vector2i_op_mul_18_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline godot::Vector2i vector2i_op_multiply_18_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2i>(left, right);
 }
-inline godot::Vector2i vector2i_op_div_19_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline godot::Vector2i vector2i_op_division_19_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2i>(left, right);
 }
-inline godot::Vector2i vector2i_op_mod_20_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
+inline godot::Vector2i vector2i_op_modulus_20_generated(const godot::Vector2i &left, const godot::Vector2i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector2i>(left, right);
 }
 inline bool vector2i_op_in_21_generated(const godot::Vector2i &left, const godot::Dictionary &right) {
@@ -3885,20 +3885,20 @@ inline godot::Vector2i vector2i_down_constant_generated() {
 }
 inline void register_vector2i_type_generated() {
 	puerts::define_class<godot::Vector2i>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector2i_op_eq_0_generated>(), puerts::make_overload<&vector2i_op_eq_10_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&vector2i_op_ne_1_generated>(), puerts::make_overload<&vector2i_op_ne_11_generated>()))
-			.function("op_Neg", puerts::make_function<&vector2i_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&vector2i_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&vector2i_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&vector2i_op_mul_5_generated>(), puerts::make_overload<&vector2i_op_mul_8_generated>(), puerts::make_overload<&vector2i_op_mul_18_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&vector2i_op_div_6_generated>(), puerts::make_overload<&vector2i_op_div_9_generated>(), puerts::make_overload<&vector2i_op_div_19_generated>()))
-			.function("op_Mod", puerts::combine_overloads(puerts::make_overload<&vector2i_op_mod_7_generated>(), puerts::make_overload<&vector2i_op_mod_20_generated>()))
-			.function("op_Lt", puerts::make_function<&vector2i_op_lt_12_generated>())
-			.function("op_Le", puerts::make_function<&vector2i_op_le_13_generated>())
-			.function("op_Gt", puerts::make_function<&vector2i_op_gt_14_generated>())
-			.function("op_Ge", puerts::make_function<&vector2i_op_ge_15_generated>())
-			.function("op_Add", puerts::make_function<&vector2i_op_add_16_generated>())
-			.function("op_Sub", puerts::make_function<&vector2i_op_sub_17_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector2i_op_equality_0_generated>(), puerts::make_overload<&vector2i_op_equality_10_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector2i_op_inequality_1_generated>(), puerts::make_overload<&vector2i_op_inequality_11_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&vector2i_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&vector2i_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&vector2i_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector2i_op_multiply_5_generated>(), puerts::make_overload<&vector2i_op_multiply_8_generated>(), puerts::make_overload<&vector2i_op_multiply_18_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector2i_op_division_6_generated>(), puerts::make_overload<&vector2i_op_division_9_generated>(), puerts::make_overload<&vector2i_op_division_19_generated>()))
+			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector2i_op_modulus_7_generated>(), puerts::make_overload<&vector2i_op_modulus_20_generated>()))
+			.function("op_LessThan", puerts::make_function<&vector2i_op_less_than_12_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&vector2i_op_less_than_or_equal_13_generated>())
+			.function("op_GreaterThan", puerts::make_function<&vector2i_op_greater_than_14_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&vector2i_op_greater_than_or_equal_15_generated>())
+			.function("op_Addition", puerts::make_function<&vector2i_op_addition_16_generated>())
+			.function("op_Subtraction", puerts::make_function<&vector2i_op_subtraction_17_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector2i_op_in_21_generated>(), puerts::make_overload<&vector2i_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector2i_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector2i_one_constant_generated>())
@@ -3935,70 +3935,70 @@ inline void register_vector2i_type_generated() {
 			.static_property("Axis", puerts::make_enum_group<puerts_generated_enum_tags::vector2i_axis_enum_tag_generated>())
 			.register_type();
 }
-inline bool vector3_op_eq_0_generated(const godot::Vector3 &left, const godot::Variant &right) {
+inline bool vector3_op_equality_0_generated(const godot::Vector3 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector3_op_ne_1_generated(const godot::Vector3 &left, const godot::Variant &right) {
+inline bool vector3_op_inequality_1_generated(const godot::Vector3 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Vector3 vector3_op_neg_2_generated(const godot::Vector3 &value) {
+inline godot::Vector3 vector3_op_unary_negation_2_generated(const godot::Vector3 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Vector3>(value);
 }
-inline godot::Vector3 vector3_op_pos_3_generated(const godot::Vector3 &value) {
+inline godot::Vector3 vector3_op_unary_plus_3_generated(const godot::Vector3 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Vector3>(value);
 }
-inline bool vector3_op_not_4_generated(const godot::Vector3 &value) {
+inline bool vector3_op_logical_not_4_generated(const godot::Vector3 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Vector3 vector3_op_mul_5_generated(const godot::Vector3 &left, int64_t right) {
+inline godot::Vector3 vector3_op_multiply_5_generated(const godot::Vector3 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_div_6_generated(const godot::Vector3 &left, int64_t right) {
+inline godot::Vector3 vector3_op_division_6_generated(const godot::Vector3 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_mul_7_generated(const godot::Vector3 &left, godot::real_t right) {
+inline godot::Vector3 vector3_op_multiply_7_generated(const godot::Vector3 &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_div_8_generated(const godot::Vector3 &left, godot::real_t right) {
+inline godot::Vector3 vector3_op_division_8_generated(const godot::Vector3 &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3>(left, right);
 }
-inline bool vector3_op_eq_9_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline bool vector3_op_equality_9_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector3_op_ne_10_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline bool vector3_op_inequality_10_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool vector3_op_lt_11_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline bool vector3_op_less_than_11_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool vector3_op_le_12_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline bool vector3_op_less_than_or_equal_12_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool vector3_op_gt_13_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline bool vector3_op_greater_than_13_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool vector3_op_ge_14_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline bool vector3_op_greater_than_or_equal_14_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::Vector3 vector3_op_add_15_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline godot::Vector3 vector3_op_addition_15_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_sub_16_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline godot::Vector3 vector3_op_subtraction_16_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_mul_17_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline godot::Vector3 vector3_op_multiply_17_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_div_18_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
+inline godot::Vector3 vector3_op_division_18_generated(const godot::Vector3 &left, const godot::Vector3 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_mul_19_generated(const godot::Vector3 &left, const godot::Quaternion &right) {
+inline godot::Vector3 vector3_op_multiply_19_generated(const godot::Vector3 &left, const godot::Quaternion &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_mul_20_generated(const godot::Vector3 &left, const godot::Basis &right) {
+inline godot::Vector3 vector3_op_multiply_20_generated(const godot::Vector3 &left, const godot::Basis &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_mul_21_generated(const godot::Vector3 &left, const godot::Transform3D &right) {
+inline godot::Vector3 vector3_op_multiply_21_generated(const godot::Vector3 &left, const godot::Transform3D &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
 inline bool vector3_op_in_22_generated(const godot::Vector3 &left, const godot::Dictionary &right) {
@@ -4057,19 +4057,19 @@ inline godot::Vector3 vector3_model_rear_constant_generated() {
 }
 inline void register_vector3_type_generated() {
 	puerts::define_class<godot::Vector3>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector3_op_eq_0_generated>(), puerts::make_overload<&vector3_op_eq_9_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&vector3_op_ne_1_generated>(), puerts::make_overload<&vector3_op_ne_10_generated>()))
-			.function("op_Neg", puerts::make_function<&vector3_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&vector3_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&vector3_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&vector3_op_mul_5_generated>(), puerts::make_overload<&vector3_op_mul_7_generated>(), puerts::make_overload<&vector3_op_mul_17_generated>(), puerts::make_overload<&vector3_op_mul_19_generated>(), puerts::make_overload<&vector3_op_mul_20_generated>(), puerts::make_overload<&vector3_op_mul_21_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&vector3_op_div_6_generated>(), puerts::make_overload<&vector3_op_div_8_generated>(), puerts::make_overload<&vector3_op_div_18_generated>()))
-			.function("op_Lt", puerts::make_function<&vector3_op_lt_11_generated>())
-			.function("op_Le", puerts::make_function<&vector3_op_le_12_generated>())
-			.function("op_Gt", puerts::make_function<&vector3_op_gt_13_generated>())
-			.function("op_Ge", puerts::make_function<&vector3_op_ge_14_generated>())
-			.function("op_Add", puerts::make_function<&vector3_op_add_15_generated>())
-			.function("op_Sub", puerts::make_function<&vector3_op_sub_16_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector3_op_equality_0_generated>(), puerts::make_overload<&vector3_op_equality_9_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector3_op_inequality_1_generated>(), puerts::make_overload<&vector3_op_inequality_10_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&vector3_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&vector3_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&vector3_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector3_op_multiply_5_generated>(), puerts::make_overload<&vector3_op_multiply_7_generated>(), puerts::make_overload<&vector3_op_multiply_17_generated>(), puerts::make_overload<&vector3_op_multiply_19_generated>(), puerts::make_overload<&vector3_op_multiply_20_generated>(), puerts::make_overload<&vector3_op_multiply_21_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector3_op_division_6_generated>(), puerts::make_overload<&vector3_op_division_8_generated>(), puerts::make_overload<&vector3_op_division_18_generated>()))
+			.function("op_LessThan", puerts::make_function<&vector3_op_less_than_11_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&vector3_op_less_than_or_equal_12_generated>())
+			.function("op_GreaterThan", puerts::make_function<&vector3_op_greater_than_13_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&vector3_op_greater_than_or_equal_14_generated>())
+			.function("op_Addition", puerts::make_function<&vector3_op_addition_15_generated>())
+			.function("op_Subtraction", puerts::make_function<&vector3_op_subtraction_16_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector3_op_in_22_generated>(), puerts::make_overload<&vector3_op_in_23_generated>(), puerts::make_overload<&vector3_op_in_24_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector3_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector3_one_constant_generated>())
@@ -4145,67 +4145,67 @@ inline void register_vector3_type_generated() {
 			.static_property("Axis", puerts::make_enum_group<puerts_generated_enum_tags::vector3_axis_enum_tag_generated>())
 			.register_type();
 }
-inline bool vector3i_op_eq_0_generated(const godot::Vector3i &left, const godot::Variant &right) {
+inline bool vector3i_op_equality_0_generated(const godot::Vector3i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector3i_op_ne_1_generated(const godot::Vector3i &left, const godot::Variant &right) {
+inline bool vector3i_op_inequality_1_generated(const godot::Vector3i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Vector3i vector3i_op_neg_2_generated(const godot::Vector3i &value) {
+inline godot::Vector3i vector3i_op_unary_negation_2_generated(const godot::Vector3i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Vector3i>(value);
 }
-inline godot::Vector3i vector3i_op_pos_3_generated(const godot::Vector3i &value) {
+inline godot::Vector3i vector3i_op_unary_plus_3_generated(const godot::Vector3i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Vector3i>(value);
 }
-inline bool vector3i_op_not_4_generated(const godot::Vector3i &value) {
+inline bool vector3i_op_logical_not_4_generated(const godot::Vector3i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Vector3i vector3i_op_mul_5_generated(const godot::Vector3i &left, int64_t right) {
+inline godot::Vector3i vector3i_op_multiply_5_generated(const godot::Vector3i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3i>(left, right);
 }
-inline godot::Vector3i vector3i_op_div_6_generated(const godot::Vector3i &left, int64_t right) {
+inline godot::Vector3i vector3i_op_division_6_generated(const godot::Vector3i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3i>(left, right);
 }
-inline godot::Vector3i vector3i_op_mod_7_generated(const godot::Vector3i &left, int64_t right) {
+inline godot::Vector3i vector3i_op_modulus_7_generated(const godot::Vector3i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector3i>(left, right);
 }
-inline godot::Vector3 vector3i_op_mul_8_generated(const godot::Vector3i &left, godot::real_t right) {
+inline godot::Vector3 vector3i_op_multiply_8_generated(const godot::Vector3i &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3i_op_div_9_generated(const godot::Vector3i &left, godot::real_t right) {
+inline godot::Vector3 vector3i_op_division_9_generated(const godot::Vector3i &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3>(left, right);
 }
-inline bool vector3i_op_eq_10_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline bool vector3i_op_equality_10_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector3i_op_ne_11_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline bool vector3i_op_inequality_11_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool vector3i_op_lt_12_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline bool vector3i_op_less_than_12_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool vector3i_op_le_13_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline bool vector3i_op_less_than_or_equal_13_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool vector3i_op_gt_14_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline bool vector3i_op_greater_than_14_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool vector3i_op_ge_15_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline bool vector3i_op_greater_than_or_equal_15_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::Vector3i vector3i_op_add_16_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline godot::Vector3i vector3i_op_addition_16_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Vector3i>(left, right);
 }
-inline godot::Vector3i vector3i_op_sub_17_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline godot::Vector3i vector3i_op_subtraction_17_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Vector3i>(left, right);
 }
-inline godot::Vector3i vector3i_op_mul_18_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline godot::Vector3i vector3i_op_multiply_18_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3i>(left, right);
 }
-inline godot::Vector3i vector3i_op_div_19_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline godot::Vector3i vector3i_op_division_19_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3i>(left, right);
 }
-inline godot::Vector3i vector3i_op_mod_20_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
+inline godot::Vector3i vector3i_op_modulus_20_generated(const godot::Vector3i &left, const godot::Vector3i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector3i>(left, right);
 }
 inline bool vector3i_op_in_21_generated(const godot::Vector3i &left, const godot::Dictionary &right) {
@@ -4246,20 +4246,20 @@ inline godot::Vector3i vector3i_back_constant_generated() {
 }
 inline void register_vector3i_type_generated() {
 	puerts::define_class<godot::Vector3i>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector3i_op_eq_0_generated>(), puerts::make_overload<&vector3i_op_eq_10_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&vector3i_op_ne_1_generated>(), puerts::make_overload<&vector3i_op_ne_11_generated>()))
-			.function("op_Neg", puerts::make_function<&vector3i_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&vector3i_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&vector3i_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&vector3i_op_mul_5_generated>(), puerts::make_overload<&vector3i_op_mul_8_generated>(), puerts::make_overload<&vector3i_op_mul_18_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&vector3i_op_div_6_generated>(), puerts::make_overload<&vector3i_op_div_9_generated>(), puerts::make_overload<&vector3i_op_div_19_generated>()))
-			.function("op_Mod", puerts::combine_overloads(puerts::make_overload<&vector3i_op_mod_7_generated>(), puerts::make_overload<&vector3i_op_mod_20_generated>()))
-			.function("op_Lt", puerts::make_function<&vector3i_op_lt_12_generated>())
-			.function("op_Le", puerts::make_function<&vector3i_op_le_13_generated>())
-			.function("op_Gt", puerts::make_function<&vector3i_op_gt_14_generated>())
-			.function("op_Ge", puerts::make_function<&vector3i_op_ge_15_generated>())
-			.function("op_Add", puerts::make_function<&vector3i_op_add_16_generated>())
-			.function("op_Sub", puerts::make_function<&vector3i_op_sub_17_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector3i_op_equality_0_generated>(), puerts::make_overload<&vector3i_op_equality_10_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector3i_op_inequality_1_generated>(), puerts::make_overload<&vector3i_op_inequality_11_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&vector3i_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&vector3i_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&vector3i_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector3i_op_multiply_5_generated>(), puerts::make_overload<&vector3i_op_multiply_8_generated>(), puerts::make_overload<&vector3i_op_multiply_18_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector3i_op_division_6_generated>(), puerts::make_overload<&vector3i_op_division_9_generated>(), puerts::make_overload<&vector3i_op_division_19_generated>()))
+			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector3i_op_modulus_7_generated>(), puerts::make_overload<&vector3i_op_modulus_20_generated>()))
+			.function("op_LessThan", puerts::make_function<&vector3i_op_less_than_12_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&vector3i_op_less_than_or_equal_13_generated>())
+			.function("op_GreaterThan", puerts::make_function<&vector3i_op_greater_than_14_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&vector3i_op_greater_than_or_equal_15_generated>())
+			.function("op_Addition", puerts::make_function<&vector3i_op_addition_16_generated>())
+			.function("op_Subtraction", puerts::make_function<&vector3i_op_subtraction_17_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector3i_op_in_21_generated>(), puerts::make_overload<&vector3i_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector3i_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector3i_one_constant_generated>())
@@ -4298,64 +4298,64 @@ inline void register_vector3i_type_generated() {
 			.static_property("Axis", puerts::make_enum_group<puerts_generated_enum_tags::vector3i_axis_enum_tag_generated>())
 			.register_type();
 }
-inline bool vector4_op_eq_0_generated(const godot::Vector4 &left, const godot::Variant &right) {
+inline bool vector4_op_equality_0_generated(const godot::Vector4 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector4_op_ne_1_generated(const godot::Vector4 &left, const godot::Variant &right) {
+inline bool vector4_op_inequality_1_generated(const godot::Vector4 &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Vector4 vector4_op_neg_2_generated(const godot::Vector4 &value) {
+inline godot::Vector4 vector4_op_unary_negation_2_generated(const godot::Vector4 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Vector4>(value);
 }
-inline godot::Vector4 vector4_op_pos_3_generated(const godot::Vector4 &value) {
+inline godot::Vector4 vector4_op_unary_plus_3_generated(const godot::Vector4 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Vector4>(value);
 }
-inline bool vector4_op_not_4_generated(const godot::Vector4 &value) {
+inline bool vector4_op_logical_not_4_generated(const godot::Vector4 &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Vector4 vector4_op_mul_5_generated(const godot::Vector4 &left, int64_t right) {
+inline godot::Vector4 vector4_op_multiply_5_generated(const godot::Vector4 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_div_6_generated(const godot::Vector4 &left, int64_t right) {
+inline godot::Vector4 vector4_op_division_6_generated(const godot::Vector4 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_mul_7_generated(const godot::Vector4 &left, godot::real_t right) {
+inline godot::Vector4 vector4_op_multiply_7_generated(const godot::Vector4 &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_div_8_generated(const godot::Vector4 &left, godot::real_t right) {
+inline godot::Vector4 vector4_op_division_8_generated(const godot::Vector4 &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4>(left, right);
 }
-inline bool vector4_op_eq_9_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline bool vector4_op_equality_9_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector4_op_ne_10_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline bool vector4_op_inequality_10_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool vector4_op_lt_11_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline bool vector4_op_less_than_11_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool vector4_op_le_12_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline bool vector4_op_less_than_or_equal_12_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool vector4_op_gt_13_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline bool vector4_op_greater_than_13_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool vector4_op_ge_14_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline bool vector4_op_greater_than_or_equal_14_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::Vector4 vector4_op_add_15_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline godot::Vector4 vector4_op_addition_15_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_sub_16_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline godot::Vector4 vector4_op_subtraction_16_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_mul_17_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline godot::Vector4 vector4_op_multiply_17_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_div_18_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
+inline godot::Vector4 vector4_op_division_18_generated(const godot::Vector4 &left, const godot::Vector4 &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_mul_19_generated(const godot::Vector4 &left, const godot::Projection &right) {
+inline godot::Vector4 vector4_op_multiply_19_generated(const godot::Vector4 &left, const godot::Projection &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
 inline bool vector4_op_in_20_generated(const godot::Vector4 &left, const godot::Dictionary &right) {
@@ -4378,19 +4378,19 @@ inline godot::Vector4 vector4_inf_constant_generated() {
 }
 inline void register_vector4_type_generated() {
 	puerts::define_class<godot::Vector4>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector4_op_eq_0_generated>(), puerts::make_overload<&vector4_op_eq_9_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&vector4_op_ne_1_generated>(), puerts::make_overload<&vector4_op_ne_10_generated>()))
-			.function("op_Neg", puerts::make_function<&vector4_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&vector4_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&vector4_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&vector4_op_mul_5_generated>(), puerts::make_overload<&vector4_op_mul_7_generated>(), puerts::make_overload<&vector4_op_mul_17_generated>(), puerts::make_overload<&vector4_op_mul_19_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&vector4_op_div_6_generated>(), puerts::make_overload<&vector4_op_div_8_generated>(), puerts::make_overload<&vector4_op_div_18_generated>()))
-			.function("op_Lt", puerts::make_function<&vector4_op_lt_11_generated>())
-			.function("op_Le", puerts::make_function<&vector4_op_le_12_generated>())
-			.function("op_Gt", puerts::make_function<&vector4_op_gt_13_generated>())
-			.function("op_Ge", puerts::make_function<&vector4_op_ge_14_generated>())
-			.function("op_Add", puerts::make_function<&vector4_op_add_15_generated>())
-			.function("op_Sub", puerts::make_function<&vector4_op_sub_16_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector4_op_equality_0_generated>(), puerts::make_overload<&vector4_op_equality_9_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector4_op_inequality_1_generated>(), puerts::make_overload<&vector4_op_inequality_10_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&vector4_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&vector4_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&vector4_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector4_op_multiply_5_generated>(), puerts::make_overload<&vector4_op_multiply_7_generated>(), puerts::make_overload<&vector4_op_multiply_17_generated>(), puerts::make_overload<&vector4_op_multiply_19_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector4_op_division_6_generated>(), puerts::make_overload<&vector4_op_division_8_generated>(), puerts::make_overload<&vector4_op_division_18_generated>()))
+			.function("op_LessThan", puerts::make_function<&vector4_op_less_than_11_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&vector4_op_less_than_or_equal_12_generated>())
+			.function("op_GreaterThan", puerts::make_function<&vector4_op_greater_than_13_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&vector4_op_greater_than_or_equal_14_generated>())
+			.function("op_Addition", puerts::make_function<&vector4_op_addition_15_generated>())
+			.function("op_Subtraction", puerts::make_function<&vector4_op_subtraction_16_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector4_op_in_20_generated>(), puerts::make_overload<&vector4_op_in_21_generated>(), puerts::make_overload<&vector4_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector4_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector4_one_constant_generated>())
@@ -4439,67 +4439,67 @@ inline void register_vector4_type_generated() {
 			.static_property("Axis", puerts::make_enum_group<puerts_generated_enum_tags::vector4_axis_enum_tag_generated>())
 			.register_type();
 }
-inline bool vector4i_op_eq_0_generated(const godot::Vector4i &left, const godot::Variant &right) {
+inline bool vector4i_op_equality_0_generated(const godot::Vector4i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector4i_op_ne_1_generated(const godot::Vector4i &left, const godot::Variant &right) {
+inline bool vector4i_op_inequality_1_generated(const godot::Vector4i &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline godot::Vector4i vector4i_op_neg_2_generated(const godot::Vector4i &value) {
+inline godot::Vector4i vector4i_op_unary_negation_2_generated(const godot::Vector4i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NEGATE, godot::Vector4i>(value);
 }
-inline godot::Vector4i vector4i_op_pos_3_generated(const godot::Vector4i &value) {
+inline godot::Vector4i vector4i_op_unary_plus_3_generated(const godot::Vector4i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_POSITIVE, godot::Vector4i>(value);
 }
-inline bool vector4i_op_not_4_generated(const godot::Vector4i &value) {
+inline bool vector4i_op_logical_not_4_generated(const godot::Vector4i &value) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT, bool>(value);
 }
-inline godot::Vector4i vector4i_op_mul_5_generated(const godot::Vector4i &left, int64_t right) {
+inline godot::Vector4i vector4i_op_multiply_5_generated(const godot::Vector4i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4i>(left, right);
 }
-inline godot::Vector4i vector4i_op_div_6_generated(const godot::Vector4i &left, int64_t right) {
+inline godot::Vector4i vector4i_op_division_6_generated(const godot::Vector4i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4i>(left, right);
 }
-inline godot::Vector4i vector4i_op_mod_7_generated(const godot::Vector4i &left, int64_t right) {
+inline godot::Vector4i vector4i_op_modulus_7_generated(const godot::Vector4i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector4i>(left, right);
 }
-inline godot::Vector4 vector4i_op_mul_8_generated(const godot::Vector4i &left, godot::real_t right) {
+inline godot::Vector4 vector4i_op_multiply_8_generated(const godot::Vector4i &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4i_op_div_9_generated(const godot::Vector4i &left, godot::real_t right) {
+inline godot::Vector4 vector4i_op_division_9_generated(const godot::Vector4i &left, godot::real_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4>(left, right);
 }
-inline bool vector4i_op_eq_10_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline bool vector4i_op_equality_10_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
-inline bool vector4i_op_ne_11_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline bool vector4i_op_inequality_11_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_NOT_EQUAL, bool>(left, right);
 }
-inline bool vector4i_op_lt_12_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline bool vector4i_op_less_than_12_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS, bool>(left, right);
 }
-inline bool vector4i_op_le_13_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline bool vector4i_op_less_than_or_equal_13_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_LESS_EQUAL, bool>(left, right);
 }
-inline bool vector4i_op_gt_14_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline bool vector4i_op_greater_than_14_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER, bool>(left, right);
 }
-inline bool vector4i_op_ge_15_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline bool vector4i_op_greater_than_or_equal_15_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_GREATER_EQUAL, bool>(left, right);
 }
-inline godot::Vector4i vector4i_op_add_16_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline godot::Vector4i vector4i_op_addition_16_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::Vector4i>(left, right);
 }
-inline godot::Vector4i vector4i_op_sub_17_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline godot::Vector4i vector4i_op_subtraction_17_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_SUBTRACT, godot::Vector4i>(left, right);
 }
-inline godot::Vector4i vector4i_op_mul_18_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline godot::Vector4i vector4i_op_multiply_18_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4i>(left, right);
 }
-inline godot::Vector4i vector4i_op_div_19_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline godot::Vector4i vector4i_op_division_19_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4i>(left, right);
 }
-inline godot::Vector4i vector4i_op_mod_20_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
+inline godot::Vector4i vector4i_op_modulus_20_generated(const godot::Vector4i &left, const godot::Vector4i &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector4i>(left, right);
 }
 inline bool vector4i_op_in_21_generated(const godot::Vector4i &left, const godot::Dictionary &right) {
@@ -4522,20 +4522,20 @@ inline godot::Vector4i vector4i_max_constant_generated() {
 }
 inline void register_vector4i_type_generated() {
 	puerts::define_class<godot::Vector4i>()
-			.function("op_Eq", puerts::combine_overloads(puerts::make_overload<&vector4i_op_eq_0_generated>(), puerts::make_overload<&vector4i_op_eq_10_generated>()))
-			.function("op_Ne", puerts::combine_overloads(puerts::make_overload<&vector4i_op_ne_1_generated>(), puerts::make_overload<&vector4i_op_ne_11_generated>()))
-			.function("op_Neg", puerts::make_function<&vector4i_op_neg_2_generated>())
-			.function("op_Pos", puerts::make_function<&vector4i_op_pos_3_generated>())
-			.function("op_Not", puerts::make_function<&vector4i_op_not_4_generated>())
-			.function("op_Mul", puerts::combine_overloads(puerts::make_overload<&vector4i_op_mul_5_generated>(), puerts::make_overload<&vector4i_op_mul_8_generated>(), puerts::make_overload<&vector4i_op_mul_18_generated>()))
-			.function("op_Div", puerts::combine_overloads(puerts::make_overload<&vector4i_op_div_6_generated>(), puerts::make_overload<&vector4i_op_div_9_generated>(), puerts::make_overload<&vector4i_op_div_19_generated>()))
-			.function("op_Mod", puerts::combine_overloads(puerts::make_overload<&vector4i_op_mod_7_generated>(), puerts::make_overload<&vector4i_op_mod_20_generated>()))
-			.function("op_Lt", puerts::make_function<&vector4i_op_lt_12_generated>())
-			.function("op_Le", puerts::make_function<&vector4i_op_le_13_generated>())
-			.function("op_Gt", puerts::make_function<&vector4i_op_gt_14_generated>())
-			.function("op_Ge", puerts::make_function<&vector4i_op_ge_15_generated>())
-			.function("op_Add", puerts::make_function<&vector4i_op_add_16_generated>())
-			.function("op_Sub", puerts::make_function<&vector4i_op_sub_17_generated>())
+			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector4i_op_equality_0_generated>(), puerts::make_overload<&vector4i_op_equality_10_generated>()))
+			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector4i_op_inequality_1_generated>(), puerts::make_overload<&vector4i_op_inequality_11_generated>()))
+			.function("op_UnaryNegation", puerts::make_function<&vector4i_op_unary_negation_2_generated>())
+			.function("op_UnaryPlus", puerts::make_function<&vector4i_op_unary_plus_3_generated>())
+			.function("op_LogicalNot", puerts::make_function<&vector4i_op_logical_not_4_generated>())
+			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector4i_op_multiply_5_generated>(), puerts::make_overload<&vector4i_op_multiply_8_generated>(), puerts::make_overload<&vector4i_op_multiply_18_generated>()))
+			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector4i_op_division_6_generated>(), puerts::make_overload<&vector4i_op_division_9_generated>(), puerts::make_overload<&vector4i_op_division_19_generated>()))
+			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector4i_op_modulus_7_generated>(), puerts::make_overload<&vector4i_op_modulus_20_generated>()))
+			.function("op_LessThan", puerts::make_function<&vector4i_op_less_than_12_generated>())
+			.function("op_LessThanOrEqual", puerts::make_function<&vector4i_op_less_than_or_equal_13_generated>())
+			.function("op_GreaterThan", puerts::make_function<&vector4i_op_greater_than_14_generated>())
+			.function("op_GreaterThanOrEqual", puerts::make_function<&vector4i_op_greater_than_or_equal_15_generated>())
+			.function("op_Addition", puerts::make_function<&vector4i_op_addition_16_generated>())
+			.function("op_Subtraction", puerts::make_function<&vector4i_op_subtraction_17_generated>())
 			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector4i_op_in_21_generated>(), puerts::make_overload<&vector4i_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector4i_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector4i_one_constant_generated>())
