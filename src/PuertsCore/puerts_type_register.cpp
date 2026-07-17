@@ -91,10 +91,6 @@ uint32_t get_method_compatibility_hash(const MethodInfo &p_method_info) {
 	return hash_fmix32(hash);
 }
 
-uint32_t get_method_compatibility_hash(const Dictionary &p_method_dict) {
-	return get_method_compatibility_hash(MethodInfo::from_dict(p_method_dict));
-}
-
 Object *instantiate_reflected_object(const TypeInfo *p_type_info, String &r_error) {
 #if GODOT_VERSION_MAJOR > 4 || (GODOT_VERSION_MAJOR == 4 && GODOT_VERSION_MINOR >= 4)
 	GDExtensionObjectPtr native_object = godot::gdextension_interface::classdb_construct_object2(
@@ -289,16 +285,30 @@ private:
 		p_type_info->static_methods.reserve(p_method_list.size());
 		for (const auto &i : p_method_list) {
 			const Dictionary method_dict = i;
+			const MethodInfo method_info = MethodInfo::from_dict(method_dict);
 			TypeInfo::MethodData method;
 			method.name = method_dict["name"];
 			method.owner_class_name = p_type_info->class_name;
-			method.compatibility_hash = get_method_compatibility_hash(method_dict);
+			method.argument_count = method_info.arguments.size();
+			method.compatibility_hash = get_method_compatibility_hash(method_info);
 			const bool is_static = (static_cast<uint32_t>(method_dict["flags"]) & METHOD_FLAG_STATIC) != 0;
 			method.callback = is_static ? &PuertsTypeRegister::object_static_method_callback : &PuertsTypeRegister::object_method_callback;
 
 			puerts_eastl::vector<TypeInfo::MethodData> &target_methods = is_static ? p_type_info->static_methods : p_type_info->instance_methods;
 			target_methods.push_back(method);
 		}
+	}
+
+	static TypeInfo::MethodData *find_instance_method(TypeInfo *p_type_info, const StringName &p_name) {
+		while (p_type_info != nullptr) {
+			for (TypeInfo::MethodData &method : p_type_info->instance_methods) {
+				if (method.name == p_name) {
+					return &method;
+				}
+			}
+			p_type_info = p_type_info->base_type;
+		}
+		return nullptr;
 	}
 
 	static void append_reflected_properties(TypeInfo *p_type_info, const TypedArray<Dictionary> &p_property_list) {
@@ -312,10 +322,17 @@ private:
 
 			TypeInfo::PropertyData property;
 			property.name = property_dict["name"];
-			property.variant_type = static_cast<Variant::Type>(static_cast<int64_t>(property_dict["type"]));
-			property.class_name = property_dict["class_name"];
+			property.getter_method = find_instance_method(
+					p_type_info,
+					ClassDB::class_get_property_getter(p_type_info->class_name, property.name));
+			property.indexed = property.getter_method->argument_count != 0;
 			property.getter = &PuertsTypeRegister::object_property_getter_callback;
 			if (!is_read_only_reflected_property(property_dict)) {
+				if (!property.indexed) {
+					property.setter_method = find_instance_method(
+							p_type_info,
+							ClassDB::class_get_property_setter(p_type_info->class_name, property.name));
+				}
 				property.setter = &PuertsTypeRegister::object_property_setter_callback;
 			}
 			p_type_info->instance_properties.push_back(property);
@@ -672,7 +689,18 @@ void PuertsTypeRegister::object_property_getter_callback(struct pesapi_ffi *apis
 		return;
 	}
 
-	puerts::return_variant(apis, info, context.env, context.environment, object->get(property->name));
+	Variant result;
+	if (!property->indexed) {
+		String call_error;
+		if (!call_reflected_method(object, property->getter_method, context, result, call_error)) {
+			CharString message = call_error.utf8();
+			apis->throw_by_string(info, message.get_data());
+			return;
+		}
+	} else {
+		result = ClassDB::class_get_property(object, property->name);
+	}
+	puerts::return_variant(apis, info, context.env, context.environment, result);
 }
 
 void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -687,27 +715,21 @@ void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis
 		apis->throw_by_string(info, "Native object is no longer valid.");
 		return;
 	}
-	const Variant property_value = puerts::script_to_variant(context.environment, context.env, context.get_arg(0));
-	auto reject_type = [&]() {
-		CharString message = String("Property type does not match the reflected signature: " + String(property->name)).utf8();
+	if (!property->indexed) {
+		Variant result;
+		String call_error;
+		if (!call_reflected_method(object, property->setter_method, context, result, call_error)) {
+			CharString message = call_error.utf8();
+			apis->throw_by_string(info, message.get_data());
+		}
+		return;
+	}
+
+	const Variant value = puerts::script_to_variant(context.environment, context.env, context.get_arg(0));
+	if (ClassDB::class_set_property(object, property->name, value) != OK) {
+		CharString message = String("Failed to set property: " + String(property->name)).utf8();
 		apis->throw_by_string(info, message.get_data());
-	};
-	if (property->variant_type != Variant::NIL) {
-		const auto actual_type = static_cast<GDExtensionVariantType>(property_value.get_type());
-		const auto expected_type = static_cast<GDExtensionVariantType>(property->variant_type);
-		if (!godot::gdextension_interface::variant_can_convert_strict(actual_type, expected_type)) {
-			reject_type();
-			return;
-		}
 	}
-	if (property->variant_type == Variant::OBJECT && property->class_name != StringName()) {
-		Object *object_value = property_value;
-		if (object_value != nullptr && !object_value->is_class(property->class_name)) {
-			reject_type();
-			return;
-		}
-	}
-	object->set(property->name, property_value);
 }
 
 void PuertsTypeRegister::object_signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {

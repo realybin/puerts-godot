@@ -43,6 +43,7 @@ public:
 		struct MethodData {
 			godot::StringName name;
 			godot::StringName owner_class_name;
+			int argument_count = 0;
 			uint32_t compatibility_hash = 0;
 			GDExtensionMethodBindPtr method_bind = nullptr;
 			pesapi_callback callback = nullptr;
@@ -51,8 +52,9 @@ public:
 
 		struct PropertyData {
 			godot::StringName name;
-			godot::Variant::Type variant_type = godot::Variant::NIL;
-			godot::StringName class_name;
+			MethodData *getter_method = nullptr;
+			MethodData *setter_method = nullptr;
+			bool indexed = false;
 			int64_t int_constant = 0;
 			pesapi_callback getter = nullptr;
 			pesapi_callback setter = nullptr;

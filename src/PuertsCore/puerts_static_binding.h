@@ -140,6 +140,14 @@ template <typename T>
 inline constexpr bool is_binary_like_v = eastl::is_same_v<bare_type<T>, godot::PackedByteArray>;
 
 template <typename T>
+inline bool can_cast_variant(const godot::Variant &p_value) {
+	return godot::gdextension_interface::variant_can_convert_strict(
+				   static_cast<GDExtensionVariantType>(p_value.get_type()),
+				   gdextension_variant_type_v<T>) &&
+			godot::VariantObjectClassChecker<T>::check(p_value);
+}
+
+template <typename T>
 struct default_finalize_resolver {
 	static void finalize(pesapi_ffi *, void *ptr, void *, void *) {
 		godot::memdelete(static_cast<T *>(ptr));
@@ -246,10 +254,7 @@ bool convert_variant_arg_with(
 	};
 	auto cast_variant = [&](const godot::Variant &p_variant) {
 		if constexpr (gdextension_variant_type_v<T> != GDEXTENSION_VARIANT_TYPE_NIL) {
-			const auto actual_type = static_cast<GDExtensionVariantType>(p_variant.get_type());
-			const auto expected_type = gdextension_variant_type_v<T>;
-			if (!godot::gdextension_interface::variant_can_convert_strict(actual_type, expected_type) ||
-					!godot::VariantObjectClassChecker<T>::check(p_variant)) {
+			if (!can_cast_variant<T>(p_variant)) {
 				return reject_argument_type();
 			}
 		}
@@ -535,11 +540,8 @@ receiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, callba
 				gdextension_variant_type_v<typename receiver<T>::target_type> != GDEXTENSION_VARIANT_TYPE_NIL) {
 			// Boxed builtin receivers come from the bridge; direct native returns use the raw pointer path below.
 			if (const godot::Variant *boxed_variant = context.get_holder_boxed_variant(); boxed_variant != nullptr) {
-				const auto actual_type = static_cast<GDExtensionVariantType>(boxed_variant->get_type());
-				const auto expected_type = gdextension_variant_type_v<typename receiver<T>::target_type>;
-				if (actual_type != GDEXTENSION_VARIANT_TYPE_NIL &&
-						godot::gdextension_interface::variant_can_convert_strict(actual_type, expected_type) &&
-						godot::VariantObjectClassChecker<typename receiver<T>::target_type>::check(*boxed_variant)) {
+				if (boxed_variant->get_type() != godot::Variant::NIL &&
+						can_cast_variant<typename receiver<T>::target_type>(*boxed_variant)) {
 					instance.storage = godot::VariantCaster<typename receiver<T>::target_type>::cast(*boxed_variant);
 					instance.boxed_handle = holder;
 					return instance;
