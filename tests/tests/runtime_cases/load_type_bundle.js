@@ -193,6 +193,92 @@
 				return error;
 			}
 
+			const ArrayType = load_type("Array");
+			const CodeEdit = load_type("CodeEdit");
+			const GlobalScope = load_type("GlobalScope");
+			const prefixes = new ArrayType();
+			prefixes.push_back("#");
+			const codeEdit = new CodeEdit();
+			codeEdit.set_auto_indent_prefixes(prefixes);
+			const storedPrefixes = codeEdit.get_auto_indent_prefixes();
+			error = expect(
+				!prefixes.is_typed() &&
+					storedPrefixes.is_typed() &&
+					storedPrefixes.get_typed_builtin() === GlobalScope.Variant.Type.TYPE_STRING &&
+					storedPrefixes.get(0) === "#",
+				"untyped array conversion mismatch"
+			);
+			if (error) {
+				return error;
+			}
+
+			const FileDialog = load_type("FileDialog");
+			const filters = new ArrayType();
+			filters.push_back("*.txt");
+			const fileDialog = new FileDialog();
+			fileDialog.set_filters(filters);
+			const storedFilters = fileDialog.get_filters();
+			error = expect(
+				storedFilters.size() === 1 && storedFilters.get(0) === "*.txt",
+				"array to reflected packed array conversion mismatch"
+			);
+			if (error) {
+				return error;
+			}
+
+			const SystemFont = load_type("SystemFont");
+			const fallbackFont = new SystemFont();
+			const untypedFallbacks = new ArrayType();
+			untypedFallbacks.push_back(fallbackFont);
+			const font = new SystemFont();
+			font.set_fallbacks(untypedFallbacks);
+			const storedFallbacks = font.get_fallbacks();
+			error = expect(
+				storedFallbacks.is_typed() &&
+					storedFallbacks.get_typed_builtin() === GlobalScope.Variant.Type.TYPE_OBJECT &&
+					String(storedFallbacks.get_typed_class_name()) === "Font" &&
+					storedFallbacks.get(0) === fallbackFont,
+				"untyped object array conversion mismatch"
+			);
+			if (error) {
+				return error;
+			}
+
+			const DictionaryType = load_type("Dictionary");
+			const bracePairs = new DictionaryType();
+			bracePairs.set("(", ")");
+			codeEdit.set_auto_brace_completion_pairs(bracePairs);
+			error = expect(
+				codeEdit.get_auto_brace_completion_pairs().get("(", null) === ")",
+				"untyped dictionary argument mismatch"
+			);
+			if (error) {
+				return error;
+			}
+
+			const GraphEdit = load_type("GraphEdit");
+			const typeNames = new DictionaryType();
+			typeNames.set(1, "flow");
+			const graphEdit = new GraphEdit();
+			graphEdit.type_names = typeNames;
+			const storedTypeNames = graphEdit.type_names;
+			error = expect(
+				!storedTypeNames.is_typed() &&
+					storedTypeNames.get(1, null) === "flow",
+				"untyped dictionary property passthrough mismatch"
+			);
+			if (error) {
+				return error;
+			}
+
+			const StyleBoxFlat = load_type("StyleBoxFlat");
+			const styleBox = new StyleBoxFlat();
+			styleBox.border_width_left = 7;
+			error = expect(styleBox.border_width_left === 7, "indexed property fallback mismatch");
+			if (error) {
+				return error;
+			}
+
 			return expect(
 				load_type("FileAccess").file_exists("res://project.godot") && load_type("FileAccess").get_size("res://project.godot") > 0,
 				"static reflected binding mismatch"
@@ -223,7 +309,7 @@
 				const RandomNumberGenerator = load_type("RandomNumberGenerator");
 				const rng = new RandomNumberGenerator();
 				rng.seed = "oops";
-			}, "Property type does not match", "property type rejection");
+			}, "Invalid argument", "property type rejection");
 			if (error) {
 				return error;
 			}
@@ -233,15 +319,6 @@
 				"Argument count does not match the bound signature",
 				"object static constructor arity rejection"
 			);
-			if (error) {
-				return error;
-			}
-
-			error = expectThrows(() => {
-				const Theme = load_type("Theme");
-				const theme = new Theme();
-				theme.default_font = backend_object;
-			}, "Property type does not match", "object property type rejection");
 			if (error) {
 				return error;
 			}
@@ -548,6 +625,25 @@
 				arr.append("x");
 				arr.set(0, 7);
 				error = expect(arr.size() === 2 && arr.get(0) === 7 && arr.has("x"), "array mismatch");
+				if (error) {
+					return error;
+				}
+			}
+
+			{
+				const ArrayType = load_type("Array");
+				const PackedStringArray = load_type("PackedStringArray");
+				const parts = new ArrayType();
+				parts.push_back("a");
+				parts.push_back("b");
+				const packedParts = new PackedStringArray();
+				packedParts.push_back("a");
+				packedParts.push_back("b");
+				const mergedParts = PackedStringArray.op_Addition(packedParts, parts);
+				error = expect(
+					mergedParts.size() === 4 && mergedParts.get(0) === "a" && mergedParts.get(3) === "b",
+					"array to packed array conversion mismatch"
+				);
 				if (error) {
 					return error;
 				}

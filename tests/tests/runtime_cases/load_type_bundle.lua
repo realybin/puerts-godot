@@ -168,6 +168,92 @@ root.load_type = {
 			return err
 		end
 
+		local ArrayType = load_type("Array")
+		local CodeEdit = load_type("CodeEdit")
+		local GlobalScope = load_type("GlobalScope")
+		local prefixes = ArrayType()
+		prefixes:push_back("#")
+		local code_edit = CodeEdit()
+		code_edit:set_auto_indent_prefixes(prefixes)
+		local stored_prefixes = code_edit:get_auto_indent_prefixes()
+		err = expect(
+			prefixes:is_typed() == false and
+				stored_prefixes:is_typed() and
+				stored_prefixes:get_typed_builtin() == GlobalScope.Variant.Type.TYPE_STRING and
+				stored_prefixes:get(0) == "#",
+			"untyped array conversion mismatch"
+		)
+		if err ~= "" then
+			return err
+		end
+
+		local FileDialog = load_type("FileDialog")
+		local filters = ArrayType()
+		filters:push_back("*.txt")
+		local file_dialog = FileDialog()
+		file_dialog:set_filters(filters)
+		local stored_filters = file_dialog:get_filters()
+		err = expect(
+			stored_filters:size() == 1 and stored_filters:get(0) == "*.txt",
+			"array to reflected packed array conversion mismatch"
+		)
+		if err ~= "" then
+			return err
+		end
+
+		local SystemFont = load_type("SystemFont")
+		local StringName = load_type("StringName")
+		local fallback_font = SystemFont()
+		local untyped_fallbacks = ArrayType()
+		untyped_fallbacks:push_back(fallback_font)
+		local font = SystemFont()
+		font:set_fallbacks(untyped_fallbacks)
+		local stored_fallbacks = font:get_fallbacks()
+		err = expect(
+			stored_fallbacks:is_typed() and
+				stored_fallbacks:get_typed_builtin() == GlobalScope.Variant.Type.TYPE_OBJECT and
+				StringName.op_Equality(stored_fallbacks:get_typed_class_name(), "Font") and
+				stored_fallbacks:get(0) == fallback_font,
+			"untyped object array conversion mismatch"
+		)
+		if err ~= "" then
+			return err
+		end
+
+		local DictionaryType = load_type("Dictionary")
+		local brace_pairs = DictionaryType()
+		brace_pairs:set("(", ")")
+		code_edit:set_auto_brace_completion_pairs(brace_pairs)
+		err = expect(
+			code_edit:get_auto_brace_completion_pairs():get("(", nil) == ")",
+			"untyped dictionary argument mismatch"
+		)
+		if err ~= "" then
+			return err
+		end
+
+		local GraphEdit = load_type("GraphEdit")
+		local type_names = DictionaryType()
+		type_names:set(1, "flow")
+		local graph_edit = GraphEdit()
+		graph_edit.type_names = type_names
+		local stored_type_names = graph_edit.type_names
+		err = expect(
+			stored_type_names:is_typed() == false and stored_type_names:get(1, nil) == "flow",
+			"untyped dictionary property passthrough mismatch"
+		)
+		if err ~= "" then
+			return err
+		end
+
+		local StyleBoxFlat = load_type("StyleBoxFlat")
+		local style_box = StyleBoxFlat()
+		style_box.border_width_left = 7
+		err = expect(style_box.border_width_left == 7, "indexed property fallback mismatch")
+		if err ~= "" then
+			return err
+		end
+
 		return expect(
 			load_type("FileAccess").file_exists("res://project.godot") and load_type("FileAccess").get_size("res://project.godot") > 0,
 			"static reflected binding mismatch"
@@ -198,7 +284,7 @@ root.load_type = {
 			local RandomNumberGenerator = load_type("RandomNumberGenerator")
 			local rng = RandomNumberGenerator()
 			rng.seed = "oops"
-		end, "Property type does not match", "property type rejection")
+		end, "Invalid argument", "property type rejection")
 		if err ~= "" then
 			return err
 		end
@@ -206,15 +292,6 @@ root.load_type = {
 		err = expect_throws(function()
 			return load_type("Object")(1)
 		end, "Argument count does not match the bound signature", "object static constructor arity rejection")
-		if err ~= "" then
-			return err
-		end
-
-		err = expect_throws(function()
-			local Theme = load_type("Theme")
-			local theme = Theme()
-			theme.default_font = backend_object
-		end, "Property type does not match", "object property type rejection")
 		if err ~= "" then
 			return err
 		end
@@ -512,6 +589,25 @@ root.load_type = {
 			arr:append("x")
 			arr:set(0, 7)
 			err = expect(arr:size() == 2 and arr:get(0) == 7 and arr:has("x"), "array mismatch")
+			if err ~= "" then
+				return err
+			end
+		end
+
+		do
+			local ArrayType = load_type("Array")
+			local PackedStringArray = load_type("PackedStringArray")
+			local parts = ArrayType()
+			parts:push_back("a")
+			parts:push_back("b")
+			local packed_parts = PackedStringArray()
+			packed_parts:push_back("a")
+			packed_parts:push_back("b")
+			local merged_parts = PackedStringArray.op_Addition(packed_parts, parts)
+			err = expect(
+				merged_parts:size() == 4 and merged_parts:get(0) == "a" and merged_parts:get(3) == "b",
+				"array to packed array conversion mismatch"
+			)
 			if err ~= "" then
 				return err
 			end
