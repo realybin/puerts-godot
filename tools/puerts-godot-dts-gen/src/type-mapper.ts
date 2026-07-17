@@ -72,7 +72,11 @@ function mapSingleType(rawType: string, ctx: Context, meta?: string): string {
 	}
 	if (original.startsWith("typedarray::")) {
 		const inner = cleanTypeName(original.slice("typedarray::".length));
-		return `globalThis.Array<${mapType(inner, ctx)}>`;
+		return `Array<${mapType(inner, ctx)}>`;
+	}
+	if (original.startsWith("typeddictionary::")) {
+		const [key, value] = original.slice("typeddictionary::".length).split(";", 2);
+		return `Dictionary<${mapType(key, ctx)}, ${mapType(value, ctx)}>`;
 	}
 	if (original.includes("*")) {
 		return "any";
@@ -111,7 +115,14 @@ export function widenArgumentType(rawType: string, mappedType: string): string {
 		return `${mappedType} | String`;
 	}
 	if (t === "PackedByteArray") {
-		return `${mappedType} | Uint8Array | ArrayBuffer`;
+		return `${mappedType}`;
+		// return `${mappedType} | Uint8Array | ArrayBuffer`; // When enable PackedByteArray casting
+	}
+	if (t === "Array") {
+		return "Array<any>";
+	}
+	if (t === "Dictionary") {
+		return "Dictionary<any, any>";
 	}
 	return mappedType;
 }

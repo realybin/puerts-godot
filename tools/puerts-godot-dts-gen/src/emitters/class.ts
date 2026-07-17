@@ -3,6 +3,7 @@
 
 import { normalizeOperators } from "../../../puerts-godot-operator-model/index.js";
 import type { ApiBuiltinClass, ApiClass, ApiMethod } from "../api-types.js";
+import { getBuiltinGenericDefinition } from "../builtin-generics.js";
 import type { Context } from "../context.js";
 import { emitDeclaration, godotClassMetadata } from "../documentation.js";
 import { sanitizeIdentifier } from "../naming.js";
@@ -65,7 +66,13 @@ export function emitObjectClass(classDef: ApiClass, ctx: Context): string[] {
 export function emitBuiltinClass(builtin: ApiBuiltinClass, ctx: Context): string[] {
 	const out: string[] = [];
 	const className = sanitizeIdentifier(builtin.name);
-	out.push(...emitDeclaration(`class ${className} {`, [builtin.brief_description, builtin.description]));
+	const generic = getBuiltinGenericDefinition(builtin.name);
+	out.push(
+		...emitDeclaration(`class ${className}${generic?.typeParameters ?? ""} {`, [builtin.brief_description, builtin.description]),
+	);
+	for (const member of generic?.members ?? []) {
+		out.push(`\t${member}`);
+	}
 	const ctors = builtin.constructors ?? [];
 	if (ctors.length === 0) {
 		out.push("\tconstructor(...args: any[]);");
@@ -87,7 +94,7 @@ export function emitBuiltinClass(builtin: ApiBuiltinClass, ctx: Context): string
 		out.push(...emitDeclaration(`static readonly ${sanitizeIdentifier(constant.name)}: ${typeName};`, [constant.description], "\t"));
 	}
 	out.push(...emitOperatorMethods(builtin, ctx));
-	out.push(...emitMethodDeclarations(builtin.methods, ctx, { indent: "\t" }));
+	out.push(...emitMethodDeclarations(builtin.methods, ctx, { indent: "\t", typeOverrides: generic?.methodTypes }));
 	out.push("}");
 	out.push(...emitNestedEnums(className, builtin.enums));
 	return out;

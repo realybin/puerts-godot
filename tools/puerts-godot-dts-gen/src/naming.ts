@@ -3,8 +3,55 @@
 
 import { RESERVED } from "./constants.js";
 
+const VARIANT_TYPE_NAMES = [
+	"Nil",
+	"bool",
+	"int",
+	"float",
+	"String",
+	"Vector2",
+	"Vector2i",
+	"Rect2",
+	"Rect2i",
+	"Vector3",
+	"Vector3i",
+	"Transform2D",
+	"Vector4",
+	"Vector4i",
+	"Plane",
+	"Quaternion",
+	"AABB",
+	"Basis",
+	"Transform3D",
+	"Projection",
+	"Color",
+	"StringName",
+	"NodePath",
+	"RID",
+	"Object",
+	"Callable",
+	"Signal",
+	"Dictionary",
+	"Array",
+	"PackedByteArray",
+	"PackedInt32Array",
+	"PackedInt64Array",
+	"PackedFloat32Array",
+	"PackedFloat64Array",
+	"PackedStringArray",
+	"PackedVector2Array",
+	"PackedVector3Array",
+	"PackedColorArray",
+	"PackedVector4Array",
+];
+
 export function cleanTypeName(input: string): string {
-	return input.trim().replace(/^const\s+/, "").replace(/\s*&$/, "").replace(/^\d+\/\d+:/, "");
+	const typeName = input.trim().replace(/^const\s+/, "").replace(/\s*&$/, "");
+	const encoded = /^(\d+)\/\d+:(.*)$/.exec(typeName);
+	if (!encoded) {
+		return typeName;
+	}
+	return encoded[2] || VARIANT_TYPE_NAMES[Number(encoded[1])] || "Variant";
 }
 
 export function splitUnionCandidates(typeName: string): string[] {
