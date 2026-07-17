@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import type { ApiEnum } from "../api-types.js";
+import { emitDeclaration } from "../documentation.js";
 import { sanitizeIdentifier } from "../naming.js";
 
 export function collectEnumConstantNames(enums: ApiEnum[] | undefined): Set<string> {
@@ -28,9 +29,9 @@ export function emitNestedEnums(ownerName: string, enums: ApiEnum[] | undefined)
 			continue;
 		}
 		emitted.add(enumName);
-		out.push(`\tenum ${enumName} {`);
+		out.push(...emitDeclaration(`enum ${enumName} {`, [enumDef.description], "\t"));
 		for (const value of enumDef.values) {
-			out.push(`\t\t${sanitizeIdentifier(value.name)} = ${value.value},`);
+			out.push(...emitDeclaration(`${sanitizeIdentifier(value.name)} = ${value.value},`, [value.description], "\t\t"));
 		}
 		out.push("\t}");
 	}
@@ -49,9 +50,9 @@ export function emitGlobalEnums(globalEnums: ApiEnum[]): string[] {
 				continue;
 			}
 			emitted.add(enumName);
-			out.push(`enum ${enumName} {`);
+			out.push(...emitDeclaration(`enum ${enumName} {`, [enumDef.description]));
 			for (const value of enumDef.values) {
-				out.push(`\t${sanitizeIdentifier(value.name)} = ${value.value},`);
+				out.push(...emitDeclaration(`${sanitizeIdentifier(value.name)} = ${value.value},`, [value.description], "\t"));
 			}
 			out.push("}");
 			continue;
@@ -64,9 +65,9 @@ export function emitGlobalEnums(globalEnums: ApiEnum[]): string[] {
 		}
 		emitted.add(scopedName);
 		out.push(`namespace ${root} {`);
-		out.push(`\tenum ${enumName} {`);
+		out.push(...emitDeclaration(`enum ${enumName} {`, [enumDef.description], "\t"));
 		for (const value of enumDef.values) {
-			out.push(`\t\t${sanitizeIdentifier(value.name)} = ${value.value},`);
+			out.push(...emitDeclaration(`${sanitizeIdentifier(value.name)} = ${value.value},`, [value.description], "\t\t"));
 		}
 		out.push("\t}");
 		out.push("}");

@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 realybin and contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-export type ApiType = {
+type Documented = {
+	description?: string;
+};
+
+export type ApiType = Documented & {
 	type: string;
 	meta?: string;
 };
@@ -11,7 +15,7 @@ export type ApiArgument = ApiType & {
 	default_value?: string;
 };
 
-export type ApiMethod = {
+export type ApiMethod = Documented & {
 	name: string;
 	is_static?: boolean;
 	is_vararg?: boolean;
@@ -20,7 +24,7 @@ export type ApiMethod = {
 	arguments?: ApiArgument[];
 };
 
-export type ApiOperator = {
+export type ApiOperator = Documented & {
 	name: string;
 	right_type?: string;
 	return_type: string;
@@ -32,32 +36,34 @@ export type ApiProperty = ApiType & {
 	getter?: string;
 };
 
-export type ApiConstant = {
+export type ApiConstant = Documented & {
 	name: string;
 	type?: string;
 	meta?: string;
 	value: number | string;
 };
 
-export type ApiEnumValue = {
+export type ApiEnumValue = Documented & {
 	name: string;
 	value: number;
 };
 
-export type ApiEnum = {
+export type ApiEnum = Documented & {
 	name: string;
 	is_bitfield?: boolean;
 	values: ApiEnumValue[];
 };
 
-export type ApiSignal = {
+export type ApiSignal = Documented & {
 	name: string;
 	arguments?: ApiArgument[];
 };
 
-export type ApiClass = {
+export type ApiClass = Documented & {
 	name: string;
+	brief_description?: string;
 	inherits?: string;
+	is_refcounted?: boolean;
 	is_instantiable?: boolean;
 	methods?: ApiMethod[];
 	properties?: ApiProperty[];
@@ -66,9 +72,10 @@ export type ApiClass = {
 	signals?: ApiSignal[];
 };
 
-export type ApiBuiltinClass = {
+export type ApiBuiltinClass = Documented & {
 	name: string;
-	constructors?: Array<{ arguments?: ApiArgument[] }>;
+	brief_description?: string;
+	constructors?: Array<Documented & { arguments?: ApiArgument[] }>;
 	methods?: ApiMethod[];
 	operators?: ApiOperator[];
 	members?: Array<ApiType & { name: string }>;
@@ -88,13 +95,13 @@ export type ApiData = {
 	};
 	classes: ApiClass[];
 	builtin_classes: ApiBuiltinClass[];
-	global_constants: Array<{ name: string; value: number }>;
+	global_constants: Array<Documented & { name: string; value: number }>;
 	global_enums: ApiEnum[];
 	utility_functions: ApiMethod[];
 	singletons: ApiSingleton[];
 };
 
-export type ApiSingleton = {
+export type ApiSingleton = Documented & {
 	name: string;
 	type: string;
 };
