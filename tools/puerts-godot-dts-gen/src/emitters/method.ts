@@ -2,19 +2,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import type { ApiArgument, ApiMethod } from "../api-types.js";
-import type { Context } from "../context.js";
-import { emitDeclaration } from "../documentation.js";
+import type { GenerationContext } from "../context.js";
+import type { DocumentationScope } from "../documentation.js";
+import type { MethodTypeOverride, MethodTypeOverrides } from "../method-overrides.js";
 import { sanitizeIdentifier } from "../naming.js";
 import { mapApiType, mapType, widenArgumentType } from "../type-mapper.js";
 
-export type MethodTypeOverride = {
-	arguments?: Record<string, string>;
-	returnType?: string;
-};
-
-export type MethodTypeOverrides = Record<string, MethodTypeOverride>;
-
-function methodReturnType(method: ApiMethod, ctx: Context, override?: MethodTypeOverride): string {
+function methodReturnType(method: ApiMethod, ctx: GenerationContext, override?: MethodTypeOverride): string {
 	if (override?.returnType) {
 		return override.returnType;
 	}
@@ -26,35 +20,48 @@ function methodReturnType(method: ApiMethod, ctx: Context, override?: MethodType
 
 export function emitArgumentList(
 	args: ApiArgument[] | undefined,
-	ctx: Context,
-	typeOverrides: Record<string, string> = {},
+	ctx: GenerationContext,
+	typeOverrides: Readonly<Record<string, string>> = {},
 ): string[] {
 	return (args ?? []).map((arg, index) => {
 		const name = sanitizeIdentifier(arg.name || `arg${index}`);
 		const mapped = mapApiType(arg, ctx);
-		const type = typeOverrides[arg.name] ?? widenArgumentType(arg.type, mapped);
+		const type = typeOverrides[arg.name] ?? widenArgumentType(arg.type, mapped, ctx.options.unknownType);
 		const optional = arg.default_value !== undefined ? "?" : "";
 		return `${name}${optional}: ${type}`;
 	});
 }
 
-function emitMethodSignature(method: ApiMethod, ctx: Context, override?: MethodTypeOverride): string {
+function emitMethodSignature(method: ApiMethod, ctx: GenerationContext, override?: MethodTypeOverride): string {
 	const methodName = sanitizeIdentifier(method.name);
 	const argTexts = emitArgumentList(method.arguments, ctx, override?.arguments);
 	if (method.is_vararg) {
-		argTexts.push("...varargs: any[]");
+		argTexts.push(`...varargs: ${ctx.options.unknownType}[]`);
 	}
 	return `${method.is_static ? "static " : ""}${methodName}(${argTexts.join(", ")}): ${methodReturnType(method, ctx, override)};`;
 }
 
-function emitMethodDeclaration(method: ApiMethod, ctx: Context, override?: MethodTypeOverride, indent = ""): string[] {
-	return emitDeclaration(emitMethodSignature(method, ctx, override), [method.description], indent);
+function emitMethodDeclaration(
+	method: ApiMethod,
+	ctx: GenerationContext,
+	documentation: DocumentationScope,
+	override?: MethodTypeOverride,
+	indent = "",
+): string[] {
+	return documentation.emit(emitMethodSignature(method, ctx, override), [method.description], indent);
 }
+
+export type MethodEmitterOptions = {
+	documentation: DocumentationScope;
+	indent?: string;
+	isStatic?: boolean;
+	typeOverrides?: MethodTypeOverrides;
+};
 
 export function emitMethodDeclarations(
 	methods: ApiMethod[] | undefined,
-	ctx: Context,
-	options: { indent?: string; isStatic?: boolean; typeOverrides?: MethodTypeOverrides } = {},
+	ctx: GenerationContext,
+	options: MethodEmitterOptions,
 ): string[] {
 	const grouped = new Map<string, ApiMethod[]>();
 	for (const method of methods ?? []) {
@@ -67,7 +74,15 @@ export function emitMethodDeclarations(
 	for (const overloads of grouped.values()) {
 		for (const method of overloads) {
 			const declaration = options.isStatic ? { ...method, is_static: true } : method;
-			out.push(...emitMethodDeclaration(declaration, ctx, options.typeOverrides?.[method.name], options.indent));
+			out.push(
+				...emitMethodDeclaration(
+					declaration,
+					ctx,
+					options.documentation,
+					options.typeOverrides?.[method.name],
+					options.indent,
+				),
+			);
 		}
 	}
 	return out;

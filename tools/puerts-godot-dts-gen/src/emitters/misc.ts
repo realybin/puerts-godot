@@ -2,34 +2,40 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import type { ApiData } from "../api-types.js";
-import type { Context } from "../context.js";
+import type { GenerationContext } from "../context.js";
 import { NON_CLASS_BUILTIN_NAMES } from "../constants.js";
-import { emitDeclaration } from "../documentation.js";
 import { NATIVE_PRIMITIVE_TYPE_SPECS } from "../native-primitive-types.js";
 import { sanitizeIdentifier } from "../naming.js";
 import { mapType } from "../type-mapper.js";
 import { emitGlobalEnums } from "./enum.js";
 import { emitMethodDeclarations } from "./method.js";
 
-export function emitGlobalScope(api: ApiData, ctx: Context): string[] {
+export function emitGlobalScope(api: ApiData, ctx: GenerationContext): string[] {
 	const out: string[] = [];
+	const documentation = ctx.documentation.forOwner("@GlobalScope");
 
 	out.push("class GlobalScope {");
-	out.push(...emitMethodDeclarations(api.utility_functions, ctx, { indent: "\t", isStatic: true }));
+	out.push(
+		...emitMethodDeclarations(api.utility_functions, ctx, {
+			documentation,
+			indent: "\t",
+			isStatic: true,
+		}),
+	);
 	for (const singleton of api.singletons) {
 		const declaration = `static readonly ${sanitizeIdentifier(singleton.name)}: ${mapType(singleton.type, ctx)};`;
-		out.push(...emitDeclaration(declaration, [singleton.description], "\t"));
+		out.push(...documentation.emit(declaration, [singleton.description], "\t"));
 	}
 	out.push("}");
 	out.push("namespace GlobalScope {");
-	for (const line of emitGlobalEnums(api.global_enums)) {
+	for (const line of emitGlobalEnums(api.global_enums, documentation)) {
 		out.push(`\t${line}`);
 	}
 	out.push("}");
 	return out;
 }
 
-export function buildVariantUnion(ctx: Context): string {
+export function buildVariantUnion(ctx: GenerationContext): string {
 	const builtinVariants = [...ctx.emittedBuiltinNames].sort().join(" | ");
 	return builtinVariants
 		? `null | Bool | Int | Float | String | ${builtinVariants} | Object`

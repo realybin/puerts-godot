@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import type { ApiType } from "./api-types.js";
-import type { Context } from "./context.js";
+import type { GenerationContext } from "./context.js";
 import { nativePrimitiveAlias } from "./native-primitive-types.js";
 import { cleanTypeName, sanitizeIdentifier, splitUnionCandidates } from "./naming.js";
 
@@ -53,7 +53,7 @@ function mapPrimitiveType(name: string, meta: string | undefined): string | null
 	}
 }
 
-function mapEnumRef(raw: string, ctx: Context): string {
+function mapEnumRef(raw: string, ctx: GenerationContext): string {
 	const payload = raw.replace(/^enum::/, "").replace(/^bitfield::/, "");
 	const mapped = payload
 		.split(".")
@@ -62,7 +62,7 @@ function mapEnumRef(raw: string, ctx: Context): string {
 	return ctx.globalEnumNames.has(payload) ? `GlobalScope.${mapped}` : mapped;
 }
 
-function mapSingleType(rawType: string, ctx: Context, meta?: string): string {
+function mapSingleType(rawType: string, ctx: GenerationContext, meta?: string): string {
 	const original = cleanTypeName(rawType);
 	if (original.startsWith("enum::")) {
 		return mapEnumRef(original, ctx);
@@ -79,7 +79,7 @@ function mapSingleType(rawType: string, ctx: Context, meta?: string): string {
 		return `Dictionary<${mapType(key, ctx)}, ${mapType(value, ctx)}>`;
 	}
 	if (original.includes("*")) {
-		return "any";
+		return ctx.options.unknownType;
 	}
 
 	const primitive = mapPrimitiveType(original, meta);
@@ -93,10 +93,10 @@ function mapSingleType(rawType: string, ctx: Context, meta?: string): string {
 	if (nativeAlias) {
 		return nativeAlias;
 	}
-	return "any";
+	return ctx.options.unknownType;
 }
 
-export function mapType(rawType: string | undefined, ctx: Context, meta?: string): string {
+export function mapType(rawType: string | undefined, ctx: GenerationContext, meta?: string): string {
 	if (!rawType) {
 		return "void";
 	}
@@ -105,11 +105,11 @@ export function mapType(rawType: string | undefined, ctx: Context, meta?: string
 	return mapped.length === 1 ? mapped[0] : mapped.join(" | ");
 }
 
-export function mapApiType(apiType: ApiType, ctx: Context): string {
+export function mapApiType(apiType: ApiType, ctx: GenerationContext): string {
 	return mapType(apiType.type, ctx, apiType.meta);
 }
 
-export function widenArgumentType(rawType: string, mappedType: string): string {
+export function widenArgumentType(rawType: string, mappedType: string, unknownType = "any"): string {
 	const t = cleanTypeName(rawType);
 	if (t === "StringName" || t === "NodePath") {
 		return `${mappedType} | String`;
@@ -119,10 +119,10 @@ export function widenArgumentType(rawType: string, mappedType: string): string {
 		// return `${mappedType} | Uint8Array | ArrayBuffer`; // When enable PackedByteArray casting
 	}
 	if (t === "Array") {
-		return "Array<any>";
+		return `Array<${unknownType}>`;
 	}
 	if (t === "Dictionary") {
-		return "Dictionary<any, any>";
+		return `Dictionary<${unknownType}, ${unknownType}>`;
 	}
 	return mappedType;
 }

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 realybin and contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-import type { MethodTypeOverrides } from "./emitters/method.js";
+import type { MethodTypeOverrides } from "./method-overrides.js";
 
 export type BuiltinGenericDefinition = {
 	typeParameters: string;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import type { ApiEnum } from "../api-types.js";
-import { emitDeclaration } from "../documentation.js";
+import type { DocumentationScope } from "../documentation.js";
 import { sanitizeIdentifier } from "../naming.js";
 
 export function collectEnumConstantNames(enums: ApiEnum[] | undefined): Set<string> {
@@ -15,7 +15,21 @@ export function collectEnumConstantNames(enums: ApiEnum[] | undefined): Set<stri
 	return names;
 }
 
-export function emitNestedEnums(ownerName: string, enums: ApiEnum[] | undefined): string[] {
+function emitEnumDefinition(enumName: string, enumDef: ApiEnum, documentation: DocumentationScope, indent = ""): string[] {
+	const valueIndent = `${indent}\t`;
+	const out = documentation.emit(`enum ${enumName} {`, [enumDef.description], indent);
+	for (const value of enumDef.values) {
+		out.push(...documentation.emit(`${sanitizeIdentifier(value.name)} = ${value.value},`, [value.description], valueIndent));
+	}
+	out.push(`${indent}}`);
+	return out;
+}
+
+export function emitNestedEnums(
+	ownerName: string,
+	enums: ApiEnum[] | undefined,
+	documentation: DocumentationScope,
+): string[] {
 	const enumDefs = enums ?? [];
 	if (enumDefs.length === 0) {
 		return [];
@@ -29,17 +43,13 @@ export function emitNestedEnums(ownerName: string, enums: ApiEnum[] | undefined)
 			continue;
 		}
 		emitted.add(enumName);
-		out.push(...emitDeclaration(`enum ${enumName} {`, [enumDef.description], "\t"));
-		for (const value of enumDef.values) {
-			out.push(...emitDeclaration(`${sanitizeIdentifier(value.name)} = ${value.value},`, [value.description], "\t\t"));
-		}
-		out.push("\t}");
+		out.push(...emitEnumDefinition(enumName, enumDef, documentation, "\t"));
 	}
 	out.push("}");
 	return out;
 }
 
-export function emitGlobalEnums(globalEnums: ApiEnum[]): string[] {
+export function emitGlobalEnums(globalEnums: ApiEnum[], documentation: DocumentationScope): string[] {
 	const out: string[] = [];
 	const emitted = new Set<string>();
 	for (const enumDef of globalEnums) {
@@ -50,11 +60,7 @@ export function emitGlobalEnums(globalEnums: ApiEnum[]): string[] {
 				continue;
 			}
 			emitted.add(enumName);
-			out.push(...emitDeclaration(`enum ${enumName} {`, [enumDef.description]));
-			for (const value of enumDef.values) {
-				out.push(...emitDeclaration(`${sanitizeIdentifier(value.name)} = ${value.value},`, [value.description], "\t"));
-			}
-			out.push("}");
+			out.push(...emitEnumDefinition(enumName, enumDef, documentation));
 			continue;
 		}
 		const root = sanitizeIdentifier(parts[0]);
@@ -65,11 +71,7 @@ export function emitGlobalEnums(globalEnums: ApiEnum[]): string[] {
 		}
 		emitted.add(scopedName);
 		out.push(`namespace ${root} {`);
-		out.push(...emitDeclaration(`enum ${enumName} {`, [enumDef.description], "\t"));
-		for (const value of enumDef.values) {
-			out.push(...emitDeclaration(`${sanitizeIdentifier(value.name)} = ${value.value},`, [value.description], "\t\t"));
-		}
-		out.push("\t}");
+		out.push(...emitEnumDefinition(enumName, enumDef, documentation, "\t"));
 		out.push("}");
 	}
 	return out;
