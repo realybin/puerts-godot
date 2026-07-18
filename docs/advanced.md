@@ -31,6 +31,7 @@ We treat constant as a static read-only property of the class. While get the val
   > Dictionary(base: Dictionary, key_type: int, key_class_name: StringName, key_script: Variant, value_type: int, value_class_name: StringName, value_script: Variant)
   > ```
   Ensure each argument uses the exact expected type to avoid unnecessary conversions and dynamic type resolution.
+* Calling scripts from `_process` or other hot paths may incur significant FFI overhead. Make sure you understand the performance implications.
 
 ## V8
 
