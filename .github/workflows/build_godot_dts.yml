@@ -3,15 +3,9 @@ name: Build Godot Type Declarations
 on:
   workflow_dispatch:
     inputs:
-      godot_version:
-        description: "Godot API version"
-        type: choice
-        required: true
-        default: "4.7"
-        options:
-          - "4.5"
-          - "4.6"
-          - "4.7"
+      build_godot_4_5: { description: "Godot 4.5", type: boolean, required: false, default: false }
+      build_godot_4_6: { description: "Godot 4.6", type: boolean, required: false, default: false }
+      build_godot_4_7: { description: "Godot 4.7", type: boolean, required: false, default: true }
       include_documentation:
         description: "Include Godot API documentation as JSDoc"
         type: boolean
@@ -22,38 +16,60 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Godot ${{ inputs.godot_version }} (${{ inputs.include_documentation && 'with docs' || 'without docs' }})
+  prepare:
     runs-on: ubuntu-22.04
-
+    outputs:
+      godot_versions: ${{ steps.select.outputs.godot_versions }}
+      has_godot_versions: ${{ steps.select.outputs.has_godot_versions }}
+      documentation_suffix: ${{ steps.select.outputs.documentation_suffix }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Resolve Godot version
-        id: godot
+      - id: select
         shell: bash
         env:
-          API_VERSION: ${{ inputs.godot_version }}
+          BUILD_GODOT_4_5: ${{ inputs.build_godot_4_5 }}
+          BUILD_GODOT_4_6: ${{ inputs.build_godot_4_6 }}
+          BUILD_GODOT_4_7: ${{ inputs.build_godot_4_7 }}
           INCLUDE_DOCUMENTATION: ${{ inputs.include_documentation }}
         run: |
           set -euo pipefail
 
-          case "$API_VERSION" in
-            4.5) full_version="4.5.2" ;;
-            4.6) full_version="4.6.3" ;;
-            4.7) full_version="4.7.1" ;;
-            *) echo "Unsupported Godot version: $API_VERSION" >&2; exit 1 ;;
-          esac
-
-          if [[ "$INCLUDE_DOCUMENTATION" == "true" ]]; then
-            documentation_suffix="with-docs"
-          else
-            documentation_suffix="without-docs"
+          godot_versions='[]'
+          if [[ "$BUILD_GODOT_4_5" == "true" ]]; then
+            godot_versions=$(jq -c '. + [{"api_version":"4.5","godot_version":"4.5.2"}]' <<<"$godot_versions")
+          fi
+          if [[ "$BUILD_GODOT_4_6" == "true" ]]; then
+            godot_versions=$(jq -c '. + [{"api_version":"4.6","godot_version":"4.6.3"}]' <<<"$godot_versions")
+          fi
+          if [[ "$BUILD_GODOT_4_7" == "true" ]]; then
+            godot_versions=$(jq -c '. + [{"api_version":"4.7","godot_version":"4.7.1"}]' <<<"$godot_versions")
           fi
 
-          echo "full_version=$full_version" >> "$GITHUB_OUTPUT"
-          echo "documentation_suffix=$documentation_suffix" >> "$GITHUB_OUTPUT"
+          echo "godot_versions=$godot_versions" >> "$GITHUB_OUTPUT"
+          if [[ "$godot_versions" == "[]" ]]; then
+            echo "has_godot_versions=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_godot_versions=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [[ "$INCLUDE_DOCUMENTATION" == "true" ]]; then
+            echo "documentation_suffix=with-docs" >> "$GITHUB_OUTPUT"
+          else
+            echo "documentation_suffix=without-docs" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Godot ${{ matrix.godot.api_version }} (${{ needs.prepare.outputs.documentation_suffix }})
+    needs: prepare
+    if: ${{ needs.prepare.outputs.has_godot_versions == 'true' }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        godot: ${{ fromJSON(needs.prepare.outputs.godot_versions) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -65,7 +81,7 @@ jobs:
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v2
         with:
-          version: ${{ steps.godot.outputs.full_version }}
+          version: ${{ matrix.godot.godot_version }}
           use-dotnet: false
           include-templates: false
 
@@ -96,7 +112,7 @@ jobs:
       - name: Generate godot.d.ts
         shell: bash
         env:
-          API_VERSION: ${{ inputs.godot_version }}
+          API_VERSION: ${{ matrix.godot.api_version }}
           INCLUDE_DOCUMENTATION: ${{ inputs.include_documentation }}
         run: |
           set -euo pipefail
@@ -118,6 +134,6 @@ jobs:
       - name: Upload godot.d.ts
         uses: actions/upload-artifact@v7
         with:
-          name: godot-dts-${{ inputs.godot_version }}-${{ steps.godot.outputs.documentation_suffix }}
+          name: godot-dts-${{ matrix.godot.api_version }}-${{ needs.prepare.outputs.documentation_suffix }}
           path: artifacts/godot.d.ts
           if-no-files-found: error
