@@ -1,0 +1,123 @@
+name: Build Godot Type Declarations
+
+on:
+  workflow_dispatch:
+    inputs:
+      godot_version:
+        description: "Godot API version"
+        type: choice
+        required: true
+        default: "4.7"
+        options:
+          - "4.5"
+          - "4.6"
+          - "4.7"
+      include_documentation:
+        description: "Include Godot API documentation as JSDoc"
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Godot ${{ inputs.godot_version }} (${{ inputs.include_documentation && 'with docs' || 'without docs' }})
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Resolve Godot version
+        id: godot
+        shell: bash
+        env:
+          API_VERSION: ${{ inputs.godot_version }}
+          INCLUDE_DOCUMENTATION: ${{ inputs.include_documentation }}
+        run: |
+          set -euo pipefail
+
+          case "$API_VERSION" in
+            4.5) full_version="4.5.2" ;;
+            4.6) full_version="4.6.3" ;;
+            4.7) full_version="4.7.1" ;;
+            *) echo "Unsupported Godot version: $API_VERSION" >&2; exit 1 ;;
+          esac
+
+          if [[ "$INCLUDE_DOCUMENTATION" == "true" ]]; then
+            documentation_suffix="with-docs"
+          else
+            documentation_suffix="without-docs"
+          fi
+
+          echo "full_version=$full_version" >> "$GITHUB_OUTPUT"
+          echo "documentation_suffix=$documentation_suffix" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: tools/puerts-godot-dts-gen/package-lock.json
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ steps.godot.outputs.full_version }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Build declaration generator
+        working-directory: tools/puerts-godot-dts-gen
+        run: |
+          npm ci
+          npm run build
+
+      - name: Export Godot extension API
+        shell: bash
+        env:
+          INCLUDE_DOCUMENTATION: ${{ inputs.include_documentation }}
+        run: |
+          set -euo pipefail
+          api_directory="$RUNNER_TEMP/godot-api"
+          mkdir -p "$api_directory"
+          cd "$api_directory"
+
+          if [[ "$INCLUDE_DOCUMENTATION" == "true" ]]; then
+            godot --headless --dump-extension-api-with-docs
+          else
+            godot --headless --dump-extension-api
+          fi
+
+          test -s extension_api.json
+
+      - name: Generate godot.d.ts
+        shell: bash
+        env:
+          API_VERSION: ${{ inputs.godot_version }}
+          INCLUDE_DOCUMENTATION: ${{ inputs.include_documentation }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+
+          generator_args=(
+            node tools/puerts-godot-dts-gen/dist/index.js
+            --input "$RUNNER_TEMP/godot-api/extension_api.json"
+            --output artifacts/godot.d.ts
+            --docs-base-url "https://docs.godotengine.org/en/$API_VERSION/"
+          )
+          if [[ "$INCLUDE_DOCUMENTATION" != "true" ]]; then
+            generator_args+=(--no-docs)
+          fi
+
+          "${generator_args[@]}"
+          test -s artifacts/godot.d.ts
+
+      - name: Upload godot.d.ts
+        uses: actions/upload-artifact@v7
+        with:
+          name: godot-dts-${{ inputs.godot_version }}-${{ steps.godot.outputs.documentation_suffix }}
+          path: artifacts/godot.d.ts
+          if-no-files-found: error
