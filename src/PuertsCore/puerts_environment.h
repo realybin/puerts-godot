@@ -6,6 +6,7 @@
 
 #include "puerts_backend.h"
 #include "puerts_eastl.h"
+#include "puerts_runtime.h"
 #include "puerts_string_name_cache_pool.h"
 
 #include <cstdint>
@@ -21,8 +22,6 @@
 #include <godot_cpp/variant/variant.hpp>
 
 class PuertsScriptValue;
-class PuertsBridgeRegistry;
-struct PuertsEnvPrivate;
 class PuertsTypeRegister;
 class PuertsEnvironment;
 namespace puerts {
@@ -38,11 +37,11 @@ class PuertsEnvironment : public godot::RefCounted {
 	const PuertsBackendFunctions *backend_functions_ = nullptr;
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_env_ref env_ref_ = nullptr;
-	PuertsEnvPrivate *env_private_ = nullptr;
+	PuertsEnvPrivate runtime_;
 	bool disposing_ = false;
 	bool dispose_requested_ = false;
 	uint32_t active_operations_ = 0;
-	puerts_eastl::hash_set<PuertsScriptValue *> script_values_;
+	PuertsScriptValue *script_values_head_ = nullptr;
 	puerts_eastl::hash_map<void *, PuertsScriptValue *> cached_script_values_;
 	uintptr_t next_script_value_cache_id_ = 1;
 	godot::Callable error_callback_;

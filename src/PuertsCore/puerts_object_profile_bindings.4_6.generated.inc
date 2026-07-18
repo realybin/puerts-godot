@@ -18,7 +18,7 @@ PUERTS_SCRIPT_TYPE(godot::Object, "Object")
 PUERTS_SCRIPT_TYPE(puerts_generated_enum_tags::object_connect_flags_enum_tag_generated, "Object.ConnectFlags")
 
 inline void register_object_connect_flags_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::object_connect_flags_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::object_connect_flags_enum_tag_generated>()
 			.static_property("CONNECT_DEFERRED", puerts::make_enum_constant<1>())
 			.static_property("CONNECT_PERSIST", puerts::make_enum_constant<2>())
 			.static_property("CONNECT_ONE_SHOT", puerts::make_enum_constant<4>())
@@ -42,7 +42,7 @@ inline int64_t object_notification_extension_reloaded_constant_generated() {
 	return 2;
 }
 inline void register_object_type_generated() {
-	puerts::define_class<godot::Object>()
+	puerts::define_type<godot::Object>()
 			.static_property("NOTIFICATION_POSTINITIALIZE", puerts::make_value_constant<&object_notification_postinitialize_constant_generated>())
 			.static_property("NOTIFICATION_PREDELETE", puerts::make_value_constant<&object_notification_predelete_constant_generated>())
 			.static_property("NOTIFICATION_EXTENSION_RELOADED", puerts::make_value_constant<&object_notification_extension_reloaded_constant_generated>())

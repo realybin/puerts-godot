@@ -27,10 +27,6 @@ bool PuertsBridgeRegistry::is_handle(void *p_handle) {
 	return parse_handle(p_handle, handle_id);
 }
 
-uint64_t PuertsBridgeRegistry::key_for(Object *p_object) {
-	return static_cast<uint64_t>(p_object->get_instance_id());
-}
-
 uint32_t PuertsBridgeRegistry::take_handle_id() {
 	ERR_FAIL_COND_V(next_handle_id_ > (UINT32_MAX >> 1U), 0);
 	return next_handle_id_++;
@@ -43,48 +39,44 @@ uint32_t PuertsBridgeRegistry::allocate() {
 		return index;
 	}
 
-	entries_.push_back(Entry());
+	entries_.emplace_back();
 	return static_cast<uint32_t>(entries_.size() - 1);
 }
 
-PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle, uint32_t *r_index) {
+bool PuertsBridgeRegistry::find_index(void *p_handle, uint32_t &r_index) const {
 	uint32_t handle_id = 0;
 	if (!parse_handle(p_handle, handle_id)) {
-		return nullptr;
+		return false;
 	}
 
-	auto found = handle_slots_.find(handle_id);
+	const auto found = handle_slots_.find(handle_id);
 	if (found == handle_slots_.end()) {
+		return false;
+	}
+	r_index = found->second;
+	return true;
+}
+
+PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle, uint32_t *r_index) {
+	uint32_t index = 0;
+	if (!find_index(p_handle, index)) {
 		return nullptr;
 	}
-
-	const uint32_t index = found->second;
-	Entry &entry = entries_[index];
-
 	if (r_index != nullptr) {
 		*r_index = index;
 	}
-	return &entry;
+	return &entries_[index];
 }
 
 const PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle, uint32_t *r_index) const {
-	uint32_t handle_id = 0;
-	if (!parse_handle(p_handle, handle_id)) {
+	uint32_t index = 0;
+	if (!find_index(p_handle, index)) {
 		return nullptr;
 	}
-
-	auto found = handle_slots_.find(handle_id);
-	if (found == handle_slots_.end()) {
-		return nullptr;
-	}
-
-	const uint32_t index = found->second;
-	const Entry &entry = entries_[index];
-
 	if (r_index != nullptr) {
 		*r_index = index;
 	}
-	return &entry;
+	return &entries_[index];
 }
 
 void PuertsBridgeRegistry::release_slot(uint32_t p_index) {
@@ -100,31 +92,23 @@ void PuertsBridgeRegistry::release_slot(uint32_t p_index) {
 	free_slots_.push_back(p_index);
 }
 
-Object *PuertsBridgeRegistry::object_from(const Entry &p_entry) const {
+Object *PuertsBridgeRegistry::object_from(const Entry &p_entry) {
 	if (p_entry.kind != Kind::Object) {
 		return nullptr;
 	}
 
-	if (p_entry.value.get_type() == Variant::OBJECT) {
+	if (p_entry.object_id.is_ref_counted()) {
 		return p_entry.value;
 	}
 
 	return ObjectDB::get_instance(p_entry.object_id);
 }
 
-Variant PuertsBridgeRegistry::variant_from(const Entry &p_entry) const {
-	if (p_entry.kind == Kind::Variant || p_entry.value.get_type() != Variant::NIL) {
-		return p_entry.value;
-	}
-
-	if (p_entry.kind == Kind::Object) {
-		return object_from(p_entry);
-	}
-
-	return {};
-}
-
 void *PuertsBridgeRegistry::store_object(Object *p_object, const void *p_type_id, bool p_script_owned) {
+	if (p_object == nullptr) {
+		return nullptr;
+	}
+
 	void *handle = nullptr;
 	const void *bound_type = nullptr;
 	if (find_object(p_object, handle, bound_type)) {
@@ -135,14 +119,16 @@ void *PuertsBridgeRegistry::store_object(Object *p_object, const void *p_type_id
 	ERR_FAIL_COND_V(handle_id == 0, nullptr);
 	const uint32_t index = allocate();
 	Entry &entry = entries_[index];
+	const ObjectID object_id(p_object->get_instance_id());
+	const bool is_ref_counted = object_id.is_ref_counted();
 	entry.kind = Kind::Object;
 	entry.handle_id = handle_id;
-	entry.object_id = p_object->get_instance_id();
-	entry.script_owned = p_script_owned && !entry.object_id.is_ref_counted();
-	entry.value = entry.object_id.is_ref_counted() ? Variant(p_object) : Variant();
+	entry.object_id = object_id;
+	entry.script_owned = p_script_owned && !is_ref_counted;
+	entry.value = is_ref_counted ? Variant(p_object) : Variant();
 	entry.type_id = p_type_id;
-	handle_slots_[handle_id] = index;
-	object_slots_[static_cast<uint64_t>(entry.object_id)] = index;
+	handle_slots_.insert({ handle_id, index });
+	object_slots_.insert({ static_cast<uint64_t>(object_id), index });
 	return make_handle(handle_id);
 }
 
@@ -168,11 +154,11 @@ void PuertsBridgeRegistry::clear() {
 }
 
 void *PuertsBridgeRegistry::bind_object(Object *p_object, const void *p_type_id) {
-	return p_object != nullptr ? store_object(p_object, p_type_id, false) : nullptr;
+	return store_object(p_object, p_type_id, false);
 }
 
 void *PuertsBridgeRegistry::own_object(Object *p_object, const void *p_type_id) {
-	return p_object != nullptr ? store_object(p_object, p_type_id, true) : nullptr;
+	return store_object(p_object, p_type_id, true);
 }
 
 void *PuertsBridgeRegistry::box_variant(const Variant &p_value, const void *p_type_id) {
@@ -184,18 +170,18 @@ void *PuertsBridgeRegistry::box_variant(const Variant &p_value, const void *p_ty
 	entry.handle_id = handle_id;
 	entry.value = p_value;
 	entry.type_id = p_type_id;
-	handle_slots_[handle_id] = index;
+	handle_slots_.insert({ handle_id, index });
 	return make_handle(handle_id);
 }
 
-bool PuertsBridgeRegistry::find_object(Object *p_object, void *&r_handle, const void *&r_type_id) {
+bool PuertsBridgeRegistry::find_object(Object *p_object, void *&r_handle, const void *&r_type_id) const {
 	r_handle = nullptr;
 	r_type_id = nullptr;
 	if (p_object == nullptr) {
 		return false;
 	}
 
-	auto found = object_slots_.find(key_for(p_object));
+	const auto found = object_slots_.find(static_cast<uint64_t>(p_object->get_instance_id()));
 	if (found == object_slots_.end()) {
 		return false;
 	}
@@ -218,7 +204,11 @@ bool PuertsBridgeRegistry::get_variant(void *p_handle, const void *p_type_id, Va
 		return false;
 	}
 
-	r_value = variant_from(*entry);
+	if (entry->kind == Kind::Object && !entry->object_id.is_ref_counted()) {
+		r_value = object_from(*entry);
+	} else {
+		r_value = entry->value;
+	}
 	return true;
 }
 

@@ -1,10 +1,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 realybin and contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-import { countMethodOverloadsInHeader, hasLikelyMemberDeclaration } from "./header_analysis.js";
-import { mapPropertyValueType } from "./type_mapping.js";
-import { sanitizeIdentifier, toSnakeCase } from "./text_utils.js";
-import type { ApiClassLike, BoundPropertyBinding, HeaderAnalysis, PropertyRule } from "./types.js";
+import {
+	countMethodOverloadsInHeader,
+	hasLikelyMemberDeclaration
+} from "./header_analysis.js";
+import {
+	sanitizeIdentifier,
+	toSnakeCase
+} from "./text_utils.js";
+import {mapPropertyValueType} from "./type_mapping.js";
+import type {ApiClassLike, BoundPropertyBinding, HeaderAnalysis, PropertyRule} from "./types.js";
 
 function makePropertyHelperBaseName(className: string, propertyName: string): string {
 	return `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(propertyName)}`;
@@ -40,31 +46,31 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 
 	const code = [
 		`inline void ${getterName}(pesapi_ffi *apis, pesapi_callback_info info) {`,
-		"\tpuerts::internal::callback_context context(apis, info);",
+		"\tpuerts::internal::CallbackFrame context(apis, info);",
 		"\tif (!context.require()) {",
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\tpuerts::internal::receiver<godot::${rule.class}> instance = puerts::internal::resolve_receiver<godot::${rule.class}>(apis, info, context);`,
+		`\tpuerts::internal::BoundReceiver<godot::${rule.class}> instance = puerts::internal::resolve_receiver<godot::${rule.class}>(apis, info, context);`,
 		"\tif (!instance.is_valid()) {",
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\tpuerts::internal::write_return<${typeName}>(apis, info, context.env, context.environment, ${getterExpr});`,
+		`\tpuerts::internal::write_return_value<${typeName}>(apis, info, context.env, context.environment, ${getterExpr});`,
 		"}",
 		"",
 		`inline void ${setterName}(pesapi_ffi *apis, pesapi_callback_info info) {`,
-		"\tpuerts::internal::callback_context context(apis, info);",
-		`\tif (!context.require() || !puerts::internal::check_arity<${typeName}>(context)) {`,
+		"\tpuerts::internal::CallbackFrame context(apis, info);",
+		`\tif (!context.require() || !puerts::internal::require_arity<${typeName}>(context)) {`,
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\tpuerts::internal::receiver<godot::${rule.class}> instance = puerts::internal::resolve_receiver<godot::${rule.class}>(apis, info, context);`,
+		`\tpuerts::internal::BoundReceiver<godot::${rule.class}> instance = puerts::internal::resolve_receiver<godot::${rule.class}>(apis, info, context);`,
 		"\tif (!instance.is_valid()) {",
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\tif (!puerts::internal::convert_arg_with<false, ${typeName}>(apis, info, context, 0, [&](auto &&value) {`,
+		`\tif (!puerts::internal::with_converted_argument<false, ${typeName}>(apis, info, context, 0, [&](auto &&value) {`,
 		`\t\t\t${setterStmt}`,
 		"\t\t})) {",
 		"\t\treturn;",
@@ -74,7 +80,7 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 		"}",
 	].join("\n");
 
-	return { getterName, setterName, code };
+	return {getterName, setterName, code};
 }
 
 export function collectPropertyBindings(

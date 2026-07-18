@@ -212,6 +212,13 @@ static func run_eval_basics_suite(backend: Object, backend_info: Dictionary) -> 
 			result = "%s eval string expected=hello world actual=%s" % [backend_name, str(eval_string)]
 
 	if result.is_empty():
+		var long_text := "puerts-" + "x".repeat(600)
+		env.set_global("long_text", long_text)
+		var long_roundtrip: Variant = _native(env.get_global("long_text"))
+		if long_roundtrip != long_text:
+			result = "%s long string roundtrip length expected=%d actual=%d" % [backend_name, long_text.length(), str(long_roundtrip).length()]
+
+	if result.is_empty():
 		env.set_global("foo", 21)
 		var roundtrip: Variant = _native(env.eval(script_for(backend_info, "return foo * 2", "foo * 2")))
 		if roundtrip != 42:

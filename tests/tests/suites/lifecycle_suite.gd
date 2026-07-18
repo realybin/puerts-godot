@@ -321,6 +321,42 @@ static func run_value_release_order_suite(backend_info: Dictionary) -> String:
 	return ""
 
 
+static func run_script_value_registry_churn_suite(backend: Object, backend_info: Dictionary) -> String:
+	var backend_name: String = backend_info["name"]
+	var created: Dictionary = create_environment(backend, backend_name)
+	if not bool(created["ok"]):
+		return str(created["error"])
+	var env: Object = created["env"]
+
+	var factory = env.eval(script_for(
+		backend_info,
+		"return function(value) return { value = value } end",
+		"(value) => ({ value })"
+	))
+	if factory == null or not factory.is_valid():
+		_dispose_env_if_alive(env)
+		return "%s registry churn factory is invalid: %s" % [backend_name, TestSupport.env_last_error(env)]
+
+	var values: Array = []
+	for i in range(256):
+		var value = factory.call([i])
+		if value == null or not value.is_valid():
+			_dispose_env_if_alive(env)
+			return "%s registry churn value %d is invalid: %s" % [backend_name, i, TestSupport.env_last_error(env)]
+		values.append(value)
+
+	# Remove alternating interior nodes before disposal; the remaining wrappers
+	# exercise bulk invalidation of a non-contiguous intrusive list.
+	for i in range(1, values.size(), 2):
+		values[i] = null
+
+	env.dispose()
+	for i in range(0, values.size(), 2):
+		if values[i].is_valid():
+			return "%s registry churn value %d remained valid after dispose" % [backend_name, i]
+	return ""
+
+
 static func run_dispose_stress_suite(backend_info: Dictionary) -> String:
 	var backend_name: String = backend_info["name"]
 	var retained_values: Array = []

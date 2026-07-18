@@ -96,31 +96,31 @@ PUERTS_SCRIPT_TYPE(puerts_generated_enum_tags::vector4i_axis_enum_tag_generated,
 
 namespace register_puerts_builtin_bindings_generated_generated_detail {
 inline void aabb_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_end());
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_end());
 }
 
 inline void aabb_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_end(eastl::move(value));
 		})) {
 		return;
@@ -130,31 +130,31 @@ inline void aabb_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void basis_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(0));
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(0));
 }
 
 inline void basis_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_column(0, eastl::move(value));
 		})) {
 		return;
@@ -164,31 +164,31 @@ inline void basis_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void basis_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(1));
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(1));
 }
 
 inline void basis_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_column(1, eastl::move(value));
 		})) {
 		return;
@@ -198,31 +198,31 @@ inline void basis_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void basis_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(2));
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(2));
 }
 
 inline void basis_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_column(2, eastl::move(value));
 		})) {
 		return;
@@ -232,31 +232,31 @@ inline void basis_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void color_r8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.get()->get_r8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_r8());
 }
 
 inline void color_r8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<int64_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_r8(eastl::move(value));
 		})) {
 		return;
@@ -266,31 +266,31 @@ inline void color_r8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_g8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.get()->get_g8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_g8());
 }
 
 inline void color_g8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<int64_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_g8(eastl::move(value));
 		})) {
 		return;
@@ -300,31 +300,31 @@ inline void color_g8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_b8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.get()->get_b8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_b8());
 }
 
 inline void color_b8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<int64_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_b8(eastl::move(value));
 		})) {
 		return;
@@ -334,31 +334,31 @@ inline void color_b8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_a8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<int64_t>(apis, info, context.env, context.environment, instance.get()->get_a8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_a8());
 }
 
 inline void color_a8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<int64_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_a8(eastl::move(value));
 		})) {
 		return;
@@ -368,31 +368,31 @@ inline void color_a8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_h_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_h());
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_h());
 }
 
 inline void color_h_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_h(eastl::move(value));
 		})) {
 		return;
@@ -402,31 +402,31 @@ inline void color_h_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void color_s_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_s());
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_s());
 }
 
 inline void color_s_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_s(eastl::move(value));
 		})) {
 		return;
@@ -436,31 +436,31 @@ inline void color_s_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void color_v_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_v());
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_v());
 }
 
 inline void color_v_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_v(eastl::move(value));
 		})) {
 		return;
@@ -470,31 +470,31 @@ inline void color_v_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void plane_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.x);
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.x);
 }
 
 inline void plane_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->normal.x = eastl::move(value);
 		})) {
 		return;
@@ -504,31 +504,31 @@ inline void plane_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void plane_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.y);
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.y);
 }
 
 inline void plane_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->normal.y = eastl::move(value);
 		})) {
 		return;
@@ -538,31 +538,31 @@ inline void plane_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void plane_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.z);
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.z);
 }
 
 inline void plane_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->normal.z = eastl::move(value);
 		})) {
 		return;
@@ -572,31 +572,31 @@ inline void plane_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void projection_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[0]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[0]);
 }
 
 inline void projection_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[0] = eastl::move(value);
 		})) {
 		return;
@@ -606,31 +606,31 @@ inline void projection_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void projection_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[1]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[1]);
 }
 
 inline void projection_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[1] = eastl::move(value);
 		})) {
 		return;
@@ -640,31 +640,31 @@ inline void projection_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void projection_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[2]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[2]);
 }
 
 inline void projection_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[2] = eastl::move(value);
 		})) {
 		return;
@@ -674,31 +674,31 @@ inline void projection_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void projection_w_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[3]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[3]);
 }
 
 inline void projection_w_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[3] = eastl::move(value);
 		})) {
 		return;
@@ -708,31 +708,31 @@ inline void projection_w_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void rect2_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->get_end());
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->get_end());
 }
 
 inline void rect2_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_end(eastl::move(value));
 		})) {
 		return;
@@ -742,31 +742,31 @@ inline void rect2_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info in
 }
 
 inline void rect2i_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector2i>(apis, info, context.env, context.environment, instance.get()->get_end());
+	puerts::internal::write_return_value<godot::Vector2i>(apis, info, context.env, context.environment, instance.get()->get_end());
 }
 
 inline void rect2i_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector2i>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector2i>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector2i>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector2i>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_end(eastl::move(value));
 		})) {
 		return;
@@ -776,31 +776,31 @@ inline void rect2i_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info i
 }
 
 inline void transform2d_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[0]);
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[0]);
 }
 
 inline void transform2d_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[0] = eastl::move(value);
 		})) {
 		return;
@@ -810,31 +810,31 @@ inline void transform2d_x_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 }
 
 inline void transform2d_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[1]);
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[1]);
 }
 
 inline void transform2d_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[1] = eastl::move(value);
 		})) {
 		return;
@@ -844,31 +844,31 @@ inline void transform2d_y_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 }
 
 inline void transform2d_origin_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
+	puerts::internal::CallbackFrame context(apis, info);
 	if (!context.require()) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	puerts::internal::write_return<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[2]);
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[2]);
 }
 
 inline void transform2d_origin_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::callback_context context(apis, info);
-	if (!context.require() || !puerts::internal::check_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackFrame context(apis, info);
+	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
 		return;
 	}
 
-	puerts::internal::receiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
+	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
 	if (!instance.is_valid()) {
 		return;
 	}
 
-	if (!puerts::internal::convert_arg_with<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[2] = eastl::move(value);
 		})) {
 		return;
@@ -880,7 +880,7 @@ inline void transform2d_origin_setter_generated(pesapi_ffi *apis, pesapi_callbac
 } // namespace register_puerts_builtin_bindings_generated_generated_detail
 
 inline void register_projection_planes_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::projection_planes_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::projection_planes_enum_tag_generated>()
 			.static_property("PLANE_NEAR", puerts::make_enum_constant<0>())
 			.static_property("PLANE_FAR", puerts::make_enum_constant<1>())
 			.static_property("PLANE_LEFT", puerts::make_enum_constant<2>())
@@ -890,33 +890,33 @@ inline void register_projection_planes_enum_generated() {
 			.register_type();
 }
 inline void register_vector2_axis_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::vector2_axis_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::vector2_axis_enum_tag_generated>()
 			.static_property("AXIS_X", puerts::make_enum_constant<0>())
 			.static_property("AXIS_Y", puerts::make_enum_constant<1>())
 			.register_type();
 }
 inline void register_vector2i_axis_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::vector2i_axis_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::vector2i_axis_enum_tag_generated>()
 			.static_property("AXIS_X", puerts::make_enum_constant<0>())
 			.static_property("AXIS_Y", puerts::make_enum_constant<1>())
 			.register_type();
 }
 inline void register_vector3_axis_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::vector3_axis_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::vector3_axis_enum_tag_generated>()
 			.static_property("AXIS_X", puerts::make_enum_constant<0>())
 			.static_property("AXIS_Y", puerts::make_enum_constant<1>())
 			.static_property("AXIS_Z", puerts::make_enum_constant<2>())
 			.register_type();
 }
 inline void register_vector3i_axis_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::vector3i_axis_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::vector3i_axis_enum_tag_generated>()
 			.static_property("AXIS_X", puerts::make_enum_constant<0>())
 			.static_property("AXIS_Y", puerts::make_enum_constant<1>())
 			.static_property("AXIS_Z", puerts::make_enum_constant<2>())
 			.register_type();
 }
 inline void register_vector4_axis_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::vector4_axis_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::vector4_axis_enum_tag_generated>()
 			.static_property("AXIS_X", puerts::make_enum_constant<0>())
 			.static_property("AXIS_Y", puerts::make_enum_constant<1>())
 			.static_property("AXIS_Z", puerts::make_enum_constant<2>())
@@ -924,7 +924,7 @@ inline void register_vector4_axis_enum_generated() {
 			.register_type();
 }
 inline void register_vector4i_axis_enum_generated() {
-	puerts::define_class<puerts_generated_enum_tags::vector4i_axis_enum_tag_generated>()
+	puerts::define_type<puerts_generated_enum_tags::vector4i_axis_enum_tag_generated>()
 			.static_property("AXIS_X", puerts::make_enum_constant<0>())
 			.static_property("AXIS_Y", puerts::make_enum_constant<1>())
 			.static_property("AXIS_Z", puerts::make_enum_constant<2>())
@@ -957,12 +957,12 @@ inline bool aabb_op_in_7_generated(const godot::AABB &left, const godot::Array &
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_aabb_type_generated() {
-	puerts::define_class<godot::AABB>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&aabb_op_equality_0_generated>(), puerts::make_overload<&aabb_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&aabb_op_inequality_1_generated>(), puerts::make_overload<&aabb_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&aabb_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::make_function<&aabb_op_multiply_5_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&aabb_op_in_6_generated>(), puerts::make_overload<&aabb_op_in_7_generated>()))
+	puerts::define_type<godot::AABB>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&aabb_op_equality_0_generated>(), puerts::make_overload<&aabb_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&aabb_op_inequality_1_generated>(), puerts::make_overload<&aabb_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&aabb_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::make_function<&aabb_op_multiply_5_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&aabb_op_in_6_generated>(), puerts::make_overload<&aabb_op_in_7_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::AABB>(),
 					puerts::make_constructor_overload<godot::AABB, const godot::AABB &>(),
@@ -1034,16 +1034,16 @@ inline bool array_op_in_11_generated(const godot::Array &left, const godot::Arra
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_array_type_generated() {
-	puerts::define_class<godot::Array>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&array_op_equality_0_generated>(), puerts::make_overload<&array_op_equality_4_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&array_op_inequality_1_generated>(), puerts::make_overload<&array_op_inequality_5_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&array_op_in_3_generated>(), puerts::make_overload<&array_op_in_11_generated>()))
-			.function("op_LessThan", puerts::make_function<&array_op_less_than_6_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&array_op_less_than_or_equal_7_generated>())
-			.function("op_GreaterThan", puerts::make_function<&array_op_greater_than_8_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&array_op_greater_than_or_equal_9_generated>())
-			.function("op_Addition", puerts::make_function<&array_op_addition_10_generated>())
+	puerts::define_type<godot::Array>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&array_op_equality_0_generated>(), puerts::make_overload<&array_op_equality_4_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&array_op_inequality_1_generated>(), puerts::make_overload<&array_op_inequality_5_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&array_op_in_3_generated>(), puerts::make_overload<&array_op_in_11_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&array_op_less_than_6_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&array_op_less_than_or_equal_7_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&array_op_greater_than_8_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&array_op_greater_than_or_equal_9_generated>())
+			.static_method("op_Addition", puerts::make_function<&array_op_addition_10_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Array>(),
 					puerts::make_constructor_overload<godot::Array, const godot::Array &>(),
@@ -1163,13 +1163,13 @@ inline godot::Basis basis_flip_z_constant_generated() {
 	return { 1, 0, 0, 0, 1, 0, 0, 0, -1 };
 }
 inline void register_basis_type_generated() {
-	puerts::define_class<godot::Basis>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&basis_op_equality_0_generated>(), puerts::make_overload<&basis_op_equality_8_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&basis_op_inequality_1_generated>(), puerts::make_overload<&basis_op_inequality_9_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&basis_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&basis_op_multiply_3_generated>(), puerts::make_overload<&basis_op_multiply_5_generated>(), puerts::make_overload<&basis_op_multiply_7_generated>(), puerts::make_overload<&basis_op_multiply_10_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&basis_op_division_4_generated>(), puerts::make_overload<&basis_op_division_6_generated>()))
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&basis_op_in_11_generated>(), puerts::make_overload<&basis_op_in_12_generated>()))
+	puerts::define_type<godot::Basis>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&basis_op_equality_0_generated>(), puerts::make_overload<&basis_op_equality_8_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&basis_op_inequality_1_generated>(), puerts::make_overload<&basis_op_inequality_9_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&basis_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&basis_op_multiply_3_generated>(), puerts::make_overload<&basis_op_multiply_5_generated>(), puerts::make_overload<&basis_op_multiply_7_generated>(), puerts::make_overload<&basis_op_multiply_10_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&basis_op_division_4_generated>(), puerts::make_overload<&basis_op_division_6_generated>()))
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&basis_op_in_11_generated>(), puerts::make_overload<&basis_op_in_12_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&basis_identity_constant_generated>())
 			.static_property("FLIP_X", puerts::make_value_constant<&basis_flip_x_constant_generated>())
 			.static_property("FLIP_Y", puerts::make_value_constant<&basis_flip_y_constant_generated>())
@@ -1197,9 +1197,9 @@ inline void register_basis_type_generated() {
 			.method("is_equal_approx", puerts::make_method<&godot::Basis::is_equal_approx>())
 			.method("is_finite", puerts::make_method<&godot::Basis::is_finite>())
 			.method("get_rotation_quaternion", puerts::make_method<&godot::Basis::get_rotation_quaternion>())
-			.function("looking_at", puerts::make_function<&godot::Basis::looking_at>())
-			.function("from_scale", puerts::make_function<&godot::Basis::from_scale>())
-			.function("from_euler", puerts::make_function<&godot::Basis::from_euler>())
+			.static_method("looking_at", puerts::make_function<&godot::Basis::looking_at>())
+			.static_method("from_scale", puerts::make_function<&godot::Basis::from_scale>())
+			.static_method("from_euler", puerts::make_function<&godot::Basis::from_euler>())
 			.property("x", &register_puerts_builtin_bindings_generated_generated_detail::basis_x_getter_generated, &register_puerts_builtin_bindings_generated_generated_detail::basis_x_setter_generated)
 			.property("y", &register_puerts_builtin_bindings_generated_generated_detail::basis_y_getter_generated, &register_puerts_builtin_bindings_generated_generated_detail::basis_y_setter_generated)
 			.property("z", &register_puerts_builtin_bindings_generated_generated_detail::basis_z_getter_generated, &register_puerts_builtin_bindings_generated_generated_detail::basis_z_setter_generated)
@@ -1232,16 +1232,16 @@ inline bool callable_op_in_6_generated(const godot::Callable &left, const godot:
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_callable_type_generated() {
-	puerts::define_class<godot::Callable>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&callable_op_equality_0_generated>(), puerts::make_overload<&callable_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&callable_op_inequality_1_generated>(), puerts::make_overload<&callable_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&callable_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&callable_op_in_5_generated>(), puerts::make_overload<&callable_op_in_6_generated>()))
+	puerts::define_type<godot::Callable>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&callable_op_equality_0_generated>(), puerts::make_overload<&callable_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&callable_op_inequality_1_generated>(), puerts::make_overload<&callable_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&callable_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&callable_op_in_5_generated>(), puerts::make_overload<&callable_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Callable>(),
 					puerts::make_constructor_overload<godot::Callable, const godot::Callable &>(),
 					puerts::make_constructor_overload<godot::Callable, godot::Object *, const godot::StringName &>()))
-			.function("create", puerts::make_function<&godot::Callable::create>())
+			.static_method("create", puerts::make_function<&godot::Callable::create>())
 			.method("callv", puerts::make_method<&godot::Callable::callv>())
 			.method("is_null", puerts::make_method<&godot::Callable::is_null>())
 			.method("is_custom", puerts::make_method<&godot::Callable::is_custom>())
@@ -1757,17 +1757,17 @@ inline godot::Color color_yellow_green_constant_generated() {
 	return { 0.6039216, 0.8039216, 0.19607843, 1 };
 }
 inline void register_color_type_generated() {
-	puerts::define_class<godot::Color>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&color_op_equality_0_generated>(), puerts::make_overload<&color_op_equality_9_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&color_op_inequality_1_generated>(), puerts::make_overload<&color_op_inequality_10_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&color_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&color_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&color_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&color_op_multiply_5_generated>(), puerts::make_overload<&color_op_multiply_7_generated>(), puerts::make_overload<&color_op_multiply_13_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&color_op_division_6_generated>(), puerts::make_overload<&color_op_division_8_generated>(), puerts::make_overload<&color_op_division_14_generated>()))
-			.function("op_Addition", puerts::make_function<&color_op_addition_11_generated>())
-			.function("op_Subtraction", puerts::make_function<&color_op_subtraction_12_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&color_op_in_15_generated>(), puerts::make_overload<&color_op_in_16_generated>(), puerts::make_overload<&color_op_in_17_generated>()))
+	puerts::define_type<godot::Color>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&color_op_equality_0_generated>(), puerts::make_overload<&color_op_equality_9_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&color_op_inequality_1_generated>(), puerts::make_overload<&color_op_inequality_10_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&color_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&color_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&color_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&color_op_multiply_5_generated>(), puerts::make_overload<&color_op_multiply_7_generated>(), puerts::make_overload<&color_op_multiply_13_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&color_op_division_6_generated>(), puerts::make_overload<&color_op_division_8_generated>(), puerts::make_overload<&color_op_division_14_generated>()))
+			.static_method("op_Addition", puerts::make_function<&color_op_addition_11_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&color_op_subtraction_12_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&color_op_in_15_generated>(), puerts::make_overload<&color_op_in_16_generated>(), puerts::make_overload<&color_op_in_17_generated>()))
 			.static_property("ALICE_BLUE", puerts::make_value_constant<&color_alice_blue_constant_generated>())
 			.static_property("ANTIQUE_WHITE", puerts::make_value_constant<&color_antique_white_constant_generated>())
 			.static_property("AQUA", puerts::make_value_constant<&color_aqua_constant_generated>())
@@ -1939,14 +1939,14 @@ inline void register_color_type_generated() {
 			.method("srgb_to_linear", puerts::make_method<&godot::Color::srgb_to_linear>())
 			.method("linear_to_srgb", puerts::make_method<&godot::Color::linear_to_srgb>())
 			.method("is_equal_approx", puerts::make_method<&godot::Color::is_equal_approx>())
-			.function("hex", puerts::make_function<&godot::Color::hex>())
-			.function("hex64", puerts::make_function<&godot::Color::hex64>())
-			.function("html", puerts::make_function<&godot::Color::html>())
-			.function("html_is_valid", puerts::make_function<&godot::Color::html_is_valid>())
-			.function("from_string", puerts::make_function<&godot::Color::from_string>())
-			.function("from_hsv", puerts::make_function<&godot::Color::from_hsv>())
-			.function("from_rgbe9995", puerts::make_function<&godot::Color::from_rgbe9995>())
-			.function("from_rgba8", puerts::make_function<&godot::Color::from_rgba8>())
+			.static_method("hex", puerts::make_function<&godot::Color::hex>())
+			.static_method("hex64", puerts::make_function<&godot::Color::hex64>())
+			.static_method("html", puerts::make_function<&godot::Color::html>())
+			.static_method("html_is_valid", puerts::make_function<&godot::Color::html_is_valid>())
+			.static_method("from_string", puerts::make_function<&godot::Color::from_string>())
+			.static_method("from_hsv", puerts::make_function<&godot::Color::from_hsv>())
+			.static_method("from_rgbe9995", puerts::make_function<&godot::Color::from_rgbe9995>())
+			.static_method("from_rgba8", puerts::make_function<&godot::Color::from_rgba8>())
 			.property("r8", &register_puerts_builtin_bindings_generated_generated_detail::color_r8_getter_generated, &register_puerts_builtin_bindings_generated_generated_detail::color_r8_setter_generated)
 			.property("g8", &register_puerts_builtin_bindings_generated_generated_detail::color_g8_getter_generated, &register_puerts_builtin_bindings_generated_generated_detail::color_g8_setter_generated)
 			.property("b8", &register_puerts_builtin_bindings_generated_generated_detail::color_b8_getter_generated, &register_puerts_builtin_bindings_generated_generated_detail::color_b8_setter_generated)
@@ -1982,11 +1982,11 @@ inline bool dictionary_op_in_6_generated(const godot::Dictionary &left, const go
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_dictionary_type_generated() {
-	puerts::define_class<godot::Dictionary>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&dictionary_op_equality_0_generated>(), puerts::make_overload<&dictionary_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&dictionary_op_inequality_1_generated>(), puerts::make_overload<&dictionary_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&dictionary_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&dictionary_op_in_5_generated>(), puerts::make_overload<&dictionary_op_in_6_generated>()))
+	puerts::define_type<godot::Dictionary>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&dictionary_op_equality_0_generated>(), puerts::make_overload<&dictionary_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&dictionary_op_inequality_1_generated>(), puerts::make_overload<&dictionary_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&dictionary_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&dictionary_op_in_5_generated>(), puerts::make_overload<&dictionary_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Dictionary>(),
 					puerts::make_constructor_overload<godot::Dictionary, const godot::Dictionary &>(),
@@ -2049,11 +2049,11 @@ inline bool node_path_op_in_6_generated(const godot::NodePath &left, const godot
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_node_path_type_generated() {
-	puerts::define_class<godot::NodePath>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&node_path_op_equality_0_generated>(), puerts::make_overload<&node_path_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&node_path_op_inequality_1_generated>(), puerts::make_overload<&node_path_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&node_path_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&node_path_op_in_5_generated>(), puerts::make_overload<&node_path_op_in_6_generated>()))
+	puerts::define_type<godot::NodePath>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&node_path_op_equality_0_generated>(), puerts::make_overload<&node_path_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&node_path_op_inequality_1_generated>(), puerts::make_overload<&node_path_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&node_path_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&node_path_op_in_5_generated>(), puerts::make_overload<&node_path_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::NodePath>(),
 					puerts::make_constructor_overload<godot::NodePath, const godot::NodePath &>(),
@@ -2096,12 +2096,12 @@ inline godot::PackedByteArray packed_byte_array_op_addition_7_generated(const go
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedByteArray>(left, right);
 }
 inline void register_packed_byte_array_type_generated() {
-	puerts::define_class<godot::PackedByteArray>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_equality_0_generated>(), puerts::make_overload<&packed_byte_array_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_inequality_1_generated>(), puerts::make_overload<&packed_byte_array_op_inequality_6_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_byte_array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_in_3_generated>(), puerts::make_overload<&packed_byte_array_op_in_4_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_byte_array_op_addition_7_generated>())
+	puerts::define_type<godot::PackedByteArray>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_equality_0_generated>(), puerts::make_overload<&packed_byte_array_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_inequality_1_generated>(), puerts::make_overload<&packed_byte_array_op_inequality_6_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_byte_array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_byte_array_op_in_3_generated>(), puerts::make_overload<&packed_byte_array_op_in_4_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_byte_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedByteArray>(),
 					puerts::make_constructor_overload<godot::PackedByteArray, const godot::PackedByteArray &>(),
@@ -2202,12 +2202,12 @@ inline godot::PackedColorArray packed_color_array_op_addition_7_generated(const 
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedColorArray>(left, right);
 }
 inline void register_packed_color_array_type_generated() {
-	puerts::define_class<godot::PackedColorArray>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_equality_0_generated>(), puerts::make_overload<&packed_color_array_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_inequality_1_generated>(), puerts::make_overload<&packed_color_array_op_inequality_6_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_color_array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_in_3_generated>(), puerts::make_overload<&packed_color_array_op_in_4_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_color_array_op_addition_7_generated>())
+	puerts::define_type<godot::PackedColorArray>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_equality_0_generated>(), puerts::make_overload<&packed_color_array_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_inequality_1_generated>(), puerts::make_overload<&packed_color_array_op_inequality_6_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_color_array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_color_array_op_in_3_generated>(), puerts::make_overload<&packed_color_array_op_in_4_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_color_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedColorArray>(),
 					puerts::make_constructor_overload<godot::PackedColorArray, const godot::PackedColorArray &>(),
@@ -2262,12 +2262,12 @@ inline godot::PackedFloat32Array packed_float32_array_op_addition_7_generated(co
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedFloat32Array>(left, right);
 }
 inline void register_packed_float32_array_type_generated() {
-	puerts::define_class<godot::PackedFloat32Array>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_equality_0_generated>(), puerts::make_overload<&packed_float32_array_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_inequality_1_generated>(), puerts::make_overload<&packed_float32_array_op_inequality_6_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_float32_array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_in_3_generated>(), puerts::make_overload<&packed_float32_array_op_in_4_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_float32_array_op_addition_7_generated>())
+	puerts::define_type<godot::PackedFloat32Array>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_equality_0_generated>(), puerts::make_overload<&packed_float32_array_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_inequality_1_generated>(), puerts::make_overload<&packed_float32_array_op_inequality_6_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_float32_array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_float32_array_op_in_3_generated>(), puerts::make_overload<&packed_float32_array_op_in_4_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_float32_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedFloat32Array>(),
 					puerts::make_constructor_overload<godot::PackedFloat32Array, const godot::PackedFloat32Array &>(),
@@ -2322,12 +2322,12 @@ inline godot::PackedFloat64Array packed_float64_array_op_addition_7_generated(co
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedFloat64Array>(left, right);
 }
 inline void register_packed_float64_array_type_generated() {
-	puerts::define_class<godot::PackedFloat64Array>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_equality_0_generated>(), puerts::make_overload<&packed_float64_array_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_inequality_1_generated>(), puerts::make_overload<&packed_float64_array_op_inequality_6_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_float64_array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_in_3_generated>(), puerts::make_overload<&packed_float64_array_op_in_4_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_float64_array_op_addition_7_generated>())
+	puerts::define_type<godot::PackedFloat64Array>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_equality_0_generated>(), puerts::make_overload<&packed_float64_array_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_inequality_1_generated>(), puerts::make_overload<&packed_float64_array_op_inequality_6_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_float64_array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_float64_array_op_in_3_generated>(), puerts::make_overload<&packed_float64_array_op_in_4_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_float64_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedFloat64Array>(),
 					puerts::make_constructor_overload<godot::PackedFloat64Array, const godot::PackedFloat64Array &>(),
@@ -2382,12 +2382,12 @@ inline godot::PackedInt32Array packed_int32_array_op_addition_7_generated(const 
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedInt32Array>(left, right);
 }
 inline void register_packed_int32_array_type_generated() {
-	puerts::define_class<godot::PackedInt32Array>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_equality_0_generated>(), puerts::make_overload<&packed_int32_array_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_inequality_1_generated>(), puerts::make_overload<&packed_int32_array_op_inequality_6_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_int32_array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_in_3_generated>(), puerts::make_overload<&packed_int32_array_op_in_4_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_int32_array_op_addition_7_generated>())
+	puerts::define_type<godot::PackedInt32Array>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_equality_0_generated>(), puerts::make_overload<&packed_int32_array_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_inequality_1_generated>(), puerts::make_overload<&packed_int32_array_op_inequality_6_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_int32_array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_int32_array_op_in_3_generated>(), puerts::make_overload<&packed_int32_array_op_in_4_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_int32_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedInt32Array>(),
 					puerts::make_constructor_overload<godot::PackedInt32Array, const godot::PackedInt32Array &>(),
@@ -2442,12 +2442,12 @@ inline godot::PackedInt64Array packed_int64_array_op_addition_7_generated(const 
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedInt64Array>(left, right);
 }
 inline void register_packed_int64_array_type_generated() {
-	puerts::define_class<godot::PackedInt64Array>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_equality_0_generated>(), puerts::make_overload<&packed_int64_array_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_inequality_1_generated>(), puerts::make_overload<&packed_int64_array_op_inequality_6_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_int64_array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_in_3_generated>(), puerts::make_overload<&packed_int64_array_op_in_4_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_int64_array_op_addition_7_generated>())
+	puerts::define_type<godot::PackedInt64Array>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_equality_0_generated>(), puerts::make_overload<&packed_int64_array_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_inequality_1_generated>(), puerts::make_overload<&packed_int64_array_op_inequality_6_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_int64_array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_int64_array_op_in_3_generated>(), puerts::make_overload<&packed_int64_array_op_in_4_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_int64_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedInt64Array>(),
 					puerts::make_constructor_overload<godot::PackedInt64Array, const godot::PackedInt64Array &>(),
@@ -2502,12 +2502,12 @@ inline godot::PackedStringArray packed_string_array_op_addition_7_generated(cons
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedStringArray>(left, right);
 }
 inline void register_packed_string_array_type_generated() {
-	puerts::define_class<godot::PackedStringArray>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_equality_0_generated>(), puerts::make_overload<&packed_string_array_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_inequality_1_generated>(), puerts::make_overload<&packed_string_array_op_inequality_6_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_string_array_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_in_3_generated>(), puerts::make_overload<&packed_string_array_op_in_4_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_string_array_op_addition_7_generated>())
+	puerts::define_type<godot::PackedStringArray>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_equality_0_generated>(), puerts::make_overload<&packed_string_array_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_inequality_1_generated>(), puerts::make_overload<&packed_string_array_op_inequality_6_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_string_array_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_string_array_op_in_3_generated>(), puerts::make_overload<&packed_string_array_op_in_4_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_string_array_op_addition_7_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedStringArray>(),
 					puerts::make_constructor_overload<godot::PackedStringArray, const godot::PackedStringArray &>(),
@@ -2565,13 +2565,13 @@ inline godot::PackedVector2Array packed_vector2_array_op_addition_8_generated(co
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedVector2Array>(left, right);
 }
 inline void register_packed_vector2_array_type_generated() {
-	puerts::define_class<godot::PackedVector2Array>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_equality_0_generated>(), puerts::make_overload<&packed_vector2_array_op_equality_6_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_inequality_1_generated>(), puerts::make_overload<&packed_vector2_array_op_inequality_7_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_vector2_array_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::make_function<&packed_vector2_array_op_multiply_3_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_in_4_generated>(), puerts::make_overload<&packed_vector2_array_op_in_5_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_vector2_array_op_addition_8_generated>())
+	puerts::define_type<godot::PackedVector2Array>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_equality_0_generated>(), puerts::make_overload<&packed_vector2_array_op_equality_6_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_inequality_1_generated>(), puerts::make_overload<&packed_vector2_array_op_inequality_7_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_vector2_array_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::make_function<&packed_vector2_array_op_multiply_3_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_vector2_array_op_in_4_generated>(), puerts::make_overload<&packed_vector2_array_op_in_5_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_vector2_array_op_addition_8_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedVector2Array>(),
 					puerts::make_constructor_overload<godot::PackedVector2Array, const godot::PackedVector2Array &>(),
@@ -2629,13 +2629,13 @@ inline godot::PackedVector3Array packed_vector3_array_op_addition_8_generated(co
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedVector3Array>(left, right);
 }
 inline void register_packed_vector3_array_type_generated() {
-	puerts::define_class<godot::PackedVector3Array>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_equality_0_generated>(), puerts::make_overload<&packed_vector3_array_op_equality_6_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_inequality_1_generated>(), puerts::make_overload<&packed_vector3_array_op_inequality_7_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&packed_vector3_array_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::make_function<&packed_vector3_array_op_multiply_3_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_in_4_generated>(), puerts::make_overload<&packed_vector3_array_op_in_5_generated>()))
-			.function("op_Addition", puerts::make_function<&packed_vector3_array_op_addition_8_generated>())
+	puerts::define_type<godot::PackedVector3Array>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_equality_0_generated>(), puerts::make_overload<&packed_vector3_array_op_equality_6_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_inequality_1_generated>(), puerts::make_overload<&packed_vector3_array_op_inequality_7_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&packed_vector3_array_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::make_function<&packed_vector3_array_op_multiply_3_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&packed_vector3_array_op_in_4_generated>(), puerts::make_overload<&packed_vector3_array_op_in_5_generated>()))
+			.static_method("op_Addition", puerts::make_function<&packed_vector3_array_op_addition_8_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::PackedVector3Array>(),
 					puerts::make_constructor_overload<godot::PackedVector3Array, const godot::PackedVector3Array &>(),
@@ -2705,14 +2705,14 @@ inline godot::Plane plane_plane_xy_constant_generated() {
 	return { 0, 0, 1, 0 };
 }
 inline void register_plane_type_generated() {
-	puerts::define_class<godot::Plane>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&plane_op_equality_0_generated>(), puerts::make_overload<&plane_op_equality_5_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&plane_op_inequality_1_generated>(), puerts::make_overload<&plane_op_inequality_6_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&plane_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&plane_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&plane_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::make_function<&plane_op_multiply_7_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&plane_op_in_8_generated>(), puerts::make_overload<&plane_op_in_9_generated>()))
+	puerts::define_type<godot::Plane>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&plane_op_equality_0_generated>(), puerts::make_overload<&plane_op_equality_5_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&plane_op_inequality_1_generated>(), puerts::make_overload<&plane_op_inequality_6_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&plane_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&plane_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&plane_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::make_function<&plane_op_multiply_7_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&plane_op_in_8_generated>(), puerts::make_overload<&plane_op_in_9_generated>()))
 			.static_property("PLANE_YZ", puerts::make_value_constant<&plane_plane_yz_constant_generated>())
 			.static_property("PLANE_XZ", puerts::make_value_constant<&plane_plane_xz_constant_generated>())
 			.static_property("PLANE_XY", puerts::make_value_constant<&plane_plane_xy_constant_generated>())
@@ -2776,12 +2776,12 @@ inline godot::Projection projection_zero_constant_generated() {
 	return { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 }
 inline void register_projection_type_generated() {
-	puerts::define_class<godot::Projection>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&projection_op_equality_0_generated>(), puerts::make_overload<&projection_op_equality_4_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&projection_op_inequality_1_generated>(), puerts::make_overload<&projection_op_inequality_5_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&projection_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&projection_op_multiply_3_generated>(), puerts::make_overload<&projection_op_multiply_6_generated>()))
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&projection_op_in_7_generated>(), puerts::make_overload<&projection_op_in_8_generated>()))
+	puerts::define_type<godot::Projection>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&projection_op_equality_0_generated>(), puerts::make_overload<&projection_op_equality_4_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&projection_op_inequality_1_generated>(), puerts::make_overload<&projection_op_inequality_5_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&projection_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&projection_op_multiply_3_generated>(), puerts::make_overload<&projection_op_multiply_6_generated>()))
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&projection_op_in_7_generated>(), puerts::make_overload<&projection_op_in_8_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&projection_identity_constant_generated>())
 			.static_property("ZERO", puerts::make_value_constant<&projection_zero_constant_generated>())
 			.constructor(puerts::combine_constructors(
@@ -2789,22 +2789,22 @@ inline void register_projection_type_generated() {
 					puerts::make_constructor_overload<godot::Projection, const godot::Projection &>(),
 					puerts::make_constructor_overload<godot::Projection, const godot::Transform3D &>(),
 					puerts::make_constructor_overload<godot::Projection, const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &>()))
-			.function("create_depth_correction", puerts::make_function<&godot::Projection::create_depth_correction>())
-			.function("create_light_atlas_rect", puerts::make_function<&godot::Projection::create_light_atlas_rect>())
-			.function("create_perspective", puerts::make_function<&godot::Projection::create_perspective>())
-			.function("create_perspective_hmd", puerts::make_function<&godot::Projection::create_perspective_hmd>())
-			.function("create_for_hmd", puerts::make_function<&godot::Projection::create_for_hmd>())
-			.function("create_orthogonal", puerts::make_function<&godot::Projection::create_orthogonal>())
-			.function("create_orthogonal_aspect", puerts::make_function<&godot::Projection::create_orthogonal_aspect>())
-			.function("create_frustum", puerts::make_function<&godot::Projection::create_frustum>())
-			.function("create_frustum_aspect", puerts::make_function<&godot::Projection::create_frustum_aspect>())
-			.function("create_fit_aabb", puerts::make_function<&godot::Projection::create_fit_aabb>())
+			.static_method("create_depth_correction", puerts::make_function<&godot::Projection::create_depth_correction>())
+			.static_method("create_light_atlas_rect", puerts::make_function<&godot::Projection::create_light_atlas_rect>())
+			.static_method("create_perspective", puerts::make_function<&godot::Projection::create_perspective>())
+			.static_method("create_perspective_hmd", puerts::make_function<&godot::Projection::create_perspective_hmd>())
+			.static_method("create_for_hmd", puerts::make_function<&godot::Projection::create_for_hmd>())
+			.static_method("create_orthogonal", puerts::make_function<&godot::Projection::create_orthogonal>())
+			.static_method("create_orthogonal_aspect", puerts::make_function<&godot::Projection::create_orthogonal_aspect>())
+			.static_method("create_frustum", puerts::make_function<&godot::Projection::create_frustum>())
+			.static_method("create_frustum_aspect", puerts::make_function<&godot::Projection::create_frustum_aspect>())
+			.static_method("create_fit_aabb", puerts::make_function<&godot::Projection::create_fit_aabb>())
 			.method("determinant", puerts::make_method<&godot::Projection::determinant>())
 			.method("perspective_znear_adjusted", puerts::make_method<&godot::Projection::perspective_znear_adjusted>())
 			.method("get_projection_plane", puerts::make_method<&godot::Projection::get_projection_plane>())
 			.method("flipped_y", puerts::make_method<&godot::Projection::flipped_y>())
 			.method("jitter_offseted", puerts::make_method<&godot::Projection::jitter_offseted>())
-			.function("get_fovy", puerts::make_function<&godot::Projection::get_fovy>())
+			.static_method("get_fovy", puerts::make_function<&godot::Projection::get_fovy>())
 			.method("get_z_far", puerts::make_method<&godot::Projection::get_z_far>())
 			.method("get_z_near", puerts::make_method<&godot::Projection::get_z_near>())
 			.method("get_aspect", puerts::make_method<&godot::Projection::get_aspect>())
@@ -2877,17 +2877,17 @@ inline godot::Quaternion quaternion_identity_constant_generated() {
 	return { 0, 0, 0, 1 };
 }
 inline void register_quaternion_type_generated() {
-	puerts::define_class<godot::Quaternion>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&quaternion_op_equality_0_generated>(), puerts::make_overload<&quaternion_op_equality_10_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&quaternion_op_inequality_1_generated>(), puerts::make_overload<&quaternion_op_inequality_11_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&quaternion_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&quaternion_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&quaternion_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&quaternion_op_multiply_5_generated>(), puerts::make_overload<&quaternion_op_multiply_7_generated>(), puerts::make_overload<&quaternion_op_multiply_9_generated>(), puerts::make_overload<&quaternion_op_multiply_14_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&quaternion_op_division_6_generated>(), puerts::make_overload<&quaternion_op_division_8_generated>()))
-			.function("op_Addition", puerts::make_function<&quaternion_op_addition_12_generated>())
-			.function("op_Subtraction", puerts::make_function<&quaternion_op_subtraction_13_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&quaternion_op_in_15_generated>(), puerts::make_overload<&quaternion_op_in_16_generated>()))
+	puerts::define_type<godot::Quaternion>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&quaternion_op_equality_0_generated>(), puerts::make_overload<&quaternion_op_equality_10_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&quaternion_op_inequality_1_generated>(), puerts::make_overload<&quaternion_op_inequality_11_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&quaternion_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&quaternion_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&quaternion_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&quaternion_op_multiply_5_generated>(), puerts::make_overload<&quaternion_op_multiply_7_generated>(), puerts::make_overload<&quaternion_op_multiply_9_generated>(), puerts::make_overload<&quaternion_op_multiply_14_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&quaternion_op_division_6_generated>(), puerts::make_overload<&quaternion_op_division_8_generated>()))
+			.static_method("op_Addition", puerts::make_function<&quaternion_op_addition_12_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&quaternion_op_subtraction_13_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&quaternion_op_in_15_generated>(), puerts::make_overload<&quaternion_op_in_16_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&quaternion_identity_constant_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Quaternion>(),
@@ -2912,7 +2912,7 @@ inline void register_quaternion_type_generated() {
 			.method("spherical_cubic_interpolate", puerts::make_method<&godot::Quaternion::spherical_cubic_interpolate>())
 			.method("spherical_cubic_interpolate_in_time", puerts::make_method<&godot::Quaternion::spherical_cubic_interpolate_in_time>())
 			.method("get_euler", puerts::make_method<&godot::Quaternion::get_euler>())
-			.function("from_euler", puerts::make_function<&godot::Quaternion::from_euler>())
+			.static_method("from_euler", puerts::make_function<&godot::Quaternion::from_euler>())
 			.method("get_axis", puerts::make_method<&godot::Quaternion::get_axis>())
 			.method("get_angle", puerts::make_method<&godot::Quaternion::get_angle>())
 			.property("x", puerts::make_property<&godot::Quaternion::x>())
@@ -2946,12 +2946,12 @@ inline bool rect2_op_in_7_generated(const godot::Rect2 &left, const godot::Array
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_rect2_type_generated() {
-	puerts::define_class<godot::Rect2>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&rect2_op_equality_0_generated>(), puerts::make_overload<&rect2_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rect2_op_inequality_1_generated>(), puerts::make_overload<&rect2_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&rect2_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::make_function<&rect2_op_multiply_5_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&rect2_op_in_6_generated>(), puerts::make_overload<&rect2_op_in_7_generated>()))
+	puerts::define_type<godot::Rect2>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&rect2_op_equality_0_generated>(), puerts::make_overload<&rect2_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rect2_op_inequality_1_generated>(), puerts::make_overload<&rect2_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&rect2_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::make_function<&rect2_op_multiply_5_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&rect2_op_in_6_generated>(), puerts::make_overload<&rect2_op_in_7_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Rect2>(),
 					puerts::make_constructor_overload<godot::Rect2, const godot::Rect2 &>(),
@@ -3001,11 +3001,11 @@ inline bool rect2i_op_in_6_generated(const godot::Rect2i &left, const godot::Arr
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_rect2i_type_generated() {
-	puerts::define_class<godot::Rect2i>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&rect2i_op_equality_0_generated>(), puerts::make_overload<&rect2i_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rect2i_op_inequality_1_generated>(), puerts::make_overload<&rect2i_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&rect2i_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&rect2i_op_in_5_generated>(), puerts::make_overload<&rect2i_op_in_6_generated>()))
+	puerts::define_type<godot::Rect2i>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&rect2i_op_equality_0_generated>(), puerts::make_overload<&rect2i_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rect2i_op_inequality_1_generated>(), puerts::make_overload<&rect2i_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&rect2i_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&rect2i_op_in_5_generated>(), puerts::make_overload<&rect2i_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Rect2i>(),
 					puerts::make_constructor_overload<godot::Rect2i, const godot::Rect2i &>(),
@@ -3064,15 +3064,15 @@ inline bool rid_op_in_10_generated(const godot::RID &left, const godot::Array &r
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_rid_type_generated() {
-	puerts::define_class<godot::RID>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&rid_op_equality_0_generated>(), puerts::make_overload<&rid_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rid_op_inequality_1_generated>(), puerts::make_overload<&rid_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&rid_op_logical_not_2_generated>())
-			.function("op_LessThan", puerts::make_function<&rid_op_less_than_5_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&rid_op_less_than_or_equal_6_generated>())
-			.function("op_GreaterThan", puerts::make_function<&rid_op_greater_than_7_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&rid_op_greater_than_or_equal_8_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&rid_op_in_9_generated>(), puerts::make_overload<&rid_op_in_10_generated>()))
+	puerts::define_type<godot::RID>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&rid_op_equality_0_generated>(), puerts::make_overload<&rid_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&rid_op_inequality_1_generated>(), puerts::make_overload<&rid_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&rid_op_logical_not_2_generated>())
+			.static_method("op_LessThan", puerts::make_function<&rid_op_less_than_5_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&rid_op_less_than_or_equal_6_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&rid_op_greater_than_7_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&rid_op_greater_than_or_equal_8_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&rid_op_in_9_generated>(), puerts::make_overload<&rid_op_in_10_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::RID>(),
 					puerts::make_constructor_overload<godot::RID, const godot::RID &>()))
@@ -3103,11 +3103,11 @@ inline bool signal_op_in_6_generated(const godot::Signal &left, const godot::Arr
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
 inline void register_signal_type_generated() {
-	puerts::define_class<godot::Signal>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&signal_op_equality_0_generated>(), puerts::make_overload<&signal_op_equality_3_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&signal_op_inequality_1_generated>(), puerts::make_overload<&signal_op_inequality_4_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&signal_op_logical_not_2_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&signal_op_in_5_generated>(), puerts::make_overload<&signal_op_in_6_generated>()))
+	puerts::define_type<godot::Signal>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&signal_op_equality_0_generated>(), puerts::make_overload<&signal_op_equality_3_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&signal_op_inequality_1_generated>(), puerts::make_overload<&signal_op_inequality_4_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&signal_op_logical_not_2_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&signal_op_in_5_generated>(), puerts::make_overload<&signal_op_in_6_generated>()))
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::Signal>(),
 					puerts::make_constructor_overload<godot::Signal, const godot::Signal &>(),
@@ -3299,17 +3299,17 @@ inline godot::String string_name_op_modulus_57_generated(const godot::StringName
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline void register_string_name_type_generated() {
-	puerts::define_class<godot::StringName>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&string_name_op_equality_0_generated>(), puerts::make_overload<&string_name_op_equality_7_generated>(), puerts::make_overload<&string_name_op_equality_28_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&string_name_op_inequality_1_generated>(), puerts::make_overload<&string_name_op_inequality_8_generated>(), puerts::make_overload<&string_name_op_inequality_29_generated>()))
-			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&string_name_op_modulus_2_generated>(), puerts::make_overload<&string_name_op_modulus_4_generated>(), puerts::make_overload<&string_name_op_modulus_5_generated>(), puerts::make_overload<&string_name_op_modulus_6_generated>(), puerts::make_overload<&string_name_op_modulus_10_generated>(), puerts::make_overload<&string_name_op_modulus_12_generated>(), puerts::make_overload<&string_name_op_modulus_13_generated>(), puerts::make_overload<&string_name_op_modulus_14_generated>(), puerts::make_overload<&string_name_op_modulus_15_generated>(), puerts::make_overload<&string_name_op_modulus_16_generated>(), puerts::make_overload<&string_name_op_modulus_17_generated>(), puerts::make_overload<&string_name_op_modulus_18_generated>(), puerts::make_overload<&string_name_op_modulus_19_generated>(), puerts::make_overload<&string_name_op_modulus_20_generated>(), puerts::make_overload<&string_name_op_modulus_21_generated>(), puerts::make_overload<&string_name_op_modulus_22_generated>(), puerts::make_overload<&string_name_op_modulus_23_generated>(), puerts::make_overload<&string_name_op_modulus_24_generated>(), puerts::make_overload<&string_name_op_modulus_25_generated>(), puerts::make_overload<&string_name_op_modulus_26_generated>(), puerts::make_overload<&string_name_op_modulus_27_generated>(), puerts::make_overload<&string_name_op_modulus_35_generated>(), puerts::make_overload<&string_name_op_modulus_37_generated>(), puerts::make_overload<&string_name_op_modulus_38_generated>(), puerts::make_overload<&string_name_op_modulus_39_generated>(), puerts::make_overload<&string_name_op_modulus_41_generated>(), puerts::make_overload<&string_name_op_modulus_42_generated>(), puerts::make_overload<&string_name_op_modulus_43_generated>(), puerts::make_overload<&string_name_op_modulus_45_generated>(), puerts::make_overload<&string_name_op_modulus_47_generated>(), puerts::make_overload<&string_name_op_modulus_48_generated>(), puerts::make_overload<&string_name_op_modulus_49_generated>(), puerts::make_overload<&string_name_op_modulus_50_generated>(), puerts::make_overload<&string_name_op_modulus_51_generated>(), puerts::make_overload<&string_name_op_modulus_52_generated>(), puerts::make_overload<&string_name_op_modulus_54_generated>(), puerts::make_overload<&string_name_op_modulus_55_generated>(), puerts::make_overload<&string_name_op_modulus_56_generated>(), puerts::make_overload<&string_name_op_modulus_57_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&string_name_op_logical_not_3_generated>())
-			.function("op_Addition", puerts::combine_overloads(puerts::make_overload<&string_name_op_addition_9_generated>(), puerts::make_overload<&string_name_op_addition_34_generated>()))
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&string_name_op_in_11_generated>(), puerts::make_overload<&string_name_op_in_36_generated>(), puerts::make_overload<&string_name_op_in_40_generated>(), puerts::make_overload<&string_name_op_in_44_generated>(), puerts::make_overload<&string_name_op_in_46_generated>(), puerts::make_overload<&string_name_op_in_53_generated>()))
-			.function("op_LessThan", puerts::make_function<&string_name_op_less_than_30_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&string_name_op_less_than_or_equal_31_generated>())
-			.function("op_GreaterThan", puerts::make_function<&string_name_op_greater_than_32_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&string_name_op_greater_than_or_equal_33_generated>())
+	puerts::define_type<godot::StringName>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&string_name_op_equality_0_generated>(), puerts::make_overload<&string_name_op_equality_7_generated>(), puerts::make_overload<&string_name_op_equality_28_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&string_name_op_inequality_1_generated>(), puerts::make_overload<&string_name_op_inequality_8_generated>(), puerts::make_overload<&string_name_op_inequality_29_generated>()))
+			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&string_name_op_modulus_2_generated>(), puerts::make_overload<&string_name_op_modulus_4_generated>(), puerts::make_overload<&string_name_op_modulus_5_generated>(), puerts::make_overload<&string_name_op_modulus_6_generated>(), puerts::make_overload<&string_name_op_modulus_10_generated>(), puerts::make_overload<&string_name_op_modulus_12_generated>(), puerts::make_overload<&string_name_op_modulus_13_generated>(), puerts::make_overload<&string_name_op_modulus_14_generated>(), puerts::make_overload<&string_name_op_modulus_15_generated>(), puerts::make_overload<&string_name_op_modulus_16_generated>(), puerts::make_overload<&string_name_op_modulus_17_generated>(), puerts::make_overload<&string_name_op_modulus_18_generated>(), puerts::make_overload<&string_name_op_modulus_19_generated>(), puerts::make_overload<&string_name_op_modulus_20_generated>(), puerts::make_overload<&string_name_op_modulus_21_generated>(), puerts::make_overload<&string_name_op_modulus_22_generated>(), puerts::make_overload<&string_name_op_modulus_23_generated>(), puerts::make_overload<&string_name_op_modulus_24_generated>(), puerts::make_overload<&string_name_op_modulus_25_generated>(), puerts::make_overload<&string_name_op_modulus_26_generated>(), puerts::make_overload<&string_name_op_modulus_27_generated>(), puerts::make_overload<&string_name_op_modulus_35_generated>(), puerts::make_overload<&string_name_op_modulus_37_generated>(), puerts::make_overload<&string_name_op_modulus_38_generated>(), puerts::make_overload<&string_name_op_modulus_39_generated>(), puerts::make_overload<&string_name_op_modulus_41_generated>(), puerts::make_overload<&string_name_op_modulus_42_generated>(), puerts::make_overload<&string_name_op_modulus_43_generated>(), puerts::make_overload<&string_name_op_modulus_45_generated>(), puerts::make_overload<&string_name_op_modulus_47_generated>(), puerts::make_overload<&string_name_op_modulus_48_generated>(), puerts::make_overload<&string_name_op_modulus_49_generated>(), puerts::make_overload<&string_name_op_modulus_50_generated>(), puerts::make_overload<&string_name_op_modulus_51_generated>(), puerts::make_overload<&string_name_op_modulus_52_generated>(), puerts::make_overload<&string_name_op_modulus_54_generated>(), puerts::make_overload<&string_name_op_modulus_55_generated>(), puerts::make_overload<&string_name_op_modulus_56_generated>(), puerts::make_overload<&string_name_op_modulus_57_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&string_name_op_logical_not_3_generated>())
+			.static_method("op_Addition", puerts::combine_overloads(puerts::make_overload<&string_name_op_addition_9_generated>(), puerts::make_overload<&string_name_op_addition_34_generated>()))
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&string_name_op_in_11_generated>(), puerts::make_overload<&string_name_op_in_36_generated>(), puerts::make_overload<&string_name_op_in_40_generated>(), puerts::make_overload<&string_name_op_in_44_generated>(), puerts::make_overload<&string_name_op_in_46_generated>(), puerts::make_overload<&string_name_op_in_53_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&string_name_op_less_than_30_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&string_name_op_less_than_or_equal_31_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&string_name_op_greater_than_32_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&string_name_op_greater_than_or_equal_33_generated>())
 			.constructor(puerts::combine_constructors(
 					puerts::make_constructor_overload<godot::StringName>(),
 					puerts::make_constructor_overload<godot::StringName, const godot::StringName &>(),
@@ -3481,13 +3481,13 @@ inline godot::Transform2D transform2d_flip_y_constant_generated() {
 	return { 1, 0, 0, -1, 0, 0 };
 }
 inline void register_transform2d_type_generated() {
-	puerts::define_class<godot::Transform2D>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&transform2d_op_equality_0_generated>(), puerts::make_overload<&transform2d_op_equality_9_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&transform2d_op_inequality_1_generated>(), puerts::make_overload<&transform2d_op_inequality_10_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&transform2d_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&transform2d_op_multiply_3_generated>(), puerts::make_overload<&transform2d_op_multiply_5_generated>(), puerts::make_overload<&transform2d_op_multiply_7_generated>(), puerts::make_overload<&transform2d_op_multiply_8_generated>(), puerts::make_overload<&transform2d_op_multiply_11_generated>(), puerts::make_overload<&transform2d_op_multiply_14_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&transform2d_op_division_4_generated>(), puerts::make_overload<&transform2d_op_division_6_generated>()))
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&transform2d_op_in_12_generated>(), puerts::make_overload<&transform2d_op_in_13_generated>()))
+	puerts::define_type<godot::Transform2D>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&transform2d_op_equality_0_generated>(), puerts::make_overload<&transform2d_op_equality_9_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&transform2d_op_inequality_1_generated>(), puerts::make_overload<&transform2d_op_inequality_10_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&transform2d_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&transform2d_op_multiply_3_generated>(), puerts::make_overload<&transform2d_op_multiply_5_generated>(), puerts::make_overload<&transform2d_op_multiply_7_generated>(), puerts::make_overload<&transform2d_op_multiply_8_generated>(), puerts::make_overload<&transform2d_op_multiply_11_generated>(), puerts::make_overload<&transform2d_op_multiply_14_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&transform2d_op_division_4_generated>(), puerts::make_overload<&transform2d_op_division_6_generated>()))
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&transform2d_op_in_12_generated>(), puerts::make_overload<&transform2d_op_in_13_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&transform2d_identity_constant_generated>())
 			.static_property("FLIP_X", puerts::make_value_constant<&transform2d_flip_x_constant_generated>())
 			.static_property("FLIP_Y", puerts::make_value_constant<&transform2d_flip_y_constant_generated>())
@@ -3584,13 +3584,13 @@ inline godot::Transform3D transform3d_flip_z_constant_generated() {
 	return { 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0 };
 }
 inline void register_transform3d_type_generated() {
-	puerts::define_class<godot::Transform3D>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&transform3d_op_equality_0_generated>(), puerts::make_overload<&transform3d_op_equality_10_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&transform3d_op_inequality_1_generated>(), puerts::make_overload<&transform3d_op_inequality_11_generated>()))
-			.function("op_LogicalNot", puerts::make_function<&transform3d_op_logical_not_2_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&transform3d_op_multiply_3_generated>(), puerts::make_overload<&transform3d_op_multiply_5_generated>(), puerts::make_overload<&transform3d_op_multiply_7_generated>(), puerts::make_overload<&transform3d_op_multiply_8_generated>(), puerts::make_overload<&transform3d_op_multiply_9_generated>(), puerts::make_overload<&transform3d_op_multiply_12_generated>(), puerts::make_overload<&transform3d_op_multiply_15_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&transform3d_op_division_4_generated>(), puerts::make_overload<&transform3d_op_division_6_generated>()))
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&transform3d_op_in_13_generated>(), puerts::make_overload<&transform3d_op_in_14_generated>()))
+	puerts::define_type<godot::Transform3D>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&transform3d_op_equality_0_generated>(), puerts::make_overload<&transform3d_op_equality_10_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&transform3d_op_inequality_1_generated>(), puerts::make_overload<&transform3d_op_inequality_11_generated>()))
+			.static_method("op_LogicalNot", puerts::make_function<&transform3d_op_logical_not_2_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&transform3d_op_multiply_3_generated>(), puerts::make_overload<&transform3d_op_multiply_5_generated>(), puerts::make_overload<&transform3d_op_multiply_7_generated>(), puerts::make_overload<&transform3d_op_multiply_8_generated>(), puerts::make_overload<&transform3d_op_multiply_9_generated>(), puerts::make_overload<&transform3d_op_multiply_12_generated>(), puerts::make_overload<&transform3d_op_multiply_15_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&transform3d_op_division_4_generated>(), puerts::make_overload<&transform3d_op_division_6_generated>()))
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&transform3d_op_in_13_generated>(), puerts::make_overload<&transform3d_op_in_14_generated>()))
 			.static_property("IDENTITY", puerts::make_value_constant<&transform3d_identity_constant_generated>())
 			.static_property("FLIP_X", puerts::make_value_constant<&transform3d_flip_x_constant_generated>())
 			.static_property("FLIP_Y", puerts::make_value_constant<&transform3d_flip_y_constant_generated>())
@@ -3709,21 +3709,21 @@ inline godot::Vector2 vector2_down_constant_generated() {
 	return { 0, 1 };
 }
 inline void register_vector2_type_generated() {
-	puerts::define_class<godot::Vector2>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector2_op_equality_0_generated>(), puerts::make_overload<&vector2_op_equality_9_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector2_op_inequality_1_generated>(), puerts::make_overload<&vector2_op_inequality_10_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&vector2_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&vector2_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&vector2_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector2_op_multiply_5_generated>(), puerts::make_overload<&vector2_op_multiply_7_generated>(), puerts::make_overload<&vector2_op_multiply_17_generated>(), puerts::make_overload<&vector2_op_multiply_19_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector2_op_division_6_generated>(), puerts::make_overload<&vector2_op_division_8_generated>(), puerts::make_overload<&vector2_op_division_18_generated>()))
-			.function("op_LessThan", puerts::make_function<&vector2_op_less_than_11_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&vector2_op_less_than_or_equal_12_generated>())
-			.function("op_GreaterThan", puerts::make_function<&vector2_op_greater_than_13_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&vector2_op_greater_than_or_equal_14_generated>())
-			.function("op_Addition", puerts::make_function<&vector2_op_addition_15_generated>())
-			.function("op_Subtraction", puerts::make_function<&vector2_op_subtraction_16_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector2_op_in_20_generated>(), puerts::make_overload<&vector2_op_in_21_generated>(), puerts::make_overload<&vector2_op_in_22_generated>()))
+	puerts::define_type<godot::Vector2>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector2_op_equality_0_generated>(), puerts::make_overload<&vector2_op_equality_9_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector2_op_inequality_1_generated>(), puerts::make_overload<&vector2_op_inequality_10_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&vector2_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&vector2_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&vector2_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector2_op_multiply_5_generated>(), puerts::make_overload<&vector2_op_multiply_7_generated>(), puerts::make_overload<&vector2_op_multiply_17_generated>(), puerts::make_overload<&vector2_op_multiply_19_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&vector2_op_division_6_generated>(), puerts::make_overload<&vector2_op_division_8_generated>(), puerts::make_overload<&vector2_op_division_18_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&vector2_op_less_than_11_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&vector2_op_less_than_or_equal_12_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&vector2_op_greater_than_13_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&vector2_op_greater_than_or_equal_14_generated>())
+			.static_method("op_Addition", puerts::make_function<&vector2_op_addition_15_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&vector2_op_subtraction_16_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&vector2_op_in_20_generated>(), puerts::make_overload<&vector2_op_in_21_generated>(), puerts::make_overload<&vector2_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector2_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector2_one_constant_generated>())
 			.static_property("INF", puerts::make_value_constant<&vector2_inf_constant_generated>())
@@ -3783,7 +3783,7 @@ inline void register_vector2_type_generated() {
 			.method("minf", puerts::make_method<&godot::Vector2::minf>())
 			.method("max", puerts::make_method<&godot::Vector2::max>())
 			.method("maxf", puerts::make_method<&godot::Vector2::maxf>())
-			.function("from_angle", puerts::make_function<&godot::Vector2::from_angle>())
+			.static_method("from_angle", puerts::make_function<&godot::Vector2::from_angle>())
 			.property("x", puerts::make_property<&godot::Vector2::x>())
 			.property("y", puerts::make_property<&godot::Vector2::y>())
 			.static_property("Axis", puerts::make_enum_group<puerts_generated_enum_tags::vector2_axis_enum_tag_generated>())
@@ -3883,22 +3883,22 @@ inline godot::Vector2i vector2i_down_constant_generated() {
 	return { 0, 1 };
 }
 inline void register_vector2i_type_generated() {
-	puerts::define_class<godot::Vector2i>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector2i_op_equality_0_generated>(), puerts::make_overload<&vector2i_op_equality_10_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector2i_op_inequality_1_generated>(), puerts::make_overload<&vector2i_op_inequality_11_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&vector2i_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&vector2i_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&vector2i_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector2i_op_multiply_5_generated>(), puerts::make_overload<&vector2i_op_multiply_8_generated>(), puerts::make_overload<&vector2i_op_multiply_18_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector2i_op_division_6_generated>(), puerts::make_overload<&vector2i_op_division_9_generated>(), puerts::make_overload<&vector2i_op_division_19_generated>()))
-			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector2i_op_modulus_7_generated>(), puerts::make_overload<&vector2i_op_modulus_20_generated>()))
-			.function("op_LessThan", puerts::make_function<&vector2i_op_less_than_12_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&vector2i_op_less_than_or_equal_13_generated>())
-			.function("op_GreaterThan", puerts::make_function<&vector2i_op_greater_than_14_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&vector2i_op_greater_than_or_equal_15_generated>())
-			.function("op_Addition", puerts::make_function<&vector2i_op_addition_16_generated>())
-			.function("op_Subtraction", puerts::make_function<&vector2i_op_subtraction_17_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector2i_op_in_21_generated>(), puerts::make_overload<&vector2i_op_in_22_generated>()))
+	puerts::define_type<godot::Vector2i>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector2i_op_equality_0_generated>(), puerts::make_overload<&vector2i_op_equality_10_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector2i_op_inequality_1_generated>(), puerts::make_overload<&vector2i_op_inequality_11_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&vector2i_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&vector2i_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&vector2i_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector2i_op_multiply_5_generated>(), puerts::make_overload<&vector2i_op_multiply_8_generated>(), puerts::make_overload<&vector2i_op_multiply_18_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&vector2i_op_division_6_generated>(), puerts::make_overload<&vector2i_op_division_9_generated>(), puerts::make_overload<&vector2i_op_division_19_generated>()))
+			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector2i_op_modulus_7_generated>(), puerts::make_overload<&vector2i_op_modulus_20_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&vector2i_op_less_than_12_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&vector2i_op_less_than_or_equal_13_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&vector2i_op_greater_than_14_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&vector2i_op_greater_than_or_equal_15_generated>())
+			.static_method("op_Addition", puerts::make_function<&vector2i_op_addition_16_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&vector2i_op_subtraction_17_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&vector2i_op_in_21_generated>(), puerts::make_overload<&vector2i_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector2i_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector2i_one_constant_generated>())
 			.static_property("MIN", puerts::make_value_constant<&vector2i_min_constant_generated>())
@@ -4055,21 +4055,21 @@ inline godot::Vector3 vector3_model_rear_constant_generated() {
 	return { 0, 0, -1 };
 }
 inline void register_vector3_type_generated() {
-	puerts::define_class<godot::Vector3>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector3_op_equality_0_generated>(), puerts::make_overload<&vector3_op_equality_9_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector3_op_inequality_1_generated>(), puerts::make_overload<&vector3_op_inequality_10_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&vector3_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&vector3_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&vector3_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector3_op_multiply_5_generated>(), puerts::make_overload<&vector3_op_multiply_7_generated>(), puerts::make_overload<&vector3_op_multiply_17_generated>(), puerts::make_overload<&vector3_op_multiply_19_generated>(), puerts::make_overload<&vector3_op_multiply_20_generated>(), puerts::make_overload<&vector3_op_multiply_21_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector3_op_division_6_generated>(), puerts::make_overload<&vector3_op_division_8_generated>(), puerts::make_overload<&vector3_op_division_18_generated>()))
-			.function("op_LessThan", puerts::make_function<&vector3_op_less_than_11_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&vector3_op_less_than_or_equal_12_generated>())
-			.function("op_GreaterThan", puerts::make_function<&vector3_op_greater_than_13_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&vector3_op_greater_than_or_equal_14_generated>())
-			.function("op_Addition", puerts::make_function<&vector3_op_addition_15_generated>())
-			.function("op_Subtraction", puerts::make_function<&vector3_op_subtraction_16_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector3_op_in_22_generated>(), puerts::make_overload<&vector3_op_in_23_generated>(), puerts::make_overload<&vector3_op_in_24_generated>()))
+	puerts::define_type<godot::Vector3>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector3_op_equality_0_generated>(), puerts::make_overload<&vector3_op_equality_9_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector3_op_inequality_1_generated>(), puerts::make_overload<&vector3_op_inequality_10_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&vector3_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&vector3_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&vector3_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector3_op_multiply_5_generated>(), puerts::make_overload<&vector3_op_multiply_7_generated>(), puerts::make_overload<&vector3_op_multiply_17_generated>(), puerts::make_overload<&vector3_op_multiply_19_generated>(), puerts::make_overload<&vector3_op_multiply_20_generated>(), puerts::make_overload<&vector3_op_multiply_21_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&vector3_op_division_6_generated>(), puerts::make_overload<&vector3_op_division_8_generated>(), puerts::make_overload<&vector3_op_division_18_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&vector3_op_less_than_11_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&vector3_op_less_than_or_equal_12_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&vector3_op_greater_than_13_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&vector3_op_greater_than_or_equal_14_generated>())
+			.static_method("op_Addition", puerts::make_function<&vector3_op_addition_15_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&vector3_op_subtraction_16_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&vector3_op_in_22_generated>(), puerts::make_overload<&vector3_op_in_23_generated>(), puerts::make_overload<&vector3_op_in_24_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector3_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector3_one_constant_generated>())
 			.static_property("INF", puerts::make_value_constant<&vector3_inf_constant_generated>())
@@ -4137,7 +4137,7 @@ inline void register_vector3_type_generated() {
 			.method("minf", puerts::make_method<&godot::Vector3::minf>())
 			.method("max", puerts::make_method<&godot::Vector3::max>())
 			.method("maxf", puerts::make_method<&godot::Vector3::maxf>())
-			.function("octahedron_decode", puerts::make_function<&godot::Vector3::octahedron_decode>())
+			.static_method("octahedron_decode", puerts::make_function<&godot::Vector3::octahedron_decode>())
 			.property("x", puerts::make_property<&godot::Vector3::x>())
 			.property("y", puerts::make_property<&godot::Vector3::y>())
 			.property("z", puerts::make_property<&godot::Vector3::z>())
@@ -4244,22 +4244,22 @@ inline godot::Vector3i vector3i_back_constant_generated() {
 	return { 0, 0, 1 };
 }
 inline void register_vector3i_type_generated() {
-	puerts::define_class<godot::Vector3i>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector3i_op_equality_0_generated>(), puerts::make_overload<&vector3i_op_equality_10_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector3i_op_inequality_1_generated>(), puerts::make_overload<&vector3i_op_inequality_11_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&vector3i_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&vector3i_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&vector3i_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector3i_op_multiply_5_generated>(), puerts::make_overload<&vector3i_op_multiply_8_generated>(), puerts::make_overload<&vector3i_op_multiply_18_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector3i_op_division_6_generated>(), puerts::make_overload<&vector3i_op_division_9_generated>(), puerts::make_overload<&vector3i_op_division_19_generated>()))
-			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector3i_op_modulus_7_generated>(), puerts::make_overload<&vector3i_op_modulus_20_generated>()))
-			.function("op_LessThan", puerts::make_function<&vector3i_op_less_than_12_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&vector3i_op_less_than_or_equal_13_generated>())
-			.function("op_GreaterThan", puerts::make_function<&vector3i_op_greater_than_14_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&vector3i_op_greater_than_or_equal_15_generated>())
-			.function("op_Addition", puerts::make_function<&vector3i_op_addition_16_generated>())
-			.function("op_Subtraction", puerts::make_function<&vector3i_op_subtraction_17_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector3i_op_in_21_generated>(), puerts::make_overload<&vector3i_op_in_22_generated>()))
+	puerts::define_type<godot::Vector3i>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector3i_op_equality_0_generated>(), puerts::make_overload<&vector3i_op_equality_10_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector3i_op_inequality_1_generated>(), puerts::make_overload<&vector3i_op_inequality_11_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&vector3i_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&vector3i_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&vector3i_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector3i_op_multiply_5_generated>(), puerts::make_overload<&vector3i_op_multiply_8_generated>(), puerts::make_overload<&vector3i_op_multiply_18_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&vector3i_op_division_6_generated>(), puerts::make_overload<&vector3i_op_division_9_generated>(), puerts::make_overload<&vector3i_op_division_19_generated>()))
+			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector3i_op_modulus_7_generated>(), puerts::make_overload<&vector3i_op_modulus_20_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&vector3i_op_less_than_12_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&vector3i_op_less_than_or_equal_13_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&vector3i_op_greater_than_14_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&vector3i_op_greater_than_or_equal_15_generated>())
+			.static_method("op_Addition", puerts::make_function<&vector3i_op_addition_16_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&vector3i_op_subtraction_17_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&vector3i_op_in_21_generated>(), puerts::make_overload<&vector3i_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector3i_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector3i_one_constant_generated>())
 			.static_property("MIN", puerts::make_value_constant<&vector3i_min_constant_generated>())
@@ -4376,21 +4376,21 @@ inline godot::Vector4 vector4_inf_constant_generated() {
 	return { Math_INF, Math_INF, Math_INF, Math_INF };
 }
 inline void register_vector4_type_generated() {
-	puerts::define_class<godot::Vector4>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector4_op_equality_0_generated>(), puerts::make_overload<&vector4_op_equality_9_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector4_op_inequality_1_generated>(), puerts::make_overload<&vector4_op_inequality_10_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&vector4_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&vector4_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&vector4_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector4_op_multiply_5_generated>(), puerts::make_overload<&vector4_op_multiply_7_generated>(), puerts::make_overload<&vector4_op_multiply_17_generated>(), puerts::make_overload<&vector4_op_multiply_19_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector4_op_division_6_generated>(), puerts::make_overload<&vector4_op_division_8_generated>(), puerts::make_overload<&vector4_op_division_18_generated>()))
-			.function("op_LessThan", puerts::make_function<&vector4_op_less_than_11_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&vector4_op_less_than_or_equal_12_generated>())
-			.function("op_GreaterThan", puerts::make_function<&vector4_op_greater_than_13_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&vector4_op_greater_than_or_equal_14_generated>())
-			.function("op_Addition", puerts::make_function<&vector4_op_addition_15_generated>())
-			.function("op_Subtraction", puerts::make_function<&vector4_op_subtraction_16_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector4_op_in_20_generated>(), puerts::make_overload<&vector4_op_in_21_generated>(), puerts::make_overload<&vector4_op_in_22_generated>()))
+	puerts::define_type<godot::Vector4>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector4_op_equality_0_generated>(), puerts::make_overload<&vector4_op_equality_9_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector4_op_inequality_1_generated>(), puerts::make_overload<&vector4_op_inequality_10_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&vector4_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&vector4_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&vector4_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector4_op_multiply_5_generated>(), puerts::make_overload<&vector4_op_multiply_7_generated>(), puerts::make_overload<&vector4_op_multiply_17_generated>(), puerts::make_overload<&vector4_op_multiply_19_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&vector4_op_division_6_generated>(), puerts::make_overload<&vector4_op_division_8_generated>(), puerts::make_overload<&vector4_op_division_18_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&vector4_op_less_than_11_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&vector4_op_less_than_or_equal_12_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&vector4_op_greater_than_13_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&vector4_op_greater_than_or_equal_14_generated>())
+			.static_method("op_Addition", puerts::make_function<&vector4_op_addition_15_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&vector4_op_subtraction_16_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&vector4_op_in_20_generated>(), puerts::make_overload<&vector4_op_in_21_generated>(), puerts::make_overload<&vector4_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector4_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector4_one_constant_generated>())
 			.static_property("INF", puerts::make_value_constant<&vector4_inf_constant_generated>())
@@ -4520,22 +4520,22 @@ inline godot::Vector4i vector4i_max_constant_generated() {
 	return { INT32_MAX, INT32_MAX, INT32_MAX, INT32_MAX };
 }
 inline void register_vector4i_type_generated() {
-	puerts::define_class<godot::Vector4i>()
-			.function("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector4i_op_equality_0_generated>(), puerts::make_overload<&vector4i_op_equality_10_generated>()))
-			.function("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector4i_op_inequality_1_generated>(), puerts::make_overload<&vector4i_op_inequality_11_generated>()))
-			.function("op_UnaryNegation", puerts::make_function<&vector4i_op_unary_negation_2_generated>())
-			.function("op_UnaryPlus", puerts::make_function<&vector4i_op_unary_plus_3_generated>())
-			.function("op_LogicalNot", puerts::make_function<&vector4i_op_logical_not_4_generated>())
-			.function("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector4i_op_multiply_5_generated>(), puerts::make_overload<&vector4i_op_multiply_8_generated>(), puerts::make_overload<&vector4i_op_multiply_18_generated>()))
-			.function("op_Division", puerts::combine_overloads(puerts::make_overload<&vector4i_op_division_6_generated>(), puerts::make_overload<&vector4i_op_division_9_generated>(), puerts::make_overload<&vector4i_op_division_19_generated>()))
-			.function("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector4i_op_modulus_7_generated>(), puerts::make_overload<&vector4i_op_modulus_20_generated>()))
-			.function("op_LessThan", puerts::make_function<&vector4i_op_less_than_12_generated>())
-			.function("op_LessThanOrEqual", puerts::make_function<&vector4i_op_less_than_or_equal_13_generated>())
-			.function("op_GreaterThan", puerts::make_function<&vector4i_op_greater_than_14_generated>())
-			.function("op_GreaterThanOrEqual", puerts::make_function<&vector4i_op_greater_than_or_equal_15_generated>())
-			.function("op_Addition", puerts::make_function<&vector4i_op_addition_16_generated>())
-			.function("op_Subtraction", puerts::make_function<&vector4i_op_subtraction_17_generated>())
-			.function("op_In", puerts::combine_overloads(puerts::make_overload<&vector4i_op_in_21_generated>(), puerts::make_overload<&vector4i_op_in_22_generated>()))
+	puerts::define_type<godot::Vector4i>()
+			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&vector4i_op_equality_0_generated>(), puerts::make_overload<&vector4i_op_equality_10_generated>()))
+			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&vector4i_op_inequality_1_generated>(), puerts::make_overload<&vector4i_op_inequality_11_generated>()))
+			.static_method("op_UnaryNegation", puerts::make_function<&vector4i_op_unary_negation_2_generated>())
+			.static_method("op_UnaryPlus", puerts::make_function<&vector4i_op_unary_plus_3_generated>())
+			.static_method("op_LogicalNot", puerts::make_function<&vector4i_op_logical_not_4_generated>())
+			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&vector4i_op_multiply_5_generated>(), puerts::make_overload<&vector4i_op_multiply_8_generated>(), puerts::make_overload<&vector4i_op_multiply_18_generated>()))
+			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&vector4i_op_division_6_generated>(), puerts::make_overload<&vector4i_op_division_9_generated>(), puerts::make_overload<&vector4i_op_division_19_generated>()))
+			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&vector4i_op_modulus_7_generated>(), puerts::make_overload<&vector4i_op_modulus_20_generated>()))
+			.static_method("op_LessThan", puerts::make_function<&vector4i_op_less_than_12_generated>())
+			.static_method("op_LessThanOrEqual", puerts::make_function<&vector4i_op_less_than_or_equal_13_generated>())
+			.static_method("op_GreaterThan", puerts::make_function<&vector4i_op_greater_than_14_generated>())
+			.static_method("op_GreaterThanOrEqual", puerts::make_function<&vector4i_op_greater_than_or_equal_15_generated>())
+			.static_method("op_Addition", puerts::make_function<&vector4i_op_addition_16_generated>())
+			.static_method("op_Subtraction", puerts::make_function<&vector4i_op_subtraction_17_generated>())
+			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&vector4i_op_in_21_generated>(), puerts::make_overload<&vector4i_op_in_22_generated>()))
 			.static_property("ZERO", puerts::make_value_constant<&vector4i_zero_constant_generated>())
 			.static_property("ONE", puerts::make_value_constant<&vector4i_one_constant_generated>())
 			.static_property("MIN", puerts::make_value_constant<&vector4i_min_constant_generated>())

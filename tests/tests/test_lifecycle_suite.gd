@@ -12,6 +12,7 @@ const LIFECYCLE_CASES = [
 	"environment_release",
 	"environment_owned_objects_release",
 	"value_release_order",
+	"script_value_registry_churn",
 	"dispose_stress",
 	"godot_holds_js_gc",
 	"js_refcounted_gc",
@@ -46,6 +47,8 @@ func test_lifecycle_release_suite(case_data: Dictionary) -> void:
 			result = LifecycleSuite.run_environment_owned_objects_release_suite(backend_info)
 		"value_release_order":
 			result = LifecycleSuite.run_value_release_order_suite(backend_info)
+		"script_value_registry_churn":
+			result = LifecycleSuite.run_script_value_registry_churn_suite(backend, backend_info)
 		"dispose_stress":
 			result = LifecycleSuite.run_dispose_stress_suite(backend_info)
 		"godot_holds_js_gc":

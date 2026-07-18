@@ -19,7 +19,7 @@ public:
 	void *own_object(godot::Object *p_object, const void *p_type_id);
 	void *box_variant(const godot::Variant &p_value, const void *p_type_id);
 
-	bool find_object(godot::Object *p_object, void *&r_handle, const void *&r_type_id);
+	bool find_object(godot::Object *p_object, void *&r_handle, const void *&r_type_id) const;
 	[[nodiscard]] const godot::Variant *get_box(void *p_handle) const;
 	bool get_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value) const;
 	bool set_box(void *p_handle, const godot::Variant &p_value);
@@ -51,16 +51,15 @@ private:
 
 	[[nodiscard]] static void *make_handle(uint32_t p_handle_id);
 	static bool parse_handle(void *p_handle, uint32_t &r_handle_id);
-	[[nodiscard]] static uint64_t key_for(godot::Object *p_object);
 	uint32_t take_handle_id();
 
 	uint32_t allocate();
+	[[nodiscard]] bool find_index(void *p_handle, uint32_t &r_index) const;
 	Entry *find(void *p_handle, uint32_t *r_index = nullptr);
 	const Entry *find(void *p_handle, uint32_t *r_index = nullptr) const;
 	void release_slot(uint32_t p_index);
 	void *store_object(godot::Object *p_object, const void *p_type_id, bool p_script_owned);
-	[[nodiscard]] godot::Object *object_from(const Entry &p_entry) const;
-	[[nodiscard]] godot::Variant variant_from(const Entry &p_entry) const;
+	[[nodiscard]] static godot::Object *object_from(const Entry &p_entry);
 };
 
 #endif // PUERTS_GODOT_PUERTS_BRIDGE_REGISTRY_H

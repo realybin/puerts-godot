@@ -3,12 +3,10 @@
 
 #include "puerts_environment.h"
 
-#include "puerts_bridge_registry.h"
 #include "puerts_runtime.h"
 #include "puerts_script_value.h"
 #include "puerts_type_register.h"
 
-#include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/core/object.hpp>
 
 using namespace godot;
@@ -126,16 +124,14 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		return ERR_CANT_CREATE;
 	}
 
-	puerts::internal::env_scope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
 	pesapi_env env = scope.get_env();
 	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
 	ffi_->set_registry(env, type_register.get_registry());
 
-	env_private_ = memnew(PuertsEnvPrivate);
-	env_private_->alive = true;
-	env_private_->environment = this;
-	env_private_->bridge = memnew(PuertsBridgeRegistry);
-	ffi_->set_env_private(env, env_private_);
+	runtime_.alive = true;
+	runtime_.environment = this;
+	ffi_->set_env_private(env, &runtime_);
 
 	pesapi_value load_type = ffi_->create_function(env, &PuertsTypeRegister::load_type_callback, nullptr, nullptr);
 	ffi_->set_property(env, ffi_->global(env), load_type_property_name, load_type);
@@ -177,23 +173,18 @@ void PuertsEnvironment::dispose_internal() {
 	}
 	disposing_ = true;
 	dispose_requested_ = false;
-	if (env_private_ != nullptr) {
-		env_private_->alive = false;
-	}
+	runtime_.alive = false;
 	invalidate_script_values();
 
-	if (env_private_ != nullptr) {
+	if (env_ref_ != nullptr) {
 		{
-			puerts::internal::env_scope scope(ffi_, env_ref_);
+			puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
 			ffi_->set_env_private(scope.get_env(), nullptr);
 		}
 
-		env_private_->bridge->clear();
-		memdelete(env_private_->bridge);
-		env_private_->bridge = nullptr;
-		memdelete(env_private_);
-		env_private_ = nullptr;
+		runtime_.bridge.clear();
 	}
+	runtime_.environment = nullptr;
 
 	if (env_ref_ != nullptr) {
 		backend_functions_->destroy_env_ref(env_ref_);
@@ -204,13 +195,12 @@ void PuertsEnvironment::dispose_internal() {
 	backend_functions_ = nullptr;
 	backend_ref_.unref();
 	string_name_cache_pool_.unref();
-	cached_script_values_.clear();
 	next_script_value_cache_id_ = 1;
 	disposing_ = false;
 }
 
 bool PuertsEnvironment::is_alive() const {
-	return !disposing_ && !dispose_requested_ && env_private_ != nullptr && env_private_->alive;
+	return !disposing_ && !dispose_requested_ && runtime_.alive;
 }
 
 Object *PuertsEnvironment::get_backend() const {
@@ -297,19 +287,7 @@ void PuertsEnvironment::emit_log(const Callable &p_callback, const String &p_mes
 }
 
 static String _read_log_message_arg(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_callback_info p_info) {
-	pesapi_value arg = p_apis->get_arg(p_info, 0);
-	size_t size = 0;
-	const char *inline_text = p_apis->get_value_string_utf8(p_env, arg, nullptr, &size);
-	if (inline_text != nullptr) {
-		return String::utf8(inline_text, static_cast<int>(size));
-	}
-
-	char *buffer = memnew_arr(char, size + 1);
-	p_apis->get_value_string_utf8(p_env, arg, buffer, &size);
-	buffer[size] = 0;
-	String result = String::utf8(buffer, static_cast<int>(size));
-	memdelete_arr(buffer);
-	return result;
+	return puerts::internal::read_utf8_string(p_apis, p_env, p_apis->get_arg(p_info, 0));
 }
 
 void PuertsEnvironment::script_log_error_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -331,10 +309,6 @@ void PuertsEnvironment::script_log_info_callback(struct pesapi_ffi *apis, pesapi
 }
 
 const CharString &PuertsEnvironment::get_cached_utf8(const StringName &p_name) {
-	static const CharString empty_utf8;
-	if (p_name.is_empty()) {
-		return empty_utf8;
-	}
 	return string_name_cache_pool_->get_cached_utf8(p_name);
 }
 
@@ -364,26 +338,38 @@ bool PuertsEnvironment::is_script_value_cache_token(void *p_token) const {
 }
 
 void PuertsEnvironment::register_script_value(PuertsScriptValue *p_value) {
-	script_values_.insert(p_value);
+	p_value->previous_ = nullptr;
+	p_value->next_ = script_values_head_;
+	if (script_values_head_ != nullptr) {
+		script_values_head_->previous_ = p_value;
+	}
+	script_values_head_ = p_value;
 }
 
 void PuertsEnvironment::unregister_script_value(PuertsScriptValue *p_value) {
-	script_values_.erase(p_value);
+	if (p_value->previous_ != nullptr) {
+		p_value->previous_->next_ = p_value->next_;
+	} else {
+		script_values_head_ = p_value->next_;
+	}
+	if (p_value->next_ != nullptr) {
+		p_value->next_->previous_ = p_value->previous_;
+	}
+	p_value->previous_ = nullptr;
+	p_value->next_ = nullptr;
 }
 
 void PuertsEnvironment::invalidate_script_values() {
-	if (script_values_.empty()) {
-		return;
-	}
-
-	puerts_eastl::vector<Ref<PuertsScriptValue>> values;
-	values.reserve(script_values_.size());
-	for (PuertsScriptValue *value : script_values_) {
-		values.push_back(Ref<PuertsScriptValue>(value));
-	}
-	script_values_.clear();
-	for (const Ref<PuertsScriptValue> &value : values) {
-		value->release_value_ref();
-	}
 	cached_script_values_.clear();
+	PuertsScriptValue *value = script_values_head_;
+	script_values_head_ = nullptr;
+	while (value != nullptr) {
+		PuertsScriptValue *next = value->next_;
+		value->previous_ = nullptr;
+		value->next_ = nullptr;
+		value->cache_token_ = nullptr;
+		Ref<PuertsScriptValue> keep_alive(value);
+		value->release_value_ref();
+		value = next;
+	}
 }

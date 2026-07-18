@@ -24,6 +24,8 @@ class PuertsScriptValue : public godot::RefCounted {
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_value_ref value_ref_ = nullptr;
 	void *cache_token_ = nullptr;
+	PuertsScriptValue *previous_ = nullptr;
+	PuertsScriptValue *next_ = nullptr;
 
 protected:
 	static void _bind_methods();

@@ -1,10 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 realybin and contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-import { basename } from "node:path";
+import {basename} from "node:path";
 
-import { resolveApiVersion, sanitizeIdentifier, toIncludeGuardMacro, toSnakeCase } from "./text_utils.js";
-import type { ApiData, ApiEnum, ApiMethod, CliArgs } from "./types.js";
+import {
+	resolveApiVersion,
+	sanitizeIdentifier,
+	toIncludeGuardMacro,
+	toSnakeCase
+} from "./text_utils.js";
+import type {ApiData, ApiEnum, ApiMethod, CliArgs} from "./types.js";
 
 type GlobalEnumBinding = {
 	name: string;
@@ -47,7 +52,7 @@ function buildGlobalEnumBinding(enumDef: ApiEnum): GlobalEnumBinding {
 		scriptTypeLine: `PUERTS_SCRIPT_TYPE(${tagType}, "GlobalScope.${enumDef.name}")`,
 		code:
 			`inline void ${registerFunctionName}() {\n` +
-			`\tpuerts::define_class<${tagType}>()\n` +
+			`\tpuerts::define_type<${tagType}>()\n` +
 			`${staticPropertyLines}\n` +
 			`\t\t\t.register_type();\n` +
 			`}\n`,
@@ -59,7 +64,7 @@ function utilityLookupLine(fn: ApiMethod): string {
 }
 
 function pushCallbackContext(lines: string[]): void {
-	lines.push("\tpuerts::internal::callback_context context(apis, info);");
+	lines.push("\tpuerts::internal::CallbackFrame context(apis, info);");
 	lines.push("\tif (!context.require()) {");
 	lines.push("\t\treturn;");
 	lines.push("\t}");
@@ -72,7 +77,7 @@ function pushVariantArgs(lines: string[], argCountExpr: string): void {
 	lines.push(`\targ_ptrs.resize(static_cast<size_t>(${argCountExpr}));`);
 	lines.push(`\tfor (int i = 0; i < ${argCountExpr}; ++i) {`);
 	lines.push("\t\tconst size_t index = static_cast<size_t>(i);");
-	lines.push("\t\targs[index] = puerts::script_to_variant(context.environment, context.env, context.get_arg(i));");
+	lines.push("\t\targs[index] = puerts::script_to_variant(context.environment, context.env, context.get_argument_value(i));");
 	lines.push("\t\targ_ptrs[index] = &args[index];");
 	lines.push("\t}");
 }
@@ -135,12 +140,12 @@ function buildSpecialUtilityHelper(fn: ApiMethod): string {
 function buildUtilityBinding(fn: ApiMethod): { bindingLine: string; helperCode?: string } {
 	if (!fn.is_vararg && fn.name !== "is_instance_valid") {
 		return {
-			bindingLine: `\t\t\t.function("${fn.name}", puerts::make_function<&godot::UtilityFunctions::${utilityCppMethodName(fn.name)}>())`,
+			bindingLine: `\t\t\t.static_method("${fn.name}", puerts::make_function<&godot::UtilityFunctions::${utilityCppMethodName(fn.name)}>())`,
 		};
 	}
 
 	return {
-		bindingLine: `\t\t\t.function("${fn.name}", ${utilityCallbackName(fn.name)})`,
+		bindingLine: `\t\t\t.static_method("${fn.name}", ${utilityCallbackName(fn.name)})`,
 		helperCode: fn.name === "is_instance_valid" ? buildSpecialUtilityHelper(fn) : buildVarargUtilityHelper(fn),
 	};
 }
@@ -174,14 +179,14 @@ function splitGlobalEnumBindings(globalEnums: GlobalEnumBinding[]): {
 		throw new Error("GlobalScope generation requires Variant.Type and Variant.Operator enums.");
 	}
 
-	return { topLevel, variantType, variantOperator };
+	return {topLevel, variantType, variantOperator};
 }
 
 export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string {
 	const includeGuard = toIncludeGuardMacro(basename(args.output));
 	const apiVersion = resolveApiVersion(data);
 	const globalEnums = (data.global_enums ?? []).map(buildGlobalEnumBinding);
-	const { topLevel: topLevelEnumBindings, variantType, variantOperator } = splitGlobalEnumBindings(globalEnums);
+	const {topLevel: topLevelEnumBindings, variantType, variantOperator} = splitGlobalEnumBindings(globalEnums);
 	const utilityBindings = (data.utility_functions ?? []).map(buildUtilityBinding);
 	const singletonNames = data.singletons ?? [];
 
@@ -225,7 +230,7 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	lines.push('\t\tapis->throw_by_string(info, "Singleton metadata is missing.");');
 	lines.push("\t\treturn;");
 	lines.push("\t}");
-	lines.push("\tpuerts::internal::callback_context context(apis, info);");
+	lines.push("\tpuerts::internal::CallbackFrame context(apis, info);");
 	lines.push("\tif (!context.require()) {");
 	lines.push("\t\treturn;");
 	lines.push("\t}");
@@ -258,7 +263,7 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 		lines.push("");
 	}
 	lines.push("inline void register_global_scope_variant_generated() {");
-	lines.push("\tpuerts::define_class<puerts_generated_global_scope_types::GlobalScopeVariant>()");
+	lines.push("\tpuerts::define_type<puerts_generated_global_scope_types::GlobalScopeVariant>()");
 	lines.push(`\t\t\t.static_property("Type", puerts::make_enum_group<${variantType.tagType}>())`);
 	lines.push(`\t\t\t.static_property("Operator", puerts::make_enum_group<${variantOperator.tagType}>())`);
 	lines.push("\t\t\t.register_type();");
@@ -269,7 +274,7 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 		lines.push(`\t${binding.registerFunctionName}();`);
 	}
 	lines.push("\tregister_global_scope_variant_generated();");
-	lines.push("\tpuerts::define_class<puerts_generated_global_scope_types::GlobalScope>()");
+	lines.push("\tpuerts::define_type<puerts_generated_global_scope_types::GlobalScope>()");
 	for (const binding of utilityBindings) {
 		lines.push(binding.bindingLine);
 	}

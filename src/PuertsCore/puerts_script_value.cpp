@@ -22,7 +22,7 @@ Result PuertsScriptValue::with_value(Result p_fallback, Function &&p_function, b
 	}
 
 	PuertsEnvironment::operation_scope operation(p_may_reenter ? environment : nullptr);
-	puerts::internal::env_scope scope(ffi_, environment->env_ref_);
+	puerts::internal::EnvironmentScope scope(ffi_, environment->env_ref_);
 	pesapi_env env = scope.get_env();
 	pesapi_value value = ffi_->get_value_from_ref(env, value_ref_);
 	return p_function(environment, scope.get_scope(), env, value);
@@ -261,7 +261,7 @@ void PuertsScriptValue::release_value_ref() {
 	if (cache_token_ != nullptr && environment != nullptr) {
 		environment->cached_script_values_.erase(cache_token_);
 		if (ffi_ != nullptr && value_ref_ != nullptr && environment->is_alive()) {
-			puerts::internal::env_scope scope(ffi_, environment->env_ref_);
+			puerts::internal::EnvironmentScope scope(ffi_, environment->env_ref_);
 			pesapi_env env = scope.get_env();
 			pesapi_value value = ffi_->get_value_from_ref(env, value_ref_);
 			void *private_ptr = nullptr;
@@ -286,9 +286,9 @@ bool PuertsScriptValue::ensure_live_native_object_receiver(PuertsEnvironment *p_
 		return true;
 	}
 
-	PuertsBridgeRegistry *bridge = p_environment->env_private_->bridge;
+	PuertsBridgeRegistry &bridge = p_environment->runtime_.bridge;
 	Object *object = nullptr;
-	if (!bridge->get_object(handle, object)) {
+	if (!bridge.get_object(handle, object)) {
 		if (!PuertsBridgeRegistry::is_handle(handle)) {
 			return true;
 		}

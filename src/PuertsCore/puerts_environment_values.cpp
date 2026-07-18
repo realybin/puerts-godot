@@ -9,7 +9,6 @@
 #include "puerts_type_register.h"
 
 #include <godot_cpp/core/error_macros.hpp>
-#include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/core/object.hpp>
 
 using namespace godot;
@@ -21,7 +20,7 @@ Ref<PuertsScriptValue> PuertsEnvironment::eval(const String &p_code, const Strin
 	}
 
 	operation_scope operation(this);
-	puerts::internal::env_scope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
 	pesapi_env env = scope.get_env();
 	CharString code_utf8 = p_code.utf8();
 	const CharString &chunk_name_utf8 = get_cached_utf8(p_chunk_name);
@@ -43,7 +42,7 @@ void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_va
 	}
 
 	operation_scope operation(this);
-	puerts::internal::env_scope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
 	pesapi_env env = scope.get_env();
 	const CharString &name_utf8 = get_cached_utf8(p_name);
 	bool converted = false;
@@ -65,7 +64,7 @@ Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
 	}
 
 	operation_scope operation(this);
-	puerts::internal::env_scope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
 	pesapi_env env = scope.get_env();
 	const CharString &name_utf8 = get_cached_utf8(p_name);
 	pesapi_value value = ffi_->get_property(env, ffi_->global(env), name_utf8.get_data());
@@ -105,7 +104,7 @@ pesapi_value PuertsEnvironment::variant_to_script(
 		*r_error_message = String();
 	}
 
-	PuertsBridgeRegistry *bridge = env_private_->bridge;
+	PuertsBridgeRegistry &bridge = runtime_.bridge;
 	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
 
 	switch (p_value.get_type()) {
@@ -153,23 +152,23 @@ pesapi_value PuertsEnvironment::variant_to_script(
 			}
 
 			void *handle = nullptr;
-			if (const void *type_id = nullptr; bridge->find_object(object, handle, type_id)) {
+			if (const void *type_id = nullptr; bridge.find_object(object, handle, type_id)) {
 				return ffi_->native_object_to_value(p_env, type_id, handle, false);
 			}
 
-			auto *type_info = type_register.find_or_add_object_type(object->get_class());
-			if (type_info != nullptr && type_register.ensure_registered(type_info)) {
-				handle = bridge->bind_object(object, type_info->type_id);
-				return ffi_->native_object_to_value(p_env, type_info->type_id, handle, false);
+			const void *type_id = type_register.find_or_add_object_type(object->get_class());
+			if (type_register.ensure_registered(type_id)) {
+				handle = bridge.bind_object(object, type_id);
+				return ffi_->native_object_to_value(p_env, type_id, handle, false);
 			}
 
 			return fail("Failed to register object type for script conversion.");
 		}
 		default:
-			auto *type_info = type_register.get_builtin_type(p_value.get_type());
-			if (type_info != nullptr && type_register.ensure_registered(type_info)) {
-				void *handle = bridge->box_variant(p_value, type_info->type_id);
-				return ffi_->native_object_to_value(p_env, type_info->type_id, handle, false);
+			const void *type_id = type_register.get_builtin_type_id(p_value.get_type());
+			if (type_register.ensure_registered(type_id)) {
+				void *handle = bridge.box_variant(p_value, type_id);
+				return ffi_->native_object_to_value(p_env, type_id, handle, false);
 			}
 			return fail("Failed to register builtin type for script conversion.");
 	}
@@ -219,22 +218,39 @@ Variant PuertsEnvironment::script_to_variant(pesapi_env p_env, pesapi_value p_va
 }
 
 bool PuertsEnvironment::native_to_variant(void *p_handle, const void *p_type_id, Variant &r_value) {
-	if (env_private_->bridge->get_variant(p_handle, p_type_id, r_value)) {
+	if (runtime_.bridge.get_variant(p_handle, p_type_id, r_value)) {
 		return true;
 	}
 	if (PuertsBridgeRegistry::is_handle(p_handle)) {
 		return false;
 	}
-	auto *type_info = PuertsTypeRegister::get_singleton().get_type_by_id(p_type_id);
-	if (type_info == nullptr || type_info->kind != PuertsTypeRegister::TypeInfo::Kind::STATIC_BOUND || type_info->native_to_variant == nullptr) {
-		return false;
-	}
-	r_value = type_info->native_to_variant(p_handle);
-	return true;
+	return PuertsTypeRegister::get_singleton().native_to_variant(p_handle, p_type_id, r_value);
 }
 
 bool puerts::native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, Variant &r_value) {
 	return p_environment->native_to_variant(p_handle, p_type_id, r_value);
+}
+
+Variant puerts::script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) {
+	return p_environment->script_to_variant(p_env, p_value);
+}
+
+bool puerts::return_variant(
+		pesapi_ffi *p_apis,
+		pesapi_callback_info p_info,
+		pesapi_env p_env,
+		PuertsEnvironment *p_environment,
+		const Variant &p_value) {
+	bool converted = false;
+	String error;
+	pesapi_value value = p_environment->variant_to_script(p_env, p_value, &converted, &error);
+	if (!converted) {
+		const CharString message = (error.is_empty() ? String("Failed to convert Variant to script value.") : error).utf8();
+		p_apis->throw_by_string(p_info, message.get_data());
+		return false;
+	}
+	p_apis->add_return(p_info, value);
+	return true;
 }
 
 Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, pesapi_value p_value) {
@@ -272,7 +288,7 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 			cache_token = take_script_value_cache_token();
 		}
 		if (cache_token != nullptr) {
-			cached_script_values_[cache_token] = script_value.ptr();
+			cached_script_values_.insert({ cache_token, script_value.ptr() });
 			void *attached_token = nullptr;
 			const bool attached = !attach_token ||
 					(ffi_->set_private(p_env, p_value, cache_token) &&
@@ -296,18 +312,7 @@ String PuertsEnvironment::read_exception(pesapi_scope p_scope) const {
 }
 
 String PuertsEnvironment::read_string(pesapi_env p_env, pesapi_value p_value) const {
-	size_t size = 0;
-	const char *inline_text = ffi_->get_value_string_utf8(p_env, p_value, nullptr, &size);
-	if (inline_text != nullptr) {
-		return String::utf8(inline_text, static_cast<int>(size));
-	}
-
-	char *buffer = memnew_arr(char, size + 1);
-	ffi_->get_value_string_utf8(p_env, p_value, buffer, &size);
-	buffer[size] = 0;
-	String result = String::utf8(buffer, static_cast<int>(size));
-	memdelete_arr(buffer);
-	return result;
+	return puerts::internal::read_utf8_string(ffi_, p_env, p_value);
 }
 
 PackedByteArray PuertsEnvironment::read_binary(pesapi_env p_env, pesapi_value p_value) const {

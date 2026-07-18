@@ -8,6 +8,21 @@
 
 using namespace godot;
 
+namespace {
+
+template <typename Cache>
+const CharString &find_or_cache_utf8(Cache &p_cache, const StringName &p_name, size_t p_capacity) {
+	if (const auto existing = p_cache.find(p_name); existing != p_cache.end()) {
+		return existing->second;
+	}
+	if (p_cache.size() >= p_capacity) {
+		p_cache.clear();
+	}
+	return p_cache.insert({ p_name, String(p_name).utf8() }).first->second;
+}
+
+} // namespace
+
 void PuertsStringNameCachePool::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "policy", "capacity"), &PuertsStringNameCachePool::initialize, DEFVAL(POLICY_HASH_MAP), DEFVAL(512));
 	ClassDB::bind_method(D_METHOD("is_initialized"), &PuertsStringNameCachePool::is_initialized);
@@ -21,6 +36,9 @@ void PuertsStringNameCachePool::_bind_methods() {
 }
 
 Error PuertsStringNameCachePool::initialize(Policy p_policy, int32_t p_capacity) {
+	if (p_policy < POLICY_HASH_MAP || p_policy > POLICY_NO_CACHE) {
+		return ERR_INVALID_PARAMETER;
+	}
 	reset_storage();
 	policy_ = p_policy;
 	capacity_ = MAX(1, p_capacity);
@@ -34,7 +52,6 @@ Error PuertsStringNameCachePool::initialize(Policy p_policy, int32_t p_capacity)
 
 PuertsStringNameCachePool::~PuertsStringNameCachePool() {
 	reset_storage();
-	initialized_ = false;
 }
 
 void PuertsStringNameCachePool::reset_storage() {
@@ -54,10 +71,6 @@ bool PuertsStringNameCachePool::is_initialized() const {
 }
 
 void PuertsStringNameCachePool::clear() {
-	if (!initialized_) {
-		return;
-	}
-
 	if (hash_map_cache_ != nullptr) {
 		hash_map_cache_->clear();
 	}
@@ -81,31 +94,19 @@ const CharString &PuertsStringNameCachePool::get_cached_utf8(const StringName &p
 		return empty_utf8;
 	}
 
-	if (policy_ == POLICY_HASH_MAP) {
-		if (hash_map_cache_ == nullptr) {
-			hash_map_cache_ = memnew(HashMap);
-			hash_map_cache_->reserve(static_cast<size_t>(capacity_));
-		}
-		if (auto existing = hash_map_cache_->find(p_name); existing != hash_map_cache_->end()) {
-			return existing->second;
-		}
-		if (hash_map_cache_->size() >= static_cast<size_t>(capacity_)) {
-			hash_map_cache_->clear();
-			hash_map_cache_->reserve(static_cast<size_t>(capacity_));
-		}
-		auto inserted = hash_map_cache_->insert({ p_name, String(p_name).utf8() });
-		return inserted.first->second;
+	switch (policy_) {
+		case POLICY_HASH_MAP:
+			if (hash_map_cache_ == nullptr) {
+				hash_map_cache_ = memnew(HashMap);
+				hash_map_cache_->reserve(static_cast<size_t>(capacity_));
+			}
+			return find_or_cache_utf8(*hash_map_cache_, p_name, static_cast<size_t>(capacity_));
+		case POLICY_FIXED_HASH_MAP:
+			return find_or_cache_utf8(*fixed_hash_map_cache_, p_name, static_cast<size_t>(capacity_));
+		case POLICY_NO_CACHE:
+			no_cache_scratch_utf8_ = String(p_name).utf8();
+			return no_cache_scratch_utf8_;
 	}
-	if (policy_ == POLICY_FIXED_HASH_MAP) {
-		if (auto existing = fixed_hash_map_cache_->find(p_name); existing != fixed_hash_map_cache_->end()) {
-			return existing->second;
-		}
-		if (fixed_hash_map_cache_->size() >= static_cast<size_t>(capacity_)) {
-			fixed_hash_map_cache_->clear();
-		}
-		auto inserted = fixed_hash_map_cache_->insert({ p_name, String(p_name).utf8() });
-		return inserted.first->second;
-	}
-	no_cache_scratch_utf8_ = String(p_name).utf8();
-	return no_cache_scratch_utf8_;
+
+	return empty_utf8;
 }

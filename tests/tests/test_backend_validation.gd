@@ -110,4 +110,8 @@ func test_string_name_cache_pool_reconfiguration() -> void:
 		assert_eq(actual, index + 1, "cache-backed property lookup for policy %d" % settings["policy"])
 		pool.clear()
 
+	assert_eq(pool.initialize(99, 8), ERR_INVALID_PARAMETER, "invalid cache policy rejected")
+	assert_eq(pool.get_policy(), 2, "invalid cache policy preserves prior policy")
+	assert_eq(pool.get_capacity(), 2, "invalid cache policy preserves prior capacity")
+
 	env.dispose()

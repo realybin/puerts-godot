@@ -1,12 +1,22 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 realybin and contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-import { normalizeOperators } from "../../puerts-godot-operator-model/index.js";
-import { mapApiMethodReturnType, mapCtorType, mapMethodArgType, mapMethodReturnType, methodPointerExprFromApi } from "./type_mapping.js";
-import { sanitizeIdentifier, toSnakeCase } from "./text_utils.js";
+import {normalizeOperators} from "../../puerts-godot-operator-model/index.js";
+
+import {
+	sanitizeIdentifier,
+	toSnakeCase
+} from "./text_utils.js";
+import {
+	mapApiMethodReturnType,
+	mapCtorType,
+	mapMethodArgType,
+	mapMethodReturnType,
+	methodPointerExprFromApi
+} from "./type_mapping.js";
 import type {
-	ApiClassLike,
 	ApiBuiltinClass,
+	ApiClassLike,
 	ApiConstant,
 	ApiMethod,
 	BoundPropertyBinding,
@@ -72,7 +82,7 @@ function pushConstantBindings(
 		const returnType = constant.type ? mapMethodReturnType(constant.type) : "int64_t";
 		helpers.push(
 			`inline ${returnType} ${getterName}() {\n` +
-				`\treturn ${constantExpression(constant, classSource)};\n` +
+			`\treturn ${constantExpression(constant, classSource)};\n` +
 			`}`,
 		);
 		bindingLines.push(`\t\t\t.static_property("${constant.name}", puerts::make_value_constant<&${getterName}>())`);
@@ -82,7 +92,7 @@ function pushConstantBindings(
 }
 
 function parameterDeclaration(type: string, name: string): string {
-	return `${type}${/[&*]$/.test(type) ? "" : " "}${name}`;
+	return `${type}${/[&*]\s*$/.test(type) ? "" : " "}${name}`;
 }
 
 function pushOperatorBindings(
@@ -108,7 +118,7 @@ function pushOperatorBindings(
 		const invokeArgs = operator.kind === "unary" ? "value" : "left, right";
 		helpers.push(
 			`inline ${returnType} ${wrapperName}(${argDecl}) {\n` +
-				`\treturn puerts::evaluate_operator<godot::Variant::${operator.variantEnum}, ${returnType}>(${invokeArgs});\n` +
+			`\treturn puerts::evaluate_operator<godot::Variant::${operator.variantEnum}, ${returnType}>(${invokeArgs});\n` +
 			`}`,
 		);
 		const overloads = byScriptName.get(operator.scriptName) ?? [];
@@ -118,11 +128,11 @@ function pushOperatorBindings(
 
 	for (const [scriptName, overloads] of byScriptName) {
 		if (overloads.length === 1) {
-			bindingLines.push(`\t\t\t.function("${scriptName}", puerts::make_function<&${overloads[0]}>())`);
+			bindingLines.push(`\t\t\t.static_method("${scriptName}", puerts::make_function<&${overloads[0]}>())`);
 			continue;
 		}
 		const exprs = overloads.map((name) => `puerts::make_overload<&${name}>()`);
-		bindingLines.push(`\t\t\t.function("${scriptName}", puerts::combine_overloads(${exprs.join(", ")}))`);
+		bindingLines.push(`\t\t\t.static_method("${scriptName}", puerts::combine_overloads(${exprs.join(", ")}))`);
 	}
 
 	return helpers;
@@ -158,7 +168,7 @@ export function generateEnumBindings(cls: ApiClassLike): GeneratedEnumBinding[] 
 			.join("\n");
 		const code =
 			`inline void ${functionName}() {\n` +
-			`\tpuerts::define_class<${tagType}>()\n` +
+			`\tpuerts::define_type<${tagType}>()\n` +
 			`${staticPropertyLines}\n` +
 			`\t\t\t.register_type();\n` +
 			`}\n`;
@@ -196,7 +206,8 @@ function pushMethodBindings(
 
 	for (const name of orderedNames) {
 		const methodGroup = byName.get(name) ?? [];
-		if (methodGroup.length === 0) continue;
+		if (methodGroup.length === 0)
+			continue;
 
 		if (methodGroup.length === 1) {
 			const method = methodGroup[0];
@@ -206,9 +217,9 @@ function pushMethodBindings(
 			if (method.is_static) {
 				if (needsDisambiguation) {
 					const ptr = methodPointerExprFromApi(className, method);
-					bindingLines.push(`\t\t\t.function("${name}", puerts::make_function<${ptr}>())`);
+					bindingLines.push(`\t\t\t.static_method("${name}", puerts::make_function<${ptr}>())`);
 				} else {
-					bindingLines.push(`\t\t\t.function("${name}", puerts::make_function<&godot::${className}::${name}>())`);
+					bindingLines.push(`\t\t\t.static_method("${name}", puerts::make_function<&godot::${className}::${name}>())`);
 				}
 			} else if (needsDisambiguation) {
 				const ptr = methodPointerExprFromApi(className, method);
@@ -228,7 +239,7 @@ function pushMethodBindings(
 			console.warn(`Warning: mixed static/instance overloads for ${className}.${name}, chose ${chosenKind} overloads.`);
 			if (chosenKind === "static") {
 				const exprs = chosen.map((m) => `puerts::make_overload<${methodPointerExprFromApi(className, m)}>()`);
-				bindingLines.push(`\t\t\t.function("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
+				bindingLines.push(`\t\t\t.static_method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
 			} else {
 				const exprs = chosen.map((m) => `puerts::make_method_overload<${methodPointerExprFromApi(className, m)}>()`);
 				bindingLines.push(`\t\t\t.method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
@@ -238,7 +249,7 @@ function pushMethodBindings(
 
 		if (staticMethods.length > 0) {
 			const exprs = staticMethods.map((m) => `puerts::make_overload<${methodPointerExprFromApi(className, m)}>()`);
-			bindingLines.push(`\t\t\t.function("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
+			bindingLines.push(`\t\t\t.static_method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
 			continue;
 		}
 
@@ -352,6 +363,6 @@ export function generateClassBinding(
 	const fnName = `register_${sanitizeIdentifier(toSnakeCase(className))}_type_generated`;
 	const prefixLines = [...varargNameDefs, ...operatorHelpers, ...constantHelpers];
 	const prefix = prefixLines.length > 0 ? `${prefixLines.join("\n")}\n` : "";
-	const code = `${prefix}inline void ${fnName}() {\n\tpuerts::define_class<godot::${className}>()\n${bindingLines.join("\n")}\n}\n`;
-	return { className, classSource, functionName: fnName, code };
+	const code = `${prefix}inline void ${fnName}() {\n\tpuerts::define_type<godot::${className}>()\n${bindingLines.join("\n")}\n}\n`;
+	return {className, classSource, functionName: fnName, code};
 }
