@@ -41,6 +41,24 @@ inline int64_t object_notification_predelete_constant_generated() {
 inline int64_t object_notification_extension_reloaded_constant_generated() {
 	return 2;
 }
+inline decltype(auto) object_notification_default_1_generated(godot::Object &p_self, int64_t p_arg_0) {
+	return p_self.notification(p_arg_0);
+}
+inline decltype(auto) object_get_meta_default_1_generated(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.get_meta(p_arg_0);
+}
+inline decltype(auto) object_add_user_signal_default_1_generated(godot::Object &p_self, const godot::String &p_arg_0) {
+	return p_self.add_user_signal(p_arg_0);
+}
+inline decltype(auto) object_connect_default_2_generated(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Callable &p_arg_1) {
+	return p_self.connect(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_tr_default_1_generated(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.tr(p_arg_0);
+}
+inline decltype(auto) object_tr_n_default_3_generated(const godot::Object &p_self, const godot::StringName &p_arg_0, const godot::StringName &p_arg_1, int64_t p_arg_2) {
+	return p_self.tr_n(p_arg_0, p_arg_1, p_arg_2);
+}
 inline void register_object_type_generated() {
 	puerts::define_type<godot::Object>()
 			.static_property("NOTIFICATION_POSTINITIALIZE", puerts::make_value_constant<&object_notification_postinitialize_constant_generated>())
@@ -57,17 +75,17 @@ inline void register_object_type_generated() {
 			.method("get_method_list", puerts::make_method<&godot::Object::get_method_list>())
 			.method("property_can_revert", puerts::make_method<&godot::Object::property_can_revert>())
 			.method("property_get_revert", puerts::make_method<&godot::Object::property_get_revert>())
-			.method("notification", puerts::make_method<&godot::Object::notification>())
+			.method("notification", puerts::combine_default_overloads(puerts::make_extension_method_overload<&object_notification_default_1_generated>(), puerts::make_method_overload<&godot::Object::notification>()))
 			.method("to_string", puerts::make_method<&godot::Object::to_string>())
 			.method("get_instance_id", puerts::make_method<&godot::Object::get_instance_id>())
 			.method("set_script", puerts::make_method<&godot::Object::set_script>())
 			.method("get_script", puerts::make_method<&godot::Object::get_script>())
 			.method("set_meta", puerts::make_method<&godot::Object::set_meta>())
 			.method("remove_meta", puerts::make_method<&godot::Object::remove_meta>())
-			.method("get_meta", puerts::make_method<&godot::Object::get_meta>())
+			.method("get_meta", puerts::combine_default_overloads(puerts::make_extension_method_overload<&object_get_meta_default_1_generated>(), puerts::make_method_overload<&godot::Object::get_meta>()))
 			.method("has_meta", puerts::make_method<&godot::Object::has_meta>())
 			.method("get_meta_list", puerts::make_method<&godot::Object::get_meta_list>())
-			.method("add_user_signal", puerts::make_method<&godot::Object::add_user_signal>())
+			.method("add_user_signal", puerts::combine_default_overloads(puerts::make_extension_method_overload<&object_add_user_signal_default_1_generated>(), puerts::make_method_overload<&godot::Object::add_user_signal>()))
 			.method("has_user_signal", puerts::make_method<&godot::Object::has_user_signal>())
 			.method("remove_user_signal", puerts::make_method<&godot::Object::remove_user_signal>())
 			.method("set_deferred", puerts::make_method<&godot::Object::set_deferred>())
@@ -78,7 +96,7 @@ inline void register_object_type_generated() {
 			.method("get_signal_list", puerts::make_method<&godot::Object::get_signal_list>())
 			.method("get_signal_connection_list", puerts::make_method<&godot::Object::get_signal_connection_list>())
 			.method("get_incoming_connections", puerts::make_method<&godot::Object::get_incoming_connections>())
-			.method("connect", puerts::make_method<&godot::Object::connect>())
+			.method("connect", puerts::combine_default_overloads(puerts::make_extension_method_overload<&object_connect_default_2_generated>(), puerts::make_method_overload<&godot::Object::connect>()))
 			.method("disconnect", puerts::make_method<&godot::Object::disconnect>())
 			.method("is_connected", puerts::make_method<&godot::Object::is_connected>())
 			.method("has_connections", puerts::make_method<&godot::Object::has_connections>())
@@ -87,8 +105,8 @@ inline void register_object_type_generated() {
 			.method("notify_property_list_changed", puerts::make_method<&godot::Object::notify_property_list_changed>())
 			.method("set_message_translation", puerts::make_method<&godot::Object::set_message_translation>())
 			.method("can_translate_messages", puerts::make_method<&godot::Object::can_translate_messages>())
-			.method("tr", puerts::make_method<&godot::Object::tr>())
-			.method("tr_n", puerts::make_method<&godot::Object::tr_n>())
+			.method("tr", puerts::combine_default_overloads(puerts::make_extension_method_overload<&object_tr_default_1_generated>(), puerts::make_method_overload<&godot::Object::tr>()))
+			.method("tr_n", puerts::combine_default_overloads(puerts::make_extension_method_overload<&object_tr_n_default_3_generated>(), puerts::make_method_overload<&godot::Object::tr_n>()))
 			.method("get_translation_domain", puerts::make_method<&godot::Object::get_translation_domain>())
 			.method("set_translation_domain", puerts::make_method<&godot::Object::set_translation_domain>())
 			.method("is_queued_for_deletion", puerts::make_method<&godot::Object::is_queued_for_deletion>())

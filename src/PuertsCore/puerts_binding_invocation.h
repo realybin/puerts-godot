@@ -462,6 +462,28 @@ struct overload_combiner {
 };
 
 template <typename... Overloads>
+struct default_overload_combiner {
+	template <typename Overload>
+	static bool invoke_matching_arity(pesapi_ffi *apis, pesapi_callback_info info, CallbackFrame &frame) {
+		if (frame.arg_count != Overload::arity) {
+			return false;
+		}
+		(void)Overload::template invoke<false>(apis, info, frame);
+		return true;
+	}
+
+	static void callback(pesapi_ffi *apis, pesapi_callback_info info) {
+		CallbackFrame frame(apis, info);
+		if (!frame.require()) {
+			return;
+		}
+		if (!(invoke_matching_arity<Overloads>(apis, info, frame) || ...)) {
+			apis->throw_by_string(info, "Argument count does not match the bound signature.");
+		}
+	}
+};
+
+template <typename... Overloads>
 struct constructor_combiner {
 	static void *callback(pesapi_ffi *apis, pesapi_callback_info info) {
 		CallbackFrame frame(apis, info);

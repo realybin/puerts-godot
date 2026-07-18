@@ -347,6 +347,11 @@
 			if (error) {
 				return error;
 			}
+			const defaultLimited = new (load_type("Vector2"))(3.0, 4.0).limit_length();
+			error = expect(near(defaultLimited.length(), 1.0, 1e-6), "instance method default argument mismatch");
+			if (error) {
+				return error;
+			}
 
 			{
 				const Vector2 = load_type("Vector2");
@@ -451,6 +456,20 @@
 					return error;
 				}
 				error = expect(name.begins_with("pla") && name.ends_with("yer") && name.to_upper() === "PLAYER", "string_name extras mismatch");
+				if (error) {
+					return error;
+				}
+				const parts = new StringName("left,right").split(",");
+				error = expect(parts.size() === 2 && parts.get(0) === "left" && parts.get(1) === "right", "partial default arguments mismatch");
+				if (error) {
+					return error;
+				}
+			}
+
+			{
+				const Color = load_type("Color");
+				const red = Color.from_hsv(0.0, 1.0, 1.0);
+				error = expect(near(red.r, 1.0, 1e-6) && near(red.a, 1.0, 1e-6), "static method default argument mismatch");
 				if (error) {
 					return error;
 				}
@@ -595,6 +614,10 @@
 				if (error) {
 					return error;
 				}
+				error = expect(args.reduce(c) === null, "array reduce Variant default mismatch");
+				if (error) {
+					return error;
+				}
 			}
 
 			{
@@ -658,6 +681,21 @@
 				if (error) {
 					return error;
 				}
+				error = expect(dict.get("missing") === null, "dictionary get Variant default mismatch");
+				if (error) {
+					return error;
+				}
+				error = expect(dict.get_or_add("inserted") === null && dict.has("inserted"), "dictionary get_or_add Variant default mismatch");
+				if (error) {
+					return error;
+				}
+			}
+
+			backend_object.set_meta("__puerts_default_arg_meta__", 42);
+			error = expect(backend_object.get_meta("__puerts_default_arg_meta__") === 42, "object method default argument mismatch");
+			backend_object.remove_meta("__puerts_default_arg_meta__");
+			if (error) {
+				return error;
 			}
 
 			error = expectThrows(() => new (load_type("Basis"))().tdotx(new (load_type("Vector2"))(1.0, 2.0)), "Argument type does not match", "direct method type rejection");
@@ -678,7 +716,7 @@
 				const Signal = load_type("Signal");
 				const Callable = load_type("Callable");
 				return Signal.prototype.connect.call(new Callable(backend_object, "get_backend_name"), 123);
-			}, "Argument count does not match the bound signature", "overload receiver rejection");
+			}, "Native object type does not match", "overload receiver rejection");
 			if (error) {
 				return error;
 			}
@@ -696,7 +734,7 @@
 				const Signal = load_type("Signal");
 				const sig = new Signal(backend_object, "script_changed");
 				return sig.connect();
-			}, "Argument count does not match the bound signature", "overload arity rejection");
+			}, "Argument count does not match", "overload arity rejection");
 			if (error) {
 				return error;
 			}

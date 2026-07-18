@@ -320,6 +320,11 @@ root.load_type = {
 		if err ~= "" then
 			return err
 		end
+		local default_limited = load_type("Vector2")(3.0, 4.0):limit_length()
+		err = expect(near(default_limited:length(), 1.0, 1e-6), "instance method default argument mismatch")
+		if err ~= "" then
+			return err
+		end
 
 		do
 			local Vector2 = load_type("Vector2")
@@ -415,6 +420,20 @@ root.load_type = {
 				return err
 			end
 			err = expect(name:begins_with("pla") and name:ends_with("yer") and name:to_upper() == "PLAYER", "string_name extras mismatch")
+			if err ~= "" then
+				return err
+			end
+			local parts = StringName("left,right"):split(",")
+			err = expect(parts:size() == 2 and parts:get(0) == "left" and parts:get(1) == "right", "partial default arguments mismatch")
+			if err ~= "" then
+				return err
+			end
+		end
+
+		do
+			local Color = load_type("Color")
+			local red = Color.from_hsv(0.0, 1.0, 1.0)
+			err = expect(near(red.r, 1.0, 1e-6) and near(red.a, 1.0, 1e-6), "static method default argument mismatch")
 			if err ~= "" then
 				return err
 			end
@@ -560,6 +579,10 @@ root.load_type = {
 			if err ~= "" then
 				return err
 			end
+			err = expect(args:reduce(c) == nil, "array reduce Variant default mismatch")
+			if err ~= "" then
+				return err
+			end
 		end
 
 		do
@@ -622,6 +645,21 @@ root.load_type = {
 			if err ~= "" then
 				return err
 			end
+			err = expect(dict:get("missing") == nil, "dictionary get Variant default mismatch")
+			if err ~= "" then
+				return err
+			end
+			err = expect(dict:get_or_add("inserted") == nil and dict:has("inserted"), "dictionary get_or_add Variant default mismatch")
+			if err ~= "" then
+				return err
+			end
+		end
+
+		backend_object:set_meta("__puerts_default_arg_meta__", 42)
+		err = expect(backend_object:get_meta("__puerts_default_arg_meta__") == 42, "object method default argument mismatch")
+		backend_object:remove_meta("__puerts_default_arg_meta__")
+		if err ~= "" then
+			return err
 		end
 
 		err = expect_throws(function()
@@ -646,7 +684,7 @@ root.load_type = {
 			local Callable = load_type("Callable")
 			local sig = Signal(backend_object, "script_changed")
 			return sig.connect(Callable(backend_object, "get_backend_name"), 123)
-		end, "Argument count does not match the bound signature", "overload receiver rejection")
+		end, "Native object type does not match", "overload receiver rejection")
 		if err ~= "" then
 			return err
 		end
@@ -664,7 +702,7 @@ root.load_type = {
 			local Signal = load_type("Signal")
 			local sig = Signal(backend_object, "script_changed")
 			return sig:connect()
-		end, "Argument count does not match the bound signature", "overload arity rejection")
+		end, "Argument count does not match", "overload arity rejection")
 		if err ~= "" then
 			return err
 		end

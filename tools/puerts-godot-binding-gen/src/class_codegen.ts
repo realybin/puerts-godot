@@ -95,6 +95,90 @@ function parameterDeclaration(type: string, name: string): string {
 	return `${type}${/[&*]\s*$/.test(type) ? "" : " "}${name}`;
 }
 
+const EXPLICIT_BUILTIN_DEFAULT_ARGUMENTS = new Map<string, { type: string; value: string; expression: string }>([
+	["Transform2D.looking_at", { type: "Vector2", value: "Vector2(0, 0)", expression: "godot::Vector2()" }],
+	["Dictionary.get", { type: "Variant", value: "null", expression: "godot::Variant()" }],
+	["Dictionary.get_or_add", { type: "Variant", value: "null", expression: "godot::Variant()" }],
+	["Array.reduce", { type: "Variant", value: "null", expression: "godot::Variant()" }],
+]);
+
+function firstDefaultArgumentIndex(className: string, method: ApiMethod): number | null {
+	const args = method.arguments ?? [];
+	const firstDefault = args.findIndex((arg) => arg.default_value !== undefined);
+	if (firstDefault < 0) {
+		return null;
+	}
+	if (args.slice(firstDefault).some((arg) => arg.default_value === undefined)) {
+		throw new Error(`Default arguments must be trailing for ${className}.${method.name}.`);
+	}
+	return firstDefault;
+}
+
+function explicitBuiltinDefaultArgument(
+	className: string,
+	classSource: ClassSource,
+	method: ApiMethod,
+): string | null {
+	const key = `${className}.${method.name}`;
+	const spec = EXPLICIT_BUILTIN_DEFAULT_ARGUMENTS.get(key);
+	if (classSource !== "builtin" || !spec) {
+		return null;
+	}
+
+	const args = method.arguments ?? [];
+	const last = args.at(-1);
+	if (!last || last.type !== spec.type || last.default_value !== spec.value) {
+		throw new Error(`Unexpected explicit default argument metadata for ${key}.`);
+	}
+	return spec.expression;
+}
+
+function defaultMethodHelperName(className: string, methodName: string, arity: number): string {
+	return `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(toSnakeCase(methodName))}_default_${arity}_generated`;
+}
+
+function buildDefaultMethodHelpers(
+	className: string,
+	classSource: ClassSource,
+	method: ApiMethod,
+	firstDefault: number,
+): { helpers: string[]; overloads: string[] } {
+	const args = method.arguments ?? [];
+	const helpers: string[] = [];
+	const overloads: string[] = [];
+	const explicitDefault = explicitBuiltinDefaultArgument(className, classSource, method);
+
+	for (let arity = firstDefault; arity < args.length; arity++) {
+		const helperName = defaultMethodHelperName(className, method.name, arity);
+		const declarations = args
+			.slice(0, arity)
+			.map((arg, index) => parameterDeclaration(mapMethodArgType(arg.type), `p_arg_${index}`));
+		const invocationArgs = args.slice(0, arity).map((_, index) => `p_arg_${index}`);
+		if (explicitDefault) {
+			invocationArgs.push(explicitDefault);
+		}
+
+		let invocation: string;
+		if (method.is_static) {
+			invocation = `godot::${className}::${method.name}(${invocationArgs.join(", ")})`;
+			overloads.push(`puerts::make_overload<&${helperName}>()`);
+		} else {
+			const receiverType = `${method.is_const ? "const " : ""}godot::${className} &`;
+			declarations.unshift(parameterDeclaration(receiverType, "p_self"));
+			invocation = `p_self.${method.name}(${invocationArgs.join(", ")})`;
+			overloads.push(`puerts::make_extension_method_overload<&${helperName}>()`);
+		}
+
+		helpers.push(
+			`inline decltype(auto) ${helperName}(${declarations.join(", ")}) {\n` +
+			`\treturn ${invocation};\n` +
+			`}`,
+		);
+	}
+
+	return { helpers, overloads };
+}
+
 function pushOperatorBindings(
 	cls: ApiClassLike,
 	bindingLines: string[],
@@ -190,10 +274,12 @@ export function generateEnumBindings(cls: ApiClassLike): GeneratedEnumBinding[] 
 
 function pushMethodBindings(
 	className: string,
+	classSource: ClassSource,
 	methods: ApiMethod[],
 	headerAnalysis: HeaderAnalysis,
 	bindingLines: string[],
-): void {
+): string[] {
+	const helpers: string[] = [];
 	const byName = new Map<string, ApiMethod[]>();
 	const orderedNames: string[] = [];
 	for (const method of methods) {
@@ -213,6 +299,24 @@ function pushMethodBindings(
 			const method = methodGroup[0];
 			const methodRefCount = headerAnalysis.methodNameCounts.get(name) ?? 0;
 			const needsDisambiguation = methodRefCount > 1;
+			const firstDefault = firstDefaultArgumentIndex(className, method);
+
+			if (firstDefault !== null) {
+				if (needsDisambiguation) {
+					throw new Error(`Default arguments on overloaded methods are unsupported for ${className}.${name}.`);
+				}
+				const generated = buildDefaultMethodHelpers(className, classSource, method, firstDefault);
+				helpers.push(...generated.helpers);
+				const fullOverload = method.is_static
+					? `puerts::make_overload<&godot::${className}::${name}>()`
+					: `puerts::make_method_overload<&godot::${className}::${name}>()`;
+				const overloads = [...generated.overloads, fullOverload];
+				const bindingKind = method.is_static ? "static_method" : "method";
+				bindingLines.push(
+					`\t\t\t.${bindingKind}("${name}", puerts::combine_default_overloads(${overloads.join(", ")}))`,
+				);
+				continue;
+			}
 
 			if (method.is_static) {
 				if (needsDisambiguation) {
@@ -256,6 +360,8 @@ function pushMethodBindings(
 		const exprs = instanceMethods.map((m) => `puerts::make_method_overload<${methodPointerExprFromApi(className, m)}>()`);
 		bindingLines.push(`\t\t\t.method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
 	}
+
+	return helpers;
 }
 
 export function generateClassBinding(
@@ -296,7 +402,7 @@ export function generateClassBinding(
 		bindingLines.push(`\t\t\t.constructor(puerts::combine_constructors(\n\t\t\t\t\t${ctorSpecs}))`);
 	}
 
-	pushMethodBindings(className, methods, headerAnalysis, bindingLines);
+	const methodHelpers = pushMethodBindings(className, classSource, methods, headerAnalysis, bindingLines);
 
 	const emittedMethodNames = new Set<string>(methods.map((m) => m.name));
 	const seenVarargNames = new Set<string>();
@@ -361,7 +467,7 @@ export function generateClassBinding(
 	bindingLines.push("\t\t\t.register_type();");
 
 	const fnName = `register_${sanitizeIdentifier(toSnakeCase(className))}_type_generated`;
-	const prefixLines = [...varargNameDefs, ...operatorHelpers, ...constantHelpers];
+	const prefixLines = [...varargNameDefs, ...operatorHelpers, ...constantHelpers, ...methodHelpers];
 	const prefix = prefixLines.length > 0 ? `${prefixLines.join("\n")}\n` : "";
 	const code = `${prefix}inline void ${fnName}() {\n\tpuerts::define_type<godot::${className}>()\n${bindingLines.join("\n")}\n}\n`;
 	return {className, classSource, functionName: fnName, code};

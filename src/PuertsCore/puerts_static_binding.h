@@ -168,6 +168,11 @@ MethodSpec combine_overloads(OverloadSpec<Overloads>...) {
 }
 
 template <typename... Overloads>
+MethodSpec combine_default_overloads(OverloadSpec<Overloads>...) {
+	return MethodSpec{ &internal::default_overload_combiner<Overloads...>::callback, nullptr };
+}
+
+template <typename... Overloads>
 ConstructorSpec combine_constructors(ConstructorOverloadSpec<Overloads>...) {
 	using first_overload = eastl::tuple_element_t<0, eastl::tuple<Overloads...>>;
 	return ConstructorSpec{ &internal::constructor_combiner<Overloads...>::callback, internal::finalizer<typename first_overload::target_type>::get() };
