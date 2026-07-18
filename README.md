@@ -8,7 +8,9 @@
 
 Showcase:
 
-https://github.com/user-attachments/assets/1b401fd2-9c58-437e-a60d-0d9e39dfaa18
+https://github.com/user-attachments/assets/2026e5d9-a95b-466b-8918-cfe784a2e6da
+
+See [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) for a complete example.
 
 It provides:
 
@@ -70,6 +72,10 @@ func _process(delta: float) -> void:
 - [Object Allocation and Lifetime](docs/object-allocating.md)
 - [Test Runner Notes](docs/testing.md)
 
+## Example
+
+* [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo): Basic esm support and sample usage of puerts-godot.
+
 ## Supported backends
 
 | Backend         | V8+  | Nodejs+ | Quickjs | Lua  |
@@ -93,7 +99,6 @@ x: No plan to support, V8 and Nodejs cannot run in Web
 ## Roadmap
 
 - [ ] HELP WANTED in technical writing
-- [ ] ESM project template and Rich editor support (TypeScript toolchain template), see [puerts-godot-dts-gen](tools/puerts-godot-dts-gen), this will be published soon
 - [ ] Stable release
 - [ ] Better API design
 - [ ] Performance optimization
