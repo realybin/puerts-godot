@@ -84,6 +84,155 @@ If `dispose()` is requested while a script operation is active, destruction is d
 
 The same `PuertsEnvironment` instance may be initialized again. Reinitialization creates a new runtime generation; values obtained from an earlier generation remain invalid and must be reacquired.
 
+## Concrete Lifecycle Examples
+
+The following examples assume `_env` is initialized with `PuertsV8Backend`, as shown in [Getting Started](getting-started.md). They use a `WeakRef` so that object destruction is observable without keeping the object alive.
+
+Garbage collection is deliberately pumped in these examples to make the transitions visible in a small test. Application code should not depend on a particular number of collection cycles.
+
+```gdscript
+func _pump_v8_gc() -> void:
+	for _i in range(8):
+		_env.eval("(function () { if (typeof gc === 'function') gc(); return 0; })()")
+		_env.low_memory_notification()
+		_env.tick()
+```
+
+### Script creates a `RefCounted`
+
+Here JS creates a `RefCounted` and stores its wrapper in a global variable. Godot observes the native object only through a weak reference.
+
+```gdscript
+func example_script_refcounted() -> void:
+	var id_value := _env.eval("""
+		(function () {
+			const RefCounted = load_type('RefCounted');
+			globalThis.stats = new RefCounted();
+			return globalThis.stats.get_instance_id();
+		})()
+	""")
+
+	var native_object := instance_from_id(id_value.to_int())
+	var lifetime: WeakRef = weakref(native_object)
+	native_object = null
+	id_value = null
+
+	_pump_v8_gc()
+	assert(lifetime.get_ref() != null) # JS wrapper keeps the registry record alive.
+
+	_env.eval("globalThis.stats = undefined")
+	_pump_v8_gc()
+	assert(lifetime.get_ref() == null) # Finalizer drops the registry's strong reference.
+```
+
+The lifecycle is:
+
+1. `new RefCounted()` creates the native object and its JS wrapper.
+2. The bridge registry stores a strong `Variant` reference to the object.
+3. `globalThis.stats` keeps the wrapper reachable, so the object survives collection.
+4. Clearing the global makes the wrapper collectible.
+5. The wrapper finalizer releases the registry record. With no other strong reference, Godot destroys the `RefCounted`.
+
+If Godot also kept `native_object` instead of assigning `null`, the object would survive step 5 until that Godot reference was released.
+
+### Script creates a `Node`
+
+A `Node` is not `RefCounted`. A node constructed by script is therefore marked script-owned and is deleted when its wrapper is finalized.
+
+```gdscript
+func example_script_node() -> void:
+	var id_value := _env.eval("""
+		(function () {
+			const Node = load_type('Node');
+			globalThis.enemy = new Node();
+			return globalThis.enemy.get_instance_id();
+		})()
+	""")
+
+	var native_node := instance_from_id(id_value.to_int())
+	var lifetime: WeakRef = weakref(native_node)
+	native_node = null
+	id_value = null
+
+	_pump_v8_gc()
+	assert(lifetime.get_ref() != null)
+
+	_env.eval("globalThis.enemy = undefined")
+	_pump_v8_gc()
+	assert(lifetime.get_ref() == null) # The bridge deletes the script-owned Node.
+```
+
+Adding this node to the scene tree does not change its bridge ownership. If the JS wrapper becomes unreachable, the bridge can still delete the node. Keep the wrapper reachable for the required lifetime, or create the node on the Godot side when Godot should own it.
+
+### Godot lends an existing `Node` to script
+
+The direction of creation changes the rule. This node is created by Godot, so its script wrapper is borrowed and does not keep it alive.
+
+```gdscript
+func example_borrowed_node() -> void:
+	var engine_node := Node.new()
+	var lifetime: WeakRef = weakref(engine_node)
+	_env.set_global("engine_node", engine_node)
+
+	var script_wrapper := _env.get_global("engine_node")
+	assert(script_wrapper.unwrap_native() == engine_node)
+
+	engine_node.free() # Godot may destroy it while JS still holds the wrapper.
+	assert(lifetime.get_ref() == null)
+	assert(script_wrapper.unwrap_native() == null)
+
+	# Logs: "Native object is no longer valid."
+	script_wrapper.get_property("name")
+```
+
+The JS wrapper remains a valid script value, but it no longer resolves to a native object. The bridge stores an `ObjectID`, not a retained raw pointer, so `unwrap_native()` safely returns `null` after `free()`.
+
+### Godot retains a script object
+
+In this example the JS local `ref` would normally become unreachable when the IIFE returns. The returned `PuertsScriptValue` keeps the containing JS object, and therefore `ref`, alive from the Godot side.
+
+```gdscript
+func example_godot_holds_script_value() -> void:
+	var held_value := _env.eval("""
+		(function () {
+			const RefCounted = load_type('RefCounted');
+			const ref = new RefCounted();
+			return { id: ref.get_instance_id(), ref };
+		})()
+	""")
+
+	var id_value := held_value.get_property("id")
+	var native_object := instance_from_id(id_value.to_int())
+	var lifetime: WeakRef = weakref(native_object)
+	native_object = null
+	id_value = null
+
+	_pump_v8_gc()
+	assert(lifetime.get_ref() != null) # held_value's value_ref keeps the JS graph alive.
+
+	held_value = null # Releases the last Godot value_ref.
+	_pump_v8_gc()
+	assert(lifetime.get_ref() == null)
+```
+
+This is the opposite boundary direction from the first three examples: `PuertsScriptValue` keeps a script value reachable, while the bridge registry keeps native values reachable according to their Godot ownership rules.
+
+### `dispose()` is the deterministic boundary
+
+GC timing varies, but environment disposal does not. It invalidates retained script values and releases objects owned only by that environment.
+
+```gdscript
+var value := _env.eval("({ answer: 42 })")
+assert(value.is_valid())
+
+_env.dispose()
+
+assert(not _env.is_alive())
+assert(not value.is_valid())
+```
+
+These transitions are also covered by the runnable [`lifecycle_suite.gd`](../tests/tests/suites/lifecycle_suite.gd), including script-created `RefCounted` objects, script-created `Node` objects, borrowed Godot nodes, retained `PuertsScriptValue` instances, and environment disposal.
+
 ## Practical Rules
 
 ### Prefer `RefCounted` for shared data
