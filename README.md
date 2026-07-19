@@ -98,6 +98,7 @@ x: No plan to support, V8 and Nodejs cannot run in Web
 
 ## Roadmap
 
+- [ ] [WebGL support](https://puerts.github.io/en/docs/puerts/unity/knowjs/webgl/)
 - [ ] HELP WANTED in technical writing
 - [ ] Stable release
 - [ ] Better API design
