@@ -2,12 +2,14 @@
 
 Simple guide to get started with `puerts-godot`.
 
+You can refer [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) for more information.
+
 ## Requirements
 
-- Godot `4.4+`
+- Godot `4.5+`
 - Built `puerts-core` and `puerts-v8` (or other backends) GDExtension modules, see [build.md](./build.md), you can use our prebuilt binaries at [Actions](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
 
-## Project setup example
+## Project setup
 
 > It depends on your project structure
 
@@ -97,29 +99,89 @@ func _ready() -> void:
 	print("Puerts answer = ", answer) # 42
 
 func _process(_delta: float) -> void:
-	if _env == null or not _env.is_alive():
-		return
-	_env.tick() # V8/Node.js debugger/event-loop tick
+	_env.debugger_tick() # V8/Node.js debugger tick
 
 func _exit_tree() -> void:
 	if _env != null:
 		_env.dispose()
 ```
 
+## Convention
+
+### load_type
+
+`load_type` is a function provided by `puerts-godot` to load a [static-binding](static-binding.md) type or a dynamic type from [ClassDB](https://docs.godotengine.org/en/stable/classes/class_classdb.html).
+
+```javascript
+const Vector2 = load_type("Vector2");
+const v = new Vector2();
+v.x = 8.0;
+v.y = 6.0;
+v.length() === 10.0 // true
+
+const GlobalScope = load_type("GlobalScope");
+GlobalScope.sin(1)
+```
+
+### Enum / Signal
+
+We treat enum as a static nested class and signal as a read-only property of the class.
+
+```javascript
+Vector2 = load_type("Vector2");
+Vector2.Axis && Vector2.Axis.AXIS_X === 0 && Vector2.Axis.AXIS_Y === 1;
+```
+
+```javascript
+const Timer = load_type("Timer");
+const timer = new Timer();
+timer.timeout.connect(callable_from_set_global);
+// under design for timer.timeout.connect(() => { })
+timer.start(1.0);
+```
+
+### Global Scope
+
+We treat global scope as a static class with static methods, properties, and enums as static members.
+
+```javascript
+const GlobalScope = load_type("GlobalScope");
+GlobalScope.sin(1)
+```
+
+### Operator Overloading
+
+JavaScript does not support operator overloading, so we treat operator overloads as normal methods with a special name. e.g. `op_Addition`
+
+See [index.js](../tools/puerts-godot-operator-model/index.js) for the operator name mapping.
+
+```javascript
+const Vector2 = load_type("Vector2");
+const sum = Vector2.op_Addition(new Vector2(1.0, 2.0), new Vector2(3.0, 4.0));
+sum.x === 4.0 && sum.y === 6.0;
+```
+
+### Constant
+
+We treat constant as a static read-only property of the class. While get the value, we will create a new instance representing the constant value.
+
+```javascript
+const Vector2 = load_type("Vector2");
+const v = Vector2.ZERO;
+v.x === 0.0 && v.y === 0.0;
+```
+
 ## API Reference
 
-See api reference in godot.
+See api reference in godot editor.
 
 ## Supported backends and capabilities
 
+We support `PuertsV8Backend`, `PuertsNodejsBackend`, `PuertsQuickjsBackend`, and `PuertsLuaBackend`.
+
 Capability checks are based on the backend function table exposed to `PuertsEnvironment`; unsupported environment calls emit an error through the configured error callback.
 
-| Backend                | Language     | Supported Capabilities                                               | Not Supported Capabilities                                           |
-|------------------------|--------------|----------------------------------------------------------------------|----------------------------------------------------------------------|
-| `PuertsV8Backend`      | `ecmascript` | `tick`, `debugger`, `low_memory_notification`, `terminate_execution` | -                                                                    |
-| `PuertsNodejsBackend`  | `ecmascript` | `tick`, `debugger`, `low_memory_notification`, `terminate_execution` | -                                                                    |
-| `PuertsQuickjsBackend` | `ecmascript` | `low_memory_notification`                                            | `tick`, `debugger`, `terminate_execution`                            |
-| `PuertsLuaBackend`     | `lua`        | -                                                                    | `tick`, `debugger`, `low_memory_notification`, `terminate_execution` |
+See [backends.md](backends.md) for more details.
 
 ## Interop between Godot and Puerts
 
@@ -205,21 +267,6 @@ Note that if you are using a backend that evaluates code in global scope, you ca
 >
 > `to_native` is a bit slower than `to_int`/`to_float`/`to_string`/`to_binary`/`unwrap_native`, because it needs to check the type and do more work, and lack of type information can cause maintenance issues.
 
-### load_type
-
-`load_type` is a function provided by `puerts-godot` to load a [static-binding](static-binding.md) type or a dynamic type from [ClassDB](https://docs.godotengine.org/en/stable/classes/class_classdb.html).
-
-```javascript
-const Vector2 = load_type("Vector2");
-const v = new Vector2();
-v.x = 8.0;
-v.y = 6.0;
-v.length() === 10.0 // true
-
-const GlobalScope = load_type("GlobalScope");
-GlobalScope.sin(1)
-```
-
 If you want better performance, you can use [static-binding](static-binding.md) to register your C++ types to script engine.
 
 ### PuertsStringNameCachePool
@@ -246,11 +293,13 @@ And you can use `log_error`, `log_warn`, `log_info` to call the callback manuall
 
 ### Rich editor support
 
-We are exploring `import` / `require` support instead of using `load_type` to get better editor support.
+You can refer [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) for more information.
 
 ## Next
 
 - Building: [build.md](./build.md)
+- Backends: [backends.md](./backends.md)
+- V8 Inspector: [v8-inspector.md](./v8-inspector.md)
 - Static binding: [static-binding.md](./static-binding.md)
 - Object allocation and lifetime: [object-allocating.md](./object-allocating.md)
 - Advanced: [advanced.md](./advanced.md)
