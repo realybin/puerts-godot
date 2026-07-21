@@ -99,6 +99,7 @@ x: No plan to support, V8 and Nodejs cannot run in Web
 ## Roadmap
 
 - [ ] [WebGL support](https://puerts.github.io/en/docs/puerts/unity/knowjs/webgl/)
+- [ ] Warp script functions to Godot callable functions
 - [ ] HELP WANTED in technical writing
 - [ ] Stable release
 - [ ] Better API design
