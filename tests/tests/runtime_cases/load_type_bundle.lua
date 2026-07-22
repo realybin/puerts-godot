@@ -28,7 +28,7 @@ end
 
 root.load_type = {
 	exists = function()
-		local err = expect(load_type ~= nil, "load_type function missing")
+		local err = expect(load_type ~= nil and to_callable ~= nil, "global helper missing")
 		if err ~= "" then
 			return err
 		end
@@ -269,6 +269,27 @@ root.load_type = {
 		err = expect_throws(function()
 			return load_type("DirAccess")()
 		end, "No constructor available", "missing constructor check")
+		if err ~= "" then
+			return err
+		end
+
+		err = expect_throws(function()
+			return to_callable()
+		end, "expects exactly one argument", "to_callable arity rejection")
+		if err ~= "" then
+			return err
+		end
+
+		err = expect_throws(function()
+			return to_callable({})
+		end, "expects a script function", "to_callable type rejection")
+		if err ~= "" then
+			return err
+		end
+
+		err = expect_throws(function()
+			return to_callable(load_type("Callable")())
+		end, "expects a script function", "to_callable Callable rejection")
 		if err ~= "" then
 			return err
 		end
@@ -580,6 +601,39 @@ root.load_type = {
 				return err
 			end
 			err = expect(args:reduce(c) == nil, "array reduce Variant default mismatch")
+			if err ~= "" then
+				return err
+			end
+
+			local add = to_callable(function(a, b)
+				return a + b
+			end)
+			err = expect(add:is_custom() and add:is_valid() and add:call(20, 22) == 42, "script callable mismatch")
+			if err ~= "" then
+				return err
+			end
+
+			local signal_calls = 0
+			local function on_script_changed()
+				signal_calls = signal_calls + 1
+			end
+			local callback = to_callable(on_script_changed)
+			local equivalent_callback = to_callable(on_script_changed)
+			local signal = backend_object.script_changed
+			err = expect_throws(function()
+				return signal:connect(on_script_changed)
+			end, "Argument type does not match", "implicit callable rejection")
+			if err ~= "" then
+				return err
+			end
+			err = expect(signal:connect(callback) == 0 and signal:is_connected(equivalent_callback), "script callable connect mismatch")
+			if err ~= "" then
+				return err
+			end
+			signal:emit()
+			signal:disconnect(equivalent_callback)
+			signal:emit()
+			err = expect(signal_calls == 1 and not signal:is_connected(callback), "script callable disconnect mismatch")
 			if err ~= "" then
 				return err
 			end

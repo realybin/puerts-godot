@@ -89,15 +89,48 @@ static func _extract_script_id_array(env: Object, backend_name: String, ids_valu
 
 
 static func _pump_backend_gc(env: Object, backend: Object, attempts: int = 8) -> void:
+	var backend_id := ""
+	if backend != null:
+		backend_id = str(backend.get_backend_id())
 	for _i in range(attempts):
-		var backend_id := ""
-		if backend != null:
-			backend_id = str(backend.get_backend_id())
+		if backend_id == "lua":
+			env.eval("collectgarbage('collect')")
+			continue
 		if backend_id == "v8" or backend_id == "nodejs":
 			env.eval("(function () { if (typeof gc === 'function') { gc(); } return 0; })()")
 		env.low_memory_notification()
 		if backend_id == "v8" or backend_id == "nodejs":
 			env.tick()
+
+
+static func _create_script_callable_pair(env: Object, backend_info: Dictionary, tracker: WeakObjectTracker) -> Dictionary:
+	var backend_name: String = backend_info["name"]
+	var id_value = env.eval(script_for(
+		backend_info,
+		"local RefCounted = load_type('RefCounted'); local captured = RefCounted(); local callback = function() return captured:get_instance_id() end; _G.__callable_gc_first = to_callable(callback); _G.__callable_gc_second = to_callable(callback); return captured:get_instance_id()",
+		"(function () { const RefCounted = load_type('RefCounted'); const captured = new RefCounted(); const callback = () => captured.get_instance_id(); globalThis.__callable_gc_first = to_callable(callback); globalThis.__callable_gc_second = to_callable(callback); return captured.get_instance_id(); })()"
+	))
+	if id_value == null or not id_value.is_valid():
+		return { "ok": false, "error": "%s script_callable_gc setup failed: %s" % [backend_name, TestSupport.env_last_error(env)] }
+
+	var first_value = env.get_global("__callable_gc_first")
+	var second_value = env.get_global("__callable_gc_second")
+	if first_value == null or second_value == null:
+		return { "ok": false, "error": "%s script_callable_gc global read failed: %s" % [backend_name, TestSupport.env_last_error(env)] }
+	env.eval(script_for(
+		backend_info,
+		"_G.__callable_gc_first = nil; _G.__callable_gc_second = nil",
+		"globalThis.__callable_gc_first = undefined; globalThis.__callable_gc_second = undefined"
+	))
+
+	var object_id = int(id_value.to_int())
+	var captured = instance_from_id(object_id)
+	var first = first_value.to_native()
+	var second = second_value.to_native()
+	if captured == null or typeof(first) != TYPE_CALLABLE or typeof(second) != TYPE_CALLABLE:
+		return { "ok": false, "error": "%s script_callable_gc native conversion failed" % backend_name }
+	tracker.remember(captured)
+	return { "ok": true, "id": object_id, "first": first, "second": second }
 
 
 static func run_reentrant_dispose_suite(backend: Object, backend_info: Dictionary) -> String:
@@ -162,7 +195,13 @@ static func run_dispose_invalidation_suite(backend: Object, backend_info: Dictio
 	var leaf_value = nested_value.get_property("value")
 	var call_value = root_value.call_method("add", [2, 3])
 	var global_value = env.get_global("holder")
-	var derived_values: Array = [root_value, nested_value, call_value, global_value]
+	var callable_value = env.eval(script_for(backend_info, "return to_callable(function() return 7 end)", "to_callable(() => 7)"))
+	if callable_value == null:
+		return "%s invalidation callable setup failed (last_error=%s)" % [backend_name, TestSupport.env_last_error(env)]
+	var script_callable = callable_value.to_native()
+	if typeof(script_callable) != TYPE_CALLABLE or not script_callable.is_valid() or script_callable.call() != 7:
+		return "%s invalidation callable mismatch before dispose" % backend_name
+	var derived_values: Array = [root_value, nested_value, call_value, global_value, callable_value]
 	if leaf_value != null:
 		derived_values.insert(2, leaf_value)
 	elif not is_lua:
@@ -184,6 +223,8 @@ static func run_dispose_invalidation_suite(backend: Object, backend_info: Dictio
 			continue
 		if derived_values[index].is_valid():
 			return "%s invalidation derived[%d] expected invalid after dispose" % [backend_name, index]
+	if script_callable.is_valid():
+		return "%s invalidation callable expected invalid after dispose" % backend_name
 
 	return ""
 
@@ -225,6 +266,48 @@ static func run_environment_release_suite(backend_info: Dictionary) -> String:
 	env = null
 	backend = null
 
+	return ""
+
+
+static func run_callable_environment_release_suite(backend_info: Dictionary) -> String:
+	var backend_name: String = backend_info["name"]
+	var backend = create_backend(backend_info["class_name"])
+	if backend == null:
+		return "%s callable environment release backend class not found" % backend_name
+
+	var created: Dictionary = create_environment(backend, backend_name)
+	if not bool(created["ok"]):
+		return str(created["error"])
+	var env: Object = created["env"]
+	created = {}
+
+	var callable_value = env.eval(script_for(
+		backend_info,
+		"return to_callable(function() return 1 end)",
+		"to_callable(() => 1)"
+	))
+	if callable_value == null or not callable_value.is_valid():
+		_dispose_env_if_alive(env)
+		return "%s callable environment release setup failed: %s" % [backend_name, TestSupport.env_last_error(env)]
+	var script_callable = callable_value.to_native()
+	if typeof(script_callable) != TYPE_CALLABLE or not script_callable.is_valid():
+		_dispose_env_if_alive(env)
+		return "%s callable environment release native conversion failed" % backend_name
+	callable_value = null
+
+	var weak_env: WeakRef = weakref(env)
+	var weak_backend: WeakRef = weakref(backend)
+	env.dispose()
+	if script_callable.is_valid():
+		return "%s callable environment release expected invalid Callable after dispose" % backend_name
+	env = null
+	backend = null
+
+	if weak_env.get_ref() != null:
+		return "%s callable environment release Callable retained disposed environment" % backend_name
+	if weak_backend.get_ref() != null:
+		return "%s callable environment release Callable retained backend" % backend_name
+	script_callable = Callable()
 	return ""
 
 
@@ -466,6 +549,131 @@ static func run_godot_holds_js_gc_suite(backend: Object, backend_info: Dictionar
 
 	if env.is_alive():
 		env.dispose()
+	return ""
+
+
+static func run_script_callable_gc_suite(backend: Object, backend_info: Dictionary) -> String:
+	var backend_name: String = backend_info["name"]
+	var created = create_environment(backend, backend_name)
+	if not bool(created["ok"]):
+		return str(created["error"])
+
+	var env: Object = created["env"]
+	var tracker: WeakObjectTracker = WeakObjectTracker.new()
+	var callables: Array[Callable] = []
+	var object_ids: Array[int] = []
+
+	for i in range(64):
+		var pair = _create_script_callable_pair(env, backend_info, tracker)
+		if not bool(pair["ok"]):
+			_dispose_env_if_alive(env)
+			return "%s at %d" % [str(pair["error"]), i]
+		object_ids.append(int(pair["id"]))
+		callables.append(pair["first"])
+		callables.append(pair["second"])
+		pair = {}
+
+	_pump_backend_gc(env, backend)
+	if tracker.living_count() != object_ids.size():
+		_dispose_env_if_alive(env)
+		return "%s script_callable_gc retained count expected=%d actual=%d" % [backend_name, object_ids.size(), tracker.living_count()]
+
+	for i in range(object_ids.size()):
+		callables[i * 2] = Callable()
+
+	_pump_backend_gc(env, backend)
+	if tracker.living_count() != object_ids.size():
+		_dispose_env_if_alive(env)
+		return "%s script_callable_gc first release dropped shared function expected=%d actual=%d" % [backend_name, object_ids.size(), tracker.living_count()]
+
+	callables.clear()
+	var released = false
+	for _i in range(16):
+		_pump_backend_gc(env, backend, 2)
+		if tracker.living_count() == 0:
+			released = true
+			break
+	if not released:
+		var leaked_count = tracker.living_count()
+		var last_error = TestSupport.env_last_error(env)
+		_dispose_env_if_alive(env)
+		return "%s script_callable_gc leaked %d captured objects after Callable release (last_error=%s)" % [backend_name, leaked_count, last_error]
+
+	env.dispose()
+	return ""
+
+
+static func run_signal_callable_gc_suite(backend: Object, backend_info: Dictionary) -> String:
+	var backend_name: String = backend_info["name"]
+	var created = create_environment(backend, backend_name)
+	if not bool(created["ok"]):
+		return str(created["error"])
+
+	var env: Object = created["env"]
+	var id_value = env.eval(script_for(
+		backend_info,
+		"local RefCounted = load_type('RefCounted'); local captured = RefCounted(); local callback = function() captured:set_meta('called', true) end; _G.__signal_callable_gc = to_callable(callback); return captured:get_instance_id()",
+		"(function () { const RefCounted = load_type('RefCounted'); const captured = new RefCounted(); const callback = () => captured.set_meta('called', true); globalThis.__signal_callable_gc = to_callable(callback); return captured.get_instance_id(); })()"
+	))
+	if id_value == null or not id_value.is_valid():
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc setup failed: %s" % [backend_name, TestSupport.env_last_error(env)]
+
+	var callable_value = env.get_global("__signal_callable_gc")
+	if callable_value == null:
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc global read failed: %s" % [backend_name, TestSupport.env_last_error(env)]
+	env.eval(script_for(backend_info, "_G.__signal_callable_gc = nil", "globalThis.__signal_callable_gc = undefined"))
+
+	var captured = instance_from_id(int(id_value.to_int()))
+	var script_callable = callable_value.to_native()
+	if captured == null or typeof(script_callable) != TYPE_CALLABLE:
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc native conversion failed" % backend_name
+	var weak_captured: WeakRef = weakref(captured)
+	var emitter := RefCounted.new()
+	var signal_value: Signal = emitter.script_changed
+	if signal_value.connect(script_callable) != OK:
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc connect failed" % backend_name
+
+	id_value = null
+	callable_value = null
+	script_callable = Callable()
+	captured = null
+	_pump_backend_gc(env, backend)
+	if weak_captured.get_ref() == null:
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc Signal did not retain callback closure" % backend_name
+
+	signal_value.emit()
+	var retained = weak_captured.get_ref()
+	if retained == null or not bool(retained.get_meta("called", false)):
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc retained callback was not invocable" % backend_name
+	retained = null
+
+	var connections: Array = signal_value.get_connections()
+	if connections.size() != 1:
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc expected one connection actual=%d" % [backend_name, connections.size()]
+	var connected_callable: Callable = connections[0]["callable"]
+	signal_value.disconnect(connected_callable)
+	connected_callable = Callable()
+	connections.clear()
+
+	var released = false
+	for _i in range(16):
+		_pump_backend_gc(env, backend, 2)
+		if weak_captured.get_ref() == null:
+			released = true
+			break
+	if not released:
+		var last_error = TestSupport.env_last_error(env)
+		_dispose_env_if_alive(env)
+		return "%s signal_callable_gc captured object survived disconnect (last_error=%s)" % [backend_name, last_error]
+
+	env.dispose()
 	return ""
 
 

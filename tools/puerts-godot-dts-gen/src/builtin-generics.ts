@@ -58,6 +58,21 @@ const DICTIONARY_METHOD_TYPES: MethodTypeOverrides = {
 	set: { arguments: { key: "K", value: "V" } },
 };
 
+const CALLABLE_METHOD_TYPES: MethodTypeOverrides = {
+	callv: { returnType: "ReturnType<T>" },
+	call: { returnType: "ReturnType<T>", varargsType: "Parameters<T>" },
+	call_deferred: { varargsType: "Parameters<T>" },
+	rpc: { varargsType: "Parameters<T>" },
+	rpc_id: { varargsType: "Parameters<T>" },
+};
+
+const SIGNAL_METHOD_TYPES: MethodTypeOverrides = {
+	connect: { arguments: { callable: "Callable<T>" } },
+	disconnect: { arguments: { callable: "Callable<T>" } },
+	is_connected: { arguments: { callable: "Callable<T>" } },
+	emit: { varargsType: "Parameters<T>" },
+};
+
 const BUILTIN_GENERICS: Record<string, BuiltinGenericDefinition> = {
 	Array: {
 		typeParameters: "<T extends Variant = Variant>",
@@ -76,6 +91,22 @@ const BUILTIN_GENERICS: Record<string, BuiltinGenericDefinition> = {
 			"private readonly __value_type__: (value: V) => V;",
 		],
 		methodTypes: DICTIONARY_METHOD_TYPES,
+	},
+	Callable: {
+		typeParameters: "<T extends (...args: any[]) => any = (...args: any[]) => any>",
+		members: [
+			"/** Type-only callable signature marker; no corresponding runtime property exists. */",
+			"private readonly __function_type__: T;",
+		],
+		methodTypes: CALLABLE_METHOD_TYPES,
+	},
+	Signal: {
+		typeParameters: "<T extends (...args: any[]) => any = (...args: any[]) => any>",
+		members: [
+			"/** Type-only invariant signal signature marker; no corresponding runtime property exists. */",
+			"private readonly __function_type__: (value: T) => T;",
+		],
+		methodTypes: SIGNAL_METHOD_TYPES,
 	},
 };
 

@@ -19,6 +19,8 @@ UNITY_DIR = REPO_ROOT / "thirdparty" / "puerts" / "unity"
 NATIVE_DIR = UNITY_DIR / "native"
 PAPI_LUA_OBJECT_NEW_FILE = PUERTS_REPO_DIR / "unity" / "native" / "papi-lua" / "source" / "CppObjectMapperLua.cpp"
 PAPI_LUA_OBJECT_NEW_PATCH = REPO_ROOT / "patches" / "papi-lua-object-new-nullptr.patch"
+PAPI_LUA_VALUE_REF_FILE = PUERTS_REPO_DIR / "unity" / "native" / "papi-lua" / "source" / "PesapiLuaImpl.cpp"
+PAPI_LUA_VALUE_REF_PATCH = REPO_ROOT / "patches" / "papi-lua-value-ref-release.patch"
 PAPI_V8_NODEJS_LINUX_RPATH_PATCH = REPO_ROOT / "patches" / "papi-v8-nodejs-linux-origin-rpath.patch"
 
 BACKEND_ALIASES = {
@@ -125,6 +127,24 @@ def ensure_papi_lua_constructor_patch() -> None:
         PUERTS_REPO_DIR,
     )
     print("[make_puerts] papi-lua constructor patch applied.")
+
+
+def ensure_papi_lua_value_ref_patch() -> None:
+    markers = ("~pesapi_value_ref__()", "value_ref->value_ref = LUA_NOREF;")
+    if not PAPI_LUA_VALUE_REF_FILE.is_file():
+        raise FileNotFoundError(f"Papi Lua source not found: {PAPI_LUA_VALUE_REF_FILE}")
+
+    source_text = PAPI_LUA_VALUE_REF_FILE.read_text(encoding="utf-8", errors="replace")
+    if all(marker in source_text for marker in markers):
+        print("[make_puerts] papi-lua value-ref patch already present, skip.")
+        return
+    if not PAPI_LUA_VALUE_REF_PATCH.is_file():
+        raise FileNotFoundError(f"papi-lua value-ref patch not found: {PAPI_LUA_VALUE_REF_PATCH}")
+    run(
+        ["git", "apply", "--ignore-space-change", "--whitespace=fix", str(PAPI_LUA_VALUE_REF_PATCH.resolve())],
+        PUERTS_REPO_DIR,
+    )
+    print("[make_puerts] papi-lua value-ref patch applied.")
 
 
 def ensure_papi_v8_nodejs_linux_rpath_patch() -> None:
@@ -245,6 +265,7 @@ def main() -> int:
         ensure_papi_v8_nodejs_linux_rpath_patch()
     if "papi-lua" in backends:
         ensure_papi_lua_constructor_patch()
+        ensure_papi_lua_value_ref_patch()
 
     if not args.skip_npm_install:
         run(["npm", "ci"], UNITY_DIR)

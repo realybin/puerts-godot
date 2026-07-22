@@ -27,7 +27,7 @@
 
 	root.load_type = {
 		exists() {
-			let error = expect(typeof load_type === "function", "load_type function missing");
+			let error = expect(typeof load_type === "function" && typeof to_callable === "function", "global helper missing");
 			if (error) {
 				return error;
 			}
@@ -292,6 +292,21 @@
 			}
 
 			error = expectThrows(() => new (load_type("DirAccess"))(), "No constructor available", "missing constructor check");
+			if (error) {
+				return error;
+			}
+
+			error = expectThrows(() => to_callable(), "expects exactly one argument", "to_callable arity rejection");
+			if (error) {
+				return error;
+			}
+
+			error = expectThrows(() => to_callable({}), "expects a script function", "to_callable type rejection");
+			if (error) {
+				return error;
+			}
+
+			error = expectThrows(() => to_callable(new (load_type("Callable"))()), "expects a script function", "to_callable Callable rejection");
 			if (error) {
 				return error;
 			}
@@ -615,6 +630,35 @@
 					return error;
 				}
 				error = expect(args.reduce(c) === null, "array reduce Variant default mismatch");
+				if (error) {
+					return error;
+				}
+
+				const add = to_callable((a, b) => a + b);
+				error = expect(add.is_custom() && add.is_valid() && add.call(20, 22) === 42, "script callable mismatch");
+				if (error) {
+					return error;
+				}
+
+				let signalCalls = 0;
+				const onScriptChanged = () => {
+					signalCalls += 1;
+				};
+				const callback = to_callable(onScriptChanged);
+				const equivalentCallback = to_callable(onScriptChanged);
+				const signal = backend_object.script_changed;
+				error = expectThrows(() => signal.connect(onScriptChanged), "Argument type does not match", "implicit callable rejection");
+				if (error) {
+					return error;
+				}
+				error = expect(signal.connect(callback) === 0 && signal.is_connected(equivalentCallback), "script callable connect mismatch");
+				if (error) {
+					return error;
+				}
+				signal.emit();
+				signal.disconnect(equivalentCallback);
+				signal.emit();
+				error = expect(signalCalls === 1 && !signal.is_connected(callback), "script callable disconnect mismatch");
 				if (error) {
 					return error;
 				}

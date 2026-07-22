@@ -4,6 +4,7 @@
 export type MethodTypeOverride = {
 	arguments?: Readonly<Record<string, string>>;
 	returnType?: string;
+	varargsType?: string;
 };
 
 export type MethodTypeOverrides = Readonly<Record<string, MethodTypeOverride>>;

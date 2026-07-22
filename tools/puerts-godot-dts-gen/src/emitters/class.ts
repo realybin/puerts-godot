@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import { normalizeOperators } from "../../../puerts-godot-operator-model/index.js";
-import type { ApiBuiltinClass, ApiClass, ApiConstant, ApiEnum, ApiMethod } from "../api-types.js";
+import type { ApiBuiltinClass, ApiClass, ApiConstant, ApiEnum, ApiMethod, ApiSignal } from "../api-types.js";
 import { getBuiltinGenericDefinition } from "../builtin-generics.js";
 import type { GenerationContext } from "../context.js";
 import type { DocumentationScope } from "../documentation.js";
@@ -53,6 +53,14 @@ function emitOperatorMethods(builtin: ApiBuiltinClass, ctx: GenerationContext, d
 	return emitMethodDeclarations(operatorMethods, ctx, { documentation, indent: "\t" });
 }
 
+function signalType(signal: ApiSignal, ctx: GenerationContext): string {
+	const argumentsList = (signal.arguments ?? []).map((argument, index) => {
+		const name = sanitizeIdentifier(argument.name || `arg${index}`);
+		return `${name}: ${mapApiType(argument, ctx)}`;
+	});
+	return `Signal<(${argumentsList.join(", ")}) => void>`;
+}
+
 export function emitObjectClass(classDef: ApiClass, ctx: GenerationContext): string[] {
 	const out: string[] = [];
 	const className = sanitizeIdentifier(classDef.name);
@@ -73,7 +81,13 @@ export function emitObjectClass(classDef: ApiClass, ctx: GenerationContext): str
 		out.push(...documentation.emit(`${readonly}${propertyName}: ${mapApiType(property, ctx)};`, [property.description], "\t"));
 	}
 	for (const signal of classDef.signals ?? []) {
-		out.push(...documentation.emit(`readonly ${sanitizeIdentifier(signal.name)}: Signal;`, [signal.description], "\t"));
+		out.push(
+			...documentation.emit(
+				`readonly ${sanitizeIdentifier(signal.name)}: ${signalType(signal, ctx)};`,
+				[signal.description],
+				"\t",
+			),
+		);
 	}
 	out.push(...emitConstants(classDef.constants, classDef.enums, ctx, documentation));
 	out.push(...emitMethodDeclarations(classDef.methods, ctx, { documentation, indent: "\t" }));

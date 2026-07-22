@@ -1,0 +1,34 @@
+Subject: [PATCH] fix: release Lua registry value references
+---
+Index: unity/native/papi-lua/source/PesapiLuaImpl.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/unity/native/papi-lua/source/PesapiLuaImpl.cpp b/unity/native/papi-lua/source/PesapiLuaImpl.cpp
+index 79eacd3a..52b7c42b 100644
+--- a/unity/native/papi-lua/source/PesapiLuaImpl.cpp
++++ b/unity/native/papi-lua/source/PesapiLuaImpl.cpp
+@@ -657,5 +657,14 @@ struct pesapi_value_ref__ : public pesapi_env_ref__
+     {
+     }
++
++    ~pesapi_value_ref__()
++    {
++        if (value_ref != LUA_NOREF)
++        {
++            luaL_unref(L, LUA_REGISTRYINDEX, value_ref);
++        }
++    }
++
+     int value_ref;
+     uint32_t internal_field_count;
+     void* internal_fields[1]; // 改为长度为1的数组
+@@ -718,6 +727,7 @@ void pesapi_set_ref_weak(pesapi_env env, pesapi_value_ref pvalue_ref)
+ {
+     auto value_ref = reinterpret_cast<pesapi::luaimpl::pesapi_value_ref__*>(pvalue_ref);
+     luaL_unref(value_ref->L, LUA_REGISTRYINDEX, value_ref->value_ref);
++    value_ref->value_ref = LUA_NOREF;
+ }
+ 
+ int pesapi_set_owner(pesapi_env env, pesapi_value pvalue, pesapi_value powner)

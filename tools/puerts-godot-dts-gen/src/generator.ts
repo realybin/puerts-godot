@@ -21,6 +21,12 @@ export function generate(api: ApiData, generatorOptions: GeneratorOptions = {}):
 	lines.push(`// api_version: ${resolveApiVersion(api)}`);
 	lines.push("");
 	lines.push(`declare function load_type<T = ${options.unknownType}>(name: string): T;`);
+	lines.push(
+		`declare function to_callable<T extends (...args: any[]) => any>(callback: T): import(${JSON.stringify(options.moduleName)}).Callable<T>;`,
+	);
+	lines.push("declare function log_error(message: string): void;");
+	lines.push("declare function log_warn(message: string): void;");
+	lines.push("declare function log_info(message: string): void;");
 	lines.push("");
 	lines.push(`declare module ${JSON.stringify(options.moduleName)} {`);
 	lines.push("\tnamespace godot {");
@@ -30,6 +36,10 @@ export function generate(api: ApiData, generatorOptions: GeneratorOptions = {}):
 	lines.push("");
 	lines.push(`\t\ttype Variant = ${buildVariantUnion(ctx)};`);
 	lines.push(`\t\tfunction load_type<T = ${options.unknownType}>(name: String): T;`);
+	lines.push("\t\tfunction to_callable<T extends (...args: any[]) => any>(callback: T): Callable<T>;");
+	lines.push("\t\tfunction log_error(message: String): void;");
+	lines.push("\t\tfunction log_warn(message: String): void;");
+	lines.push("\t\tfunction log_info(message: String): void;");
 	lines.push("");
 
 	for (const line of emitGlobalScope(api, ctx)) {
@@ -57,6 +67,10 @@ export function generate(api: ApiData, generatorOptions: GeneratorOptions = {}):
 	lines.push("\t}");
 	lines.push("");
 	lines.push("\texport const load_type: typeof globalThis.load_type;");
+	lines.push("\texport const to_callable: typeof globalThis.to_callable;");
+	lines.push("\texport const log_error: typeof globalThis.log_error;");
+	lines.push("\texport const log_warn: typeof globalThis.log_warn;");
+	lines.push("\texport const log_info: typeof globalThis.log_info;");
 	for (const namedExportLine of emitGodotModuleNamedExports(api)) {
 		lines.push(namedExportLine);
 	}

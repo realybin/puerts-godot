@@ -10,11 +10,14 @@ const LIFECYCLE_CASES = [
 	"coercion_dispose",
 	"dispose_invalidation",
 	"environment_release",
+	"callable_environment_release",
 	"environment_owned_objects_release",
 	"value_release_order",
 	"script_value_registry_churn",
 	"dispose_stress",
 	"godot_holds_js_gc",
+	"script_callable_gc",
+	"signal_callable_gc",
 	"js_refcounted_gc",
 	"non_refcounted_unbind",
 	"same_backend_multi_env",
@@ -43,6 +46,8 @@ func test_lifecycle_release_suite(case_data: Dictionary) -> void:
 			result = LifecycleSuite.run_dispose_invalidation_suite(backend, backend_info)
 		"environment_release":
 			result = LifecycleSuite.run_environment_release_suite(backend_info)
+		"callable_environment_release":
+			result = LifecycleSuite.run_callable_environment_release_suite(backend_info)
 		"environment_owned_objects_release":
 			result = LifecycleSuite.run_environment_owned_objects_release_suite(backend_info)
 		"value_release_order":
@@ -53,6 +58,10 @@ func test_lifecycle_release_suite(case_data: Dictionary) -> void:
 			result = LifecycleSuite.run_dispose_stress_suite(backend_info)
 		"godot_holds_js_gc":
 			result = LifecycleSuite.run_godot_holds_js_gc_suite(backend, backend_info)
+		"script_callable_gc":
+			result = LifecycleSuite.run_script_callable_gc_suite(backend, backend_info)
+		"signal_callable_gc":
+			result = LifecycleSuite.run_signal_callable_gc_suite(backend, backend_info)
 		"js_refcounted_gc":
 			result = LifecycleSuite.run_js_refcounted_gc_suite(backend, backend_info)
 		"non_refcounted_unbind":

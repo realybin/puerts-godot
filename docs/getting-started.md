@@ -123,6 +123,18 @@ const GlobalScope = load_type("GlobalScope");
 GlobalScope.sin(1)
 ```
 
+### to_callable
+
+`to_callable` converts a script function to a Godot `Callable`.
+
+```javascript
+const callback = to_callable((message) => {
+	log_info(message);
+});
+
+callback.call("hello");
+```
+
 ### Enum / Signal
 
 We treat enum as a static nested class and signal as a read-only property of the class.
@@ -135,8 +147,10 @@ Vector2.Axis && Vector2.Axis.AXIS_X === 0 && Vector2.Axis.AXIS_Y === 1;
 ```javascript
 const Timer = load_type("Timer");
 const timer = new Timer();
-timer.timeout.connect(callable_from_set_global);
-// under design for timer.timeout.connect(() => { })
+timer.timeout.connect(to_callable(() => {
+	log_info("timeout");
+}));
+// Note: You may need save the function reference to reuse it.
 timer.start(1.0);
 ```
 

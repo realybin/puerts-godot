@@ -102,6 +102,7 @@ private:
 	static void script_log_error_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void script_log_warn_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void script_log_info_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
+	static void script_to_callable_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	[[nodiscard]] const godot::CharString &get_cached_utf8(const godot::StringName &p_name);
 	pesapi_value variant_to_script(
 			pesapi_env p_env,

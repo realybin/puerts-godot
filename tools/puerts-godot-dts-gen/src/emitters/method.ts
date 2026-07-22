@@ -36,7 +36,7 @@ function emitMethodSignature(method: ApiMethod, ctx: GenerationContext, override
 	const methodName = sanitizeIdentifier(method.name);
 	const argTexts = emitArgumentList(method.arguments, ctx, override?.arguments);
 	if (method.is_vararg) {
-		argTexts.push(`...varargs: ${ctx.options.unknownType}[]`);
+		argTexts.push(`...varargs: ${override?.varargsType ?? `${ctx.options.unknownType}[]`}`);
 	}
 	return `${method.is_static ? "static " : ""}${methodName}(${argTexts.join(", ")}): ${methodReturnType(method, ctx, override)};`;
 }

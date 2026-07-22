@@ -4,6 +4,7 @@
 #include "puerts_environment.h"
 
 #include "puerts_runtime.h"
+#include "puerts_script_callable.h"
 #include "puerts_script_value.h"
 #include "puerts_type_register.h"
 
@@ -16,6 +17,7 @@ extern "C" int GetPapiVersion();
 namespace {
 
 constexpr char load_type_property_name[] = "load_type";
+constexpr char to_callable_property_name[] = "to_callable";
 constexpr char log_error_property_name[] = "log_error";
 constexpr char log_warn_property_name[] = "log_warn";
 constexpr char log_info_property_name[] = "log_info";
@@ -135,6 +137,8 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 
 	pesapi_value load_type = ffi_->create_function(env, &PuertsTypeRegister::load_type_callback, nullptr, nullptr);
 	ffi_->set_property(env, ffi_->global(env), load_type_property_name, load_type);
+	pesapi_value to_callable = ffi_->create_function(env, &PuertsEnvironment::script_to_callable_callback, nullptr, nullptr);
+	ffi_->set_property(env, ffi_->global(env), to_callable_property_name, to_callable);
 	pesapi_value log_error = ffi_->create_function(env, &PuertsEnvironment::script_log_error_callback, nullptr, nullptr);
 	ffi_->set_property(env, ffi_->global(env), log_error_property_name, log_error);
 	pesapi_value log_warn = ffi_->create_function(env, &PuertsEnvironment::script_log_warn_callback, nullptr, nullptr);
@@ -306,6 +310,36 @@ void PuertsEnvironment::script_log_info_callback(struct pesapi_ffi *apis, pesapi
 	pesapi_env env = apis->get_env(info);
 	const auto *env_private = static_cast<const PuertsEnvPrivate *>(apis->get_env_private(env));
 	env_private->environment->log_info(_read_log_message_arg(apis, env, info));
+}
+
+void PuertsEnvironment::script_to_callable_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+	puerts::internal::CallbackFrame frame(apis, info);
+	if (!frame.require()) {
+		return;
+	}
+	if (frame.arg_count != 1) {
+		apis->throw_by_string(info, "to_callable expects exactly one argument.");
+		return;
+	}
+
+	pesapi_value function = frame.get_argument_value(0);
+	if (!apis->is_function(frame.env, function)) {
+		apis->throw_by_string(info, "to_callable expects a script function.");
+		return;
+	}
+
+	Ref<PuertsScriptValue> script_function = frame.environment->create_script_value(frame.env, function);
+	if (script_function.is_null()) {
+		apis->throw_by_string(info, "Failed to retain script function.");
+		return;
+	}
+
+	puerts::return_variant(
+			apis,
+			info,
+			frame.env,
+			frame.environment,
+			puerts::internal::make_script_callable(script_function));
 }
 
 const CharString &PuertsEnvironment::get_cached_utf8(const StringName &p_name) {
