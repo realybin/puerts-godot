@@ -35,6 +35,10 @@ public:
 
 private:
 	class RecordBuilder;
+	struct TypeRecordDeleter {
+		void operator()(TypeRecord *p_type) const;
+	};
+	using TypeOwner = puerts_eastl::unique_ptr<TypeRecord, TypeRecordDeleter>;
 
 	struct StringNameHash {
 		size_t operator()(const godot::StringName &p_name) const {
@@ -65,7 +69,7 @@ private:
 	[[nodiscard]] TypeRecord *find_record(const void *p_type_id) const;
 	[[nodiscard]] TypeRecord *find_type_by_name(const godot::StringName &p_name);
 	[[nodiscard]] TypeRecord *find_or_add_object_record(const godot::StringName &p_name);
-	void store_type(TypeRecord *p_type);
+	void store_type(TypeOwner p_owner);
 	bool resolve_base_type(TypeRecord *p_type);
 	void register_type(TypeRecord *p_type);
 	bool ensure_registered(TypeRecord *p_type);
@@ -76,7 +80,7 @@ private:
 	puerts_eastl::hash_map<godot::StringName, TypeRecord *, StringNameHash, StringNameEqual> reflected_types_by_name_;
 	puerts_eastl::hash_map<const void *, TypeRecord *> types_by_id_;
 	TypeRecord *builtin_types_[godot::Variant::VARIANT_MAX] = {};
-	puerts_eastl::vector<TypeRecord *> owned_types_;
+	puerts_eastl::vector<TypeOwner> owned_types_;
 };
 
 #endif // PUERTS_GODOT_PUERTS_TYPE_REGISTER_H

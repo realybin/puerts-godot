@@ -11,7 +11,16 @@
 
 class PuertsBridgeRegistry {
 public:
+	struct ObjectBinding {
+		void *handle = nullptr;
+		const void *type_id = nullptr;
+	};
+
 	PuertsBridgeRegistry() = default;
+	~PuertsBridgeRegistry();
+
+	PuertsBridgeRegistry(const PuertsBridgeRegistry &) = delete;
+	PuertsBridgeRegistry &operator=(const PuertsBridgeRegistry &) = delete;
 
 	void clear();
 
@@ -19,47 +28,46 @@ public:
 	void *own_object(godot::Object *p_object, const void *p_type_id);
 	void *box_variant(const godot::Variant &p_value, const void *p_type_id);
 
-	bool find_object(godot::Object *p_object, void *&r_handle, const void *&r_type_id) const;
-	[[nodiscard]] const godot::Variant *get_box(void *p_handle) const;
-	bool get_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value) const;
-	bool set_box(void *p_handle, const godot::Variant &p_value);
-	bool get_object(void *p_handle, godot::Object *&r_object) const;
-	bool release(void *p_handle);
+	[[nodiscard]] ObjectBinding find_object(godot::Object *p_object) const;
 	[[nodiscard]] static bool is_handle(void *p_handle);
+	[[nodiscard]] const godot::Variant *find_box(void *p_handle) const;
+	bool try_get_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value) const;
+	bool update_box(void *p_handle, const godot::Variant &p_value);
+	bool try_get_object(void *p_handle, godot::Object *&r_object) const;
+	bool release(void *p_handle);
 
 private:
 	enum class Kind {
-		Free,
 		Object,
 		Variant,
 	};
 
 	struct Entry {
-		Kind kind = Kind::Free;
+		Kind kind = Kind::Variant;
 		bool script_owned = false;
-		uint32_t handle_id = 0;
 		godot::ObjectID object_id;
 		godot::Variant value;
 		const void *type_id = nullptr;
 	};
 
-	puerts_eastl::vector<Entry> entries_;
-	puerts_eastl::vector<uint32_t> free_slots_;
-	puerts_eastl::hash_map<uint32_t, uint32_t> handle_slots_;
-	puerts_eastl::hash_map<uint64_t, uint32_t> object_slots_;
-	uint32_t next_handle_id_ = 1;
+	using HandleId = uintptr_t;
+	using EntryMap = puerts_eastl::hash_map<HandleId, Entry>;
 
-	[[nodiscard]] static void *make_handle(uint32_t p_handle_id);
-	static bool parse_handle(void *p_handle, uint32_t &r_handle_id);
-	uint32_t take_handle_id();
+	static constexpr uintptr_t HANDLE_TAG = 1;
+	static constexpr HandleId MAX_HANDLE_ID = UINTPTR_MAX >> 1U;
 
-	uint32_t allocate();
-	[[nodiscard]] bool find_index(void *p_handle, uint32_t &r_index) const;
-	Entry *find(void *p_handle, uint32_t *r_index = nullptr);
-	const Entry *find(void *p_handle, uint32_t *r_index = nullptr) const;
-	void release_slot(uint32_t p_index);
+	EntryMap entries_;
+	puerts_eastl::hash_map<uint64_t, HandleId> object_entries_;
+	// Handle IDs are never reused. Exhaustion is terminal, so stale tokens cannot become valid again.
+	HandleId next_handle_id_ = 1;
+
+	[[nodiscard]] static void *encode_handle(HandleId p_handle_id);
+	static bool decode_handle(void *p_handle, HandleId &r_handle_id);
+	HandleId take_handle_id();
+	[[nodiscard]] Entry *find(void *p_handle);
+	[[nodiscard]] const Entry *find(void *p_handle) const;
 	void *store_object(godot::Object *p_object, const void *p_type_id, bool p_script_owned);
-	[[nodiscard]] static godot::Object *object_from(const Entry &p_entry);
+	[[nodiscard]] static godot::Object *resolve_object(const Entry &p_entry);
 };
 
 #endif // PUERTS_GODOT_PUERTS_BRIDGE_REGISTRY_H

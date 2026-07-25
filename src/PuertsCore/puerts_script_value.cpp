@@ -230,7 +230,9 @@ Ref<PuertsScriptValue> PuertsScriptValue::call_script_function(
 		pesapi_value p_function,
 		pesapi_value p_receiver,
 		const Array &p_args) const {
-	const int32_t arg_count = p_args.size();
+	const int64_t array_size = p_args.size();
+	ERR_FAIL_COND_V_MSG(array_size > INT_MAX, Ref<PuertsScriptValue>(), "Too many arguments for a script function call.");
+	const int arg_count = static_cast<int>(array_size);
 	puerts_eastl::fixed_vector<pesapi_value, puerts::internal::INLINE_ARGUMENT_COUNT> argv;
 	argv.resize(arg_count);
 	for (int32_t i = 0; i < arg_count; i++) {
@@ -258,19 +260,23 @@ void PuertsScriptValue::initialize(PuertsEnvironment *p_environment, pesapi_ffi 
 void PuertsScriptValue::release_value_ref() {
 	PuertsEnvironment *environment = get_environment();
 	PuertsEnvironment::operation_scope operation(environment);
-	if (cache_token_ != nullptr && environment != nullptr) {
-		environment->cached_script_values_.erase(cache_token_);
+	if (cache_entry_ != nullptr && environment != nullptr) {
+		cache_entry_->value = nullptr;
 		if (ffi_ != nullptr && value_ref_ != nullptr && environment->is_alive()) {
 			puerts::internal::EnvironmentScope scope(ffi_, environment->env_ref_);
 			pesapi_env env = scope.get_env();
 			pesapi_value value = ffi_->get_value_from_ref(env, value_ref_);
 			void *private_ptr = nullptr;
-			if (ffi_->get_private(env, value, &private_ptr) && private_ptr == cache_token_) {
-				ffi_->set_private(env, value, nullptr);
+			if (ffi_->get_private(env, value, &private_ptr) && private_ptr == cache_entry_ &&
+					ffi_->set_private(env, value, nullptr)) {
+				void *detached_entry = cache_entry_;
+				if (ffi_->get_private(env, value, &detached_entry) && detached_entry == nullptr) {
+					environment->script_value_cache_.erase(cache_entry_);
+				}
 			}
 		}
 	}
-	cache_token_ = nullptr;
+	cache_entry_ = nullptr;
 
 	if (ffi_ != nullptr && value_ref_ != nullptr) {
 		ffi_->release_value_ref(value_ref_);
@@ -288,7 +294,7 @@ bool PuertsScriptValue::ensure_live_native_object_receiver(PuertsEnvironment *p_
 
 	PuertsBridgeRegistry &bridge = p_environment->runtime_.bridge;
 	Object *object = nullptr;
-	if (!bridge.get_object(handle, object)) {
+	if (!bridge.try_get_object(handle, object)) {
 		if (!PuertsBridgeRegistry::is_handle(handle)) {
 			return true;
 		}

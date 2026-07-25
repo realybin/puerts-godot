@@ -10,6 +10,7 @@
 #include <EASTL/functional.h>
 #include <EASTL/hash_map.h>
 #include <EASTL/hash_set.h>
+#include <EASTL/unique_ptr.h>
 #include <EASTL/vector.h>
 
 namespace puerts_eastl {
@@ -30,6 +31,12 @@ using fixed_hash_map = eastl::fixed_hash_map<Key, Value, node_count, bucket_coun
 
 template <typename Value, typename Hash = eastl::hash<Value>, typename Predicate = eastl::equal_to<Value>, bool CacheHashCode = false>
 using hash_set = eastl::hash_set<Value, Hash, Predicate, allocator, CacheHashCode>;
+
+template <typename T, typename Deleter = eastl::default_delete<T>>
+using unique_ptr = eastl::unique_ptr<T, Deleter>;
+
+using eastl::make_unique;
+using eastl::move;
 
 } // namespace puerts_eastl
 

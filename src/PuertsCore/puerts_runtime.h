@@ -13,10 +13,21 @@
 
 class PuertsEnvironment;
 
+enum class PuertsEnvironmentState {
+	Uninitialized,
+	Ready,
+	DisposePending,
+	Disposing,
+};
+
 struct PuertsEnvPrivate {
-	bool alive = false;
+	PuertsEnvironmentState state = PuertsEnvironmentState::Uninitialized;
 	PuertsEnvironment *environment = nullptr;
 	PuertsBridgeRegistry bridge;
+
+	[[nodiscard]] bool accepts_calls() const {
+		return state == PuertsEnvironmentState::Ready || state == PuertsEnvironmentState::DisposePending;
+	}
 };
 
 namespace puerts::internal {
@@ -126,7 +137,7 @@ struct CallbackFrame {
 	}
 
 	[[nodiscard]] bool require() const {
-		if (env_private == nullptr || !env_private->alive) {
+		if (env_private == nullptr || !env_private->accepts_calls()) {
 			apis->throw_by_string(info, "Puerts environment is not available.");
 			return false;
 		}
@@ -155,7 +166,7 @@ private:
 			return;
 		}
 
-		holder_boxed_variant = env_private->bridge.get_box(holder_ptr);
+		holder_boxed_variant = env_private->bridge.find_box(holder_ptr);
 	}
 };
 

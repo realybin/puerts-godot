@@ -151,26 +151,38 @@ pesapi_value PuertsEnvironment::variant_to_script(
 				return ffi_->get_value_from_ref(p_env, script_value->value_ref_);
 			}
 
-			void *handle = nullptr;
-			if (const void *type_id = nullptr; bridge.find_object(object, handle, type_id)) {
-				return ffi_->native_object_to_value(p_env, type_id, handle, false);
+			if (const PuertsBridgeRegistry::ObjectBinding binding = bridge.find_object(object); binding.handle != nullptr) {
+				pesapi_value script_object = ffi_->native_object_to_value(p_env, binding.type_id, binding.handle, false);
+				return script_object != nullptr ? script_object : fail("Failed to wrap native object for script conversion.");
 			}
 
 			const void *type_id = type_register.find_or_add_object_type(object->get_class());
 			if (type_register.ensure_registered(type_id)) {
-				handle = bridge.bind_object(object, type_id);
-				return ffi_->native_object_to_value(p_env, type_id, handle, false);
+				void *handle = bridge.bind_object(object, type_id);
+				if (handle != nullptr) {
+					pesapi_value script_object = ffi_->native_object_to_value(p_env, type_id, handle, false);
+					if (script_object != nullptr) {
+						return script_object;
+					}
+					bridge.release(handle);
+				}
 			}
 
-			return fail("Failed to register object type for script conversion.");
+			return fail("Failed to wrap native object for script conversion.");
 		}
 		default:
 			const void *type_id = type_register.get_builtin_type_id(p_value.get_type());
 			if (type_register.ensure_registered(type_id)) {
 				void *handle = bridge.box_variant(p_value, type_id);
-				return ffi_->native_object_to_value(p_env, type_id, handle, false);
+				if (handle != nullptr) {
+					pesapi_value script_object = ffi_->native_object_to_value(p_env, type_id, handle, false);
+					if (script_object != nullptr) {
+						return script_object;
+					}
+					bridge.release(handle);
+				}
 			}
-			return fail("Failed to register builtin type for script conversion.");
+			return fail("Failed to wrap builtin value for script conversion.");
 	}
 }
 
@@ -218,11 +230,8 @@ Variant PuertsEnvironment::script_to_variant(pesapi_env p_env, pesapi_value p_va
 }
 
 bool PuertsEnvironment::native_to_variant(void *p_handle, const void *p_type_id, Variant &r_value) {
-	if (runtime_.bridge.get_variant(p_handle, p_type_id, r_value)) {
-		return true;
-	}
 	if (PuertsBridgeRegistry::is_handle(p_handle)) {
-		return false;
+		return runtime_.bridge.try_get_variant(p_handle, p_type_id, r_value);
 	}
 	return PuertsTypeRegister::get_singleton().native_to_variant(p_handle, p_type_id, r_value);
 }
@@ -259,16 +268,22 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 		cacheable = ffi_->get_native_object_ptr(p_env, p_value) != nullptr &&
 				ffi_->get_native_object_typeid(p_env, p_value) != nullptr;
 	}
-	void *cache_token = nullptr;
+	PuertsScriptValueCacheEntry *cache_entry = nullptr;
 	if (cacheable) {
 		void *private_ptr = nullptr;
 		if (ffi_->get_private(p_env, p_value, &private_ptr)) {
-			auto cached = cached_script_values_.find(private_ptr);
-			if (cached != cached_script_values_.end()) {
-				return Ref<PuertsScriptValue>(cached->second);
+			auto cached = script_value_cache_.find(static_cast<PuertsScriptValueCacheEntry *>(private_ptr));
+			if (cached != script_value_cache_.end()) {
+				cache_entry = cached->first;
+				if (cache_entry->value != nullptr) {
+					return Ref<PuertsScriptValue>(cache_entry->value);
+				}
 			}
-			if (is_script_value_cache_token(private_ptr)) {
-				cache_token = private_ptr;
+			// ! Happens if user write key intentionally
+			// The private slot is shared backend state. Never overwrite a value that
+			// was installed by another integration and is not one of our live keys.
+			if (private_ptr != nullptr && cache_entry == nullptr) {
+				cacheable = false;
 			}
 		}
 	}
@@ -283,21 +298,21 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 	script_value->initialize(this, ffi_, value_ref);
 	register_script_value(script_value.ptr());
 	if (cacheable) {
-		const bool attach_token = cache_token == nullptr;
-		if (attach_token) {
-			cache_token = take_script_value_cache_token();
-		}
-		if (cache_token != nullptr) {
-			cached_script_values_.insert({ cache_token, script_value.ptr() });
-			void *attached_token = nullptr;
-			const bool attached = !attach_token ||
-					(ffi_->set_private(p_env, p_value, cache_token) &&
-							ffi_->get_private(p_env, p_value, &attached_token) && attached_token == cache_token);
-			if (attached) {
-				script_value->cache_token_ = cache_token;
-			} else {
-				cached_script_values_.erase(cache_token);
+		if (cache_entry == nullptr) {
+			auto owner = puerts_eastl::make_unique<PuertsScriptValueCacheEntry>();
+			cache_entry = owner.get();
+			script_value_cache_.emplace(cache_entry, puerts_eastl::move(owner));
+			void *attached_entry = nullptr;
+			const bool attached = ffi_->set_private(p_env, p_value, cache_entry) &&
+					ffi_->get_private(p_env, p_value, &attached_entry) && attached_entry == cache_entry;
+			if (!attached) {
+				script_value_cache_.erase(cache_entry);
+				cache_entry = nullptr;
 			}
+		}
+		if (cache_entry != nullptr) {
+			cache_entry->value = script_value.ptr();
+			script_value->cache_entry_ = cache_entry;
 		}
 	}
 	return script_value;
@@ -318,10 +333,14 @@ String PuertsEnvironment::read_string(pesapi_env p_env, pesapi_value p_value) co
 PackedByteArray PuertsEnvironment::read_binary(pesapi_env p_env, pesapi_value p_value) const {
 	size_t size = 0;
 	void *buffer = ffi_->get_value_binary(p_env, p_value, &size);
-	PackedByteArray bytes;
-	bytes.resize(static_cast<int>(size));
-	if (size > 0 && buffer != nullptr) {
-		memcpy(bytes.ptrw(), buffer, size);
+	if (size == 0) {
+		return {};
 	}
+	ERR_FAIL_NULL_V_MSG(buffer, PackedByteArray(), "Script backend returned a null binary buffer with a non-zero size.");
+	ERR_FAIL_COND_V_MSG(size > static_cast<size_t>(INT64_MAX), PackedByteArray(), "Script binary is too large for PackedByteArray.");
+
+	PackedByteArray bytes;
+	ERR_FAIL_COND_V_MSG(bytes.resize(static_cast<int64_t>(size)) != OK, PackedByteArray(), "Failed to allocate PackedByteArray for script binary.");
+	memcpy(bytes.ptrw(), buffer, size);
 	return bytes;
 }

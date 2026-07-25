@@ -40,8 +40,8 @@ private:
 
 	Policy policy_ = POLICY_HASH_MAP;
 	int32_t capacity_ = 512;
-	HashMap *hash_map_cache_ = nullptr;
-	FixedHashMap *fixed_hash_map_cache_ = nullptr;
+	puerts_eastl::unique_ptr<HashMap> hash_map_cache_;
+	puerts_eastl::unique_ptr<FixedHashMap> fixed_hash_map_cache_;
 	godot::CharString no_cache_scratch_utf8_;
 
 protected:
@@ -49,7 +49,6 @@ protected:
 
 public:
 	PuertsStringNameCachePool() = default;
-	~PuertsStringNameCachePool() override;
 	godot::Error initialize(Policy p_policy = POLICY_HASH_MAP, int32_t p_capacity = 512);
 	[[nodiscard]] bool is_initialized() const;
 	void clear();

@@ -16,6 +16,7 @@
 #include "pesapi.h"
 
 class PuertsEnvironment;
+struct PuertsScriptValueCacheEntry;
 
 class PuertsScriptValue : public godot::RefCounted {
 	GDCLASS(PuertsScriptValue, godot::RefCounted)
@@ -23,7 +24,7 @@ class PuertsScriptValue : public godot::RefCounted {
 	PuertsEnvironment *environment_ = nullptr;
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_value_ref value_ref_ = nullptr;
-	void *cache_token_ = nullptr;
+	PuertsScriptValueCacheEntry *cache_entry_ = nullptr;
 	PuertsScriptValue *previous_ = nullptr;
 	PuertsScriptValue *next_ = nullptr;
 

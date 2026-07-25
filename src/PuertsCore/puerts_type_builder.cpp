@@ -97,12 +97,13 @@ void copy_properties(puerts_eastl::vector<TypeRecord::Property> &r_properties, c
 
 } // namespace
 
-PuertsTypeRegister::TypeRecord *PuertsTypeRegister::RecordBuilder::build_object_type(PuertsTypeRegister &p_registry, const StringName &p_name) {
+PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_object_type(PuertsTypeRegister &p_registry, const StringName &p_name) {
 	if (!ClassDB::class_exists(p_name)) {
-		return nullptr;
+		return {};
 	}
 
-	TypeRecord *type = memnew(TypeRecord);
+	TypeOwner owner(memnew(TypeRecord));
+	TypeRecord *type = owner.get();
 	type->type_id = type;
 	type->kind = TypeRecord::Kind::REFLECTED_OBJECT;
 	type->name = p_name;
@@ -120,11 +121,12 @@ PuertsTypeRegister::TypeRecord *PuertsTypeRegister::RecordBuilder::build_object_
 	const PackedStringArray integer_constants = ClassDB::class_get_integer_constant_list(p_name, true);
 	append_reflected_enum_groups(p_registry, type, p_name);
 	append_reflected_integer_constants(type, p_name, integer_constants);
-	return type;
+	return owner;
 }
 
-PuertsTypeRegister::TypeRecord *PuertsTypeRegister::RecordBuilder::build_static_type(const puerts::TypeDefinition &p_definition) {
-	TypeRecord *type = memnew(TypeRecord);
+PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_static_type(const puerts::TypeDefinition &p_definition) {
+	TypeOwner owner(memnew(TypeRecord));
+	TypeRecord *type = owner.get();
 	type->type_id = p_definition.type_id;
 	type->kind = TypeRecord::Kind::STATIC_BINDING;
 	type->name = p_definition.name;
@@ -139,7 +141,7 @@ PuertsTypeRegister::TypeRecord *PuertsTypeRegister::RecordBuilder::build_static_
 	copy_properties(type->instance_properties, p_definition.instance_properties);
 	copy_properties(type->static_properties, p_definition.static_properties);
 
-	return type;
+	return owner;
 }
 
 void PuertsTypeRegister::RecordBuilder::append_reflected_methods(TypeRecord *p_type, const TypedArray<Dictionary> &p_method_list) {
@@ -157,7 +159,7 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_methods(TypeRecord *p_t
 		TypeRecord::Method method;
 		method.name = method_dict["name"];
 		method.owner_class_name = p_type->name;
-		method.argument_count = method_info.arguments.size();
+		method.has_arguments = !method_info.arguments.is_empty();
 		if ((method_flags & METHOD_FLAG_VIRTUAL) == 0 && ClassDB::class_has_method(method.owner_class_name, method.name, true)) {
 			// Resolve once while building the immutable type record. Reflected calls
 			// then enter Godot without a lazy lookup branch or shared-state write.
@@ -215,7 +217,10 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_properties(TypeRecord *
 		property.getter_method = find_reflected_method(
 				methods,
 				ClassDB::class_get_property_getter(p_type->name, property.name));
-		property.indexed = property.getter_method->argument_count != 0;
+		if (property.getter_method == nullptr) {
+			continue;
+		}
+		property.indexed = property.getter_method->has_arguments;
 		property.getter = &PuertsTypeRegister::object_property_getter_callback;
 		if (!is_read_only_reflected_property(property_dict)) {
 			if (!property.indexed) {
@@ -246,7 +251,8 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_enum_groups(PuertsTypeR
 	p_type->static_properties.reserve(p_type->static_properties.size() + enum_names.size());
 	for (const auto &enum_name_value : enum_names) {
 		const StringName enum_name = enum_name_value;
-		TypeRecord *enum_type = memnew(TypeRecord);
+		TypeOwner enum_owner(memnew(TypeRecord));
+		TypeRecord *enum_type = enum_owner.get();
 		enum_type->type_id = enum_type;
 		enum_type->kind = TypeRecord::Kind::STATIC_BINDING;
 		enum_type->name = StringName(String(p_name) + "." + String(enum_name));
@@ -261,7 +267,7 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_enum_groups(PuertsTypeR
 			constant.getter = &PuertsTypeRegister::integer_constant_getter_callback;
 			enum_type->static_properties.push_back(constant);
 		}
-		p_registry.store_type(enum_type);
+		p_registry.store_type(puerts_eastl::move(enum_owner));
 
 		TypeRecord::Property enum_group_property;
 		enum_group_property.name = enum_name;

@@ -155,6 +155,7 @@ bool with_converted_variant(
 template <typename Target>
 Target *resolve_native_pointer(
 		pesapi_ffi *apis,
+		CallbackFrame &p_frame,
 		CallbackFrame::Argument &p_argument,
 		pesapi_callback_info info = nullptr) {
 	if (p_argument.native_handle == nullptr || PuertsBridgeRegistry::is_handle(p_argument.native_handle)) {
@@ -180,7 +181,8 @@ Target *resolve_native_pointer(
 template <typename T, typename Consumer>
 bool with_converted_native(
 		pesapi_ffi *apis,
-		CallbackFrame::Argument &p_argument,
+		CallbackFrame &p_frame,
+		int p_index,
 		pesapi_callback_info info,
 		Consumer &&p_consumer) {
 	static_assert(!is_nonconst_lvalue_ref_v<T>, "Non-const reference arguments are not supported.");
@@ -189,7 +191,8 @@ bool with_converted_native(
 			eastl::is_pointer_v<argument_type>,
 			eastl::remove_cv_t<eastl::remove_pointer_t<argument_type>>,
 			argument_type>;
-	target_type *ptr = resolve_native_pointer<target_type>(apis, p_argument, info);
+	CallbackFrame::Argument &argument = p_frame.get_native_argument(p_index);
+	target_type *ptr = resolve_native_pointer<target_type>(apis, p_frame, argument, info);
 	if (ptr == nullptr) {
 		return false;
 	}
@@ -212,7 +215,7 @@ bool with_converted_argument(
 	if constexpr (has_variant_type_v<T>) {
 		return with_converted_variant<T>(apis, error_info, frame, p_index, eastl::forward<Consumer>(p_consumer));
 	}
-	return with_converted_native<T>(apis, frame.get_native_argument(p_index), error_info, eastl::forward<Consumer>(p_consumer));
+	return with_converted_native<T>(apis, frame, p_index, error_info, eastl::forward<Consumer>(p_consumer));
 }
 
 template <bool Probe, typename T>
@@ -244,7 +247,14 @@ inline void add_native_owned_return(
 		pesapi_env env,
 		const T &value) {
 	using target_type = unqualified_t<T>;
-	apis->add_return(info, apis->native_object_to_value(env, static_type_id<target_type>::get(), memnew(target_type(value)), true));
+	target_type *owned_value = memnew(target_type(value));
+	pesapi_value script_value = apis->native_object_to_value(env, static_type_id<target_type>::get(), owned_value, true);
+	if (script_value == nullptr) {
+		godot::memdelete(owned_value);
+		apis->throw_by_string(info, "Failed to wrap native return value.");
+		return;
+	}
+	apis->add_return(info, script_value);
 }
 
 template <typename R>
@@ -357,7 +367,7 @@ struct ReceiverStorage<T, true> {
 
 	void write_back() const {
 		if (boxed_handle != nullptr) {
-			frame->env_private->bridge.set_box(boxed_handle, godot::Variant(storage));
+			frame->env_private->bridge.update_box(boxed_handle, godot::Variant(storage));
 		}
 	}
 };
@@ -425,7 +435,7 @@ BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, C
 
 	if constexpr (eastl::is_base_of_v<godot::Object, typename BoundReceiver<T>::target_type>) {
 		godot::Object *resolved = nullptr;
-		if (frame.env_private->bridge.get_object(holder, resolved)) {
+		if (frame.env_private->bridge.try_get_object(holder, resolved)) {
 			if (resolved == nullptr) {
 				apis->throw_by_string(info, "Native object is no longer valid.");
 				return instance;

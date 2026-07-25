@@ -63,7 +63,7 @@ PuertsEnvironment::~PuertsEnvironment() {
 }
 
 Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNameCachePool> &p_string_name_cache_pool) {
-	if (disposing_ || active_operations_ != 0) {
+	if (runtime_.state == PuertsEnvironmentState::Disposing || active_operations_ != 0) {
 		log_error("Puerts environment is being disposed.");
 		return ERR_BUSY;
 	}
@@ -94,13 +94,17 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		return ERR_UNCONFIGURED;
 	}
 
-	const uint64_t functions_ptr = functions_ptr_variant;
-	if (functions_ptr == 0) {
+	const int64_t functions_address = functions_ptr_variant;
+	if (functions_address <= 0) {
 		log_error("Puerts backend does not expose its function table.");
 		return ERR_UNCONFIGURED;
 	}
+	if (static_cast<uint64_t>(functions_address) > static_cast<uint64_t>(UINTPTR_MAX)) {
+		log_error("Puerts backend function table address does not fit this architecture.");
+		return ERR_UNCONFIGURED;
+	}
 
-	const auto *functions = reinterpret_cast<const PuertsBackendFunctions *>(functions_ptr);
+	const auto *functions = reinterpret_cast<const PuertsBackendFunctions *>(static_cast<uintptr_t>(functions_address));
 	if (functions->get_api_version == nullptr || functions->get_ffi == nullptr || functions->create_env_ref == nullptr || functions->destroy_env_ref == nullptr) {
 		log_error("Puerts backend function table is incomplete.");
 		return ERR_UNCONFIGURED;
@@ -131,7 +135,7 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
 	ffi_->set_registry(env, type_register.get_registry());
 
-	runtime_.alive = true;
+	runtime_.state = PuertsEnvironmentState::Ready;
 	runtime_.environment = this;
 	ffi_->set_env_private(env, &runtime_);
 
@@ -153,11 +157,11 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 }
 
 void PuertsEnvironment::dispose() {
-	if (disposing_) {
+	if (runtime_.state != PuertsEnvironmentState::Ready) {
 		return;
 	}
 	if (active_operations_ != 0) {
-		dispose_requested_ = true;
+		runtime_.state = PuertsEnvironmentState::DisposePending;
 		return;
 	}
 	Ref<PuertsEnvironment> keep_alive(this);
@@ -166,18 +170,16 @@ void PuertsEnvironment::dispose() {
 
 void PuertsEnvironment::end_operation() {
 	--active_operations_;
-	if (active_operations_ == 0 && dispose_requested_) {
+	if (active_operations_ == 0 && runtime_.state == PuertsEnvironmentState::DisposePending) {
 		dispose_internal();
 	}
 }
 
 void PuertsEnvironment::dispose_internal() {
-	if (disposing_) {
+	if (runtime_.state != PuertsEnvironmentState::Ready && runtime_.state != PuertsEnvironmentState::DisposePending) {
 		return;
 	}
-	disposing_ = true;
-	dispose_requested_ = false;
-	runtime_.alive = false;
+	runtime_.state = PuertsEnvironmentState::Disposing;
 	invalidate_script_values();
 
 	if (env_ref_ != nullptr) {
@@ -199,12 +201,11 @@ void PuertsEnvironment::dispose_internal() {
 	backend_functions_ = nullptr;
 	backend_ref_.unref();
 	string_name_cache_pool_.unref();
-	next_script_value_cache_id_ = 1;
-	disposing_ = false;
+	runtime_.state = PuertsEnvironmentState::Uninitialized;
 }
 
 bool PuertsEnvironment::is_alive() const {
-	return !disposing_ && !dispose_requested_ && runtime_.alive;
+	return runtime_.state == PuertsEnvironmentState::Ready;
 }
 
 Object *PuertsEnvironment::get_backend() const {
@@ -290,26 +291,26 @@ void PuertsEnvironment::emit_log(const Callable &p_callback, const String &p_mes
 	p_callback.call(p_message);
 }
 
-static String _read_log_message_arg(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_callback_info p_info) {
+static String read_log_message_arg(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_callback_info p_info) {
 	return puerts::internal::read_utf8_string(p_apis, p_env, p_apis->get_arg(p_info, 0));
 }
 
 void PuertsEnvironment::script_log_error_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	pesapi_env env = apis->get_env(info);
 	const auto *env_private = static_cast<const PuertsEnvPrivate *>(apis->get_env_private(env));
-	env_private->environment->log_error(_read_log_message_arg(apis, env, info));
+	env_private->environment->log_error(read_log_message_arg(apis, env, info));
 }
 
 void PuertsEnvironment::script_log_warn_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	pesapi_env env = apis->get_env(info);
 	const auto *env_private = static_cast<const PuertsEnvPrivate *>(apis->get_env_private(env));
-	env_private->environment->log_warn(_read_log_message_arg(apis, env, info));
+	env_private->environment->log_warn(read_log_message_arg(apis, env, info));
 }
 
 void PuertsEnvironment::script_log_info_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	pesapi_env env = apis->get_env(info);
 	const auto *env_private = static_cast<const PuertsEnvPrivate *>(apis->get_env_private(env));
-	env_private->environment->log_info(_read_log_message_arg(apis, env, info));
+	env_private->environment->log_info(read_log_message_arg(apis, env, info));
 }
 
 void PuertsEnvironment::script_to_callable_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -358,19 +359,6 @@ bool PuertsEnvironment::can_use_backend_function(bool p_supported, const String 
 	return false;
 }
 
-void *PuertsEnvironment::take_script_value_cache_token() {
-	if (next_script_value_cache_id_ > (UINTPTR_MAX >> 1U)) {
-		return nullptr;
-	}
-	return reinterpret_cast<void *>((next_script_value_cache_id_++ << 1U) | 1U);
-}
-
-bool PuertsEnvironment::is_script_value_cache_token(void *p_token) const {
-	const uintptr_t raw = reinterpret_cast<uintptr_t>(p_token);
-	const uintptr_t id = raw >> 1U;
-	return (raw & 1U) != 0 && id != 0 && id < next_script_value_cache_id_;
-}
-
 void PuertsEnvironment::register_script_value(PuertsScriptValue *p_value) {
 	p_value->previous_ = nullptr;
 	p_value->next_ = script_values_head_;
@@ -394,16 +382,16 @@ void PuertsEnvironment::unregister_script_value(PuertsScriptValue *p_value) {
 }
 
 void PuertsEnvironment::invalidate_script_values() {
-	cached_script_values_.clear();
 	PuertsScriptValue *value = script_values_head_;
 	script_values_head_ = nullptr;
 	while (value != nullptr) {
 		PuertsScriptValue *next = value->next_;
 		value->previous_ = nullptr;
 		value->next_ = nullptr;
-		value->cache_token_ = nullptr;
+		value->cache_entry_ = nullptr;
 		Ref<PuertsScriptValue> keep_alive(value);
 		value->release_value_ref();
 		value = next;
 	}
+	script_value_cache_.clear();
 }

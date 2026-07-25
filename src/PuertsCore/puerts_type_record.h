@@ -18,7 +18,7 @@ struct PuertsTypeRegister::TypeRecord {
 	struct Method {
 		godot::StringName name;
 		godot::StringName owner_class_name;
-		int argument_count = 0;
+		bool has_arguments = false;
 		GDExtensionMethodBindPtr method_bind = nullptr;
 		pesapi_callback callback = nullptr;
 		void *userdata = nullptr;
@@ -56,8 +56,8 @@ struct PuertsTypeRegister::TypeRecord {
 
 class PuertsTypeRegister::RecordBuilder {
 public:
-	static TypeRecord *build_object_type(PuertsTypeRegister &p_registry, const godot::StringName &p_name);
-	static TypeRecord *build_static_type(const puerts::TypeDefinition &p_definition);
+	static TypeOwner build_object_type(PuertsTypeRegister &p_registry, const godot::StringName &p_name);
+	static TypeOwner build_static_type(const puerts::TypeDefinition &p_definition);
 
 private:
 	static void append_reflected_methods(TypeRecord *p_type, const godot::TypedArray<godot::Dictionary> &p_method_list);

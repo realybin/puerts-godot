@@ -72,7 +72,7 @@ Object *resolve_holder_object(puerts::internal::CallbackFrame &p_frame) {
 		return nullptr;
 	}
 	Object *object = nullptr;
-	if (p_frame.env_private->bridge.get_object(holder, object)) {
+	if (p_frame.env_private->bridge.try_get_object(holder, object)) {
 		return object;
 	}
 	return PuertsBridgeRegistry::is_handle(holder) ? nullptr : static_cast<Object *>(holder);
@@ -140,11 +140,11 @@ PuertsTypeRegister::PuertsTypeRegister() {
 	});
 }
 
-PuertsTypeRegister::~PuertsTypeRegister() {
-	for (TypeRecord *type : owned_types_) {
-		memdelete(type);
-	}
+void PuertsTypeRegister::TypeRecordDeleter::operator()(TypeRecord *p_type) const {
+	memdelete(p_type);
 }
+
+PuertsTypeRegister::~PuertsTypeRegister() = default;
 
 pesapi_registry PuertsTypeRegister::get_registry() const {
 	return registry_;
@@ -165,11 +165,12 @@ bool PuertsTypeRegister::has_type(const void *p_type_id) const {
 }
 
 void PuertsTypeRegister::register_static_type(const puerts::TypeDefinition &p_definition) {
-	TypeRecord *type = RecordBuilder::build_static_type(p_definition);
+	TypeOwner owner = RecordBuilder::build_static_type(p_definition);
+	TypeRecord *type = owner.get();
 	if (type->base_id != nullptr) {
 		type->base = find_record(type->base_id);
 	}
-	store_type(type);
+	store_type(puerts_eastl::move(owner));
 }
 
 PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_or_add_object_record(const StringName &p_name) {
@@ -178,12 +179,13 @@ PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_or_add_object_record(co
 		return found->second;
 	}
 
-	TypeRecord *type = RecordBuilder::build_object_type(*this, p_name);
-	if (type == nullptr) {
+	TypeOwner owner = RecordBuilder::build_object_type(*this, p_name);
+	if (owner == nullptr) {
 		return nullptr;
 	}
 
-	store_type(type);
+	TypeRecord *type = owner.get();
+	store_type(puerts_eastl::move(owner));
 	return type;
 }
 
@@ -250,25 +252,26 @@ bool PuertsTypeRegister::native_to_variant(void *p_pointer, const void *p_type_i
 	return true;
 }
 
-void PuertsTypeRegister::store_type(TypeRecord *p_type) {
-	owned_types_.push_back(p_type);
-	types_by_id_.insert({ p_type->type_id, p_type });
-	if (p_type->kind == TypeRecord::Kind::REFLECTED_OBJECT) {
-		reflected_types_by_name_.insert({ p_type->name, p_type });
+void PuertsTypeRegister::store_type(TypeOwner p_owner) {
+	TypeRecord *type = p_owner.get();
+	owned_types_.push_back(puerts_eastl::move(p_owner));
+	types_by_id_.insert({ type->type_id, type });
+	if (type->kind == TypeRecord::Kind::REFLECTED_OBJECT) {
+		reflected_types_by_name_.insert({ type->name, type });
 	}
 
-	auto by_name = types_by_name_.find(p_type->name);
+	auto by_name = types_by_name_.find(type->name);
 	const bool keep_existing_static_binding = by_name != types_by_name_.end() &&
 			by_name->second->kind == TypeRecord::Kind::STATIC_BINDING &&
-			p_type->kind != TypeRecord::Kind::STATIC_BINDING;
+			type->kind != TypeRecord::Kind::STATIC_BINDING;
 	if (by_name == types_by_name_.end()) {
-		types_by_name_.insert({ p_type->name, p_type });
+		types_by_name_.insert({ type->name, type });
 	} else if (!keep_existing_static_binding) {
-		by_name->second = p_type;
+		by_name->second = type;
 	}
 
-	if (should_index_builtin_variant(p_type)) {
-		builtin_types_[static_cast<int>(p_type->variant_type)] = p_type;
+	if (should_index_builtin_variant(type)) {
+		builtin_types_[static_cast<int>(type->variant_type)] = type;
 	}
 }
 
@@ -345,7 +348,7 @@ void PuertsTypeRegister::register_type(TypeRecord *p_type) {
 
 void PuertsTypeRegister::on_native_binding_exit(void *ptr, void *class_data, void *env_private, void *userdata) {
 	auto *private_state = static_cast<PuertsEnvPrivate *>(env_private);
-	if (private_state == nullptr || !private_state->alive) {
+	if (private_state == nullptr || !private_state->accepts_calls()) {
 		return;
 	}
 	Ref<PuertsEnvironment> keep_alive(private_state->environment);

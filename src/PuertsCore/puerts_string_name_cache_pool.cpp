@@ -3,7 +3,6 @@
 
 #include "puerts_string_name_cache_pool.h"
 
-#include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/variant/string.hpp>
 
 using namespace godot;
@@ -44,25 +43,15 @@ Error PuertsStringNameCachePool::initialize(Policy p_policy, int32_t p_capacity)
 	capacity_ = MAX(1, p_capacity);
 	if (policy_ == POLICY_FIXED_HASH_MAP) {
 		capacity_ = FIXED_HASH_MAP_MAX_CAPACITY;
-		fixed_hash_map_cache_ = memnew(FixedHashMap);
+		fixed_hash_map_cache_ = puerts_eastl::make_unique<FixedHashMap>();
 	}
 	initialized_ = true;
 	return OK;
 }
 
-PuertsStringNameCachePool::~PuertsStringNameCachePool() {
-	reset_storage();
-}
-
 void PuertsStringNameCachePool::reset_storage() {
-	if (hash_map_cache_ != nullptr) {
-		memdelete(hash_map_cache_);
-		hash_map_cache_ = nullptr;
-	}
-	if (fixed_hash_map_cache_ != nullptr) {
-		memdelete(fixed_hash_map_cache_);
-		fixed_hash_map_cache_ = nullptr;
-	}
+	hash_map_cache_.reset();
+	fixed_hash_map_cache_.reset();
 	no_cache_scratch_utf8_ = CharString();
 }
 
@@ -97,7 +86,7 @@ const CharString &PuertsStringNameCachePool::get_cached_utf8(const StringName &p
 	switch (policy_) {
 		case POLICY_HASH_MAP:
 			if (hash_map_cache_ == nullptr) {
-				hash_map_cache_ = memnew(HashMap);
+				hash_map_cache_ = puerts_eastl::make_unique<HashMap>();
 				hash_map_cache_->reserve(static_cast<size_t>(capacity_));
 			}
 			return find_or_cache_utf8(*hash_map_cache_, p_name, static_cast<size_t>(capacity_));

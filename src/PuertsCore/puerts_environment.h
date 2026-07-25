@@ -24,6 +24,11 @@
 class PuertsScriptValue;
 class PuertsTypeRegister;
 class PuertsEnvironment;
+
+struct PuertsScriptValueCacheEntry {
+	PuertsScriptValue *value = nullptr;
+};
+
 namespace puerts {
 godot::Variant script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
 bool native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
@@ -38,12 +43,9 @@ class PuertsEnvironment : public godot::RefCounted {
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_env_ref env_ref_ = nullptr;
 	PuertsEnvPrivate runtime_;
-	bool disposing_ = false;
-	bool dispose_requested_ = false;
 	uint32_t active_operations_ = 0;
 	PuertsScriptValue *script_values_head_ = nullptr;
-	puerts_eastl::hash_map<void *, PuertsScriptValue *> cached_script_values_;
-	uintptr_t next_script_value_cache_id_ = 1;
+	puerts_eastl::hash_map<PuertsScriptValueCacheEntry *, puerts_eastl::unique_ptr<PuertsScriptValueCacheEntry>> script_value_cache_;
 	godot::Callable error_callback_;
 	godot::Callable warn_callback_;
 	godot::Callable info_callback_;
@@ -118,8 +120,6 @@ private:
 	bool can_use_backend_function(bool p_supported, const godot::String &p_error_message);
 	void end_operation();
 	void dispose_internal();
-	void *take_script_value_cache_token();
-	bool is_script_value_cache_token(void *p_token) const;
 	void register_script_value(PuertsScriptValue *p_value);
 	void unregister_script_value(PuertsScriptValue *p_value);
 	void invalidate_script_values();
