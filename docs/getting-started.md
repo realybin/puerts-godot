@@ -307,7 +307,17 @@ And you can use `log_error`, `log_warn`, `log_info` to call the callback manuall
 
 ### Rich editor support
 
+We provided a godot d.ts generator via `extension_api.json`
+
+[puerts-godot-dts-gen](../tools/puerts-godot-dts-gen)
+
 You can refer [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) for more information.
+
+### ESM support
+
+We provided a simple esm implementation for [BackendEnv.cpp](https://github.com/Tencent/puerts/blob/master/unity/native/papi-v8/source/BackendEnv.cpp)
+
+See [README.md](../src/PuertsRuntime/ECMAScript/README.md)
 
 ## Next
 
