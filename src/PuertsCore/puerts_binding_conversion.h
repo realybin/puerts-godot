@@ -95,37 +95,35 @@ struct variant_converter<T, eastl::enable_if_t<has_variant_type_v<T>>> {
 };
 
 inline const godot::Variant &load_variant_argument(
-		CallbackFrame &p_frame,
+		CallbackContext &p_frame,
 		int p_index,
-		CallbackFrame::Argument *p_native_argument = nullptr) {
-	CallbackFrame::Argument &argument = p_frame.get_argument(p_index);
+		CallbackContext::Argument *p_native_argument = nullptr) {
+	CallbackContext::Argument &argument = p_frame.argument(p_index);
+	godot::Variant &variant = p_frame.variant(p_index);
 	if (!argument.variant_loaded) {
 		if (p_native_argument == nullptr ||
 				!puerts::native_to_variant(
-						p_frame.environment,
+						p_frame.puerts_environment(),
 						p_native_argument->native_handle,
 						p_native_argument->native_type_id,
-						argument.variant)) {
-			argument.variant = puerts::script_to_variant(p_frame.environment, p_frame.env, p_frame.get_argument_value(p_index));
+						variant)) {
+			variant = puerts::script_to_variant(p_frame.puerts_environment(), p_frame.script_env(), p_frame.argument_value(p_index));
 		}
 		argument.variant_loaded = true;
 	}
-	return argument.variant;
+	return variant;
 }
 
 template <typename T, typename Consumer>
-bool with_converted_variant(
+bool convert_variant_argument(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
-		CallbackFrame &frame,
+		CallbackContext &frame,
 		int p_index,
 		Consumer &&p_consumer) {
 	static_assert(!is_nonconst_lvalue_ref_v<T>, "Non-const reference arguments are not supported.");
 	auto reject_argument_type = [&]() {
-		if (info != nullptr) {
-			apis->throw_by_string(info, "Argument type does not match the bound signature.");
-		}
-		return false;
+		return frame.reject(info, "Argument type does not match the bound signature.");
 	};
 	auto cast_variant = [&](const godot::Variant &p_variant) {
 		if constexpr (variant_type_v<T> != GDEXTENSION_VARIANT_TYPE_NIL) {
@@ -138,12 +136,12 @@ bool with_converted_variant(
 		return true;
 	};
 
-	CallbackFrame::Argument *native_argument = nullptr;
+	CallbackContext::Argument *native_argument = nullptr;
 	if constexpr (variant_type_v<T> != GDEXTENSION_VARIANT_TYPE_OBJECT &&
 			variant_type_v<T> != GDEXTENSION_VARIANT_TYPE_NIL) {
-		pesapi_value value = frame.get_argument_value(p_index);
-		if (apis->is_object(frame.env, value)) {
-			native_argument = &frame.get_native_argument(p_index);
+		pesapi_value value = frame.argument_value(p_index);
+		if (apis->is_object(frame.script_env(), value)) {
+			native_argument = &frame.native_argument(p_index);
 			if (native_argument->native_handle == nullptr) {
 				return reject_argument_type();
 			}
@@ -154,14 +152,11 @@ bool with_converted_variant(
 
 template <typename Target>
 Target *resolve_native_pointer(
-		pesapi_ffi *apis,
-		CallbackFrame &p_frame,
-		CallbackFrame::Argument &p_argument,
+		CallbackContext &p_frame,
+		CallbackContext::Argument &p_argument,
 		pesapi_callback_info info = nullptr) {
 	if (p_argument.native_handle == nullptr || PuertsBridgeRegistry::is_handle(p_argument.native_handle)) {
-		if (info != nullptr) {
-			apis->throw_by_string(info, "Native object is no longer valid.");
-		}
+		(void)p_frame.reject(info, "Native object is no longer valid.");
 		return nullptr;
 	}
 	const void *type_id = p_argument.native_type_id;
@@ -169,9 +164,7 @@ Target *resolve_native_pointer(
 		return static_cast<Target *>(p_argument.native_handle);
 	}
 	if (!PuertsTypeRegister::get_singleton().is_assignable(type_id, static_type_id<Target>::get())) {
-		if (info != nullptr) {
-			apis->throw_by_string(info, "Native object type does not match the bound signature.");
-		}
+		(void)p_frame.reject(info, "Native object type does not match the bound signature.");
 		return nullptr;
 	}
 
@@ -179,9 +172,9 @@ Target *resolve_native_pointer(
 }
 
 template <typename T, typename Consumer>
-bool with_converted_native(
+bool convert_native_argument(
 		pesapi_ffi *apis,
-		CallbackFrame &p_frame,
+		CallbackContext &p_frame,
 		int p_index,
 		pesapi_callback_info info,
 		Consumer &&p_consumer) {
@@ -191,8 +184,8 @@ bool with_converted_native(
 			eastl::is_pointer_v<argument_type>,
 			eastl::remove_cv_t<eastl::remove_pointer_t<argument_type>>,
 			argument_type>;
-	CallbackFrame::Argument &argument = p_frame.get_native_argument(p_index);
-	target_type *ptr = resolve_native_pointer<target_type>(apis, p_frame, argument, info);
+	CallbackContext::Argument &argument = p_frame.native_argument(p_index);
+	target_type *ptr = resolve_native_pointer<target_type>(p_frame, argument, info);
 	if (ptr == nullptr) {
 		return false;
 	}
@@ -205,29 +198,45 @@ bool with_converted_native(
 }
 
 template <bool Probe, typename T, typename Consumer>
-bool with_converted_argument(
+bool convert_script_argument(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
-		CallbackFrame &frame,
+		CallbackContext &frame,
 		int p_index,
 		Consumer &&p_consumer) {
 	pesapi_callback_info error_info = Probe ? nullptr : info;
 	if constexpr (has_variant_type_v<T>) {
-		return with_converted_variant<T>(apis, error_info, frame, p_index, eastl::forward<Consumer>(p_consumer));
+		return convert_variant_argument<T>(apis, error_info, frame, p_index, eastl::forward<Consumer>(p_consumer));
 	}
-	return with_converted_native<T>(apis, frame, p_index, error_info, eastl::forward<Consumer>(p_consumer));
+	return convert_native_argument<T>(apis, frame, p_index, error_info, eastl::forward<Consumer>(p_consumer));
 }
 
 template <bool Probe, typename T>
-bool convert_argument(
+bool assign_converted_argument(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
-		CallbackFrame &frame,
+		CallbackContext &frame,
 		int p_index,
 		unqualified_t<T> &r_value) {
-	return with_converted_argument<Probe, T>(apis, info, frame, p_index, [&](auto &&p_value) {
+	return convert_script_argument<Probe, T>(apis, info, frame, p_index, [&](auto &&p_value) {
 		r_value = eastl::forward<decltype(p_value)>(p_value);
 	});
+}
+
+template <bool Probe>
+bool convert_call_arguments(
+		pesapi_ffi *p_apis,
+		pesapi_callback_info p_info,
+		CallbackContext &p_frame,
+		CallArguments &r_arguments) {
+	const int argument_count = p_frame.argument_count();
+	r_arguments.resize(argument_count);
+	for (int i = 0; i < argument_count; ++i) {
+		if (!assign_converted_argument<Probe, godot::Variant>(p_apis, p_info, p_frame, i, r_arguments.values[i])) {
+			return false;
+		}
+	}
+	return true;
 }
 
 template <typename T>
@@ -352,7 +361,7 @@ struct ReceiverStorage<T, true> {
 	// Builtin variants are copied into local storage and written back after mutation.
 	target_type storage{};
 	target_type *raw_ptr = nullptr;
-	CallbackFrame *frame = nullptr;
+	CallbackContext *frame = nullptr;
 	void *boxed_handle = nullptr;
 
 	ReceiverStorage() = default;
@@ -367,7 +376,7 @@ struct ReceiverStorage<T, true> {
 
 	void write_back() const {
 		if (boxed_handle != nullptr) {
-			frame->env_private->bridge.update_box(boxed_handle, godot::Variant(storage));
+			frame->environment_data()->bridge.update_box(boxed_handle, godot::Variant(storage));
 		}
 	}
 };
@@ -395,18 +404,18 @@ template <typename T>
 using BoundReceiver = ReceiverStorage<T, is_boxed_receiver<T>::value>;
 
 template <typename T>
-BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, CallbackFrame &frame) {
+BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
 	BoundReceiver<T> instance;
 	if constexpr (is_boxed_receiver<T>::value) {
 		instance.frame = &frame;
 	}
 
-	void *holder = frame.get_holder_ptr();
+	void *holder = frame.holder_ptr();
 	if (holder == nullptr) {
 		apis->throw_by_string(info, "Native object is not available.");
 		return instance;
 	}
-	if (const void *holder_type_id = frame.get_holder_typeid(); holder_type_id != nullptr) {
+	if (const void *holder_type_id = frame.holder_type_id(); holder_type_id != nullptr) {
 		const void *expected_type_id = static_type_id<typename BoundReceiver<T>::target_type>::get();
 		if (holder_type_id != expected_type_id &&
 				!PuertsTypeRegister::get_singleton().is_assignable(holder_type_id, expected_type_id)) {
@@ -419,7 +428,7 @@ BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, C
 		if constexpr (variant_type_v<typename BoundReceiver<T>::target_type> != GDEXTENSION_VARIANT_TYPE_OBJECT &&
 				variant_type_v<typename BoundReceiver<T>::target_type> != GDEXTENSION_VARIANT_TYPE_NIL) {
 			// Boxed builtin receivers come from the bridge; direct native returns use the raw pointer path below.
-			if (const godot::Variant *boxed_variant = frame.get_holder_boxed_variant(); boxed_variant != nullptr) {
+			if (const godot::Variant *boxed_variant = frame.holder_boxed_variant(); boxed_variant != nullptr) {
 				if (boxed_variant->get_type() != godot::Variant::NIL &&
 						can_cast_variant<typename BoundReceiver<T>::target_type>(*boxed_variant)) {
 					instance.storage = godot::VariantCaster<typename BoundReceiver<T>::target_type>::cast(*boxed_variant);
@@ -435,7 +444,7 @@ BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, C
 
 	if constexpr (eastl::is_base_of_v<godot::Object, typename BoundReceiver<T>::target_type>) {
 		godot::Object *resolved = nullptr;
-		if (frame.env_private->bridge.try_get_object(holder, resolved)) {
+		if (frame.environment_data()->bridge.try_get_object(holder, resolved)) {
 			if (resolved == nullptr) {
 				apis->throw_by_string(info, "Native object is no longer valid.");
 				return instance;

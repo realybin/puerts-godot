@@ -22,8 +22,6 @@ extern "C" void *GetRegisterApi();
 namespace {
 
 using TypeRecord = PuertsTypeRegister::TypeRecord;
-using RuntimeArgumentValues = puerts_eastl::fixed_vector<Variant, puerts::internal::INLINE_ARGUMENT_COUNT>;
-using RuntimeArgumentPointers = puerts_eastl::fixed_vector<const Variant *, puerts::internal::INLINE_ARGUMENT_COUNT>;
 
 void throw_script_error(pesapi_ffi *p_apis, pesapi_callback_info p_info, const String &p_message) {
 	const CharString utf8 = p_message.utf8();
@@ -31,7 +29,7 @@ void throw_script_error(pesapi_ffi *p_apis, pesapi_callback_info p_info, const S
 }
 
 bool should_index_builtin_variant(const TypeRecord *p_type) {
-	return p_type->kind == TypeRecord::Kind::STATIC_BINDING &&
+	return p_type->kind == TypeRecord::Kind::StaticBinding &&
 			p_type->variant_type != Variant::NIL && p_type->variant_type != Variant::OBJECT;
 }
 
@@ -50,77 +48,81 @@ Object *instantiate_reflected_object(const TypeRecord *p_type, String &r_error) 
 	return object;
 }
 
-void fill_runtime_arguments(
-		RuntimeArgumentValues &r_values,
-		RuntimeArgumentPointers &r_arg_ptrs,
-		puerts::internal::CallbackFrame &p_frame) {
-	const int argc = p_frame.arg_count;
-	r_values.resize(argc);
-	r_arg_ptrs.resize(argc);
+void build_call_arguments(
+		puerts::internal::CallArguments &r_arguments,
+		puerts::internal::CallbackContext &p_frame) {
+	const int argc = p_frame.argument_count();
+	r_arguments.resize(argc);
 	for (int i = 0; i < argc; ++i) {
-		r_values[i] = puerts::script_to_variant(
-				p_frame.environment,
-				p_frame.env,
-				p_frame.get_argument_value(i));
-		r_arg_ptrs[i] = &r_values[i];
+		r_arguments.values[i] = puerts::script_to_variant(
+				p_frame.puerts_environment(),
+				p_frame.script_env(),
+				p_frame.argument_value(i));
 	}
 }
 
-Object *resolve_holder_object(puerts::internal::CallbackFrame &p_frame) {
-	void *holder = p_frame.get_holder_ptr();
+Object *resolve_holder_object(puerts::internal::CallbackContext &p_frame) {
+	void *holder = p_frame.holder_ptr();
 	if (holder == nullptr) {
 		return nullptr;
 	}
 	Object *object = nullptr;
-	if (p_frame.env_private->bridge.try_get_object(holder, object)) {
+	if (p_frame.environment_data()->bridge.try_get_object(holder, object)) {
 		return object;
 	}
 	return PuertsBridgeRegistry::is_handle(holder) ? nullptr : static_cast<Object *>(holder);
 }
 
-Object *require_holder_object(puerts::internal::CallbackFrame &p_frame) {
+Object *require_holder_object(puerts::internal::CallbackContext &p_frame) {
 	Object *object = resolve_holder_object(p_frame);
 	if (object == nullptr) {
-		p_frame.apis->throw_by_string(p_frame.info, "Native object is no longer valid.");
+		p_frame.api()->throw_by_string(p_frame.callback_info(), "Native object is no longer valid.");
 	}
 	return object;
 }
 
-bool call_reflected_method(Object *p_object, TypeRecord::Method *p_method, puerts::internal::CallbackFrame &p_frame, Variant &r_result) {
+bool call_reflected_method(Object *p_object, TypeRecord::Method *p_method, puerts::internal::CallbackContext &p_frame, Variant &r_result) {
 	// MethodBind resolution is intentionally performed once while building the
 	// type record. Godot may still reject virtual-only or compatibility entries;
 	// keep that boundary explicit instead of forwarding a null bind into the FFI.
 	if (p_method == nullptr || p_method->method_bind == nullptr) {
 		const String target = p_method != nullptr ? String(p_method->owner_class_name) + "." + String(p_method->name) : "unknown method";
-		throw_script_error(p_frame.apis, p_frame.info, "MethodBind not found: " + target);
+		throw_script_error(p_frame.api(), p_frame.callback_info(), "MethodBind not found: " + target);
 		return false;
 	}
 
-	RuntimeArgumentValues args;
-	RuntimeArgumentPointers arg_ptrs;
-	fill_runtime_arguments(args, arg_ptrs, p_frame);
+	puerts::internal::CallArguments args;
+	build_call_arguments(args, p_frame);
 	GDExtensionCallError call_error{ GDEXTENSION_CALL_OK, 0, 0 };
 	godot::gdextension_interface::object_method_bind_call(
 			p_method->method_bind,
 			p_object != nullptr ? p_object->_owner : nullptr,
-			reinterpret_cast<const GDExtensionConstVariantPtr *>(arg_ptrs.data()),
-			arg_ptrs.size(),
+			reinterpret_cast<const GDExtensionConstVariantPtr *>(args.pointers.data()),
+			args.pointers.size(),
 			r_result._native_ptr(),
 			&call_error);
 	if (call_error.error != GDEXTENSION_CALL_OK) {
 		throw_script_error(
-				p_frame.apis,
-				p_frame.info,
+				p_frame.api(),
+				p_frame.callback_info(),
 				puerts::internal::format_call_error(String(p_method->owner_class_name) + "." + String(p_method->name), call_error));
 		return false;
 	}
 	return true;
 }
 
-void return_reflected_method(Object *p_object, TypeRecord::Method *p_method, puerts::internal::CallbackFrame &p_frame) {
+template <typename Callback>
+void dispatch_callback(pesapi_ffi *p_apis, pesapi_callback_info p_info, Callback &&p_callback) {
+	puerts::internal::CallbackContext context(p_apis, p_info);
+	if (context.require()) {
+		p_callback(context);
+	}
+}
+
+void return_reflected_method(Object *p_object, TypeRecord::Method *p_method, puerts::internal::CallbackContext &p_frame) {
 	Variant result;
 	if (call_reflected_method(p_object, p_method, p_frame, result)) {
-		puerts::return_variant(p_frame.apis, p_frame.info, p_frame.env, p_frame.environment, result);
+		puerts::return_variant(p_frame.api(), p_frame.callback_info(), p_frame.script_env(), p_frame.puerts_environment(), result);
 	}
 }
 
@@ -215,13 +217,23 @@ PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_type_by_name(const Stri
 }
 
 bool PuertsTypeRegister::ensure_registered(TypeRecord *p_type) {
-	if (p_type->registered) {
-		return true;
+	switch (p_type->registration_state) {
+		case TypeRecord::RegistrationState::Registered:
+			return true;
+		case TypeRecord::RegistrationState::Registering:
+			// A type cannot depend on itself through its base chain.
+			return false;
+		case TypeRecord::RegistrationState::Unregistered:
+			break;
 	}
+
+	p_type->registration_state = TypeRecord::RegistrationState::Registering;
 	if (!resolve_base_type(p_type)) {
+		p_type->registration_state = TypeRecord::RegistrationState::Unregistered;
 		return false;
 	}
 	if (p_type->base != nullptr && !ensure_registered(p_type->base)) {
+		p_type->registration_state = TypeRecord::RegistrationState::Unregistered;
 		return false;
 	}
 
@@ -245,7 +257,7 @@ bool PuertsTypeRegister::is_assignable(const void *p_type_id, const void *p_base
 
 bool PuertsTypeRegister::native_to_variant(void *p_pointer, const void *p_type_id, Variant &r_value) const {
 	const TypeRecord *type = find_record(p_type_id);
-	if (type == nullptr || type->kind != TypeRecord::Kind::STATIC_BINDING || type->to_variant == nullptr) {
+	if (type == nullptr || type->kind != TypeRecord::Kind::StaticBinding || type->to_variant == nullptr) {
 		return false;
 	}
 	r_value = type->to_variant(p_pointer);
@@ -256,14 +268,14 @@ void PuertsTypeRegister::store_type(TypeOwner p_owner) {
 	TypeRecord *type = p_owner.get();
 	owned_types_.push_back(puerts_eastl::move(p_owner));
 	types_by_id_.insert({ type->type_id, type });
-	if (type->kind == TypeRecord::Kind::REFLECTED_OBJECT) {
+	if (type->kind == TypeRecord::Kind::ReflectedObject) {
 		reflected_types_by_name_.insert({ type->name, type });
 	}
 
 	auto by_name = types_by_name_.find(type->name);
 	const bool keep_existing_static_binding = by_name != types_by_name_.end() &&
-			by_name->second->kind == TypeRecord::Kind::STATIC_BINDING &&
-			type->kind != TypeRecord::Kind::STATIC_BINDING;
+			by_name->second->kind == TypeRecord::Kind::StaticBinding &&
+			type->kind != TypeRecord::Kind::StaticBinding;
 	if (by_name == types_by_name_.end()) {
 		types_by_name_.insert({ type->name, type });
 	} else if (!keep_existing_static_binding) {
@@ -292,7 +304,7 @@ bool PuertsTypeRegister::resolve_base_type(TypeRecord *p_type) {
 void PuertsTypeRegister::register_type(TypeRecord *p_type) {
 	pesapi_constructor constructor = p_type->constructor;
 	if (constructor == nullptr) {
-		constructor = p_type->kind == TypeRecord::Kind::REFLECTED_OBJECT && p_type->constructible ? &PuertsTypeRegister::object_default_constructor_callback : &PuertsTypeRegister::no_constructor_callback;
+		constructor = p_type->kind == TypeRecord::Kind::ReflectedObject && p_type->constructible ? &PuertsTypeRegister::object_default_constructor_callback : &PuertsTypeRegister::no_constructor_callback;
 	}
 
 	CharString class_name = String(p_type->name).utf8();
@@ -343,16 +355,16 @@ void PuertsTypeRegister::register_type(TypeRecord *p_type) {
 
 	reg_api_.trace_native_object_lifecycle(registry_, p_type->type_id, nullptr, &PuertsTypeRegister::on_native_binding_exit);
 
-	p_type->registered = true;
+	p_type->registration_state = TypeRecord::RegistrationState::Registered;
 }
 
-void PuertsTypeRegister::on_native_binding_exit(void *ptr, void *class_data, void *env_private, void *userdata) {
-	auto *private_state = static_cast<PuertsEnvPrivate *>(env_private);
-	if (private_state == nullptr || !private_state->accepts_calls()) {
+void PuertsTypeRegister::on_native_binding_exit(void *ptr, void *class_data, void *environment_data_ptr, void *userdata) {
+	auto *environment_data = static_cast<PuertsEnvironmentData *>(environment_data_ptr);
+	if (environment_data == nullptr || !environment_data->accepts_calls()) {
 		return;
 	}
-	Ref<PuertsEnvironment> keep_alive(private_state->environment);
-	private_state->bridge.release(ptr);
+	Ref<PuertsEnvironment> keep_alive(environment_data->environment);
+	environment_data->bridge.release(ptr);
 }
 
 void *PuertsTypeRegister::no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -362,13 +374,13 @@ void *PuertsTypeRegister::no_constructor_callback(struct pesapi_ffi *apis, pesap
 }
 
 void *PuertsTypeRegister::object_default_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame frame(apis, info);
+	puerts::internal::CallbackContext frame(apis, info);
 	if (!frame.require()) {
 		return nullptr;
 	}
 
 	const auto *type = static_cast<const TypeRecord *>(apis->get_userdata(info));
-	if (frame.arg_count != 0) {
+	if (frame.argument_count() != 0) {
 		apis->throw_by_string(info, "Reflected ClassDB object types only support zero-argument construction.");
 		return nullptr;
 	}
@@ -380,7 +392,7 @@ void *PuertsTypeRegister::object_default_constructor_callback(struct pesapi_ffi 
 		return nullptr;
 	}
 
-	void *handle = frame.env_private->bridge.own_object(
+	void *handle = frame.environment_data()->bridge.own_object(
 			object,
 			type->type_id);
 	if (handle == nullptr) {
@@ -393,89 +405,74 @@ void *PuertsTypeRegister::object_default_constructor_callback(struct pesapi_ffi 
 
 void PuertsTypeRegister::object_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *method = static_cast<TypeRecord::Method *>(apis->get_userdata(info));
-	puerts::internal::CallbackFrame frame(apis, info);
-	if (!frame.require()) {
-		return;
-	}
-
-	if (Object *object = require_holder_object(frame); object != nullptr) {
-		return_reflected_method(object, method, frame);
-	}
+	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
+		if (Object *object = require_holder_object(context); object != nullptr) {
+			return_reflected_method(object, method, context);
+		}
+	});
 }
 
 void PuertsTypeRegister::object_static_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *method = static_cast<TypeRecord::Method *>(apis->get_userdata(info));
-	puerts::internal::CallbackFrame frame(apis, info);
-	if (!frame.require()) {
-		return;
-	}
-
-	return_reflected_method(nullptr, method, frame);
+	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
+		return_reflected_method(nullptr, method, context);
+	});
 }
 
 void PuertsTypeRegister::object_property_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
-	puerts::internal::CallbackFrame frame(apis, info);
-	if (!frame.require()) {
-		return;
-	}
-
-	Object *object = require_holder_object(frame);
-	if (object == nullptr) {
-		return;
-	}
-
-	Variant result;
-	if (!property->indexed) {
-		if (!call_reflected_method(object, property->getter_method, frame, result)) {
+	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
+		Object *object = require_holder_object(context);
+		if (object == nullptr) {
 			return;
 		}
-	} else {
-		result = ClassDB::class_get_property(object, property->name);
-	}
-	puerts::return_variant(apis, info, frame.env, frame.environment, result);
+
+		Variant result;
+		if (!property->indexed) {
+			if (!call_reflected_method(object, property->getter_method, context, result)) {
+				return;
+			}
+		} else {
+			result = ClassDB::class_get_property(object, property->name);
+		}
+		puerts::return_variant(apis, info, context.script_env(), context.puerts_environment(), result);
+	});
 }
 
 void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
-	puerts::internal::CallbackFrame frame(apis, info);
-	if (!frame.require()) {
-		return;
-	}
+	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
+		Object *object = require_holder_object(context);
+		if (object == nullptr) {
+			return;
+		}
+		if (!property->indexed) {
+			Variant result;
+			(void)call_reflected_method(object, property->setter_method, context, result);
+			return;
+		}
 
-	Object *object = require_holder_object(frame);
-	if (object == nullptr) {
-		return;
-	}
-	if (!property->indexed) {
-		Variant result;
-		(void)call_reflected_method(object, property->setter_method, frame, result);
-		return;
-	}
-
-	const Variant value = puerts::script_to_variant(frame.environment, frame.env, frame.get_argument_value(0));
-	if (ClassDB::class_set_property(object, property->name, value) != OK) {
-		throw_script_error(apis, info, "Failed to set property: " + String(property->name));
-	}
+		const Variant value = puerts::script_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(0));
+		if (ClassDB::class_set_property(object, property->name, value) != OK) {
+			throw_script_error(apis, info, "Failed to set property: " + String(property->name));
+		}
+	});
 }
 
 void PuertsTypeRegister::object_signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
-	puerts::internal::CallbackFrame frame(apis, info);
-	if (!frame.require()) {
-		return;
-	}
-
-	Object *object = require_holder_object(frame);
-	if (object == nullptr) {
-		return;
-	}
-	puerts::return_variant(
-			apis,
-			info,
-			frame.env,
-			frame.environment,
-			Variant(Signal(object, property->name)));
+	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
+		Object *object = require_holder_object(context);
+		if (object == nullptr) {
+			return;
+		}
+		puerts::return_variant(
+				apis,
+				info,
+				context.script_env(),
+				context.puerts_environment(),
+				Variant(Signal(object, property->name)));
+	});
 }
 
 void PuertsTypeRegister::enum_group_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {

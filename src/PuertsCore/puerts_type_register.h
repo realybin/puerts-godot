@@ -30,7 +30,7 @@ public:
 	[[nodiscard]] bool is_assignable(const void *p_type_id, const void *p_base_type_id) const;
 	bool native_to_variant(void *p_pointer, const void *p_type_id, godot::Variant &r_value) const;
 
-	static void on_native_binding_exit(void *ptr, void *class_data, void *env_private, void *userdata);
+	static void on_native_binding_exit(void *ptr, void *class_data, void *environment_data, void *userdata);
 	static void load_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 
 private:

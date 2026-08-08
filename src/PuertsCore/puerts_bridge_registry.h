@@ -53,19 +53,25 @@ private:
 	using HandleId = uintptr_t;
 	using EntryMap = puerts_eastl::hash_map<HandleId, Entry>;
 
+	struct ObjectRecord {
+		HandleId handle_id = 0;
+		const void *type_id = nullptr;
+	};
+
 	static constexpr uintptr_t HANDLE_TAG = 1;
 	static constexpr HandleId MAX_HANDLE_ID = UINTPTR_MAX >> 1U;
 
 	EntryMap entries_;
-	puerts_eastl::hash_map<uint64_t, HandleId> object_entries_;
+	puerts_eastl::hash_map<uint64_t, ObjectRecord> object_entries_;
 	// Handle IDs are never reused. Exhaustion is terminal, so stale tokens cannot become valid again.
 	HandleId next_handle_id_ = 1;
 
 	[[nodiscard]] static void *encode_handle(HandleId p_handle_id);
 	static bool decode_handle(void *p_handle, HandleId &r_handle_id);
 	HandleId take_handle_id();
-	[[nodiscard]] Entry *find(void *p_handle);
-	[[nodiscard]] const Entry *find(void *p_handle) const;
+	[[nodiscard]] Entry *find_entry(void *p_handle);
+	[[nodiscard]] const Entry *find_entry(void *p_handle) const;
+	void remove_object_entry(HandleId p_handle_id, const Entry &p_entry);
 	void *store_object(godot::Object *p_object, const void *p_type_id, bool p_script_owned);
 	[[nodiscard]] static godot::Object *resolve_object(const Entry &p_entry);
 };

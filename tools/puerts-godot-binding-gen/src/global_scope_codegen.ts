@@ -64,21 +64,18 @@ function utilityLookupLine(fn: ApiMethod): string {
 }
 
 function pushCallbackContext(lines: string[]): void {
-	lines.push("\tpuerts::internal::CallbackFrame context(apis, info);");
+	lines.push("\tpuerts::internal::CallbackContext context(apis, info);");
 	lines.push("\tif (!context.require()) {");
 	lines.push("\t\treturn;");
 	lines.push("\t}");
 }
 
 function pushVariantArgs(lines: string[], argCountExpr: string): void {
-	lines.push("\tpuerts_eastl::fixed_vector<godot::Variant, puerts::internal::INLINE_ARGUMENT_COUNT> args;");
-	lines.push("\tpuerts_eastl::fixed_vector<const godot::Variant *, puerts::internal::INLINE_ARGUMENT_COUNT> arg_ptrs;");
-	lines.push(`\targs.resize(static_cast<size_t>(${argCountExpr}));`);
-	lines.push(`\targ_ptrs.resize(static_cast<size_t>(${argCountExpr}));`);
+	lines.push("\tpuerts::internal::CallArguments arguments;");
+	lines.push(`\targuments.resize(${argCountExpr});`);
 	lines.push(`\tfor (int i = 0; i < ${argCountExpr}; ++i) {`);
 	lines.push("\t\tconst size_t index = static_cast<size_t>(i);");
-	lines.push("\t\targs[index] = puerts::script_to_variant(context.environment, context.env, context.get_argument_value(i));");
-	lines.push("\t\targ_ptrs[index] = &args[index];");
+	lines.push("\t\targuments.values[index] = puerts::script_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));");
 	lines.push("\t}");
 }
 
@@ -98,19 +95,19 @@ function buildVarargUtilityHelper(fn: ApiMethod): string {
 	lines.push(`inline void ${callbackName}(pesapi_ffi *apis, pesapi_callback_info info) {`);
 	pushCallbackContext(lines);
 	pushUtilityLookup(lines, fn);
-	pushVariantArgs(lines, "context.arg_count");
+	pushVariantArgs(lines, "context.argument_count()");
 
 	if (returnType === "String") {
 		lines.push("\tgodot::String result;");
-		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);");
-		lines.push("\tpuerts::return_variant(apis, info, context.env, context.environment, godot::Variant(result));");
+		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());");
+		lines.push("\tpuerts::return_variant(apis, info, context.script_env(), context.puerts_environment(), godot::Variant(result));");
 	} else if (returnType === "Variant") {
 		lines.push("\tgodot::Variant result;");
-		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);");
-		lines.push("\tpuerts::return_variant(apis, info, context.env, context.environment, result);");
+		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());");
+		lines.push("\tpuerts::return_variant(apis, info, context.script_env(), context.puerts_environment(), result);");
 	} else {
 		lines.push("\tgodot::Variant ignored_result;");
-		lines.push("\tutility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arg_ptrs.data()), context.arg_count);");
+		lines.push("\tutility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());");
 	}
 
 	lines.push("}");
@@ -124,15 +121,15 @@ function buildSpecialUtilityHelper(fn: ApiMethod): string {
 
 	lines.push(`inline void ${callbackName}(pesapi_ffi *apis, pesapi_callback_info info) {`);
 	pushCallbackContext(lines);
-	lines.push(`\tif (context.arg_count != ${expectedArgs}) {`);
+	lines.push(`\tif (context.argument_count() != ${expectedArgs}) {`);
 	lines.push(`\t\tapis->throw_by_string(info, "${fn.name} expects exactly ${expectedArgs} argument(s).");`);
 	lines.push("\t\treturn;");
 	lines.push("\t}");
 	pushUtilityLookup(lines, fn);
 	pushVariantArgs(lines, `${expectedArgs}`);
 	lines.push("\tbool result = false;");
-	lines.push(`\tutility_function(&result, reinterpret_cast<GDExtensionConstTypePtr *>(arg_ptrs.data()), ${expectedArgs});`);
-	lines.push("\tapis->add_return(info, apis->create_boolean(context.env, result));");
+	lines.push(`\tutility_function(&result, reinterpret_cast<GDExtensionConstTypePtr *>(arguments.pointers.data()), ${expectedArgs});`);
+	lines.push("\tapis->add_return(info, apis->create_boolean(context.script_env(), result));");
 	lines.push("}");
 	return lines.join("\n");
 }
@@ -230,7 +227,7 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	lines.push('\t\tapis->throw_by_string(info, "Singleton metadata is missing.");');
 	lines.push("\t\treturn;");
 	lines.push("\t}");
-	lines.push("\tpuerts::internal::CallbackFrame context(apis, info);");
+	lines.push("\tpuerts::internal::CallbackContext context(apis, info);");
 	lines.push("\tif (!context.require()) {");
 	lines.push("\t\treturn;");
 	lines.push("\t}");
@@ -246,10 +243,10 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	lines.push("\t}");
 	lines.push("\tgodot::Object *singleton = engine->get_singleton(singleton_key);");
 	lines.push("\tif (singleton == nullptr) {");
-	lines.push("\t\tapis->add_return(info, apis->create_null(context.env));");
+	lines.push("\t\tapis->add_return(info, apis->create_null(context.script_env()));");
 	lines.push("\t\treturn;");
 	lines.push("\t}");
-	lines.push("\tpuerts::return_variant(apis, info, context.env, context.environment, godot::Variant(singleton));");
+	lines.push("\tpuerts::return_variant(apis, info, context.script_env(), context.puerts_environment(), godot::Variant(singleton));");
 	lines.push("}");
 	for (const binding of utilityBindings) {
 		if (binding.helperCode) {

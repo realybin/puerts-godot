@@ -38,11 +38,11 @@ PuertsBridgeRegistry::HandleId PuertsBridgeRegistry::take_handle_id() {
 	return next_handle_id_++;
 }
 
-PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle) {
-	return const_cast<Entry *>(static_cast<const PuertsBridgeRegistry *>(this)->find(p_handle));
+PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find_entry(void *p_handle) {
+	return const_cast<Entry *>(static_cast<const PuertsBridgeRegistry *>(this)->find_entry(p_handle));
 }
 
-const PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find(void *p_handle) const {
+const PuertsBridgeRegistry::Entry *PuertsBridgeRegistry::find_entry(void *p_handle) const {
 	HandleId handle_id = 0;
 	if (!decode_handle(p_handle, handle_id)) {
 		return nullptr;
@@ -68,7 +68,18 @@ void *PuertsBridgeRegistry::store_object(Object *p_object, const void *p_type_id
 
 	const uint64_t object_id_value = p_object->get_instance_id();
 	if (const auto existing = object_entries_.find(object_id_value); existing != object_entries_.end()) {
-		return encode_handle(existing->second);
+		const HandleId existing_handle_id = existing->second.handle_id;
+		Entry *existing_entry = find_entry(encode_handle(existing_handle_id));
+		if (existing_entry != nullptr && resolve_object(*existing_entry) == p_object) {
+			return encode_handle(existing_handle_id);
+		}
+
+		// ObjectDB instance IDs can be reused after an object is freed. Do not
+		// let a stale index make the new object inherit an unrelated handle.
+		if (existing_entry != nullptr) {
+			entries_.erase(existing_handle_id);
+		}
+		object_entries_.erase(existing);
 	}
 
 	const HandleId handle_id = take_handle_id();
@@ -81,8 +92,17 @@ void *PuertsBridgeRegistry::store_object(Object *p_object, const void *p_type_id
 	entry.script_owned = p_script_owned && !entry.object_id.is_ref_counted();
 	entry.value = entry.object_id.is_ref_counted() ? Variant(p_object) : Variant();
 	entry.type_id = p_type_id;
-	object_entries_.insert({ object_id_value, handle_id });
+	object_entries_.insert({ object_id_value, { handle_id, p_type_id } });
 	return encode_handle(handle_id);
+}
+
+void PuertsBridgeRegistry::remove_object_entry(HandleId p_handle_id, const Entry &p_entry) {
+	if (p_entry.kind == Kind::Object) {
+		const auto object_entry = object_entries_.find(static_cast<uint64_t>(p_entry.object_id));
+		if (object_entry != object_entries_.end() && object_entry->second.handle_id == p_handle_id) {
+			object_entries_.erase(object_entry);
+		}
+	}
 }
 
 void PuertsBridgeRegistry::clear() {
@@ -134,18 +154,16 @@ PuertsBridgeRegistry::ObjectBinding PuertsBridgeRegistry::find_object(Object *p_
 	if (found == object_entries_.end()) {
 		return {};
 	}
-	const HandleId handle_id = found->second;
-	const Entry &entry = entries_.find(handle_id)->second;
-	return { encode_handle(handle_id), entry.type_id };
+	return { encode_handle(found->second.handle_id), found->second.type_id };
 }
 
 const Variant *PuertsBridgeRegistry::find_box(void *p_handle) const {
-	const Entry *entry = find(p_handle);
+	const Entry *entry = find_entry(p_handle);
 	return entry != nullptr && entry->kind == Kind::Variant ? &entry->value : nullptr;
 }
 
 bool PuertsBridgeRegistry::try_get_variant(void *p_handle, const void *p_type_id, Variant &r_value) const {
-	const Entry *entry = find(p_handle);
+	const Entry *entry = find_entry(p_handle);
 	if (entry == nullptr || entry->type_id != p_type_id) {
 		return false;
 	}
@@ -158,7 +176,7 @@ bool PuertsBridgeRegistry::try_get_variant(void *p_handle, const void *p_type_id
 }
 
 bool PuertsBridgeRegistry::update_box(void *p_handle, const Variant &p_value) {
-	Entry *entry = find(p_handle);
+	Entry *entry = find_entry(p_handle);
 	if (entry == nullptr || entry->kind != Kind::Variant) {
 		return false;
 	}
@@ -167,7 +185,7 @@ bool PuertsBridgeRegistry::update_box(void *p_handle, const Variant &p_value) {
 }
 
 bool PuertsBridgeRegistry::try_get_object(void *p_handle, Object *&r_object) const {
-	const Entry *entry = find(p_handle);
+	const Entry *entry = find_entry(p_handle);
 	if (entry == nullptr || entry->kind != Kind::Object) {
 		return false;
 	}
@@ -187,10 +205,7 @@ bool PuertsBridgeRegistry::release(void *p_handle) {
 
 	Entry &entry = found->second;
 	Object *script_owned_object = entry.script_owned ? resolve_object(entry) : nullptr;
-	Variant released_value = puerts_eastl::move(entry.value);
-	if (entry.kind == Kind::Object) {
-		object_entries_.erase(static_cast<uint64_t>(entry.object_id));
-	}
+	remove_object_entry(handle_id, entry);
 	entries_.erase(found);
 	if (script_owned_object != nullptr) {
 		memdelete(script_owned_object);

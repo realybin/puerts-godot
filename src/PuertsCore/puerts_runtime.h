@@ -20,7 +20,7 @@ enum class PuertsEnvironmentState {
 	Disposing,
 };
 
-struct PuertsEnvPrivate {
+struct PuertsEnvironmentData {
 	PuertsEnvironmentState state = PuertsEnvironmentState::Uninitialized;
 	PuertsEnvironment *environment = nullptr;
 	PuertsBridgeRegistry bridge;
@@ -32,141 +32,192 @@ struct PuertsEnvPrivate {
 
 namespace puerts::internal {
 
-constexpr size_t INLINE_ARGUMENT_COUNT = 8;
+constexpr size_t kInlineArgumentCount = 8;
+
+struct CallArguments {
+	puerts_eastl::fixed_vector<godot::Variant, kInlineArgumentCount> values;
+	puerts_eastl::fixed_vector<const godot::Variant *, kInlineArgumentCount> pointers;
+
+	void resize(int p_count) {
+		values.resize(static_cast<size_t>(p_count));
+		pointers.resize(static_cast<size_t>(p_count));
+		for (int i = 0; i < p_count; ++i) {
+			pointers[i] = &values[i];
+		}
+	}
+};
 
 godot::String read_utf8_string(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_value p_value);
 godot::String format_call_error(const godot::String &p_target_name, const GDExtensionCallError &p_call_error);
 
-class EnvironmentScope {
+class EnvironmentHandleScope {
 public:
-	EnvironmentScope(pesapi_ffi *p_apis, pesapi_env_ref p_env_ref) :
-			apis_(p_apis),
+	EnvironmentHandleScope(pesapi_ffi *p_apis, pesapi_env_ref p_env_ref) :
+			api_(p_apis),
 			scope_(p_apis->open_scope(p_env_ref)),
-			env_(p_apis->get_env_from_ref(p_env_ref)) {
+			script_env_(p_apis->get_env_from_ref(p_env_ref)) {
 	}
 
-	~EnvironmentScope() {
-		apis_->close_scope(scope_);
+	~EnvironmentHandleScope() {
+		api_->close_scope(scope_);
 	}
 
-	EnvironmentScope(const EnvironmentScope &) = delete;
-	EnvironmentScope &operator=(const EnvironmentScope &) = delete;
+	EnvironmentHandleScope(const EnvironmentHandleScope &) = delete;
+	EnvironmentHandleScope &operator=(const EnvironmentHandleScope &) = delete;
 
-	[[nodiscard]] pesapi_scope get_scope() const { return scope_; }
-	[[nodiscard]] pesapi_env get_env() const { return env_; }
+	[[nodiscard]] pesapi_scope scope() const { return scope_; }
+	[[nodiscard]] pesapi_env env() const { return script_env_; }
 
 private:
-	pesapi_ffi *apis_;
+	pesapi_ffi *api_;
 	pesapi_scope scope_;
-	pesapi_env env_;
+	pesapi_env script_env_;
 };
 
-struct CallbackFrame {
+class CallbackContext {
+public:
 	struct Argument {
 		pesapi_value value = nullptr;
 		void *native_handle = nullptr;
 		const void *native_type_id = nullptr;
-		godot::Variant variant;
 		bool value_loaded = false;
 		bool native_loaded = false;
 		bool variant_loaded = false;
 	};
 
-	pesapi_ffi *apis = nullptr;
-	pesapi_callback_info info = nullptr;
-	pesapi_env env = nullptr;
-	int arg_count = 0;
-	puerts_eastl::fixed_vector<Argument, INLINE_ARGUMENT_COUNT> arguments;
-	bool holder_loaded = false;
-	void *holder_ptr = nullptr;
-	const void *holder_type_id = nullptr;
-	bool holder_boxed_variant_loaded = false;
-	const godot::Variant *holder_boxed_variant = nullptr;
-	PuertsEnvPrivate *env_private = nullptr;
-	PuertsEnvironment *environment = nullptr;
-
-	CallbackFrame(pesapi_ffi *p_apis, pesapi_callback_info p_info) :
-			apis(p_apis),
-			info(p_info),
-			env(p_apis->get_env(p_info)),
-			arg_count(p_apis->get_args_len(p_info)) {
-		arguments.resize(static_cast<size_t>(arg_count));
-		env_private = const_cast<PuertsEnvPrivate *>(static_cast<const PuertsEnvPrivate *>(apis->get_env_private(env)));
-		environment = env_private != nullptr ? env_private->environment : nullptr;
+	CallbackContext(pesapi_ffi *p_apis, pesapi_callback_info p_info) :
+			api_(p_apis),
+			callback_info_(p_info),
+			script_env_(p_apis->get_env(p_info)),
+			argument_count_(p_apis->get_args_len(p_info)) {
+		arguments_.resize(static_cast<size_t>(argument_count_));
+		environment_data_ = const_cast<PuertsEnvironmentData *>(static_cast<const PuertsEnvironmentData *>(api_->get_env_private(script_env_)));
+		puerts_environment_ = environment_data_ != nullptr ? environment_data_->environment : nullptr;
 	}
 
-	[[nodiscard]] Argument &get_argument(int p_index) {
-		return arguments[static_cast<size_t>(p_index)];
-	}
-
-	[[nodiscard]] pesapi_value get_argument_value(int p_index) {
-		Argument &argument = get_argument(p_index);
-		if (!argument.value_loaded) {
-			argument.value = apis->get_arg(info, p_index);
-			argument.value_loaded = true;
+	[[nodiscard]] pesapi_ffi *api() const { return api_; }
+	[[nodiscard]] pesapi_callback_info callback_info() const { return callback_info_; }
+	[[nodiscard]] pesapi_env script_env() const { return script_env_; }
+	[[nodiscard]] int argument_count() const { return argument_count_; }
+	[[nodiscard]] PuertsEnvironmentData *environment_data() const { return environment_data_; }
+	[[nodiscard]] PuertsEnvironment *puerts_environment() const { return puerts_environment_; }
+	[[nodiscard]] bool require_argument_count(int p_expected) const {
+		if (argument_count_ == p_expected) {
+			return true;
 		}
-		return argument.value;
+		api_->throw_by_string(callback_info_, "Argument count does not match the bound signature.");
+		return false;
 	}
 
-	[[nodiscard]] Argument &get_native_argument(int p_index) {
-		Argument &argument = get_argument(p_index);
-		if (!argument.native_loaded) {
-			const pesapi_value value = get_argument_value(p_index);
-			argument.native_handle = apis->get_native_object_ptr(env, value);
-			if (argument.native_handle != nullptr) {
-				argument.native_type_id = apis->get_native_object_typeid(env, value);
+	[[nodiscard]] bool require_minimum_argument_count(int p_minimum) const {
+		if (argument_count_ >= p_minimum) {
+			return true;
+		}
+		api_->throw_by_string(callback_info_, "Argument count does not match the bound signature.");
+		return false;
+	}
+
+	[[nodiscard]] Argument &argument(int p_index) {
+		return arguments_[static_cast<size_t>(p_index)];
+	}
+
+	[[nodiscard]] pesapi_value argument_value(int p_index) {
+		Argument &entry = argument(p_index);
+		if (!entry.value_loaded) {
+			entry.value = api_->get_arg(callback_info_, p_index);
+			entry.value_loaded = true;
+		}
+		return entry.value;
+	}
+
+	[[nodiscard]] Argument &native_argument(int p_index) {
+		Argument &entry = argument(p_index);
+		if (!entry.native_loaded) {
+			const pesapi_value value = argument_value(p_index);
+			entry.native_handle = api_->get_native_object_ptr(script_env_, value);
+			if (entry.native_handle != nullptr) {
+				entry.native_type_id = api_->get_native_object_typeid(script_env_, value);
 			}
-			argument.native_loaded = true;
+			entry.native_loaded = true;
 		}
-		return argument;
+		return entry;
 	}
 
-	[[nodiscard]] void *get_holder_ptr() {
+	[[nodiscard]] godot::Variant &variant(int p_index) {
+		const size_t index = static_cast<size_t>(p_index);
+		if (variants_.size() <= index) {
+			variants_.resize(index + 1);
+		}
+		return variants_[index];
+	}
+
+	[[nodiscard]] void *holder_ptr() {
 		ensure_holder_loaded();
-		return holder_ptr;
+		return holder_ptr_;
 	}
 
-	[[nodiscard]] const void *get_holder_typeid() {
+	[[nodiscard]] const void *holder_type_id() {
 		ensure_holder_loaded();
-		return holder_type_id;
+		return holder_type_id_;
 	}
 
-	[[nodiscard]] const godot::Variant *get_holder_boxed_variant() {
+	[[nodiscard]] const godot::Variant *holder_boxed_variant() {
 		ensure_holder_boxed_variant_loaded();
-		return holder_boxed_variant;
+		return holder_boxed_variant_;
 	}
 
 	[[nodiscard]] bool require() const {
-		if (env_private == nullptr || !env_private->accepts_calls()) {
-			apis->throw_by_string(info, "Puerts environment is not available.");
+		if (environment_data_ == nullptr || !environment_data_->accepts_calls()) {
+			api_->throw_by_string(callback_info_, "Puerts environment is not available.");
 			return false;
 		}
 		return true;
 	}
 
+	[[nodiscard]] bool reject(pesapi_callback_info p_info, const char *p_message) const {
+		if (p_info != nullptr) {
+			api_->throw_by_string(p_info, p_message);
+		}
+		return false;
+	}
+
 private:
+	pesapi_ffi *api_ = nullptr;
+	pesapi_callback_info callback_info_ = nullptr;
+	pesapi_env script_env_ = nullptr;
+	int argument_count_ = 0;
+	puerts_eastl::fixed_vector<Argument, kInlineArgumentCount> arguments_;
+	puerts_eastl::fixed_vector<godot::Variant, kInlineArgumentCount> variants_;
+	bool holder_loaded_ = false;
+	void *holder_ptr_ = nullptr;
+	const void *holder_type_id_ = nullptr;
+	bool holder_boxed_variant_loaded_ = false;
+	const godot::Variant *holder_boxed_variant_ = nullptr;
+	PuertsEnvironmentData *environment_data_ = nullptr;
+	PuertsEnvironment *puerts_environment_ = nullptr;
+
 	void ensure_holder_loaded() {
-		if (holder_loaded) {
+		if (holder_loaded_) {
 			return;
 		}
 
-		holder_ptr = apis->get_native_holder_ptr(info);
-		holder_type_id = apis->get_native_holder_typeid(info);
-		holder_loaded = true;
+		holder_ptr_ = api_->get_native_holder_ptr(callback_info_);
+		holder_type_id_ = api_->get_native_holder_typeid(callback_info_);
+		holder_loaded_ = true;
 	}
 
 	void ensure_holder_boxed_variant_loaded() {
-		if (holder_boxed_variant_loaded) {
+		if (holder_boxed_variant_loaded_) {
 			return;
 		}
 
 		ensure_holder_loaded();
-		holder_boxed_variant_loaded = true;
-		if (holder_ptr == nullptr) {
+		holder_boxed_variant_loaded_ = true;
+		if (holder_ptr_ == nullptr) {
 			return;
 		}
 
-		holder_boxed_variant = env_private->bridge.find_box(holder_ptr);
+		holder_boxed_variant_ = environment_data_->bridge.find_box(holder_ptr_);
 	}
 };
 

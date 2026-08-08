@@ -21,11 +21,11 @@ Result PuertsScriptValue::with_value(Result p_fallback, Function &&p_function, b
 		return p_fallback;
 	}
 
-	PuertsEnvironment::operation_scope operation(p_may_reenter ? environment : nullptr);
-	puerts::internal::EnvironmentScope scope(ffi_, environment->env_ref_);
-	pesapi_env env = scope.get_env();
+	PuertsEnvironment::OperationScope operation(p_may_reenter ? environment : nullptr);
+	puerts::internal::EnvironmentHandleScope scope(ffi_, environment->env_ref_);
+	pesapi_env env = scope.env();
 	pesapi_value value = ffi_->get_value_from_ref(env, value_ref_);
-	return p_function(environment, scope.get_scope(), env, value);
+	return p_function(environment, scope.scope(), env, value);
 }
 
 void PuertsScriptValue::_bind_methods() {
@@ -233,7 +233,7 @@ Ref<PuertsScriptValue> PuertsScriptValue::call_script_function(
 	const int64_t array_size = p_args.size();
 	ERR_FAIL_COND_V_MSG(array_size > INT_MAX, Ref<PuertsScriptValue>(), "Too many arguments for a script function call.");
 	const int arg_count = static_cast<int>(array_size);
-	puerts_eastl::fixed_vector<pesapi_value, puerts::internal::INLINE_ARGUMENT_COUNT> argv;
+	puerts_eastl::fixed_vector<pesapi_value, puerts::internal::kInlineArgumentCount> argv;
 	argv.resize(arg_count);
 	for (int32_t i = 0; i < arg_count; i++) {
 		bool converted = false;
@@ -259,12 +259,12 @@ void PuertsScriptValue::initialize(PuertsEnvironment *p_environment, pesapi_ffi 
 
 void PuertsScriptValue::release_value_ref() {
 	PuertsEnvironment *environment = get_environment();
-	PuertsEnvironment::operation_scope operation(environment);
+	PuertsEnvironment::OperationScope operation(environment);
 	if (cache_entry_ != nullptr && environment != nullptr) {
 		cache_entry_->value = nullptr;
 		if (ffi_ != nullptr && value_ref_ != nullptr && environment->is_alive()) {
-			puerts::internal::EnvironmentScope scope(ffi_, environment->env_ref_);
-			pesapi_env env = scope.get_env();
+			puerts::internal::EnvironmentHandleScope scope(ffi_, environment->env_ref_);
+			pesapi_env env = scope.env();
 			pesapi_value value = ffi_->get_value_from_ref(env, value_ref_);
 			void *private_ptr = nullptr;
 			if (ffi_->get_private(env, value, &private_ptr) && private_ptr == cache_entry_ &&
@@ -292,7 +292,7 @@ bool PuertsScriptValue::ensure_live_native_object_receiver(PuertsEnvironment *p_
 		return true;
 	}
 
-	PuertsBridgeRegistry &bridge = p_environment->runtime_.bridge;
+	PuertsBridgeRegistry &bridge = p_environment->environment_data_.bridge;
 	Object *object = nullptr;
 	if (!bridge.try_get_object(handle, object)) {
 		if (!PuertsBridgeRegistry::is_handle(handle)) {

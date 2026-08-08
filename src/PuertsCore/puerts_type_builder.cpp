@@ -105,7 +105,7 @@ PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_object_ty
 	TypeOwner owner(memnew(TypeRecord));
 	TypeRecord *type = owner.get();
 	type->type_id = type;
-	type->kind = TypeRecord::Kind::REFLECTED_OBJECT;
+	type->kind = TypeRecord::Kind::ReflectedObject;
 	type->name = p_name;
 	type->variant_type = Variant::OBJECT;
 	type->constructible = ClassDB::can_instantiate(p_name);
@@ -128,7 +128,7 @@ PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_static_ty
 	TypeOwner owner(memnew(TypeRecord));
 	TypeRecord *type = owner.get();
 	type->type_id = p_definition.type_id;
-	type->kind = TypeRecord::Kind::STATIC_BINDING;
+	type->kind = TypeRecord::Kind::StaticBinding;
 	type->name = p_definition.name;
 	type->variant_type = p_definition.variant_type;
 	type->base_id = p_definition.base_id;
@@ -254,7 +254,7 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_enum_groups(PuertsTypeR
 		TypeOwner enum_owner(memnew(TypeRecord));
 		TypeRecord *enum_type = enum_owner.get();
 		enum_type->type_id = enum_type;
-		enum_type->kind = TypeRecord::Kind::STATIC_BINDING;
+		enum_type->kind = TypeRecord::Kind::StaticBinding;
 		enum_type->name = StringName(String(p_name) + "." + String(enum_name));
 
 		const PackedStringArray enum_constants = ClassDB::class_get_enum_constants(p_name, enum_name, true);

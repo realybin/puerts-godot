@@ -11,8 +11,14 @@
 
 struct PuertsTypeRegister::TypeRecord {
 	enum class Kind {
-		REFLECTED_OBJECT,
-		STATIC_BINDING,
+		ReflectedObject,
+		StaticBinding,
+	};
+
+	enum class RegistrationState {
+		Unregistered,
+		Registering,
+		Registered,
 	};
 
 	struct Method {
@@ -37,14 +43,14 @@ struct PuertsTypeRegister::TypeRecord {
 	};
 
 	const void *type_id = nullptr;
-	Kind kind = Kind::REFLECTED_OBJECT;
+	Kind kind = Kind::ReflectedObject;
 	godot::StringName name;
 	godot::Variant::Type variant_type = godot::Variant::NIL;
 	TypeRecord *base = nullptr;
 	const void *base_id = nullptr;
 	godot::StringName base_name;
 	bool constructible = false;
-	bool registered = false;
+	RegistrationState registration_state = RegistrationState::Unregistered;
 	pesapi_constructor constructor = nullptr;
 	pesapi_finalize finalize = nullptr;
 	godot::Variant (*to_variant)(void *ptr) = nullptr;

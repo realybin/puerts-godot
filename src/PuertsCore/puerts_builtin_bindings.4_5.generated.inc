@@ -96,7 +96,7 @@ PUERTS_SCRIPT_TYPE(puerts_generated_enum_tags::vector4i_axis_enum_tag_generated,
 
 namespace register_puerts_builtin_bindings_generated_generated_detail {
 inline void aabb_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -106,12 +106,12 @@ inline void aabb_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_end());
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_end());
 }
 
 inline void aabb_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -120,7 +120,7 @@ inline void aabb_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_end(eastl::move(value));
 		})) {
 		return;
@@ -130,7 +130,7 @@ inline void aabb_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void basis_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -140,12 +140,12 @@ inline void basis_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(0));
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_column(0));
 }
 
 inline void basis_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -154,7 +154,7 @@ inline void basis_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_column(0, eastl::move(value));
 		})) {
 		return;
@@ -164,7 +164,7 @@ inline void basis_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void basis_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -174,12 +174,12 @@ inline void basis_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(1));
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_column(1));
 }
 
 inline void basis_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -188,7 +188,7 @@ inline void basis_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_column(1, eastl::move(value));
 		})) {
 		return;
@@ -198,7 +198,7 @@ inline void basis_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void basis_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -208,12 +208,12 @@ inline void basis_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.env, context.environment, instance.get()->get_column(2));
+	puerts::internal::write_return_value<godot::Vector3>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_column(2));
 }
 
 inline void basis_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector3>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -222,7 +222,7 @@ inline void basis_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector3>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_column(2, eastl::move(value));
 		})) {
 		return;
@@ -232,7 +232,7 @@ inline void basis_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void color_r8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -242,12 +242,12 @@ inline void color_r8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_r8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_r8());
 }
 
 inline void color_r8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -256,7 +256,7 @@ inline void color_r8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_r8(eastl::move(value));
 		})) {
 		return;
@@ -266,7 +266,7 @@ inline void color_r8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_g8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -276,12 +276,12 @@ inline void color_g8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_g8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_g8());
 }
 
 inline void color_g8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -290,7 +290,7 @@ inline void color_g8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_g8(eastl::move(value));
 		})) {
 		return;
@@ -300,7 +300,7 @@ inline void color_g8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_b8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -310,12 +310,12 @@ inline void color_b8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_b8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_b8());
 }
 
 inline void color_b8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -324,7 +324,7 @@ inline void color_b8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_b8(eastl::move(value));
 		})) {
 		return;
@@ -334,7 +334,7 @@ inline void color_b8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_a8_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -344,12 +344,12 @@ inline void color_a8_getter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	puerts::internal::write_return_value<int64_t>(apis, info, context.env, context.environment, instance.get()->get_a8());
+	puerts::internal::write_return_value<int64_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_a8());
 }
 
 inline void color_a8_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<int64_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -358,7 +358,7 @@ inline void color_a8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, int64_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_a8(eastl::move(value));
 		})) {
 		return;
@@ -368,7 +368,7 @@ inline void color_a8_setter_generated(pesapi_ffi *apis, pesapi_callback_info inf
 }
 
 inline void color_h_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -378,12 +378,12 @@ inline void color_h_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_h());
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_h());
 }
 
 inline void color_h_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -392,7 +392,7 @@ inline void color_h_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_h(eastl::move(value));
 		})) {
 		return;
@@ -402,7 +402,7 @@ inline void color_h_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void color_s_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -412,12 +412,12 @@ inline void color_s_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_s());
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_s());
 }
 
 inline void color_s_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -426,7 +426,7 @@ inline void color_s_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_s(eastl::move(value));
 		})) {
 		return;
@@ -436,7 +436,7 @@ inline void color_s_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void color_v_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -446,12 +446,12 @@ inline void color_v_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->get_v());
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_v());
 }
 
 inline void color_v_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -460,7 +460,7 @@ inline void color_v_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_v(eastl::move(value));
 		})) {
 		return;
@@ -470,7 +470,7 @@ inline void color_v_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void plane_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -480,12 +480,12 @@ inline void plane_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.x);
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->normal.x);
 }
 
 inline void plane_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -494,7 +494,7 @@ inline void plane_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->normal.x = eastl::move(value);
 		})) {
 		return;
@@ -504,7 +504,7 @@ inline void plane_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void plane_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -514,12 +514,12 @@ inline void plane_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.y);
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->normal.y);
 }
 
 inline void plane_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -528,7 +528,7 @@ inline void plane_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->normal.y = eastl::move(value);
 		})) {
 		return;
@@ -538,7 +538,7 @@ inline void plane_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void plane_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -548,12 +548,12 @@ inline void plane_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::real_t>(apis, info, context.env, context.environment, instance.get()->normal.z);
+	puerts::internal::write_return_value<godot::real_t>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->normal.z);
 }
 
 inline void plane_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::real_t>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -562,7 +562,7 @@ inline void plane_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::real_t>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->normal.z = eastl::move(value);
 		})) {
 		return;
@@ -572,7 +572,7 @@ inline void plane_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info
 }
 
 inline void projection_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -582,12 +582,12 @@ inline void projection_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[0]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->columns[0]);
 }
 
 inline void projection_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -596,7 +596,7 @@ inline void projection_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[0] = eastl::move(value);
 		})) {
 		return;
@@ -606,7 +606,7 @@ inline void projection_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void projection_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -616,12 +616,12 @@ inline void projection_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[1]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->columns[1]);
 }
 
 inline void projection_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -630,7 +630,7 @@ inline void projection_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[1] = eastl::move(value);
 		})) {
 		return;
@@ -640,7 +640,7 @@ inline void projection_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void projection_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -650,12 +650,12 @@ inline void projection_z_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[2]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->columns[2]);
 }
 
 inline void projection_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -664,7 +664,7 @@ inline void projection_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[2] = eastl::move(value);
 		})) {
 		return;
@@ -674,7 +674,7 @@ inline void projection_z_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void projection_w_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -684,12 +684,12 @@ inline void projection_w_getter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.env, context.environment, instance.get()->columns[3]);
+	puerts::internal::write_return_value<godot::Vector4>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->columns[3]);
 }
 
 inline void projection_w_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector4>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -698,7 +698,7 @@ inline void projection_w_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector4>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[3] = eastl::move(value);
 		})) {
 		return;
@@ -708,7 +708,7 @@ inline void projection_w_setter_generated(pesapi_ffi *apis, pesapi_callback_info
 }
 
 inline void rect2_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -718,12 +718,12 @@ inline void rect2_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info in
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->get_end());
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_end());
 }
 
 inline void rect2_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -732,7 +732,7 @@ inline void rect2_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info in
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_end(eastl::move(value));
 		})) {
 		return;
@@ -742,7 +742,7 @@ inline void rect2_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info in
 }
 
 inline void rect2i_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -752,12 +752,12 @@ inline void rect2i_end_getter_generated(pesapi_ffi *apis, pesapi_callback_info i
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector2i>(apis, info, context.env, context.environment, instance.get()->get_end());
+	puerts::internal::write_return_value<godot::Vector2i>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->get_end());
 }
 
 inline void rect2i_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector2i>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -766,7 +766,7 @@ inline void rect2i_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info i
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector2i>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector2i>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->set_end(eastl::move(value));
 		})) {
 		return;
@@ -776,7 +776,7 @@ inline void rect2i_end_setter_generated(pesapi_ffi *apis, pesapi_callback_info i
 }
 
 inline void transform2d_x_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -786,12 +786,12 @@ inline void transform2d_x_getter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[0]);
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->columns[0]);
 }
 
 inline void transform2d_x_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -800,7 +800,7 @@ inline void transform2d_x_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[0] = eastl::move(value);
 		})) {
 		return;
@@ -810,7 +810,7 @@ inline void transform2d_x_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 }
 
 inline void transform2d_y_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -820,12 +820,12 @@ inline void transform2d_y_getter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[1]);
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->columns[1]);
 }
 
 inline void transform2d_y_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -834,7 +834,7 @@ inline void transform2d_y_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[1] = eastl::move(value);
 		})) {
 		return;
@@ -844,7 +844,7 @@ inline void transform2d_y_setter_generated(pesapi_ffi *apis, pesapi_callback_inf
 }
 
 inline void transform2d_origin_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
+	puerts::internal::CallbackContext context(apis, info);
 	if (!context.require()) {
 		return;
 	}
@@ -854,12 +854,12 @@ inline void transform2d_origin_getter_generated(pesapi_ffi *apis, pesapi_callbac
 		return;
 	}
 
-	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.env, context.environment, instance.get()->columns[2]);
+	puerts::internal::write_return_value<godot::Vector2>(apis, info, context.script_env(), context.puerts_environment(), instance.get()->columns[2]);
 }
 
 inline void transform2d_origin_setter_generated(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackFrame context(apis, info);
-	if (!context.require() || !puerts::internal::require_arity<godot::Vector2>(context)) {
+	puerts::internal::CallbackContext context(apis, info);
+	if (!context.require() || !context.require_argument_count(1)) {
 		return;
 	}
 
@@ -868,7 +868,7 @@ inline void transform2d_origin_setter_generated(pesapi_ffi *apis, pesapi_callbac
 		return;
 	}
 
-	if (!puerts::internal::with_converted_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
+	if (!puerts::internal::convert_script_argument<false, godot::Vector2>(apis, info, context, 0, [&](auto &&value) {
 			instance.get()->columns[2] = eastl::move(value);
 		})) {
 		return;

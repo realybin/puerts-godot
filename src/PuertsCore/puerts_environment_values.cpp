@@ -19,15 +19,15 @@ Ref<PuertsScriptValue> PuertsEnvironment::eval(const String &p_code, const Strin
 		return {};
 	}
 
-	operation_scope operation(this);
-	puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
-	pesapi_env env = scope.get_env();
+	OperationScope operation(this);
+	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
+	pesapi_env env = scope.env();
 	CharString code_utf8 = p_code.utf8();
 	const CharString &chunk_name_utf8 = get_cached_utf8(p_chunk_name);
 	pesapi_value result = ffi_->eval(env, reinterpret_cast<const uint8_t *>(code_utf8.get_data()), code_utf8.length(), chunk_name_utf8.get_data());
 
-	if (ffi_->has_caught(scope.get_scope())) {
-		log_error(read_exception(scope.get_scope()));
+	if (ffi_->has_caught(scope.scope())) {
+		log_error(read_exception(scope.scope()));
 		return {};
 	}
 
@@ -41,9 +41,9 @@ void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_va
 		return;
 	}
 
-	operation_scope operation(this);
-	puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
-	pesapi_env env = scope.get_env();
+	OperationScope operation(this);
+	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
+	pesapi_env env = scope.env();
 	const CharString &name_utf8 = get_cached_utf8(p_name);
 	bool converted = false;
 	pesapi_value script_value = variant_to_script(env, p_value, &converted, nullptr);
@@ -51,8 +51,8 @@ void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_va
 		return;
 	}
 	ffi_->set_property(env, ffi_->global(env), name_utf8.get_data(), script_value);
-	if (ffi_->has_caught(scope.get_scope())) {
-		log_error(read_exception(scope.get_scope()));
+	if (ffi_->has_caught(scope.scope())) {
+		log_error(read_exception(scope.scope()));
 		return;
 	}
 }
@@ -63,9 +63,9 @@ Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
 		return {};
 	}
 
-	operation_scope operation(this);
-	puerts::internal::EnvironmentScope scope(ffi_, env_ref_);
-	pesapi_env env = scope.get_env();
+	OperationScope operation(this);
+	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
+	pesapi_env env = scope.env();
 	const CharString &name_utf8 = get_cached_utf8(p_name);
 	pesapi_value value = ffi_->get_property(env, ffi_->global(env), name_utf8.get_data());
 	// Backends differ here:
@@ -74,7 +74,7 @@ Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
 	// - some may leave a stale caught flag while still returning a usable value
 	// Treat only the "no value" case as a hard global read failure.
 	if (value == nullptr) {
-		log_error(read_exception(scope.get_scope()));
+		log_error(read_exception(scope.scope()));
 		return {};
 	}
 
@@ -104,7 +104,7 @@ pesapi_value PuertsEnvironment::variant_to_script(
 		*r_error_message = String();
 	}
 
-	PuertsBridgeRegistry &bridge = runtime_.bridge;
+	PuertsBridgeRegistry &bridge = environment_data_.bridge;
 	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
 
 	switch (p_value.get_type()) {
@@ -231,7 +231,7 @@ Variant PuertsEnvironment::script_to_variant(pesapi_env p_env, pesapi_value p_va
 
 bool PuertsEnvironment::native_to_variant(void *p_handle, const void *p_type_id, Variant &r_value) {
 	if (PuertsBridgeRegistry::is_handle(p_handle)) {
-		return runtime_.bridge.try_get_variant(p_handle, p_type_id, r_value);
+		return environment_data_.bridge.try_get_variant(p_handle, p_type_id, r_value);
 	}
 	return PuertsTypeRegister::get_singleton().native_to_variant(p_handle, p_type_id, r_value);
 }
