@@ -7,6 +7,7 @@
 * method bind
 * avoid reflection-based paths as possible
 * Minimize implicit conversions, as they may introduce significant overhead. Use the most precise types available.
+  > [!NOTE]
   > When constructing containers such as `Array`, use typed constructors with matching typed arguments whenever possible. For example:
   > ```gdscript
   > Array(base: Array, type: int, class_name: StringName, script: Variant)
