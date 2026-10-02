@@ -6,7 +6,7 @@ You can refer [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo)
 
 ## Requirements
 
-- Godot `4.5+`
+- Godot `4.5+` (Prefer 4.7+)
 - Built `puerts-core` and `puerts-v8` (or other backends) GDExtension modules, see [build.md](./build.md), you can use our prebuilt binaries at [Actions](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
 
 ## Project setup
@@ -53,7 +53,7 @@ windows.debug.arm64 = {
                       "res://bin/PapiV8.dll": ""
 }
 ```
-
+> [!NOTE]
 > You need to add a dependencies section if the backend has dependencies; otherwise, the GDExtension may fail to load,
 > especially if you encounter an error like `Could not find type "PuertsEnvironment" in the current scope`.
 
@@ -65,7 +65,7 @@ More backends see [build.md](./build.md)
 - Initialize `PuertsStringNameCachePool`
 - Execute `eval` and get a result
 - Tick in `_process` when using V8/Node.js debugger integration
-- Dispose in `_exit_tree`
+- Dispose in `_exit_tree` _you may need store it as singleton nor create and dispose it frequently_
 
 ```gdscript
 extends Node
@@ -106,84 +106,12 @@ func _exit_tree() -> void:
 		_env.dispose()
 ```
 
-## Convention
+## Conventions
 
-### load_type
+> [!IMPORTANT]
+> We recommend you read it before using.
 
-`load_type` is a function provided by `puerts-godot` to load a [static-binding](static-binding.md) type or a dynamic type from [ClassDB](https://docs.godotengine.org/en/stable/classes/class_classdb.html).
-
-```javascript
-const Vector2 = load_type("Vector2");
-const v = new Vector2();
-v.x = 8.0;
-v.y = 6.0;
-v.length() === 10.0 // true
-
-const GlobalScope = load_type("GlobalScope");
-GlobalScope.sin(1)
-```
-
-### to_callable
-
-`to_callable` converts a script function to a Godot `Callable`.
-
-```javascript
-const callback = to_callable((message) => {
-	log_info(message);
-});
-
-callback.call("hello");
-```
-
-### Enum / Signal
-
-We treat enum as a static nested class and signal as a read-only property of the class.
-
-```javascript
-Vector2 = load_type("Vector2");
-Vector2.Axis && Vector2.Axis.AXIS_X === 0 && Vector2.Axis.AXIS_Y === 1;
-```
-
-```javascript
-const Timer = load_type("Timer");
-const timer = new Timer();
-timer.timeout.connect(to_callable(() => {
-	log_info("timeout");
-}));
-// Note: You may need save the function reference to reuse it.
-timer.start(1.0);
-```
-
-### Global Scope
-
-We treat global scope as a static class with static methods, properties, and enums as static members.
-
-```javascript
-const GlobalScope = load_type("GlobalScope");
-GlobalScope.sin(1)
-```
-
-### Operator Overloading
-
-JavaScript does not support operator overloading, so we treat operator overloads as normal methods with a special name. e.g. `op_Addition`
-
-See [index.js](../tools/puerts-godot-operator-model/index.js) for the operator name mapping.
-
-```javascript
-const Vector2 = load_type("Vector2");
-const sum = Vector2.op_Addition(new Vector2(1.0, 2.0), new Vector2(3.0, 4.0));
-sum.x === 4.0 && sum.y === 6.0;
-```
-
-### Constant
-
-We treat constant as a static read-only property of the class. While get the value, we will create a new instance representing the constant value.
-
-```javascript
-const Vector2 = load_type("Vector2");
-const v = Vector2.ZERO;
-v.x === 0.0 && v.y === 0.0;
-```
+See [conventions.md](conventions.md)
 
 ## API Reference
 
@@ -211,6 +139,7 @@ Remember to call `dispose` when the environment is no longer needed.
 
 We recommend `PuertsV8Backend` or `PuertsNodejsBackend` for most projects. V8 has better performance in most cases.
 
+> [!WARNING]
 > Use one of them. Do not use V8 and Nodejs in the same process, especially on Linux. It may cause issues.
 
 And `ECMAScript` has a good ecosystem and more mature tools, so it is easier to use and maintain.
@@ -277,6 +206,7 @@ Note that if you are using a backend that evaluates code in global scope, you ca
 - `call`: call it as a function
 - `call_method`: call a method of a script object
 
+> [!NOTE]
 > We recommend `to_int`/`to_float`/`to_string`/`to_binary`/`unwrap_native` when you know the expected type, and `to_native` when you want to support multiple types or get the value generically.
 >
 > `to_native` is a bit slower than `to_int`/`to_float`/`to_string`/`to_binary`/`unwrap_native`, because it needs to check the type and do more work, and lack of type information can cause maintenance issues.
@@ -321,6 +251,7 @@ See [README.md](../src/PuertsRuntime/ECMAScript/README.md)
 
 ## Next
 
+- Conventions [conventions.md](conventions.md)
 - Building: [build.md](./build.md)
 - Backends: [backends.md](./backends.md)
 - V8 Inspector: [v8-inspector.md](./v8-inspector.md)

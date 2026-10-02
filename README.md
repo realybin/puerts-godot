@@ -1,7 +1,9 @@
 # puerts-godot
 
+> [!NOTE]
 > This project is a community-maintained, third-party implementation of Puerts integration for Godot.
 
+> [!WARNING]
 > Experimental, use with caution, and expect breaking changes in the future before the 1.0 release.
 
 `puerts-godot` is a Godot GDExtension integration for puerts.

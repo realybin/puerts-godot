@@ -44,15 +44,8 @@ python scripts/make_puerts.py --platform web --arch wasm32 --config Release --ba
 
 ### Build GDExtension
 
-The `api_version` SCons option selects the Godot GDExtension API used to build
-`godot-cpp`. This project currently supports Godot API versions `4.5`, `4.6`,
-and `4.7`. Godot `4.7` is the default; select `4.5` explicitly when producing
-a backwards-compatible build.
-
-Static bindings for Godot `4.5`, `4.6`, and `4.7` are generated as separate,
-versioned `.inc` files. Each generated file is
-guarded by `GODOT_VERSION_MAJOR` and `GODOT_VERSION_MINOR`; the C++ entry point
-includes only the files matching the selected `api_version`. Normal builds do
+Static bindings for Godot are generated as separated version,
+versioned `.inc` files. Normal builds do
 not run the binding generator. When updating the API files or generator, follow
 the three generation commands in the
 [`puerts-godot-binding-gen` README](../tools/puerts-godot-binding-gen/README.md).
