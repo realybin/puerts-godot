@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import filecmp
 import os
 import platform
 import queue
@@ -14,54 +15,34 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from pathlib import Path
 
-from scons.puerts_layout import map_godot_target_to_library_key
-from scons.puerts_matrix import supports_runtime_tests
+try:
+    from .scons.puerts_layout import map_godot_target_to_library_key
+    from .scons.puerts_matrix import BACKENDS, CONFIG, PLATFORMS, supports_runtime_tests
+except ImportError:
+    from scons.puerts_layout import map_godot_target_to_library_key
+    from scons.puerts_matrix import BACKENDS, CONFIG, PLATFORMS, supports_runtime_tests
 
 DEFAULT_TIMEOUT = 300
 IMPORT_TIMEOUT_RATIO = 0.5
 RUNTIME_SUFFIXES = {".dll", ".so", ".dylib"}
-GDEXTENSION_BACKENDS = [
-    {
-        "name": "core",
-        "file": "puerts_core.gdextension",
-        "entry_symbol": "puerts_core_library_init",
-        "binary_stem": "PuertsCore",
-    },
-    {
-        "name": "quickjs",
-        "file": "puerts_quickjs.gdextension",
-        "entry_symbol": "puerts_quickjs_library_init",
-        "binary_stem": "PuertsQuickjs",
-    },
-    {
-        "name": "v8",
-        "file": "puerts_v8.gdextension",
-        "entry_symbol": "puerts_v8_library_init",
-        "binary_stem": "PuertsV8",
-    },
-    {
-        "name": "nodejs",
-        "file": "puerts_nodejs.gdextension",
-        "entry_symbol": "puerts_nodejs_library_init",
-        "binary_stem": "PuertsNodejs",
-    },
-    {
-        "name": "lua",
-        "file": "puerts_lua.gdextension",
-        "entry_symbol": "puerts_lua_library_init",
-        "binary_stem": "PuertsLua",
-    },
-]
-RUNTIME_BACKEND_NAMES = {backend["name"] for backend in GDEXTENSION_BACKENDS if backend["name"] != "core"}
+BUILD_ARTIFACT_PREFIXES = ("Puerts", "Papi", "libPuerts", "libPapi", "libnode")
+RUNTIME_BACKEND_NAMES = set(BACKENDS) - {"core"}
 # Keep only one heavy JS backend in runtime tests.
 BACKEND_ALIAS = {
     "nodejs": "v8",
 }
-DEFAULT_BACKENDS = "lua,quickjs,v8"
+DEFAULT_BACKENDS = ",".join(CONFIG["runtime_test_backends"])
+
+
+def _same_file(source: Path, target: Path) -> bool:
+    """Compare staged artifacts without trusting filecmp's coarse cache key."""
+    filecmp.clear_cache()
+    return filecmp.cmp(source, target, shallow=False)
 
 
 def parse_args() -> argparse.Namespace:
@@ -74,7 +55,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--platform",
         default="",
-        choices=["", "windows", "macos", "linux", "android", "ios", "web"],
+        choices=["", *PLATFORMS],
         help="Target Godot platform in CI. Empty means detect from host OS.",
     )
     parser.add_argument(
@@ -104,19 +85,32 @@ def resolve_godot(value: str) -> Path | None:
             if path.is_file():
                 return path.resolve()
     found = shutil.which(value)
-    return Path(found) if found else None
+    return Path(found).resolve() if found else None
 
 
 def sync_binaries(build_bin_dir: Path, project_bin_dir: Path) -> int:
     project_bin_dir.mkdir(parents=True, exist_ok=True)
+    build_files = [path for path in build_bin_dir.iterdir() if path.is_file()]
+    build_names = {path.name for path in build_files}
     for stale_file in project_bin_dir.iterdir():
-        if stale_file.is_file():
+        if (
+            stale_file.is_file()
+            and stale_file.name.startswith(BUILD_ARTIFACT_PREFIXES)
+            and stale_file.name not in build_names
+        ):
             stale_file.unlink()
     copied_count = 0
-    for src_file in build_bin_dir.iterdir():
-        if not src_file.is_file():
-            continue
+    for src_file in build_files:
         dst_file = project_bin_dir / src_file.name
+        if dst_file.is_file():
+            source_stat = src_file.stat()
+            target_stat = dst_file.stat()
+            if (
+                source_stat.st_size == target_stat.st_size
+                and source_stat.st_mtime_ns == target_stat.st_mtime_ns
+                and _same_file(src_file, dst_file)
+            ):
+                continue
         shutil.copy2(src_file, dst_file)
         copied_count += 1
     return copied_count
@@ -259,17 +253,30 @@ def verify_linux_v8_dependency_linkage(project_bin_dir: Path, requested_backends
 def rewrite_gdextension_files(project_dir: Path, platform_name: str, requested_backends: set[str]) -> list[str]:
     updated: list[str] = []
     project_bin_dir = project_dir / "bin"
-    for backend in GDEXTENSION_BACKENDS:
-        backend_name = backend["name"]
-        if backend_name != "core" and backend_name not in requested_backends:
+    for name, backend in BACKENDS.items():
+        if name != "core" and name not in requested_backends:
             continue
-        lines = _collect_library_lines(project_bin_dir, backend["binary_stem"], platform_name)
+        lines = _collect_library_lines(project_bin_dir, backend["source"], platform_name)
         if not lines:
             continue
-        config_path = project_dir / backend["file"]
-        config_path.write_text(_render_gdextension(backend["entry_symbol"], lines), encoding="utf-8", newline="\n")
+        config_path = project_dir / backend["extension"]
+        config_path.write_text(_render_gdextension(backend["entry"], lines), encoding="utf-8", newline="\n")
         updated.append(config_path.name)
     return updated
+
+
+@contextlib.contextmanager
+def restore_gdextension_files(project_dir: Path):
+    paths = [project_dir / backend["extension"] for backend in BACKENDS.values()]
+    originals = {path: path.read_bytes() if path.exists() else None for path in paths}
+    try:
+        yield
+    finally:
+        for path, contents in originals.items():
+            if contents is None:
+                path.unlink(missing_ok=True)
+            elif not path.exists() or path.read_bytes() != contents:
+                path.write_bytes(contents)
 
 
 def import_safe_backends(platform_name: str, requested_backends: set[str]) -> set[str]:
@@ -282,26 +289,33 @@ def import_safe_backends(platform_name: str, requested_backends: set[str]) -> se
 
 @contextlib.contextmanager
 def temporarily_hide_gdextensions(project_dir: Path, keep_backends: set[str]):
-    moved: list[tuple[Path, Path]] = []
-    keep_names = {"core"} | set(keep_backends)
-    try:
-        for backend in GDEXTENSION_BACKENDS:
-            backend_name = backend["name"]
-            if backend_name in keep_names:
-                continue
-            path = project_dir / backend["file"]
-            if not path.is_file():
-                continue
-            hidden = path.with_suffix(path.suffix + ".disabled-for-import")
-            if hidden.exists():
-                hidden.unlink()
-            path.rename(hidden)
-            moved.append((hidden, path))
-        yield
-    finally:
-        for hidden, original in reversed(moved):
-            if hidden.exists():
-                hidden.rename(original)
+    keep_files = {BACKENDS[name]["extension"] for name in {"core"} | keep_backends}
+    extension_list = project_dir / ".godot" / "extension_list.cfg"
+    original_list = extension_list.read_bytes() if extension_list.exists() else None
+    with tempfile.TemporaryDirectory(prefix="puerts-import-") as temporary:
+        moved: list[tuple[Path, Path]] = []
+        try:
+            for path in project_dir.glob("*.gdextension"):
+                if path.name in keep_files:
+                    continue
+                hidden = Path(temporary) / path.name
+                shutil.move(str(path), str(hidden))
+                moved.append((hidden, path))
+            # CI skips the import that normally creates this startup registry.
+            extension_list.parent.mkdir(parents=True, exist_ok=True)
+            extension_list.write_text(
+                "".join(f"res://{name}\n" for name in sorted(keep_files) if (project_dir / name).is_file()),
+                encoding="utf-8",
+                newline="\n",
+            )
+            yield
+        finally:
+            for hidden, original in reversed(moved):
+                shutil.move(str(hidden), str(original))
+            if original_list is not None:
+                extension_list.write_bytes(original_list)
+            else:
+                extension_list.unlink(missing_ok=True)
 
 
 def run_godot_import(root: Path, godot_exe: Path, project_dir: Path, timeout: float, env: dict[str, str]) -> int:
@@ -350,13 +364,14 @@ SUMMARY_PATTERN = re.compile(r"^\[mini-test\] summary .*failed=(\d+)\b")
 
 
 def _terminate_process(proc: subprocess.Popen[str]) -> None:
-    for action in (proc.terminate, proc.kill):
-        try:
-            action()
-            proc.wait(timeout=3)
-            return
-        except Exception:
-            pass
+    if proc.poll() is not None:
+        return
+    proc.terminate()
+    try:
+        proc.wait(timeout=3)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait()
 
 
 def run_with_timeout(command: list[str], cwd: Path, timeout: float, env: dict[str, str]) -> int:
@@ -385,39 +400,93 @@ def run_with_timeout(command: list[str], cwd: Path, timeout: float, env: dict[st
     reader_thread.start()
 
     summary_failed: int | None = None
+    runtime_error = False
 
-    start = time.monotonic()
-    while True:
-        if time.monotonic() - start > timeout:
-            print(f"[test-runner] timeout after {timeout:.1f}s, terminating process.", file=sys.stderr)
-            _terminate_process(proc)
-            return 1
-
-        try:
-            item = output_queue.get(timeout=0.2)
-        except queue.Empty:
-            if proc.poll() is not None and not reader_thread.is_alive():
-                break
-            continue
-
-        if item is None:
-            break
-
-        print(item)
-        summary_match = SUMMARY_PATTERN.match(item)
-        if summary_match:
-            summary_failed = int(summary_match.group(1))
-            # Some backends (for example nodejs) may keep the process alive.
-            # Once summary is printed, tests are finished and we can terminate.
-            if proc.poll() is None:
-                _terminate_process(proc)
-            return 1 if summary_failed > 0 else 0
-
+    deadline = time.monotonic() + timeout
     try:
-        return proc.wait(timeout=1)
-    except subprocess.TimeoutExpired:
-        proc.kill()
-        return 1
+        while time.monotonic() < deadline:
+            try:
+                item = output_queue.get(timeout=0.1)
+            except queue.Empty:
+                continue
+            if item is None:
+                break
+            print(item)
+            runtime_error |= item.startswith(("SCRIPT ERROR:", "ERROR:", "WARNING: ObjectDB instances leaked"))
+            summary_match = SUMMARY_PATTERN.match(item)
+            if summary_match:
+                summary_failed = int(summary_match.group(1))
+                # Let Godot report shutdown errors. Node.js may need termination after this grace period.
+                deadline = min(deadline, time.monotonic() + 3)
+        if summary_failed is None:
+            if proc.poll() is None and time.monotonic() >= deadline:
+                print(f"[test-runner] timeout after {timeout:.1f}s, terminating process.", file=sys.stderr)
+            else:
+                print("[test-runner] missing test summary (process exited early).", file=sys.stderr)
+            return 1
+        return int(summary_failed > 0 or runtime_error or proc.poll() not in (None, 0))
+    finally:
+        _terminate_process(proc)
+        reader_thread.join(timeout=1)
+        proc.stdout.close()
+
+
+def run_project(
+    root: Path,
+    project_dir: Path,
+    build_bin_dir: Path,
+    godot_exe: Path,
+    platform_name: str,
+    requested_backend_set: set[str],
+    timeout: float,
+    process_env: dict[str, str],
+) -> int:
+    project_bin_dir = project_dir / "bin"
+    copied_count = sync_binaries(build_bin_dir, project_bin_dir)
+    print(f"[test-runner] synced {copied_count} build artifact(s) to {project_bin_dir}")
+    import_backend_set = import_safe_backends(platform_name, requested_backend_set)
+
+    if import_backend_set != requested_backend_set:
+        print("[test-runner] import phase backend mapping reduced to: " + ",".join(sorted(import_backend_set)))
+
+    updated_gdextensions = rewrite_gdextension_files(project_dir, platform_name, import_backend_set)
+    if updated_gdextensions:
+        print(f"[test-runner] updated gdextension mappings: {', '.join(updated_gdextensions)}")
+    else:
+        print(
+            f"[test-runner] no runtime libraries found for platform={platform_name}; "
+            "tests may skip unsupported backends."
+        )
+
+    if should_skip_godot_import(platform_name):
+        print(
+            "[test-runner] skipping project import on GitHub Actions "
+            f"for platform={platform_name} due to headless import crash risk."
+        )
+    else:
+        import_env = dict(process_env)
+        with temporarily_hide_gdextensions(project_dir, import_backend_set):
+            import_code = run_godot_import(root, godot_exe, project_dir, timeout, import_env)
+        if import_code != 0:
+            return import_code
+
+    if import_backend_set != requested_backend_set:
+        updated_gdextensions = rewrite_gdextension_files(project_dir, platform_name, requested_backend_set)
+        if updated_gdextensions:
+            print("[test-runner] restored runtime gdextension mappings: " + ", ".join(updated_gdextensions))
+
+    configure_runtime_loader_env(platform_name, project_bin_dir, process_env)
+    if platform_name == "linux":
+        linkage_code = verify_linux_v8_dependency_linkage(project_bin_dir, requested_backend_set, process_env)
+        if linkage_code != 0:
+            return linkage_code
+
+    command = [str(godot_exe), "--headless", "--path", str(project_dir)]
+    print(f"[test-runner] launching: {' '.join(command)}")
+    print("[test-runner] streaming Godot output:")
+    return_code = run_with_timeout(command, root, timeout, process_env)
+    print(f"[test-runner] godot exit code: {return_code}")
+    return return_code
 
 
 def main() -> int:
@@ -425,7 +494,6 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1]
     build_bin_dir = root / "bin"
     project_dir = root / "tests"
-    project_bin_dir = project_dir / "bin"
     platform_name = args.platform or detect_platform()
     process_env = dict(os.environ)
     requested_backend_list, invalid_backends = _parse_requested_backends(args.backends)
@@ -438,6 +506,9 @@ def main() -> int:
         return 2
     if not requested_backend_list:
         print("[test-runner] backend filter resolved to empty list.", file=sys.stderr)
+        return 2
+    if args.timeout <= 0:
+        print("[test-runner] timeout must be positive.", file=sys.stderr)
         return 2
     backend_filter = ",".join(requested_backend_list)
     process_env["PUERTS_TEST_BACKENDS"] = backend_filter
@@ -462,60 +533,11 @@ def main() -> int:
         print("[test-runner] Build first with scons so binaries are generated in ./bin.", file=sys.stderr)
         return 2
 
-    copied_count = sync_binaries(build_bin_dir, project_bin_dir)
-    print(f"[test-runner] synced {copied_count} build artifact(s) to {project_bin_dir}")
     requested_backend_set = set(requested_backend_list)
-    import_backend_set = import_safe_backends(platform_name, requested_backend_set)
-
-    if import_backend_set != requested_backend_set:
-        print("[test-runner] import phase backend mapping reduced to: " + ",".join(sorted(import_backend_set)))
-
-    updated_gdextensions = rewrite_gdextension_files(project_dir, platform_name, import_backend_set)
-    if updated_gdextensions:
-        print(f"[test-runner] updated gdextension mappings: {', '.join(updated_gdextensions)}")
-    else:
-        print(
-            f"[test-runner] no runtime libraries found for platform={platform_name}; "
-            "tests may skip unsupported backends."
+    with restore_gdextension_files(project_dir), temporarily_hide_gdextensions(project_dir, requested_backend_set):
+        return run_project(
+            root, project_dir, build_bin_dir, godot_exe, platform_name, requested_backend_set, args.timeout, process_env
         )
-
-    if should_skip_godot_import(platform_name):
-        print(
-            "[test-runner] skipping project import on GitHub Actions "
-            f"for platform={platform_name} due to headless import crash risk."
-        )
-    else:
-        import_env = dict(process_env)
-        with temporarily_hide_gdextensions(project_dir, import_backend_set):
-            import_code = run_godot_import(root, godot_exe, project_dir, args.timeout, import_env)
-        if import_code != 0:
-            return import_code
-
-    # Restore full backend mapping for runtime execution after a possibly reduced import mapping.
-    if import_backend_set != requested_backend_set:
-        updated_gdextensions = rewrite_gdextension_files(project_dir, platform_name, requested_backend_set)
-        if updated_gdextensions:
-            print("[test-runner] restored runtime gdextension mappings: " + ", ".join(updated_gdextensions))
-
-    configure_runtime_loader_env(platform_name, project_bin_dir, process_env)
-
-    if platform_name == "linux":
-        linkage_code = verify_linux_v8_dependency_linkage(project_bin_dir, requested_backend_set, process_env)
-        if linkage_code != 0:
-            return linkage_code
-
-    command = [
-        str(godot_exe),
-        "--headless",
-        "--path",
-        str(project_dir),
-    ]
-
-    print(f"[test-runner] launching: {' '.join(command)}")
-    print("[test-runner] streaming Godot output:")
-    return_code = run_with_timeout(command, root, args.timeout, process_env)
-    print(f"[test-runner] godot exit code: {return_code}")
-    return return_code
 
 
 if __name__ == "__main__":

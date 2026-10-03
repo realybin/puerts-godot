@@ -1,0 +1,32 @@
+{
+  "platforms": {
+    "windows": {"puerts": "win", "default_arch": "x86_64", "arch": {"x86_64": "x64", "x86_32": "ia32", "arm64": "arm64"}},
+    "macos": {"puerts": "osx", "default_arch": "arm64", "arch": {"x86_64": "x64", "arm64": "arm64"}},
+    "linux": {"puerts": "linux", "default_arch": "x86_64", "arch": {"x86_64": "x64", "arm64": "arm64"}},
+    "android": {"puerts": "android", "default_arch": "arm64", "arch": {"x86_64": "x64", "arm64": "arm64", "arm32": "armv7"}},
+    "ios": {"puerts": "ios", "default_arch": "arm64", "arch": {"arm64": "arm64"}},
+    "web": {"puerts": "wasm", "default_arch": "wasm32", "arch": {"wasm32": "wasm32"}}
+  },
+  "backends": {
+    "core": {"native": "puerts", "source": "PuertsCore", "library": "PuertsCore", "extension": "puerts_core.gdextension", "entry": "puerts_core_library_init"},
+    "v8": {"native": "papi-v8", "source": "PuertsV8", "library": "PapiV8", "extension": "puerts_v8.gdextension", "entry": "puerts_v8_library_init"},
+    "nodejs": {"native": "papi-nodejs", "source": "PuertsNodejs", "library": "PapiNodejs", "extension": "puerts_nodejs.gdextension", "entry": "puerts_nodejs_library_init"},
+    "quickjs": {"native": "papi-quickjs", "source": "PuertsQuickjs", "library": "PapiQuickjs", "extension": "puerts_quickjs.gdextension", "entry": "puerts_quickjs_library_init"},
+    "lua": {"native": "papi-lua", "source": "PuertsLua", "library": "PapiLua", "extension": "puerts_lua.gdextension", "entry": "puerts_lua_library_init"}
+  },
+  "web_backends": ["core", "quickjs", "lua"],
+  "runtime_test_platforms": ["windows", "macos", "linux"],
+  "runtime_test_backends": ["lua", "quickjs", "v8"],
+  "patches": [
+    {"file": "papi-lua-object-new-nullptr", "backends": ["lua"]},
+    {"file": "papi-lua-value-ref-release", "backends": ["lua"]},
+    {"file": "papi-quickjs-string-buffer", "backends": ["quickjs"]},
+    {"file": "papi-v8-nodejs-linux-origin-rpath", "platform": "linux", "backends": ["v8", "nodejs"]}
+  ],
+  "node_dependencies": {
+    "windows": "Win64/libnode.dll",
+    "linux": "Linux/libnode.so.93",
+    "macos": {"arm64": "macOS_arm64/libnode.93.dylib", "x86_64": "macOS/libnode.93.dylib"},
+    "ios": "iOS/*.a"
+  }
+}

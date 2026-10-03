@@ -1,157 +1,82 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsEnvironment" inherits="RefCounted">
-	<brief_description>
-		Creates and manages a Puerts scripting environment backed by a runtime resource.
-	</brief_description>
-	<description>
-		[PuertsEnvironment] owns one live scripting runtime created from a backend resource such as [PuertsV8Backend], [PuertsNodejsBackend], [PuertsQuickjsBackend], or [PuertsLuaBackend]. Call [method initialize] before using the environment. The environment installs global helpers [code]load_type()[/code], [code]log_error()[/code], [code]log_warn()[/code], and [code]log_info()[/code].
-		The [method initialize] call requires a [PuertsStringNameCachePool]. You can share one pool across multiple environments, or use different pool instances (and policies) per environment.
-		Values returned from [method eval] and [method get_global] stay wrapped as [PuertsScriptValue] objects. This keeps object references alive across the script boundary and lets you inspect or convert them later. Calling [method dispose] releases the runtime and invalidates every [PuertsScriptValue] created by this environment.
-		[codeblocks]
-		[gdscript]
-		var backend := PuertsV8Backend.new()
-		var env := PuertsEnvironment.new()
-
-		var pool := PuertsStringNameCachePool.new()
-		pool.initialize(PuertsStringNameCachePool.POLICY_HASH_MAP, 512)
-		var err := env.initialize(backend, pool)
-		if err != OK:
-		    return
-
-		env.eval("globalThis.answer = 40 + 2")
-		var answer := env.get_global("answer").to_int()
-		print(answer) # 42
-		[/gdscript]
-		[/codeblocks]
-	</description>
+	<brief_description>Owns one script runtime.</brief_description>
+	<description>Initialize with a backend and cache pool, keep the environment alive while using its values, and dispose it when finished. Use it and its values on one thread.</description>
 	<methods>
 		<method name="initialize">
 			<return type="int" enum="Error" />
 			<param index="0" name="backend" type="Object" />
 			<param index="1" name="string_name_cache_pool" type="PuertsStringNameCachePool" />
-			<description>
-				Initializes the environment with [param backend] and [param string_name_cache_pool].
-				[param string_name_cache_pool] must be initialized before calling this method.
-				The backend must expose the Puerts function table. If initialization fails, this method returns an [enum Error] value and emits messages through the log callbacks configured by [method set_error_callback], [method set_warn_callback], and [method set_info_callback]. Calling this method on an already initialized environment first disposes the previous runtime.
-			</description>
+			<description>Creates a runtime from the backend and initialized cache pool. An idle previous runtime is disposed first; returns ERR_BUSY during initialization, an active operation, or disposal.</description>
 		</method>
 		<method name="dispose">
 			<return type="void" />
-			<description>
-				Releases the current runtime and invalidates all [PuertsScriptValue] objects created by this environment.
-				It is safe to call this method more than once.
-			</description>
+			<description>Releases the runtime and invalidates its script values and callables. Cleanup is deferred when called during an active operation.</description>
 		</method>
 		<method name="is_alive" qualifiers="const">
 			<return type="bool" />
-			<description>
-				Returns [code]true[/code] if the environment is initialized and has not been disposed.
-			</description>
+			<description>Returns true while the environment accepts operations.</description>
 		</method>
 		<method name="get_backend" qualifiers="const">
 			<return type="Object" />
-			<description>
-				Returns the backend object currently attached to this environment, or [code]null[/code] if the environment is not initialized.
-			</description>
+			<description>Returns the attached backend, or null when none is attached.</description>
 		</method>
 		<method name="set_error_callback">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
-			<description>
-				Sets the environment error log callback.
-				The callback receives one [String] argument: [code]message[/code].
-			</description>
+			<description>Sets the synchronous callback for error messages; an invalid Callable disables it.</description>
 		</method>
 		<method name="set_warn_callback">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
-			<description>
-				Sets the environment warning log callback.
-				The callback receives one [String] argument: [code]message[/code].
-			</description>
+			<description>Sets the synchronous callback for warning messages; an invalid Callable disables it.</description>
 		</method>
 		<method name="set_info_callback">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
-			<description>
-				Sets the environment info log callback.
-				The callback receives one [String] argument: [code]message[/code].
-			</description>
+			<description>Sets the synchronous callback for information messages; an invalid Callable disables it.</description>
 		</method>
 		<method name="eval">
 			<return type="PuertsScriptValue" />
 			<param index="0" name="code" type="String" />
-			<param index="1" name="chunk_name" type="StringName" default="chunk" />
-			<description>
-				Executes [param code] in the current scripting runtime and returns the result as a [PuertsScriptValue].
-				Use [param chunk_name] to label the source for stack traces and debugger views. If script evaluation throws an exception, this method returns [code]null[/code] and emits the exception through the error callback.
-				[codeblocks]
-				[gdscript]
-				var value := env.eval("({ name: 'puerts', version: 1 })", "bootstrap.js")
-				var name := value.get_property("name").to_string()
-				print(name) # "puerts"
-				[/gdscript]
-				[/codeblocks]
-			</description>
+			<param index="1" name="chunk_name" type="StringName" default="&amp;&quot;chunk&quot;" />
+			<description>Executes code and wraps its result. Returns null on failure; use the wrapper type checks for a successful null or undefined result.</description>
 		</method>
 		<method name="set_global">
 			<return type="void" />
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="value" type="Variant" />
-			<description>
-				Stores [param value] on the script global object under [param name].
-				Primitive [Variant] values are converted directly. Godot objects and built-in types are exposed through Puerts' native binding layer.
-			</description>
+			<description>Converts value and assigns it to the named script global. A value from another environment is rejected.</description>
 		</method>
 		<method name="get_global">
 			<return type="PuertsScriptValue" />
 			<param index="0" name="name" type="StringName" />
-			<description>
-				Returns the script global named [param name] as a [PuertsScriptValue].
-				If the global does not exist, the returned wrapper usually represents an undefined script value. Call [method PuertsScriptValue.is_undefined] to check for that case.
-			</description>
+			<description>Returns the named global as a PuertsScriptValue, or null when the read fails.</description>
 		</method>
 		<method name="tick">
 			<return type="void" />
-			<description>
-				Runs one backend update step.
-				Call this from your frame loop for backends that implement ticking, such as V8 and Node.js.
-			</description>
+			<description>Runs one update step for V8 or Node.js.</description>
 		</method>
 		<method name="low_memory_notification">
 			<return type="void" />
-			<description>
-				Asks the backend to release memory aggressively when the backend supports this operation.
-				This usually maps to a garbage-collection or memory-pressure hook.
-			</description>
+			<description>Notifies V8, Node.js, or QuickJS of memory pressure; collection is backend-controlled.</description>
 		</method>
 		<method name="open_debugger">
 			<return type="void" />
 			<param index="0" name="port" type="int" />
-			<description>
-				Opens the backend's remote debugger on the specified [param port].
-				After opening the debugger, call [method debugger_tick] regularly so the backend can process debugger traffic.
-			</description>
+			<description>Opens the V8 or Node.js inspector on port.</description>
 		</method>
 		<method name="debugger_tick">
 			<return type="bool" />
-			<description>
-				Processes one debugger update step.
-				Call this every frame while a debugger is open. The return value is backend-defined and can be used as a lightweight status result for the tick.
-			</description>
+			<description>Processes inspector traffic for V8 or Node.js; returns false when unsupported.</description>
 		</method>
 		<method name="close_debugger">
 			<return type="void" />
-			<description>
-				Closes the active remote debugger, if the backend supports debugging.
-			</description>
+			<description>Closes the active inspector.</description>
 		</method>
 		<method name="terminate_execution">
 			<return type="void" />
-			<description>
-				Requests that the backend stop the currently running script.
-				Only some backends implement forced termination. Unsupported backends emit an error through the configured error callback.
-			</description>
+			<description>Requests termination of the current script on supported backends.</description>
 		</method>
 	</methods>
 </class>

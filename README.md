@@ -1,86 +1,64 @@
 # puerts-godot
 
+`puerts-godot` runs ECMAScript and Lua in Godot through Puerts GDExtensions.
+
+It provides:
+
+- V8, Node.js, QuickJS, and Lua backends.
+- Multiple independent `PuertsEnvironment` runtimes.
+- Godot object bindings and C++ static bindings.
+
 > [!NOTE]
 > This project is a community-maintained, third-party implementation of Puerts integration for Godot.
 
 > [!WARNING]
 > Experimental, use with caution, and expect breaking changes in the future before the 1.0 release.
 
-`puerts-godot` is a Godot GDExtension integration for puerts.
-
-Showcase:
-
-https://github.com/user-attachments/assets/2026e5d9-a95b-466b-8918-cfe784a2e6da
-
-See [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) for a complete example.
-
-It provides:
-
-- Run ECMAScript, Lua, or other supported language scripts in Godot through `puerts`
-- Multiple ScriptEngine backends: V8, Nodejs, Quickjs, Lua
-- Support multiple instances of ScriptEngine with different backends in the same process
-- Static binding support based on C++ templates
+## Quick example
 
 ```gdscript
-# Example usage
-extends Node3D
+extends Node
 
-var env:PuertsEnvironment
+var env: PuertsEnvironment
 
 func _ready() -> void:
-
+	var pool := PuertsStringNameCachePool.new()
+	if pool.initialize() != OK:
+		return
 	env = PuertsEnvironment.new()
-	var backend = PuertsV8Backend.new()
-	var pool = PuertsStringNameCachePool.new()
-	pool.initialize(PuertsStringNameCachePool.POLICY_HASH_MAP)
+	if env.initialize(PuertsV8Backend.new(), pool) != OK:
+		return
+	env.set_global(&"answer", 41)
+	var result := env.eval("answer + 1")
+	if result != null:
+		print(result.to_native()) # 42
 
-	env.initialize(backend,pool)
-	env.open_debugger(9229)
+func _process(_delta: float) -> void:
+	if env != null and env.is_alive():
+		env.tick()
 
-	env.eval("""
-	console.log("hello world")
-	""", "chunk.js")
-
-	env.set_global("myGlobal", 123)
-	var result = env.eval("myGlobal + 1", "chunk2.js")
-	print(result.to_int()) # 124
-
-	var print_func: Callable = func (message):
-		print(message)
-
-	env.set_global("print", print_func)
-	env.eval("""
-	print.call("hello from js")
-	""", "chunk3.js")
-	var ret = env.eval("""(function () {
-	const Vector2 = new load_type("Vector2")
-	const v = new Vector2(3.0, 4.0).length()
-	return v; })()
-	"""
-	, "chunk4.js") # returns 5.0
-
-	print(ret.to_int())
-
-func _process(delta: float) -> void:
-	env.debugger_tick()
+func _exit_tree() -> void:
+	if env != null:
+		env.dispose()
 ```
 
+Keep the environment alive while using its script values. `dispose()` invalidates those values; initialize again only after disposal completes.
 
 ## Documentation
 
-- [Getting Started](docs/getting-started.md)
-- [Build Guide](docs/build.md)
-- [Static Binding](docs/static-binding.md)
-- [Object Allocation and Lifetime](docs/object-allocating.md)
-- [Test Runner Notes](docs/testing.md)
-
-## Example
-
-* [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo): Basic esm support and sample usage of puerts-godot.
+- [Getting started](docs/getting-started.md)
+- [Backends](docs/backends.md)
+- [Conventions](docs/conventions.md)
+- [Static binding](docs/static-binding.md)
+- [Object allocation and lifetime](docs/object-allocating.md)
+- [Advanced usage](docs/advanced.md)
+- [V8 inspector](docs/v8-inspector.md)
+- [Build guide](docs/build.md)
+- [Test runner](docs/testing.md)
 
 ## Supported backends
 
-| Backend         | V8+  | Nodejs+ | Quickjs | Lua  |
+| Platform        | V8+  | Nodejs+ | Quickjs | Lua  |
 |-----------------|------|---------|---------|------|
 | Windows(x86_64) | Yes  | Yes     | Yes     | Yes  |
 | Linux(x86_64)   | Yes  | Yes     | Yes     | Yes  |
@@ -97,6 +75,10 @@ func _process(delta: float) -> void:
 ?: Not tested yet due to lack of devices or time
 
 x: No plan to support, V8 and Nodejs cannot run in Web
+
+## Example project
+
+[puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) contains a complete project.
 
 ## Roadmap
 

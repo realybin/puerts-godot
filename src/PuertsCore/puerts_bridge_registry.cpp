@@ -69,29 +69,30 @@ void *PuertsBridgeRegistry::store_object(Object *p_object, const void *p_type_id
 	const uint64_t object_id_value = p_object->get_instance_id();
 	if (const auto existing = object_entries_.find(object_id_value); existing != object_entries_.end()) {
 		const HandleId existing_handle_id = existing->second.handle_id;
-		Entry *existing_entry = find_entry(encode_handle(existing_handle_id));
-		if (existing_entry != nullptr && resolve_object(*existing_entry) == p_object) {
+		const auto existing_entry = entries_.find(existing_handle_id);
+		if (existing_entry != entries_.end() && resolve_object(existing_entry->second) == p_object) {
 			return encode_handle(existing_handle_id);
 		}
 
 		// ObjectDB instance IDs can be reused after an object is freed. Do not
 		// let a stale index make the new object inherit an unrelated handle.
-		if (existing_entry != nullptr) {
-			entries_.erase(existing_handle_id);
-		}
 		object_entries_.erase(existing);
+		if (existing_entry != entries_.end()) {
+			entries_.erase(existing_entry);
+		}
 	}
 
 	const HandleId handle_id = take_handle_id();
 	if (handle_id == 0) {
 		return nullptr;
 	}
-	Entry &entry = entries_[handle_id];
+	Entry entry;
 	entry.kind = Kind::Object;
 	entry.object_id = ObjectID(object_id_value);
 	entry.script_owned = p_script_owned && !entry.object_id.is_ref_counted();
 	entry.value = entry.object_id.is_ref_counted() ? Variant(p_object) : Variant();
 	entry.type_id = p_type_id;
+	entries_.try_emplace(handle_id, eastl::move(entry));
 	object_entries_.insert({ object_id_value, { handle_id, p_type_id } });
 	return encode_handle(handle_id);
 }
@@ -106,13 +107,11 @@ void PuertsBridgeRegistry::remove_object_entry(HandleId p_handle_id, const Entry
 }
 
 void PuertsBridgeRegistry::clear() {
-	puerts_eastl::vector<Object *> script_owned_objects;
+	puerts_eastl::vector<ObjectID> script_owned_objects;
 	for (const auto &item : entries_) {
 		const Entry &entry = item.second;
 		if (entry.kind == Kind::Object && entry.script_owned) {
-			if (Object *object = resolve_object(entry); object != nullptr) {
-				script_owned_objects.push_back(object);
-			}
+			script_owned_objects.push_back(entry.object_id);
 		}
 	}
 
@@ -121,8 +120,10 @@ void PuertsBridgeRegistry::clear() {
 	object_entries_.clear();
 	released_entries.clear();
 
-	for (Object *object : script_owned_objects) {
-		memdelete(object);
+	for (ObjectID object_id : script_owned_objects) {
+		if (Object *object = ObjectDB::get_instance(object_id); object != nullptr) {
+			memdelete(object);
+		}
 	}
 }
 
@@ -139,10 +140,11 @@ void *PuertsBridgeRegistry::box_variant(const Variant &p_value, const void *p_ty
 	if (handle_id == 0) {
 		return nullptr;
 	}
-	Entry &entry = entries_[handle_id];
+	Entry entry;
 	entry.kind = Kind::Variant;
 	entry.value = p_value;
 	entry.type_id = p_type_id;
+	entries_.try_emplace(handle_id, eastl::move(entry));
 	return encode_handle(handle_id);
 }
 
@@ -203,12 +205,16 @@ bool PuertsBridgeRegistry::release(void *p_handle) {
 		return false;
 	}
 
-	Entry &entry = found->second;
-	Object *script_owned_object = entry.script_owned ? resolve_object(entry) : nullptr;
+	const Entry &entry = found->second;
+	const ObjectID script_owned_id = entry.script_owned ? entry.object_id : ObjectID();
 	remove_object_entry(handle_id, entry);
+	// Finish mutating the map before Variant destruction can reenter it.
+	Variant released_value = eastl::move(found->second.value);
 	entries_.erase(found);
-	if (script_owned_object != nullptr) {
-		memdelete(script_owned_object);
+	if (script_owned_id.is_valid()) {
+		if (Object *object = ObjectDB::get_instance(script_owned_id); object != nullptr) {
+			memdelete(object);
+		}
 	}
 	return true;
 }

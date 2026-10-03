@@ -7,12 +7,11 @@
 
 #include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/templates/hashfuncs.hpp>
-#include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/callable_custom.hpp>
 
 using namespace godot;
 
-namespace {
+namespace puerts::internal {
 
 class PuertsScriptCallable final : public CallableCustom {
 public:
@@ -62,31 +61,22 @@ public:
 	}
 
 	void call(const Variant **p_arguments, int p_argument_count, Variant &r_return_value, GDExtensionCallError &r_call_error) const override {
+		// Script may disconnect its signal and destroy this Callable.
+		Ref<PuertsScriptValue> function = function_;
 		r_return_value = {};
-		r_call_error.error = GDEXTENSION_CALL_OK;
-		if (!is_valid()) {
-			r_call_error.error = GDEXTENSION_CALL_ERROR_INSTANCE_IS_NULL;
+		if (function.is_null()) {
+			r_call_error = { GDEXTENSION_CALL_ERROR_INSTANCE_IS_NULL, 0, 0 };
 			return;
 		}
-
-		Array arguments;
-		arguments.resize(p_argument_count);
-		for (int i = 0; i < p_argument_count; ++i) {
-			arguments[i] = *p_arguments[i];
-		}
-
-		Ref<PuertsScriptValue> result = function_->call(arguments);
-		if (result.is_valid()) {
-			r_return_value = result->to_native();
-		}
+		function->call_native(p_arguments, p_argument_count, r_return_value, r_call_error);
 	}
 
 private:
 	Ref<PuertsScriptValue> function_;
 };
 
-} // namespace
-
-Callable puerts::internal::make_script_callable(const Ref<PuertsScriptValue> &p_function) {
+Callable make_script_callable(const Ref<PuertsScriptValue> &p_function) {
 	return Callable(memnew(PuertsScriptCallable(p_function)));
 }
+
+} // namespace puerts::internal

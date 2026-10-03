@@ -63,11 +63,22 @@ PuertsEnvironment::~PuertsEnvironment() {
 }
 
 Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNameCachePool> &p_string_name_cache_pool) {
-	if (environment_data_.state == PuertsEnvironmentState::Disposing || active_operations_ != 0) {
-		log_error("Puerts environment is being disposed.");
+	if (environment_data_.state == PuertsEnvironmentState::Initializing || environment_data_.state == PuertsEnvironmentState::Disposing || active_operations_ != 0) {
+		log_error("Puerts environment is busy.");
 		return ERR_BUSY;
 	}
+	Ref<PuertsEnvironment> keep_alive(this);
+	Ref<RefCounted> backend(Object::cast_to<RefCounted>(p_backend));
 	dispose();
+	environment_data_.state = PuertsEnvironmentState::Initializing;
+	struct InitializationGuard {
+		PuertsEnvironmentData &data;
+		~InitializationGuard() {
+			if (data.state == PuertsEnvironmentState::Initializing) {
+				data.state = PuertsEnvironmentState::Uninitialized;
+			}
+		}
+	} initialization_guard{ environment_data_ };
 
 	if (p_backend == nullptr) {
 		log_error("Puerts backend is null.");
@@ -81,8 +92,7 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		log_error("Puerts StringName cache pool is not initialized.");
 		return ERR_INVALID_PARAMETER;
 	}
-	auto *backend_refcounted = Object::cast_to<RefCounted>(p_backend);
-	if (backend_refcounted == nullptr) {
+	if (backend.is_null()) {
 		log_error("Puerts backend must inherit RefCounted.");
 		return ERR_INVALID_PARAMETER;
 	}
@@ -130,13 +140,16 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		return ERR_CANT_CREATE;
 	}
 
+	backend_functions_ = functions;
+	backend_ref_ = backend;
+	string_name_cache_pool_ = p_string_name_cache_pool;
+	environment_data_.state = PuertsEnvironmentState::Ready;
+	environment_data_.environment = this;
+	OperationScope operation(this);
 	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
 	pesapi_env env = scope.env();
 	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
 	ffi_->set_registry(env, type_register.get_registry());
-
-	environment_data_.state = PuertsEnvironmentState::Ready;
-	environment_data_.environment = this;
 	ffi_->set_env_private(env, &environment_data_);
 
 	pesapi_value load_type = ffi_->create_function(env, &PuertsTypeRegister::load_type_callback, nullptr, nullptr);
@@ -150,9 +163,6 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 	pesapi_value log_info = ffi_->create_function(env, &PuertsEnvironment::script_log_info_callback, nullptr, nullptr);
 	ffi_->set_property(env, ffi_->global(env), log_info_property_name, log_info);
 
-	backend_functions_ = functions;
-	backend_ref_ = Ref(backend_refcounted);
-	string_name_cache_pool_ = p_string_name_cache_pool;
 	return OK;
 }
 
@@ -274,10 +284,11 @@ void PuertsEnvironment::log_info(const String &p_message) {
 }
 
 void PuertsEnvironment::emit_log(const Callable &p_callback, const String &p_message) {
-	if (!p_callback.is_valid()) {
+	const Callable callback = p_callback;
+	if (!callback.is_valid()) {
 		return;
 	}
-	p_callback.call(p_message);
+	callback.call(p_message);
 }
 
 static String read_log_message_arg(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_callback_info p_info) {
@@ -341,38 +352,23 @@ const CharString &PuertsEnvironment::get_cached_utf8(const StringName &p_name) {
 }
 
 void PuertsEnvironment::register_script_value(PuertsScriptValue *p_value) {
-	p_value->previous_ = nullptr;
-	p_value->next_ = script_values_head_;
-	if (script_values_head_ != nullptr) {
-		script_values_head_->previous_ = p_value;
-	}
-	script_values_head_ = p_value;
+	p_value->registry_index_ = script_values_.size();
+	script_values_.push_back(p_value);
 }
 
 void PuertsEnvironment::unregister_script_value(PuertsScriptValue *p_value) {
-	if (p_value->previous_ != nullptr) {
-		p_value->previous_->next_ = p_value->next_;
-	} else {
-		script_values_head_ = p_value->next_;
-	}
-	if (p_value->next_ != nullptr) {
-		p_value->next_->previous_ = p_value->previous_;
-	}
-	p_value->previous_ = nullptr;
-	p_value->next_ = nullptr;
+	PuertsScriptValue *last = script_values_.back();
+	script_values_[p_value->registry_index_] = last;
+	last->registry_index_ = p_value->registry_index_;
+	script_values_.pop_back();
 }
 
 void PuertsEnvironment::invalidate_script_values() {
-	PuertsScriptValue *value = script_values_head_;
-	script_values_head_ = nullptr;
-	while (value != nullptr) {
-		PuertsScriptValue *next = value->next_;
-		value->previous_ = nullptr;
-		value->next_ = nullptr;
-		value->cache_entry_ = nullptr;
-		Ref<PuertsScriptValue> keep_alive(value);
+	while (!script_values_.empty()) {
+		Ref<PuertsScriptValue> value(script_values_.back());
+		// A backend release can synchronously destroy other registered values.
+		unregister_script_value(value.ptr());
 		value->release_value_ref();
-		value = next;
 	}
 	script_value_cache_.clear();
 }

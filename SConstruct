@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 import sys
+from collections import namedtuple
 
 from methods import print_error
 from scripts.scons.puerts_layout import (
@@ -10,7 +11,7 @@ from scripts.scons.puerts_layout import (
     load_backend_config,
     resolve_puerts_paths,
 )
-from scripts.scons.puerts_matrix import map_puerts_arch, supported_backends
+from scripts.scons.puerts_matrix import BACKENDS, map_puerts_arch, supported_backends
 
 # You can find documentation for SCons and SConstruct files at:
 # https://scons.org/documentation.html
@@ -39,20 +40,9 @@ if env["platform"] == "windows":
     env.Append(CCFLAGS=["/bigobj"])
 
 
-class ProjectInfo:
-    def __init__(self, project_name, source_dir, backend_dir, lib_name):
-        self.project_name = project_name
-        self.source_dir = source_dir
-        self.backend_dir = backend_dir
-        self.lib_name = lib_name
-
-
+ProjectInfo = namedtuple("ProjectInfo", "project_name source_dir backend_dir lib_name")
 project_infos = [
-    ProjectInfo("PuertsCore", "PuertsCore", "puerts", "PuertsCore"),
-    ProjectInfo("PuertsV8", "PuertsV8", "papi-v8", "PapiV8"),
-    ProjectInfo("PuertsNodejs", "PuertsNodejs", "papi-nodejs", "PapiNodejs"),
-    ProjectInfo("PuertsQuickjs", "PuertsQuickjs", "papi-quickjs", "PapiQuickjs"),
-    ProjectInfo("PuertsLua", "PuertsLua", "papi-lua", "PapiLua"),
+    ProjectInfo(entry["source"], entry["source"], entry["native"], entry["library"]) for entry in BACKENDS.values()
 ]
 
 available_backends = supported_backends(env["platform"])

@@ -8,6 +8,8 @@
 #include "puerts_bridge_registry.h"
 #include "puerts_eastl.h"
 
+#include <cstddef>
+
 #include <godot_cpp/variant/string.hpp>
 #include <godot_cpp/variant/variant.hpp>
 
@@ -15,6 +17,7 @@ class PuertsEnvironment;
 
 enum class PuertsEnvironmentState {
 	Uninitialized,
+	Initializing,
 	Ready,
 	DisposePending,
 	Disposing,
@@ -54,12 +57,17 @@ class EnvironmentHandleScope {
 public:
 	EnvironmentHandleScope(pesapi_ffi *p_apis, pesapi_env_ref p_env_ref) :
 			api_(p_apis),
-			scope_(p_apis->open_scope(p_env_ref)),
+			placement_(p_apis->open_scope_placement != nullptr && p_apis->close_scope_placement != nullptr),
+			scope_(placement_ ? p_apis->open_scope_placement(p_env_ref, &memory_) : p_apis->open_scope(p_env_ref)),
 			script_env_(p_apis->get_env_from_ref(p_env_ref)) {
 	}
 
 	~EnvironmentHandleScope() {
-		api_->close_scope(scope_);
+		if (placement_) {
+			api_->close_scope_placement(scope_);
+		} else {
+			api_->close_scope(scope_);
+		}
 	}
 
 	EnvironmentHandleScope(const EnvironmentHandleScope &) = delete;
@@ -70,6 +78,8 @@ public:
 
 private:
 	pesapi_ffi *api_;
+	bool placement_;
+	alignas(std::max_align_t) pesapi_scope_memory memory_;
 	pesapi_scope scope_;
 	pesapi_env script_env_;
 };

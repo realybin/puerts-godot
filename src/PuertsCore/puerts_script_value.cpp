@@ -21,7 +21,9 @@ Result PuertsScriptValue::with_value(Result p_fallback, Function &&p_function, b
 		return p_fallback;
 	}
 
-	PuertsEnvironment::OperationScope operation(p_may_reenter ? environment : nullptr);
+	Ref<PuertsScriptValue> keep_alive(p_may_reenter ? const_cast<PuertsScriptValue *>(this) : nullptr);
+	// Closing a scope can execute pending jobs, even after a type query.
+	PuertsEnvironment::OperationScope operation(environment);
 	puerts::internal::EnvironmentHandleScope scope(ffi_, environment->env_ref_);
 	pesapi_env env = scope.env();
 	pesapi_value value = ffi_->get_value_from_ref(env, value_ref_);
@@ -232,23 +234,63 @@ Ref<PuertsScriptValue> PuertsScriptValue::call_script_function(
 		const Array &p_args) const {
 	const int64_t array_size = p_args.size();
 	ERR_FAIL_COND_V_MSG(array_size > INT_MAX, Ref<PuertsScriptValue>(), "Too many arguments for a script function call.");
-	const int arg_count = static_cast<int>(array_size);
-	puerts_eastl::fixed_vector<pesapi_value, puerts::internal::kInlineArgumentCount> argv;
-	argv.resize(arg_count);
-	for (int32_t i = 0; i < arg_count; i++) {
-		bool converted = false;
-		argv[i] = p_environment->variant_to_script(p_env, p_args[i], &converted, nullptr);
-		if (!converted) {
-			return {};
-		}
-	}
-
-	pesapi_value result = ffi_->call_function(p_env, p_function, p_receiver, static_cast<int>(arg_count), argv.data());
-	if (ffi_->has_caught(p_scope)) {
-		p_environment->log_error(p_environment->read_exception(p_scope));
+	pesapi_value result = nullptr;
+	GDExtensionCallError call_error{ GDEXTENSION_CALL_OK, 0, 0 };
+	if (!invoke_script_function(p_environment, p_scope, p_env, p_function, p_receiver, static_cast<int>(array_size), [&](int p_index) -> decltype(auto) { return p_args[p_index]; }, result, call_error)) {
 		return {};
 	}
 	return p_environment->create_script_value(p_env, result);
+}
+
+void PuertsScriptValue::call_native(const Variant **p_args, int p_arg_count, Variant &r_result, GDExtensionCallError &r_call_error) const {
+	r_call_error = { GDEXTENSION_CALL_ERROR_INSTANCE_IS_NULL, 0, 0 };
+	with_value(false, [this, p_args, p_arg_count, &r_result, &r_call_error](PuertsEnvironment *p_environment, pesapi_scope p_scope, pesapi_env p_env, pesapi_value p_function) {
+		if (!ffi_->is_function(p_env, p_function)) {
+			p_environment->log_error("Puerts script value is not a function.");
+			r_call_error.error = GDEXTENSION_CALL_ERROR_INVALID_METHOD;
+			return false;
+		}
+		pesapi_value result = nullptr;
+		if (!invoke_script_function(p_environment, p_scope, p_env, p_function, ffi_->global(p_env),
+				p_arg_count, [p_args](int p_index) -> const Variant & { return *p_args[p_index]; }, result, r_call_error)) {
+			return false;
+		}
+		if (result != nullptr) {
+			r_result = p_environment->script_to_variant(p_env, result);
+		}
+		return true; }, true);
+}
+
+template <typename ArgumentAt>
+bool PuertsScriptValue::invoke_script_function(
+		PuertsEnvironment *p_environment,
+		pesapi_scope p_scope,
+		pesapi_env p_env,
+		pesapi_value p_function,
+		pesapi_value p_receiver,
+		int p_arg_count,
+		ArgumentAt p_argument_at,
+		pesapi_value &r_result,
+		GDExtensionCallError &r_call_error) const {
+	puerts_eastl::fixed_vector<pesapi_value, puerts::internal::kInlineArgumentCount> argv;
+	argv.resize(p_arg_count);
+	for (int i = 0; i < p_arg_count; ++i) {
+		bool converted = false;
+		argv[i] = p_environment->variant_to_script(p_env, p_argument_at(i), &converted, nullptr);
+		if (!converted) {
+			r_call_error = { GDEXTENSION_CALL_ERROR_INVALID_ARGUMENT, i, GDEXTENSION_VARIANT_TYPE_NIL };
+			return false;
+		}
+	}
+
+	r_result = ffi_->call_function(p_env, p_function, p_receiver, p_arg_count, argv.data());
+	if (ffi_->has_caught(p_scope)) {
+		p_environment->log_error(p_environment->read_exception(p_scope));
+		r_call_error = { GDEXTENSION_CALL_ERROR_INVALID_METHOD, 0, 0 };
+		return false;
+	}
+	r_call_error = { GDEXTENSION_CALL_OK, 0, 0 };
+	return true;
 }
 
 void PuertsScriptValue::initialize(PuertsEnvironment *p_environment, pesapi_ffi *p_ffi, pesapi_value_ref p_value_ref) {
@@ -258,32 +300,34 @@ void PuertsScriptValue::initialize(PuertsEnvironment *p_environment, pesapi_ffi 
 }
 
 void PuertsScriptValue::release_value_ref() {
-	PuertsEnvironment *environment = get_environment();
+	PuertsEnvironment *environment = environment_;
 	PuertsEnvironment::OperationScope operation(environment);
-	if (cache_entry_ != nullptr && environment != nullptr) {
-		cache_entry_->value = nullptr;
+	if (cache_key_ != nullptr && environment != nullptr) {
+		environment->script_value_cache_[cache_key_] = nullptr;
 		if (ffi_ != nullptr && value_ref_ != nullptr && environment->is_alive()) {
 			puerts::internal::EnvironmentHandleScope scope(ffi_, environment->env_ref_);
 			pesapi_env env = scope.env();
 			pesapi_value value = ffi_->get_value_from_ref(env, value_ref_);
 			void *private_ptr = nullptr;
-			if (ffi_->get_private(env, value, &private_ptr) && private_ptr == cache_entry_ &&
+			if (ffi_->get_private(env, value, &private_ptr) && private_ptr == cache_key_ &&
 					ffi_->set_private(env, value, nullptr)) {
-				void *detached_entry = cache_entry_;
+				void *detached_entry = cache_key_;
 				if (ffi_->get_private(env, value, &detached_entry) && detached_entry == nullptr) {
-					environment->script_value_cache_.erase(cache_entry_);
+					environment->script_value_cache_.erase(cache_key_);
 				}
 			}
 		}
 	}
-	cache_entry_ = nullptr;
-
-	if (ffi_ != nullptr && value_ref_ != nullptr) {
-		ffi_->release_value_ref(value_ref_);
-	}
+	pesapi_ffi *ffi = ffi_;
+	pesapi_value_ref value_ref = value_ref_;
+	cache_key_ = nullptr;
 	value_ref_ = nullptr;
 	ffi_ = nullptr;
 	environment_ = nullptr;
+	// Finalizers may release other wrappers or reenter disposal.
+	if (ffi != nullptr && value_ref != nullptr) {
+		ffi->release_value_ref(value_ref);
+	}
 }
 
 bool PuertsScriptValue::ensure_live_native_object_receiver(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) const {

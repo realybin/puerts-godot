@@ -28,10 +28,6 @@ class PuertsScriptValue;
 class PuertsTypeRegister;
 class PuertsEnvironment;
 
-struct PuertsScriptValueCacheEntry {
-	PuertsScriptValue *value = nullptr;
-};
-
 namespace puerts {
 godot::Variant script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
 bool native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
@@ -47,8 +43,10 @@ class PuertsEnvironment : public godot::RefCounted {
 	pesapi_env_ref env_ref_ = nullptr;
 	PuertsEnvironmentData environment_data_;
 	uint32_t active_operations_ = 0;
-	PuertsScriptValue *script_values_head_ = nullptr;
-	puerts_eastl::hash_map<PuertsScriptValueCacheEntry *, puerts_eastl::unique_ptr<PuertsScriptValueCacheEntry>> script_value_cache_;
+	puerts_eastl::vector<PuertsScriptValue *> script_values_;
+	puerts_eastl::hash_map<void *, PuertsScriptValue *> script_value_cache_;
+	// Keys occupy the upper address range and are never reused.
+	uintptr_t next_cache_key_ = (UINTPTR_MAX >> 2U) + 1;
 	godot::Callable error_callback_;
 	godot::Callable warn_callback_;
 	godot::Callable info_callback_;

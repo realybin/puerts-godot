@@ -1,105 +1,60 @@
 # Static Binding
 
-> Note: This may outdate if we have no time to update the document.
+Static bindings connect script calls to C++ constructors, methods, and properties through template callbacks. `load_type(name)` checks the static registry before Godot ClassDB.
 
-This document explains static binding in `puerts-godot`.
+## Minimal binding
 
-## What static binding is?
-
-In general, we use reflection-based paths based on [ClassDB](https://docs.godotengine.org/en/stable/classes/class_classdb.html), but reflection may be slow.
-Static binding may be faster.
-
-Static binding maps C++ types and members to script-visible types at compile time.
-You register constructors, methods, and properties in C++.
-At runtime, scripts load the type by name with `load_type("TypeName")`.
-
-We will find the type in a static registry first, if not found, fallback to reflection-based paths.
-
-Use static binding when you need predictable behavior and lower runtime overhead than reflection-based paths.
-So you can integrate with existing C++ libraries and expose their APIs to scripts.
-
-More details in
-- [puerts_type_register.cpp](../src/PuertsCore/puerts_type_register.cpp)
-- [register_types.cpp](../src/PuertsCore/register_types.cpp)
-- [puerts_builtin_binding.cpp](../src/PuertsCore/puerts_builtin_binding.cpp)
-- [puerts_builtin_binding.h](../src/PuertsCore/puerts_builtin_binding.h)
-- Versioned generated built-in bindings for
-  [Godot 4.5](../src/PuertsCore/puerts_builtin_bindings.4_5.generated.inc),
-  [Godot 4.6](../src/PuertsCore/puerts_builtin_bindings.4_6.generated.inc), and
-  [Godot 4.7](../src/PuertsCore/puerts_builtin_bindings.4_7.generated.inc)
-
-## Minimal example
+This example binds a plain C++ type without redeclaring a Godot built-in:
 
 ```cpp
-#include "puerts_static_binding.h"
-#include <godot_cpp/variant/vector2.hpp>
+#include "PuertsCore/puerts_static_binding.h"
 
-PUERTS_SCRIPT_TYPE(godot::Vector2, "Vector2")
+class ExampleCounter {
+public:
+	double value = 0.0;
+	ExampleCounter() = default;
+	explicit ExampleCounter(double p_value) : value(p_value) {}
+	double add(double p_amount) { value += p_amount; return value; }
+};
 
-void register_my_bindings() {
-	puerts::define_class<godot::Vector2>()
+PUERTS_SCRIPT_TYPE(ExampleCounter, "ExampleCounter")
+
+void register_example_bindings() {
+	puerts::define_type<ExampleCounter>()
 			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Vector2>(),
-					puerts::make_constructor_overload<godot::Vector2, float, float>()))
-			.method("length", puerts::make_method<&godot::Vector2::length>())
-			.property("x", puerts::make_property<&godot::Vector2::x>())
-			.property("y", puerts::make_property<&godot::Vector2::y>())
+					puerts::make_constructor_overload<ExampleCounter>(),
+					puerts::make_constructor_overload<ExampleCounter, double>()))
+			.method("add", puerts::make_method<&ExampleCounter::add>())
+			.property("value", puerts::make_property<&ExampleCounter::value>())
 			.register_type();
 }
 ```
 
-## Inheritance example (`extends`)
+Register once during scene initialization, before scripts call `load_type`:
 
-```cpp
-class MyBase {
-public:
-	int id = 0;
-	int get_id() const { return id; }
-};
-
-class MyDerived : public MyBase {
-public:
-	void set_id(int p_id) { id = p_id; }
-};
-
-PUERTS_SCRIPT_TYPE(MyBase, "MyBase")
-PUERTS_SCRIPT_TYPE(MyDerived, "MyDerived")
-
-void register_inheritance_bindings() {
-	puerts::define_class<MyBase>()
-			.constructor<>()
-			.method("get_id", puerts::make_method<&MyBase::get_id>())
-			.register_type();
-
-	puerts::define_class<MyDerived>()
-			.extends<MyBase>()
-			.constructor<>()
-			.method("set_id", puerts::make_method<&MyDerived::set_id>())
-			.register_type();
-}
+```javascript
+const Counter = load_type("ExampleCounter");
+const counter = new Counter(10.0);
+counter.add(2.0); // 12
+counter.value = 5.0;
 ```
 
-```js
-const Vector2 = load_type("Vector2");
-const v = new Vector2(3.0, 4.0);
-console.log(v.length()); // 5
-```
+## Supported builders
 
-## Register at initialization
+| Member | Builder |
+|--------|---------|
+| Constructor | `constructor<Args...>()` |
+| Constructor overloads | `combine_constructors(make_constructor_overload<T, Args...>(), ...)` |
+| Instance method | `method("name", make_method<&T::method>())` |
+| Static function | `static_method("name", make_function<&function>())` |
+| Property | `property("name", make_property<&T::member>())` |
 
-Register static types during module initialization, before script code uses `load_type`.
-For example, this project registers built-in static bindings in `initialize_puerts_core_module()`:
+Use an explicit member-pointer cast for overloaded methods. `combine_overloads()` combines method signatures.
 
-- [register_types.cpp](../src/PuertsCore/register_types.cpp)
-- [puerts_builtin_binding.cpp](../src/PuertsCore/puerts_builtin_binding.cpp)
+## Inheritance and lifetime
 
-## Auto generate static binding code
+Register the base first, then use `.extends<Base>()` on the derived type. Each type needs its own `PUERTS_SCRIPT_TYPE` and constructor. The registry models one simple base relationship; multiple or virtual inheritance is not adjusted.
 
-[puerts-godot-binding-gen](../tools/puerts-godot-binding-gen)
+Plain C++ values use the generated finalizer and are deleted when their script wrapper is collected or the environment is disposed. Godot `Object` subclasses follow the bridge ownership rules in [Object Allocation and Lifetime](object-allocating.md). Plain C++ types do not gain a Godot `Variant` representation automatically.
 
-## Troubleshooting
-
-- `Type not found`: confirm `PUERTS_SCRIPT_TYPE` name matches the `load_type` name.
-- `No constructor overload matches`: constructor signature or argument types do not match.
-- `No overload matches`: method overload resolution failed for the provided arguments.
-- `Property type does not match`: assignment value cannot convert to the property type.
+The builder and macro are declared in [puerts_static_binding.h](../src/PuertsCore/puerts_static_binding.h). Generated bindings are registered by [puerts_builtin_binding.cpp](../src/PuertsCore/puerts_builtin_binding.cpp).

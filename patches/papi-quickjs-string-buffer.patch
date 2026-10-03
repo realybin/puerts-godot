@@ -1,0 +1,40 @@
+Subject: [PATCH] fix: bound QuickJS UTF-8 writes and preserve embedded nulls
+
+diff --git a/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp b/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp
+index 9bea4d52..58c3e42c 100644
+--- a/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp
++++ b/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp
+@@ -263,23 +263,19 @@ const char* pesapi_get_value_string_utf8(pesapi_env env, pesapi_value pvalue, ch
+     if (ctx != nullptr)
+     {
+         auto jsvalue = reinterpret_cast<pesapi::qjsimpl::pesapi_value__*>(pvalue)->v;
+-        if (buf == nullptr)
++        const size_t capacity = buf != nullptr ? *bufsize : 0;
++        size_t length = 0;
++        const char* text = JS_ToCStringLen(ctx, &length, jsvalue);
++        *bufsize = length;
++        if (text != nullptr)
+         {
+-            auto ret = JS_ToCString(ctx, jsvalue); // TODO: 优化
+-            if (ret)
++            if (buf != nullptr)
+             {
+-                *bufsize = strlen(ret);
+-                JS_FreeCString(ctx, ret);
+-            }
+-        }
+-        else
+-        {
+-            auto ret = JS_ToCStringLen(ctx, bufsize, jsvalue);
+-            if (ret)
+-            {
+-                strcpy(buf, ret);
+-                JS_FreeCString(ctx, ret);
++                // The input size limits writes; report the full length even
++                // when coercion changed the string since the size query.
++                memcpy(buf, text, length < capacity ? length : capacity);
+             }
++            JS_FreeCString(ctx, text);
+         }
+     }
+     return buf;

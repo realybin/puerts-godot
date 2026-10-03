@@ -1,10 +1,14 @@
-## Backends
+# Backends
 
-Capability checks are based on the backend function table exposed to `PuertsEnvironment`; unsupported environment calls emit an error through the configured error callback.
+Pass one backend resource to `PuertsEnvironment.initialize()`. A resource can be shared; each initialization creates an independent runtime.
 
-| Backend                | Language     | Supported Capabilities                                               | Not Supported Capabilities                                           |
-|------------------------|--------------|----------------------------------------------------------------------|----------------------------------------------------------------------|
-| `PuertsV8Backend`      | `ecmascript` | `tick`, `debugger`, `low_memory_notification`, `terminate_execution` | -                                                                    |
-| `PuertsNodejsBackend`  | `ecmascript` | `tick`, `debugger`, `low_memory_notification`, `terminate_execution` | -                                                                    |
-| `PuertsQuickjsBackend` | `ecmascript` | `low_memory_notification`                                            | `tick`, `debugger`, `terminate_execution`                            |
-| `PuertsLuaBackend`     | `lua`        | -                                                                    | `tick`, `debugger`, `low_memory_notification`, `terminate_execution` |
+| Backend | Language | `tick` | Inspector | Low memory | Terminate |
+|---------|----------|--------|-----------|------------|-----------|
+| `PuertsV8Backend` | ECMAScript | Yes | Yes | Yes | Yes |
+| `PuertsNodejsBackend` | ECMAScript | Yes | Yes | Yes | Yes |
+| `PuertsQuickjsBackend` | ECMAScript | No | No | Yes | No |
+| `PuertsLuaBackend` | Lua | No | No | No | No |
+
+Unsupported hooks report through the error callback. Choose V8 or Node.js for a process; loading both may conflict, especially on Linux. QuickJS and Lua support Web builds.
+
+Each backend exposes `get_backend_id()`, `get_backend_name()`, and `get_language_id()`. `_puerts_get_functions_ptr()` is an internal core hook.

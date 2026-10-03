@@ -36,9 +36,42 @@ export function countMethodOverloadsInHeader(cleanedHeader: string, methodName: 
 	return signatures.size;
 }
 
-function extractTopLevelMembers(source: string, className: string): Set<string> {
+function countMethodOverloads(cleanedHeader: string, methodNames: Iterable<string>): Map<string, number> {
+	const names = [...new Set(methodNames)];
+	const counts = new Map<string, Set<string>>();
+	for (const name of names) {
+		counts.set(name, new Set<string>());
+	}
+	if (names.length === 0) {
+		return new Map();
+	}
+
+	const methodAlternation = names.map(escapeRegex).join("|");
+	const re = new RegExp(
+		`(?:^|\\n)[ \\t]*(static\\s+)?([A-Za-z0-9_:<>,*&~][A-Za-z0-9_:<>,*&~ \\t]*)\\b(?:[A-Za-z_][A-Za-z0-9_]*::)?(${methodAlternation})\\s*\\(((?:${CPP_QUOTED_LITERAL_PATTERN}|[^;{}"'])*)\\)\\s*(const\\s*)?(?:;|\\{)`,
+		"g",
+	);
+	let match: RegExpExecArray | null = re.exec(cleanedHeader);
+	while (match) {
+		const prefix = (match[2] ?? "").trim();
+		if (!/^(return|if|for|while|switch|else|do)\\b/.test(prefix)) {
+			const methodName = match[3];
+			const argsRaw = match[4] ?? "";
+			const argsNoDefault = argsRaw
+				.replace(/\\s*=\\s*[^,]+/g, "")
+				.replace(/\\s+/g, " ")
+				.trim();
+			const signature = `${match[1] ? "S" : "I"}|${match[5] ? "C" : "N"}|${argsNoDefault}`;
+			counts.get(methodName)?.add(signature);
+		}
+		match = re.exec(cleanedHeader);
+	}
+
+	return new Map([...counts].map(([name, signatures]) => [name, signatures.size]));
+}
+
+function extractTopLevelMembers(cleaned: string, className: string): Set<string> {
 	const members = new Set<string>();
-	const cleaned = stripCppComments(source);
 	const classRe = new RegExp(`\\b(?:struct|class)\\b[^\\n{;]*\\b${escapeRegex(className)}\\b[^\\n{;]*\\{`);
 	const match = classRe.exec(cleaned);
 	if (!match) {
@@ -111,16 +144,12 @@ export function hasLikelyMemberDeclaration(cleanedHeader: string, memberName: st
 }
 
 export function analyzeHeaderMethods(source: string, methodNames: string[], className: string): HeaderAnalysis {
-	const methodNameCounts = new Map<string, number>();
 	const cleaned = stripCppComments(source);
-
-	for (const name of [...new Set(methodNames)]) {
-		methodNameCounts.set(name, countMethodOverloadsInHeader(cleaned, name));
-	}
+	const methodNameCounts = countMethodOverloads(cleaned, methodNames);
 
 	return {
 		methodNameCounts,
-		topLevelMembers: extractTopLevelMembers(source, className),
+		topLevelMembers: extractTopLevelMembers(cleaned, className),
 		source: cleaned,
 	};
 }

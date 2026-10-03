@@ -16,7 +16,10 @@
 #include "pesapi.h"
 
 class PuertsEnvironment;
-struct PuertsScriptValueCacheEntry;
+
+namespace puerts::internal {
+class PuertsScriptCallable;
+}
 
 class PuertsScriptValue : public godot::RefCounted {
 	GDCLASS(PuertsScriptValue, godot::RefCounted)
@@ -24,9 +27,8 @@ class PuertsScriptValue : public godot::RefCounted {
 	PuertsEnvironment *environment_ = nullptr;
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_value_ref value_ref_ = nullptr;
-	PuertsScriptValueCacheEntry *cache_entry_ = nullptr;
-	PuertsScriptValue *previous_ = nullptr;
-	PuertsScriptValue *next_ = nullptr;
+	void *cache_key_ = nullptr;
+	size_t registry_index_ = 0;
 
 protected:
 	static void _bind_methods();
@@ -62,11 +64,24 @@ public:
 
 private:
 	friend class PuertsEnvironment;
+	friend class puerts::internal::PuertsScriptCallable;
 
 	void initialize(PuertsEnvironment *p_environment, pesapi_ffi *p_ffi, pesapi_value_ref p_value_ref);
 	void release_value_ref();
 	template <typename Result, typename Function>
 	Result with_value(Result p_fallback, Function &&p_function, bool p_may_reenter = false) const;
+	void call_native(const godot::Variant **p_args, int p_arg_count, godot::Variant &r_result, GDExtensionCallError &r_call_error) const;
+	template <typename ArgumentAt>
+	bool invoke_script_function(
+			PuertsEnvironment *p_environment,
+			pesapi_scope p_scope,
+			pesapi_env p_env,
+			pesapi_value p_function,
+			pesapi_value p_receiver,
+			int p_arg_count,
+			ArgumentAt p_argument_at,
+			pesapi_value &r_result,
+			GDExtensionCallError &r_call_error) const;
 	godot::Ref<PuertsScriptValue> call_script_function(
 			PuertsEnvironment *p_environment,
 			pesapi_scope p_scope,

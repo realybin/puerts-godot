@@ -20,7 +20,9 @@ godot::String read_utf8_string(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_valu
 	// vector only falls back to the heap for unusually long script strings.
 	puerts_eastl::fixed_vector<char, INLINE_UTF8_BUFFER_SIZE> buffer;
 	buffer.resize(size + 1);
+	const size_t capacity = size;
 	p_apis->get_value_string_utf8(p_env, p_value, buffer.data(), &size);
+	ERR_FAIL_COND_V_MSG(size > capacity, godot::String(), "Script string changed length during conversion.");
 	buffer[size] = '\0';
 	return godot::String::utf8(buffer.data(), static_cast<int64_t>(size));
 }

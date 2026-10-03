@@ -52,8 +52,6 @@ const declaration = generate(api, {
 });
 ```
 
-Run the focused generator tests with `npm test`.
-
 ## Native primitive types
 
 Generated signatures keep JavaScript primitive values assignable as `boolean`, `number`, and `string`, while exposing their native meaning through documented aliases. This includes general aliases such as `Bool`, `String`, `Int`, `Float`, and `Bitfield`, plus metadata-driven aliases such as `Float32`, `Float64`, `Int32`, and `UInt64`. The generator uses `extension_api.json` `meta` values when available and derives `Real` from the API header precision.

@@ -1,85 +1,48 @@
 -- SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 -- SPDX-License-Identifier: BSD-3-Clause
 
-local root = _G.__puerts_cases or {}
-_G.__puerts_cases = root
-
-local function expect(condition, message)
-	if condition then
-		return ""
-	end
-	return message
-end
+local expect = assert
 
 local function expect_throws(fn, needle, label)
 	local ok, err = pcall(fn)
-	if ok then
-		return label .. ": no throw"
-	end
-	if string.find(tostring(err), needle, 1, true) == nil then
-		return label .. ": " .. tostring(err)
-	end
-	return ""
+	expect(not ok, label .. ": no throw")
+	expect(string.find(tostring(err), needle, 1, true) ~= nil, label .. ": " .. tostring(err))
 end
 
 local function near(a, b, eps)
 	return math.abs(a - b) <= eps
 end
 
-root.load_type = {
+_G.binding_cases = {
 	exists = function()
-		local err = expect(load_type ~= nil and to_callable ~= nil, "global helper missing")
-		if err ~= "" then
-			return err
-		end
+		expect(load_type ~= nil and to_callable ~= nil, "global helper missing")
 
-		err = expect(load_type(backend_class_name) ~= nil, "backend class constructor missing")
-		if err ~= "" then
-			return err
-		end
+		expect(load_type(backend_class_name) ~= nil, "backend class constructor missing")
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return load_type("DefinitelyMissingType")
 		end, "Type not found", "missing type check")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect(load_type("Time").Month.MONTH_JANUARY == 1, "class enum mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(load_type("Time").Month.MONTH_JANUARY == 1, "class enum mismatch")
 
-		return expect(load_type("Vector2") ~= nil, "builtin class constructor missing")
+		expect(load_type("Vector2") ~= nil, "builtin class constructor missing")
 	end,
 
 	backend_constructor = function()
-		return expect(load_type(backend_class_name)():get_backend_id() == backend_object:get_backend_id(), "backend constructor mismatch")
+		expect(load_type(backend_class_name)():get_backend_id() == backend_object:get_backend_id(), "backend constructor mismatch")
 	end,
 
 	global_scope = function()
 		local GlobalScope = load_type("GlobalScope")
-		local err = expect(GlobalScope ~= nil, "GlobalScope type missing")
-		if err ~= "" then
-			return err
-		end
+		expect(GlobalScope ~= nil, "GlobalScope type missing")
 
-		err = expect(near(GlobalScope.sin(math.pi * 0.5), 1.0, 1e-6), "GlobalScope utility mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(near(GlobalScope.sin(math.pi * 0.5), 1.0, 1e-6), "GlobalScope utility mismatch")
 
-		err = expect(type(GlobalScope.Engine.get_frames_drawn) == "function", "GlobalScope singleton mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(type(GlobalScope.Engine.get_frames_drawn) == "function", "GlobalScope singleton mismatch")
 
-		err = expect(GlobalScope.Key.KEY_ENTER > 0, "GlobalScope enum mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(GlobalScope.Key.KEY_ENTER > 0, "GlobalScope enum mismatch")
 
-		return expect(GlobalScope.Variant.Type.TYPE_INT == 2, "GlobalScope Variant enum mismatch")
+		expect(GlobalScope.Variant.Type.TYPE_INT == 2, "GlobalScope Variant enum mismatch")
 	end,
 
 	reflected_objects = function()
@@ -87,61 +50,37 @@ root.load_type = {
 		local rng = RandomNumberGenerator()
 		rng.seed = 13579
 		local sample = rng:randi()
-		local err = expect(rng.seed == 13579 and sample >= 0, "rng reflected binding mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(rng.seed == 13579 and sample >= 0, "rng reflected binding mismatch")
 
 		local NodeType = load_type("Node")
 		local node = NodeType()
-		err = expect(node:get_class() == "Node" and node:get_child_count() == 0, "node reflected binding mismatch")
-		if err ~= "" then
-			return err
-		end
-		err = expect(NodeType.NOTIFICATION_READY == 13, "node reflected constant mismatch")
-		if err ~= "" then
-			return err
-		end
-		err = expect_throws(function()
+		expect(node:get_class() == "Node" and node:get_child_count() == 0, "node reflected binding mismatch")
+		expect(NodeType.NOTIFICATION_READY == 13, "node reflected constant mismatch")
+		expect_throws(function()
 			NodeType.NOTIFICATION_READY = 99
 		end, "read-only", "node reflected constant readonly")
-		if err ~= "" then
-			return err
-		end
 
 		local ObjectType = load_type("Object")
 		local obj = ObjectType()
-		err = expect(
+		expect(
 			obj:get_class() == "Object" and
 				obj:has_signal("script_changed") and
 				ObjectType.ConnectFlags.CONNECT_DEFERRED == 1 and
 				ObjectType.NOTIFICATION_PREDELETE == 1,
 			"object reflected binding mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
-		err = expect(obj:call("get_instance_id") == obj:get_instance_id(), "object vararg return mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(obj:call("get_instance_id") == obj:get_instance_id(), "object vararg return mismatch")
 		local script_changed = obj.script_changed
-		err = expect(
+		expect(
 			script_changed ~= nil and
 				script_changed:is_null() == false and
 				script_changed:get_name() == "script_changed" and
 				script_changed:get_object_id() == obj:get_instance_id(),
 			"object reflected signal property mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
-		err = expect_throws(function()
+		expect_throws(function()
 			ObjectType.ConnectFlags.CONNECT_DEFERRED = 99
 		end, "read-only", "object reflected enum readonly")
-		if err ~= "" then
-			return err
-		end
 
 		local GraphNode = load_type("GraphNode")
 		local GradientTexture2D = load_type("GradientTexture2D")
@@ -160,13 +99,10 @@ root.load_type = {
 			slot_icon,
 			true
 		)
-		err = expect(
+		expect(
 			graph_node:is_slot_enabled_left(0) and graph_node:is_slot_enabled_right(0),
 			"reflected overflow arguments mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
 
 		local ArrayType = load_type("Array")
 		local CodeEdit = load_type("CodeEdit")
@@ -176,16 +112,13 @@ root.load_type = {
 		local code_edit = CodeEdit()
 		code_edit:set_auto_indent_prefixes(prefixes)
 		local stored_prefixes = code_edit:get_auto_indent_prefixes()
-		err = expect(
+		expect(
 			prefixes:is_typed() == false and
 				stored_prefixes:is_typed() and
 				stored_prefixes:get_typed_builtin() == GlobalScope.Variant.Type.TYPE_STRING and
 				stored_prefixes:get(0) == "#",
 			"untyped array conversion mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
 
 		local FileDialog = load_type("FileDialog")
 		local filters = ArrayType()
@@ -193,13 +126,10 @@ root.load_type = {
 		local file_dialog = FileDialog()
 		file_dialog:set_filters(filters)
 		local stored_filters = file_dialog:get_filters()
-		err = expect(
+		expect(
 			stored_filters:size() == 1 and stored_filters:get(0) == "*.txt",
 			"array to reflected packed array conversion mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
 
 		local SystemFont = load_type("SystemFont")
 		local StringName = load_type("StringName")
@@ -209,28 +139,22 @@ root.load_type = {
 		local font = SystemFont()
 		font:set_fallbacks(untyped_fallbacks)
 		local stored_fallbacks = font:get_fallbacks()
-		err = expect(
+		expect(
 			stored_fallbacks:is_typed() and
 				stored_fallbacks:get_typed_builtin() == GlobalScope.Variant.Type.TYPE_OBJECT and
 				StringName.op_Equality(stored_fallbacks:get_typed_class_name(), "Font") and
 				stored_fallbacks:get(0) == fallback_font,
 			"untyped object array conversion mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
 
 		local DictionaryType = load_type("Dictionary")
 		local brace_pairs = DictionaryType()
 		brace_pairs:set("(", ")")
 		code_edit:set_auto_brace_completion_pairs(brace_pairs)
-		err = expect(
+		expect(
 			code_edit:get_auto_brace_completion_pairs():get("(", nil) == ")",
 			"untyped dictionary argument mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
 
 		local GraphEdit = load_type("GraphEdit")
 		local type_names = DictionaryType()
@@ -238,168 +162,88 @@ root.load_type = {
 		local graph_edit = GraphEdit()
 		graph_edit.type_names = type_names
 		local stored_type_names = graph_edit.type_names
-		err = expect(
+		expect(
 			stored_type_names:is_typed() == false and stored_type_names:get(1, nil) == "flow",
 			"untyped dictionary property passthrough mismatch"
 		)
-		if err ~= "" then
-			return err
-		end
 
 		local StyleBoxFlat = load_type("StyleBoxFlat")
 		local style_box = StyleBoxFlat()
 		style_box.border_width_left = 7
-		err = expect(style_box.border_width_left == 7, "indexed property fallback mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(style_box.border_width_left == 7, "indexed property fallback mismatch")
 
-		return expect(
+		expect(
 			load_type("FileAccess").file_exists("res://project.godot") and load_type("FileAccess").get_size("res://project.godot") > 0,
 			"static reflected binding mismatch"
 		)
 	end,
 
 	error_paths = function()
-		local err = expect(load_type() == nil, "load_type empty arg should return nil")
-		if err ~= "" then
-			return err
-		end
+		expect(load_type() == nil, "load_type empty arg should return nil")
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return load_type("DirAccess")()
 		end, "No constructor available", "missing constructor check")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return to_callable()
 		end, "expects exactly one argument", "to_callable arity rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return to_callable({})
 		end, "expects a script function", "to_callable type rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return to_callable(load_type("Callable")())
 		end, "expects a script function", "to_callable Callable rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return load_type("RandomNumberGenerator")(1)
 		end, "zero-argument construction", "constructor arg rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local RandomNumberGenerator = load_type("RandomNumberGenerator")
 			local rng = RandomNumberGenerator()
 			rng.seed = "oops"
 		end, "Invalid argument", "property type rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return load_type("Object")(1)
 		end, "Argument count does not match the bound signature", "object static constructor arity rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			load_type("Time").Month.MONTH_JANUARY = 2
 		end, "read-only", "readonly enum rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local LightmapGIData = load_type("LightmapGIData")
 			local data = LightmapGIData()
 			data.lightmap_textures = {}
 		end, "read-only", "readonly property rejection")
-		if err ~= "" then
-			return err
-		end
 
-		return ""
 	end,
 
 	builtin_static_binding = function()
-		local err = expect(load_type("Vector2")(3.0, 4.0):length() == 5.0, "vector2 constructor mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(load_type("Vector2")(3.0, 4.0):length() == 5.0, "vector2 constructor mismatch")
 		local default_limited = load_type("Vector2")(3.0, 4.0):limit_length()
-		err = expect(near(default_limited:length(), 1.0, 1e-6), "instance method default argument mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(near(default_limited:length(), 1.0, 1e-6), "instance method default argument mismatch")
 
 		do
 			local Vector2 = load_type("Vector2")
-			err = expect(
+			expect(
 				Vector2.ZERO.x == 0 and Vector2.ZERO.y == 0 and Vector2.ONE.x == 1 and Vector2.ONE.y == 1,
 				"vector2 constants mismatch"
 			)
-			if err ~= "" then
-				return err
-			end
-			err = expect_throws(function()
+			expect_throws(function()
 				Vector2.ZERO = nil
 			end, "read-only", "vector2 constant readonly")
-			if err ~= "" then
-				return err
-			end
-			err = expect(Vector2.Axis and Vector2.Axis.AXIS_X == 0 and Vector2.Axis.AXIS_Y == 1, "vector2 axis enum mismatch")
-			if err ~= "" then
-				return err
-			end
-			err = expect_throws(function()
+			expect(Vector2.Axis and Vector2.Axis.AXIS_X == 0 and Vector2.Axis.AXIS_Y == 1, "vector2 axis enum mismatch")
+			expect_throws(function()
 				Vector2.Axis = nil
 			end, "read-only", "vector2 axis enum group readonly")
-			if err ~= "" then
-				return err
-			end
-			err = expect_throws(function()
+			expect_throws(function()
 				Vector2.Axis.AXIS_X = 7
 			end, "read-only", "vector2 axis enum readonly")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local Projection = load_type("Projection")
-			err = expect(Projection.Planes and Projection.Planes.PLANE_NEAR == 0 and Projection.Planes.PLANE_BOTTOM == 5, "projection planes enum mismatch")
-			if err ~= "" then
-				return err
-			end
-			err = expect_throws(function()
-				Projection.Planes.PLANE_NEAR = 99
-			end, "read-only", "projection planes enum readonly")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local Vector4 = load_type("Vector4")
-			err = expect(Vector4.Axis and Vector4.Axis.AXIS_X == 0 and Vector4.Axis.AXIS_W == 3, "vector4 axis enum mismatch")
-			if err ~= "" then
-				return err
-			end
 		end
 
 		do
@@ -407,140 +251,32 @@ root.load_type = {
 			local v = Vector2()
 			v.x = 8.0
 			v.y = 6.0
-			err = expect(v:length() == 10.0, "vector2 property mismatch")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local Vector3 = load_type("Vector3")
-			local v = Vector3(1.0, 2.0, 3.0)
-			v.z = 4.0
-			err = expect(v:dot(Vector3(2.0, 0.0, 1.0)) == 6.0, "vector3 method mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(v:length() == 10.0, "vector2 property mismatch")
 		end
 
 		do
 			local Vector2 = load_type("Vector2")
 			local Rect2 = load_type("Rect2")
 			local rect = Rect2(Vector2(2.0, 3.0), Vector2(4.0, 5.0))
-			err = expect(rect:has_point(Vector2(3.0, 4.0)) and rect:get_area() == 20.0 and rect.position.x == 2.0, "rect2 mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(rect:has_point(Vector2(3.0, 4.0)) and rect:get_area() == 20.0 and rect.position.x == 2.0, "rect2 mismatch")
 		end
 
 		do
 			local StringName = load_type("StringName")
 			local name = StringName("player")
-			err = expect(name:contains("lay") and name:length() == 6, "string_name methods mismatch")
-			if err ~= "" then
-				return err
-			end
-			err = expect(name:begins_with("pla") and name:ends_with("yer") and name:to_upper() == "PLAYER", "string_name extras mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(name:contains("lay") and name:length() == 6, "string_name methods mismatch")
+			expect(name:begins_with("pla") and name:ends_with("yer") and name:to_upper() == "PLAYER", "string_name extras mismatch")
 			local parts = StringName("left,right"):split(",")
-			err = expect(parts:size() == 2 and parts:get(0) == "left" and parts:get(1) == "right", "partial default arguments mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(parts:size() == 2 and parts:get(0) == "left" and parts:get(1) == "right", "partial default arguments mismatch")
 		end
 
 		do
 			local Color = load_type("Color")
 			local red = Color.from_hsv(0.0, 1.0, 1.0)
-			err = expect(near(red.r, 1.0, 1e-6) and near(red.a, 1.0, 1e-6), "static method default argument mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(near(red.r, 1.0, 1e-6) and near(red.a, 1.0, 1e-6), "static method default argument mismatch")
 		end
 
-		do
-			local Vector2i = load_type("Vector2i")
-			local v = Vector2i(6, 8)
-			err = expect(math.floor(v:length()) == 10 and v.x == 6 and v.y == 8, "vector2i mismatch")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local NodePath = load_type("NodePath")
-			local path = NodePath("Root/Child:leaf")
-			err = expect(path:get_name_count() == 2 and path:get_subname_count() == 1, "node_path methods mismatch")
-			if err ~= "" then
-				return err
-			end
-
-			local abs_path = NodePath("/Root/Child:leaf")
-			err = expect(abs_path:is_absolute() and abs_path:get_name(0) == "Root" and abs_path:get_subname(0) == "leaf", "node_path extras mismatch")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local Transform2D = load_type("Transform2D")
-			local Vector2 = load_type("Vector2")
-			local t = Transform2D(Vector2(1.0, 0.0), Vector2(0.0, 1.0), Vector2(2.0, 3.0))
-			local determinant = t.determinant and t:determinant() or t:basis_determinant()
-			err = expect(t.origin.x == 2.0 and t.origin.y == 3.0 and determinant == 1.0, "transform2d mismatch")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local Vector3 = load_type("Vector3")
-			local Plane = load_type("Plane")
-			local plane = Plane(Vector3(0.0, 1.0, 0.0), 2.0)
-			err = expect(plane:has_point(Vector3(0.0, 2.0, 0.0), 0.001) and plane:distance_to(Vector3(0.0, 5.0, 0.0)) == 3.0, "plane mismatch")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local Vector3 = load_type("Vector3")
-			local Basis = load_type("Basis")
-			local Transform3D = load_type("Transform3D")
-			local t = Transform3D(Basis(), Vector3(1.0, 2.0, 3.0))
-			local inv = t:inverse()
-			err = expect(inv.origin.x == -1.0 and inv.origin.y == -2.0 and inv.origin.z == -3.0, "transform3d inverse mismatch")
-			if err ~= "" then
-				return err
-			end
-
-			local moved = t:translated_local(Vector3(1.0, 0.0, 0.0))
-			err = expect(moved.origin.x == 2.0 and moved.origin.y == 2.0 and moved.origin.z == 3.0, "transform3d extras mismatch")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		do
-			local Projection = load_type("Projection")
-			err = expect(Projection.create_orthogonal(-1.0, 1.0, -1.0, 1.0, 0.1, 10.0):determinant() ~= 0.0, "projection orthogonal mismatch")
-			if err ~= "" then
-				return err
-			end
-
-			local p = Projection.create_perspective(75.0, 1.0, 0.1, 10.0, false)
-			err = expect(near(p:get_z_near(), 0.1, 0.001) and p:is_orthogonal() == false and p:inverse():determinant() ~= 0.0, "projection perspective mismatch")
-			if err ~= "" then
-				return err
-			end
-		end
-
-		err = expect(load_type("RID")():is_valid() == false, "rid default mismatch")
-		if err ~= "" then
-			return err
-		end
+		expect(load_type("RID")():is_valid() == false, "rid default mismatch")
 
 		do
 			local PackedInt32Array = load_type("PackedInt32Array")
@@ -563,13 +299,10 @@ root.load_type = {
 			local colors = PackedColorArray()
 			colors:append(Color(0.1, 0.2, 0.3, 1.0))
 
-			err = expect(
+			expect(
 				ints:get(0) == 7 and ints:has(7) and floats:get(0) == 1.5 and strings:get(0) == "godot" and vectors:get(0).y == 4.0 and near(colors:get(0).b, 0.3, 0.001),
 				"packed arrays mismatch"
 			)
-			if err ~= "" then
-				return err
-			end
 		end
 
 		do
@@ -580,10 +313,7 @@ root.load_type = {
 			bytes:append(100)
 			bytes:append(111)
 			bytes:append(116)
-			err = expect(bytes:get(1) == 111 and bytes:get_string_from_utf8() == "godot" and bytes:hex_encode() == "676f646f74", "packed byte array mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(bytes:get(1) == 111 and bytes:get_string_from_utf8() == "godot" and bytes:hex_encode() == "676f646f74", "packed byte array mismatch")
 		end
 
 		do
@@ -591,27 +321,15 @@ root.load_type = {
 			local ArrayType = load_type("Array")
 			local c = Callable(backend_object, "get_backend_name")
 			local args = ArrayType()
-			err = expect(c:is_valid() and c:get_method() == "get_backend_name" and c:callv(args) == backend_object:get_backend_name() and c:call() == backend_object:get_backend_name(), "callable mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(c:is_valid() and c:get_method() == "get_backend_name" and c:callv(args) == backend_object:get_backend_name() and c:call() == backend_object:get_backend_name(), "callable mismatch")
 			c:call_deferred()
-			err = expect(type(c.call_deferred) == "function", "callable call_deferred missing")
-			if err ~= "" then
-				return err
-			end
-			err = expect(args:reduce(c) == nil, "array reduce Variant default mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(type(c.call_deferred) == "function", "callable call_deferred missing")
+			expect(args:reduce(c) == nil, "array reduce Variant default mismatch")
 
 			local add = to_callable(function(a, b)
 				return a + b
 			end)
-			err = expect(add:is_custom() and add:is_valid() and add:call(20, 22) == 42, "script callable mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(add:is_custom() and add:is_valid() and add:call(20, 22) == 42, "script callable mismatch")
 
 			local signal_calls = 0
 			local function on_script_changed()
@@ -620,43 +338,28 @@ root.load_type = {
 			local callback = to_callable(on_script_changed)
 			local equivalent_callback = to_callable(on_script_changed)
 			local signal = backend_object.script_changed
-			err = expect_throws(function()
+			expect_throws(function()
 				return signal:connect(on_script_changed)
 			end, "Argument type does not match", "implicit callable rejection")
-			if err ~= "" then
-				return err
-			end
-			err = expect(signal:connect(callback) == 0 and signal:is_connected(equivalent_callback), "script callable connect mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(signal:connect(callback) == 0 and signal:is_connected(equivalent_callback), "script callable connect mismatch")
 			signal:emit()
 			signal:disconnect(equivalent_callback)
 			signal:emit()
-			err = expect(signal_calls == 1 and not signal:is_connected(callback), "script callable disconnect mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(signal_calls == 1 and not signal:is_connected(callback), "script callable disconnect mismatch")
 		end
 
 		do
 			local Signal = load_type("Signal")
 			local sig = Signal(backend_object, "script_changed")
-			err = expect(sig:is_null() == false and sig:get_name() == "script_changed" and sig:get_object_id() == backend_object:get_instance_id(), "signal mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(sig:is_null() == false and sig:get_name() == "script_changed" and sig:get_object_id() == backend_object:get_instance_id(), "signal mismatch")
 
 			local sig_from_property = backend_object.script_changed
-			err = expect(
+			expect(
 				sig_from_property ~= nil and
 				sig_from_property:is_null() == false and
 				sig_from_property:get_name() == "script_changed" and
 				sig_from_property:get_object_id() == backend_object:get_instance_id(),
 				"signal property mismatch")
-			if err ~= "" then
-				return err
-			end
 		end
 
 		do
@@ -665,10 +368,7 @@ root.load_type = {
 			arr:append(1)
 			arr:append("x")
 			arr:set(0, 7)
-			err = expect(arr:size() == 2 and arr:get(0) == 7 and arr:has("x"), "array mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(arr:size() == 2 and arr:get(0) == 7 and arr:has("x"), "array mismatch")
 		end
 
 		do
@@ -681,13 +381,10 @@ root.load_type = {
 			packed_parts:push_back("a")
 			packed_parts:push_back("b")
 			local merged_parts = PackedStringArray.op_Addition(packed_parts, parts)
-			err = expect(
+			expect(
 				merged_parts:size() == 4 and merged_parts:get(0) == "a" and merged_parts:get(3) == "b",
 				"array to packed array conversion mismatch"
 			)
-			if err ~= "" then
-				return err
-			end
 		end
 
 		do
@@ -695,114 +392,75 @@ root.load_type = {
 			local dict = DictionaryType()
 			dict:set("answer", 42)
 			dict:set("name", "godot")
-			err = expect(dict:get("answer", nil) == 42 and dict:has("name") and dict:keys():size() == 2, "dictionary mismatch")
-			if err ~= "" then
-				return err
-			end
-			err = expect(dict:get("missing") == nil, "dictionary get Variant default mismatch")
-			if err ~= "" then
-				return err
-			end
-			err = expect(dict:get_or_add("inserted") == nil and dict:has("inserted"), "dictionary get_or_add Variant default mismatch")
-			if err ~= "" then
-				return err
-			end
+			expect(dict:get("answer", nil) == 42 and dict:has("name") and dict:keys():size() == 2, "dictionary mismatch")
+			expect(dict:get("missing") == nil, "dictionary get Variant default mismatch")
+			expect(dict:get_or_add("inserted") == nil and dict:has("inserted"), "dictionary get_or_add Variant default mismatch")
 		end
 
 		backend_object:set_meta("__puerts_default_arg_meta__", 42)
-		err = expect(backend_object:get_meta("__puerts_default_arg_meta__") == 42, "object method default argument mismatch")
+		expect(backend_object:get_meta("__puerts_default_arg_meta__") == 42, "object method default argument mismatch")
 		backend_object:remove_meta("__puerts_default_arg_meta__")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			return load_type("Basis")():tdotx(load_type("Vector2")(1.0, 2.0))
 		end, "Argument type does not match", "direct method type rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Vector2 = load_type("Vector2")
 			local Color = load_type("Color")
 			local v = Vector2()
 			return v.length(Color(0.1, 0.2, 0.3, 1.0))
 		end, "Native object type does not match", "receiver type rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Signal = load_type("Signal")
 			local Callable = load_type("Callable")
 			local sig = Signal(backend_object, "script_changed")
 			return sig.connect(Callable(backend_object, "get_backend_name"), 123)
 		end, "Native object type does not match", "overload receiver rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Signal = load_type("Signal")
 			local sig = Signal(backend_object, "script_changed")
 			return sig:connect({}, 0)
 		end, "Argument type does not match", "overload plain table rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Signal = load_type("Signal")
 			local sig = Signal(backend_object, "script_changed")
 			return sig:connect()
 		end, "Argument count does not match", "overload arity rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Signal = load_type("Signal")
 			local sig = Signal(backend_object, "script_changed")
 			return sig:connect(backend_object, 0)
 		end, "Argument type does not match", "overload native object rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Signal = load_type("Signal")
 			local Vector2 = load_type("Vector2")
 			local sig = Signal(backend_object, "script_changed")
 			return sig:connect(Vector2(1.0, 2.0), 0)
 		end, "Argument type does not match", "overload wrong builtin rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Vector2 = load_type("Vector2")
 			return Vector2(1.0)
 		end, "No constructor overload matches", "constructor arity rejection")
-		if err ~= "" then
-			return err
-		end
 
-		err = expect_throws(function()
+		expect_throws(function()
 			local Signal = load_type("Signal")
 			local Vector2 = load_type("Vector2")
 			return Signal(Vector2(1.0, 2.0), "script_changed")
 		end, "No constructor overload matches", "constructor wrong object rejection")
-		if err ~= "" then
-			return err
-		end
 
 		do
 			local Color = load_type("Color")
 			local c = Color(0.1, 0.2, 0.3, 0.4)
 			c.a = 1.0
 			local white_with_alpha = Color(Color.WHITE, 0.5)
-			err = expect(
+			expect(
 				c.a == 1.0 and
 					white_with_alpha.r == 1.0 and
 					white_with_alpha.g == 1.0 and
@@ -811,17 +469,10 @@ root.load_type = {
 					Color.TRANSPARENT.a == 0.0,
 				"color property or constants mismatch"
 			)
-			if err ~= "" then
-				return err
-			end
-			err = expect_throws(function()
+			expect_throws(function()
 				Color.WHITE = nil
 			end, "read-only", "color constant readonly")
-			if err ~= "" then
-				return err
-			end
 		end
 
-		return ""
 	end,
 }

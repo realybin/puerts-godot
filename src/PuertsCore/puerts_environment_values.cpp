@@ -44,12 +44,12 @@ void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_va
 	OperationScope operation(this);
 	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
 	pesapi_env env = scope.env();
-	const CharString &name_utf8 = get_cached_utf8(p_name);
 	bool converted = false;
 	pesapi_value script_value = variant_to_script(env, p_value, &converted, nullptr);
 	if (!converted) {
 		return;
 	}
+	const CharString &name_utf8 = get_cached_utf8(p_name);
 	ffi_->set_property(env, ffi_->global(env), name_utf8.get_data(), script_value);
 	if (ffi_->has_caught(scope.scope())) {
 		log_error(read_exception(scope.scope()));
@@ -268,21 +268,20 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 		cacheable = ffi_->get_native_object_ptr(p_env, p_value) != nullptr &&
 				ffi_->get_native_object_typeid(p_env, p_value) != nullptr;
 	}
-	PuertsScriptValueCacheEntry *cache_entry = nullptr;
+	void *cache_key = nullptr;
 	if (cacheable) {
 		void *private_ptr = nullptr;
 		if (ffi_->get_private(p_env, p_value, &private_ptr)) {
-			auto cached = script_value_cache_.find(static_cast<PuertsScriptValueCacheEntry *>(private_ptr));
+			auto cached = script_value_cache_.find(private_ptr);
 			if (cached != script_value_cache_.end()) {
-				cache_entry = cached->first;
-				if (cache_entry->value != nullptr) {
-					return Ref<PuertsScriptValue>(cache_entry->value);
+				cache_key = cached->first;
+				if (cached->second != nullptr) {
+					return Ref<PuertsScriptValue>(cached->second);
 				}
 			}
-			// ! Happens if user write key intentionally
 			// The private slot is shared backend state. Never overwrite a value that
 			// was installed by another integration and is not one of our live keys.
-			if (private_ptr != nullptr && cache_entry == nullptr) {
+			if (private_ptr != nullptr && cache_key == nullptr) {
 				cacheable = false;
 			}
 		}
@@ -297,24 +296,23 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 	script_value.instantiate();
 	script_value->initialize(this, ffi_, value_ref);
 	register_script_value(script_value.ptr());
-	if (cacheable) {
-		if (cache_entry == nullptr) {
-			auto owner = puerts_eastl::make_unique<PuertsScriptValueCacheEntry>();
-			cache_entry = owner.get();
-			script_value_cache_.emplace(cache_entry, puerts_eastl::move(owner));
-			void *attached_entry = nullptr;
-			const bool attached = ffi_->set_private(p_env, p_value, cache_entry) &&
-					ffi_->get_private(p_env, p_value, &attached_entry) && attached_entry == cache_entry;
-			if (!attached) {
-				script_value_cache_.erase(cache_entry);
-				cache_entry = nullptr;
-			}
-		}
-		if (cache_entry != nullptr) {
-			cache_entry->value = script_value.ptr();
-			script_value->cache_entry_ = cache_entry;
+	if (!cacheable) {
+		return script_value;
+	}
+	if (cache_key != nullptr) {
+		script_value_cache_[cache_key] = script_value.ptr();
+	} else if (next_cache_key_ <= (UINTPTR_MAX >> 1U)) {
+		cache_key = reinterpret_cast<void *>((next_cache_key_++ << 1U) | 1U);
+		script_value_cache_.emplace(cache_key, script_value.ptr());
+		void *attached_key = nullptr;
+		const bool attached = ffi_->set_private(p_env, p_value, cache_key) &&
+				ffi_->get_private(p_env, p_value, &attached_key) && attached_key == cache_key;
+		if (!attached) {
+			script_value_cache_.erase(cache_key);
+			cache_key = nullptr;
 		}
 	}
+	script_value->cache_key_ = cache_key;
 	return script_value;
 }
 

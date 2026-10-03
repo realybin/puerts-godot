@@ -6,6 +6,17 @@ import type { GenerationContext } from "./context.js";
 import { nativePrimitiveAlias } from "./native-primitive-types.js";
 import { cleanTypeName, sanitizeIdentifier, splitUnionCandidates } from "./naming.js";
 
+const typeMapCache = new WeakMap<GenerationContext, Map<string, string>>();
+
+function cacheFor(ctx: GenerationContext): Map<string, string> {
+	let cache = typeMapCache.get(ctx);
+	if (!cache) {
+		cache = new Map();
+		typeMapCache.set(ctx, cache);
+	}
+	return cache;
+}
+
 function mapPrimitiveType(name: string, meta: string | undefined): string | null {
 	const isNumericPrimitive = /^(?:u?int(?:8|16|32|64)?(?:_t)?|float|double|real_t)$/.test(name);
 	const metaAlias = isNumericPrimitive ? nativePrimitiveAlias(meta) : null;
@@ -100,9 +111,18 @@ export function mapType(rawType: string | undefined, ctx: GenerationContext, met
 	if (!rawType) {
 		return "void";
 	}
+	const cache = cacheFor(ctx);
+	const cacheKey = `${rawType}\u0000${meta ?? ""}`;
+	const cached = cache.get(cacheKey);
+	if (cached !== undefined) {
+		return cached;
+	}
+
 	const parts = splitUnionCandidates(cleanTypeName(rawType));
 	const mapped = [...new Set(parts.map((part) => mapSingleType(part, ctx, parts.length === 1 ? meta : undefined)))];
-	return mapped.length === 1 ? mapped[0] : mapped.join(" | ");
+	const result = mapped.length === 1 ? mapped[0] : mapped.join(" | ");
+	cache.set(cacheKey, result);
+	return result;
 }
 
 export function mapApiType(apiType: ApiType, ctx: GenerationContext): string {

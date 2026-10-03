@@ -63,6 +63,7 @@ def collect_ios_dependency_archives(backend_config, puerts_root, backend_dir, pu
 
     backend_assets_root = os.path.join(puerts_root, backend_dir, ".backends", backend_dir)
     archives = []
+    seen_archives = set()
     missing_patterns = []
 
     for relative_pattern in copy_libraries:
@@ -72,8 +73,10 @@ def collect_ios_dependency_archives(backend_config, puerts_root, backend_dir, pu
         if not matched:
             missing_patterns.append(pattern)
         for path in matched:
-            if os.path.isfile(path) and path.endswith(".a"):
-                archives.append(os.path.normpath(path))
+            normalized_path = os.path.normpath(path)
+            if os.path.isfile(path) and path.endswith(".a") and normalized_path not in seen_archives:
+                archives.append(normalized_path)
+                seen_archives.add(normalized_path)
 
     return archives, missing_patterns
 
