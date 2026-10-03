@@ -484,7 +484,8 @@ def run_project(
     command = [str(godot_exe), "--headless", "--path", str(project_dir)]
     print(f"[test-runner] launching: {' '.join(command)}")
     print("[test-runner] streaming Godot output:")
-    return_code = run_with_timeout(command, root, timeout, process_env)
+    with temporarily_hide_gdextensions(project_dir, requested_backend_set):
+        return_code = run_with_timeout(command, root, timeout, process_env)
     print(f"[test-runner] godot exit code: {return_code}")
     return return_code
 
@@ -534,7 +535,7 @@ def main() -> int:
         return 2
 
     requested_backend_set = set(requested_backend_list)
-    with restore_gdextension_files(project_dir), temporarily_hide_gdextensions(project_dir, requested_backend_set):
+    with restore_gdextension_files(project_dir):
         return run_project(
             root, project_dir, build_bin_dir, godot_exe, platform_name, requested_backend_set, args.timeout, process_env
         )
