@@ -26,7 +26,7 @@ When a cache reaches capacity, it clears all entries; it is not an LRU. Share a 
 
 ## Reentry and threads
 
-Use an environment and its values on one thread. Synchronous callbacks may reenter a live environment. `dispose()` marks it unavailable immediately and defers destruction until the outer operation returns; `initialize()` returns `ERR_BUSY` during initialization, an active operation, or disposal.
+Use an environment and its values on one thread; WebGL requires the browser main thread. Synchronous callbacks may reenter it. See [object lifetime](object-allocating.md#disposal-and-reinitialization) for disposal during callbacks.
 
 ## Runtime hooks
 

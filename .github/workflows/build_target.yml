@@ -18,10 +18,18 @@ on:
       float_precision:
         required: true
         type: string
+      backends:
+        required: false
+        type: string
+        default: ""
+      web_threads:
+        required: false
+        type: boolean
+        default: true
       em_version:
         required: false
         type: string
-        default: "3.1.62"
+        default: "4.0.0"
       upload_artifact:
         required: false
         type: boolean
@@ -89,35 +97,54 @@ jobs:
 
       - name: Build puerts native backends
         shell: bash
+        env:
+          PUERTS_BACKENDS: ${{ inputs.backends }}
+          WEB_THREADS: ${{ inputs.web_threads }}
         run: |
+          extra_args=()
+          if [ -n "$PUERTS_BACKENDS" ]; then
+            extra_args+=(--backends "$PUERTS_BACKENDS")
+          fi
+          if [ "${{ inputs.platform }}" = "web" ]; then
+            extra_args+=(--threads "$WEB_THREADS")
+          fi
           python3 scripts/make_puerts.py \
             --platform ${{ inputs.platform }} \
             --arch ${{ inputs.arch }} \
-            --config ${{ inputs.target_type == 'template_release' && 'Release' || 'Debug' }}
+            --config ${{ inputs.target_type == 'template_release' && 'Release' || 'Debug' }} \
+            "${extra_args[@]}"
 
       - name: Restore .scons_cache
         uses: ./godot-cpp/.github/actions/godot-cache-restore
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
-          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}_api-${{ inputs.api_version }}
+          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}_api-${{ inputs.api_version }}_threads-${{ inputs.web_threads }}_em-${{ inputs.em_version }}
 
       - name: Build GDExtension
         shell: bash
         env:
           SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
+          PUERTS_BACKENDS: ${{ inputs.backends }}
+          WEB_THREADS: ${{ inputs.web_threads }}
         run: |
-          extra_scons_args=""
-          if [ "${{ inputs.platform }}" = "ios" ]; then
-            extra_scons_args="ios_min_version=16.0"
+          extra_scons_args=()
+          if [ -n "$PUERTS_BACKENDS" ]; then
+            extra_scons_args+=("backends=$PUERTS_BACKENDS")
           fi
-          scons target=${{ inputs.target_type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float_precision }} api_version=${{ inputs.api_version }} ${extra_scons_args}
+          if [ "${{ inputs.platform }}" = "ios" ]; then
+            extra_scons_args+=(ios_min_version=16.0)
+          fi
+          if [ "${{ inputs.platform }}" = "web" ]; then
+            extra_scons_args+=("threads=$WEB_THREADS")
+          fi
+          scons target=${{ inputs.target_type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float_precision }} api_version=${{ inputs.api_version }} "${extra_scons_args[@]}"
 
       - name: Save .scons_cache
         if: ${{ inputs.save_cache }}
         uses: ./godot-cpp/.github/actions/godot-cache-save
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
-          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}_api-${{ inputs.api_version }}
+          cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float_precision }}_${{ inputs.target_type }}_api-${{ inputs.api_version }}_threads-${{ inputs.web_threads }}_em-${{ inputs.em_version }}
 
       - name: Setup Godot
         if: ${{ inputs.run_tests && (inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux') }}
@@ -128,16 +155,34 @@ jobs:
           include-templates: false
 
       - name: Run tests
-        if: ${{ inputs.run_tests }}
+        if: ${{ inputs.run_tests && inputs.platform != 'web' }}
         shell: bash
         run: |
           python3 scripts/run_tests.py --platform "${{ inputs.platform }}" --godot godot --timeout 120
+
+      - name: Run WebGL runtime tests
+        if: ${{ inputs.run_tests && inputs.platform == 'web' }}
+        shell: bash
+        run: node --expose-gc --test tests/webgl/runtime.test.cjs
+
+      - name: Stage WebGL extension descriptors
+        if: ${{ inputs.upload_artifact && inputs.platform == 'web' }}
+        shell: bash
+        env:
+          FLOAT_PRECISION: ${{ inputs.float_precision }}
+        run: |
+          if compgen -G "bin/PuertsWebgl.web.*.wasm" >/dev/null; then
+            cp tests/webgl/puerts_core.gdextension tests/webgl/puerts_webgl.gdextension bin/
+            if [ "$FLOAT_PRECISION" = "double" ]; then
+              sed -i 's/\.wasm32/.double.wasm32/g' bin/puerts_core.gdextension bin/puerts_webgl.gdextension
+            fi
+          fi
 
       - name: Upload Artifact
         if: ${{ inputs.upload_artifact }}
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ inputs.artifact_name != '' && inputs.artifact_name || format('puerts-godot-{0}-{1}-{2}-{3}-godot-{4}', inputs.platform, inputs.arch, inputs.float_precision, inputs.target_type, inputs.api_version) }}
+          name: ${{ inputs.artifact_name != '' && inputs.artifact_name || format('puerts-godot-{0}-{1}-{2}-{3}-godot-{4}{5}', inputs.platform, inputs.arch, inputs.float_precision, inputs.target_type, inputs.api_version, inputs.platform == 'web' && (inputs.web_threads && '-threads' || '-nothreads') || '') }}
           path: |
             ${{ github.workspace }}/bin/**
             !${{ github.workspace }}/bin/**/*.exp

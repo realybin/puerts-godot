@@ -9,6 +9,7 @@ on:
       build_android_arm64: { description: "android/arm64", type: boolean, required: false, default: false }
       build_ios_arm64: { description: "ios/arm64", type: boolean, required: false, default: false }
       build_web_wasm32: { description: "web/wasm32", type: boolean, required: false, default: false }
+      web_threads: { description: "Web thread support", type: boolean, required: false, default: true }
       build_godot_4_5: { description: "Godot 4.5", type: boolean, required: false, default: false }
       build_godot_4_6: { description: "Godot 4.6", type: boolean, required: false, default: false }
       build_godot_4_7: { description: "Godot 4.7", type: boolean, required: false, default: true }
@@ -87,12 +88,13 @@ jobs:
       arch: ${{ matrix.target.arch }}
       target_type: ${{ matrix.target_type }}
       float_precision: ${{ matrix.float_precision }}
+      web_threads: ${{ inputs.web_threads }}
       api_version: ${{ matrix.godot.api_version }}
       godot_version: ${{ matrix.godot.godot_version }}
       run_tests: true
       upload_artifact: true
       save_cache: true
-      artifact_name: puerts-godot-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float_precision }}-${{ matrix.target_type }}-godot-${{ matrix.godot.api_version }}
+      artifact_name: puerts-godot-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float_precision }}-${{ matrix.target_type }}-godot-${{ matrix.godot.api_version }}${{ matrix.target.platform == 'web' && format('-{0}', inputs.web_threads && 'threads' || 'nothreads') || '' }}
 
   merge:
     runs-on: ubuntu-22.04

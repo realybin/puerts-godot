@@ -19,6 +19,7 @@ struct PuertsBackendFunctions {
 	bool (*debugger_tick)(pesapi_env_ref p_env_ref) = nullptr;
 	void (*close_debugger)(pesapi_env_ref p_env_ref) = nullptr;
 	void (*terminate_execution)(pesapi_env_ref p_env_ref) = nullptr;
+	bool supports_dispose = true;
 };
 
 #endif // PUERTS_GODOT_PUERTS_BACKEND_H

@@ -38,11 +38,14 @@ class PuertsEnvironment : public godot::RefCounted {
 	GDCLASS(PuertsEnvironment, godot::RefCounted)
 
 	godot::Ref<godot::RefCounted> backend_ref_;
+	// Non-disposable browser runtimes keep their owner alive for the page lifetime.
+	godot::Ref<PuertsEnvironment> page_lifetime_ref_;
 	const PuertsBackendFunctions *backend_functions_ = nullptr;
 	pesapi_ffi *ffi_ = nullptr;
 	pesapi_env_ref env_ref_ = nullptr;
 	PuertsEnvironmentData environment_data_;
 	uint32_t active_operations_ = 0;
+	bool reporting_lifecycle_rejection_ = false;
 	puerts_eastl::vector<PuertsScriptValue *> script_values_;
 	puerts_eastl::hash_map<void *, PuertsScriptValue *> script_value_cache_;
 	// Keys occupy the upper address range and are never reused.
@@ -99,6 +102,7 @@ private:
 	friend bool puerts::return_variant(pesapi_ffi *p_apis, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 
 	void log_error(const godot::String &p_message);
+	void log_lifecycle_rejection(const godot::String &p_message);
 	void log_warn(const godot::String &p_message);
 	void log_info(const godot::String &p_message);
 	void emit_log(const godot::Callable &p_callback, const godot::String &p_message);

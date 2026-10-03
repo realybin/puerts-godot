@@ -1,6 +1,6 @@
 # Object Allocation and Lifetime
 
-The bridge tracks Godot values exposed to script. `PuertsScriptValue` and script `Callable` objects keep script values reachable. GC timing is backend-controlled; `dispose()` is deterministic.
+The bridge tracks Godot values exposed to script. `PuertsScriptValue` and script `Callable` objects keep script values reachable. GC timing is backend-controlled; native backends support deterministic disposal.
 
 ## Godot values in script
 
@@ -17,14 +17,9 @@ The same object reuses one bridge record in an environment. Borrowed wrappers re
 
 `eval()`, `get_global()`, property reads, and calls return `PuertsScriptValue`. Holding the wrapper keeps its script value reachable. `to_callable()` retains a function and closure. Neither keeps the environment alive, and values cannot cross environments.
 
-```gdscript
-var held := env.eval("({ answer: 42 })")
-assert(held.is_valid())
-env.dispose()
-assert(not held.is_valid())
-```
-
 ## Disposal and reinitialization
+
+The following applies to V8, Node.js, QuickJS, and Lua. [WebGL](backends.md#browser-javascript-webgl) retains its environment until page unload and rejects disposal and reinitialization.
 
 `dispose()` immediately makes `is_alive()` false and invalidates all values and callables. Cleanup releases script references, strong `RefCounted` references, boxed values, and script-owned non-`RefCounted` objects. Borrowed objects remain Godot-owned. Repeated disposal is safe.
 

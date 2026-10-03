@@ -1,0 +1,13 @@
+[configuration]
+
+entry_symbol = "puerts_core_library_init"
+compatibility_minimum = "4.4"
+reloadable = false
+
+[libraries]
+
+web.debug.threads.wasm32 = "res://bin/PuertsCore.web.template_debug.wasm32.wasm"
+web.release.threads.wasm32 = "res://bin/PuertsCore.web.template_release.wasm32.wasm"
+web.debug.wasm32 = "res://bin/PuertsCore.web.template_debug.wasm32.nothreads.wasm"
+web.release.wasm32 = "res://bin/PuertsCore.web.template_release.wasm32.nothreads.wasm"
+

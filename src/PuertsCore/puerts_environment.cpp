@@ -63,6 +63,10 @@ PuertsEnvironment::~PuertsEnvironment() {
 }
 
 Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNameCachePool> &p_string_name_cache_pool) {
+	if (environment_data_.state == PuertsEnvironmentState::Ready && backend_functions_ != nullptr && !backend_functions_->supports_dispose) {
+		log_lifecycle_rejection("This Puerts backend does not support environment reinitialization.");
+		return ERR_ALREADY_IN_USE;
+	}
 	if (environment_data_.state == PuertsEnvironmentState::Initializing || environment_data_.state == PuertsEnvironmentState::Disposing || active_operations_ != 0) {
 		log_error("Puerts environment is busy.");
 		return ERR_BUSY;
@@ -163,11 +167,18 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 	pesapi_value log_info = ffi_->create_function(env, &PuertsEnvironment::script_log_info_callback, nullptr, nullptr);
 	ffi_->set_property(env, ffi_->global(env), log_info_property_name, log_info);
 
+	if (!backend_functions_->supports_dispose) {
+		page_lifetime_ref_ = keep_alive;
+	}
 	return OK;
 }
 
 void PuertsEnvironment::dispose() {
 	if (environment_data_.state != PuertsEnvironmentState::Ready) {
+		return;
+	}
+	if (backend_functions_ != nullptr && !backend_functions_->supports_dispose) {
+		log_lifecycle_rejection("This Puerts backend does not support environment disposal.");
 		return;
 	}
 	if (active_operations_ != 0) {
@@ -273,6 +284,22 @@ void PuertsEnvironment::terminate_execution() {
 
 void PuertsEnvironment::log_error(const String &p_message) {
 	emit_log(error_callback_, p_message);
+}
+
+void PuertsEnvironment::log_lifecycle_rejection(const String &p_message) {
+	if (reporting_lifecycle_rejection_) {
+		return;
+	}
+	struct ReportingGuard {
+		bool &reporting;
+		explicit ReportingGuard(bool &p_reporting) : reporting(p_reporting) {
+			reporting = true;
+		}
+		~ReportingGuard() {
+			reporting = false;
+		}
+	} reporting_guard(reporting_lifecycle_rejection_);
+	log_error(p_message);
 }
 
 void PuertsEnvironment::log_warn(const String &p_message) {

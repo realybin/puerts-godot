@@ -1,0 +1,14 @@
+Subject: [PATCH] fix: build Web native archives with the configured CMake generator
+
+diff --git a/unity/cli/make.mjs b/unity/cli/make.mjs
+--- a/unity/cli/make.mjs
++++ b/unity/cli/make.mjs
+@@ -321,7 +321,7 @@
+             hook: function (CMAKE_BUILD_PATH, options, cmakeAddedLibraryName, cmakeDArgs) {
+                 cd(CMAKE_BUILD_PATH);
+                 assert.equal(0, exec(`emcmake cmake ${cmakeDArgs} -DJS_ENGINE=${options.backend} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_BUILD_TYPE=${options.config} ..`).code);
+-                assert.equal(0, exec(`emmake make`).code);
++                assert.equal(0, exec(`cmake --build . --config ${options.config}`).code);
+                 cd("..");
+ 
+                 return `${CMAKE_BUILD_PATH}/lib${cmakeAddedLibraryName}.a`;

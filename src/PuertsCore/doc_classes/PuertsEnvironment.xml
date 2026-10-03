@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsEnvironment" inherits="RefCounted">
 	<brief_description>Owns one script runtime.</brief_description>
-	<description>Initialize with a backend and cache pool, keep the environment alive while using its values, and dispose it when finished. Use it and its values on one thread.</description>
+	<description>Initialize with a backend and cache pool. Keep it alive while using its values, and use one thread. WebGL retains its environment until page unload.</description>
 	<methods>
 		<method name="initialize">
 			<return type="int" enum="Error" />
 			<param index="0" name="backend" type="Object" />
 			<param index="1" name="string_name_cache_pool" type="PuertsStringNameCachePool" />
-			<description>Creates a runtime from the backend and initialized cache pool. An idle previous runtime is disposed first; returns ERR_BUSY during initialization, an active operation, or disposal.</description>
+			<description>Creates a runtime from the backend and initialized cache pool, disposing an idle previous runtime. Returns ERR_BUSY during an active operation or lifecycle change. WebGL returns ERR_ALREADY_IN_USE when reinitialized, or ERR_CANT_CREATE when another environment exists.</description>
 		</method>
 		<method name="dispose">
 			<return type="void" />
-			<description>Releases the runtime and invalidates its script values and callables. Cleanup is deferred when called during an active operation.</description>
+			<description>Invalidates values and callables, then releases the runtime after active operations return. Safe to repeat. WebGL reports an error and leaves the environment alive.</description>
 		</method>
 		<method name="is_alive" qualifiers="const">
 			<return type="bool" />

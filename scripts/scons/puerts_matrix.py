@@ -19,8 +19,7 @@ def map_puerts_arch(godot_platform, godot_arch):
 def supported_backends(godot_platform):
     if godot_platform not in PLATFORMS:
         return set()
-    names = CONFIG["web_backends"] if godot_platform == "web" else BACKENDS
-    return {BACKENDS[name]["native"] for name in names}
+    return {backend["native"] for backend in BACKENDS.values() if godot_platform in backend.get("platforms", PLATFORMS)}
 
 
 def supports_runtime_tests(godot_platform):

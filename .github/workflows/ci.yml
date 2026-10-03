@@ -11,9 +11,6 @@ on:
       - 'docs/**'
       - '**.md'
   merge_group:
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
 
 jobs:
   lint:
@@ -40,7 +37,7 @@ jobs:
           clang-format -style=file --dry-run --Werror "${files[@]}"
 
   build:
-    name: build and test (${{ matrix.target.platform }}, ${{ matrix.target.arch }}, ${{ matrix.target.os }}, ${{ matrix.target_type }}, ${{ matrix.float_precision }})
+    name: build and test (${{ matrix.target.platform }}, ${{ matrix.target.arch }}, ${{ matrix.target.os }}, ${{ matrix.target_type }}, ${{ matrix.float_precision }}${{ matrix.target.platform == 'web' && format(', {0}', matrix.web_threads && 'threads' || 'nothreads') || '' }})
     needs: lint
     strategy:
       fail-fast: false
@@ -55,6 +52,15 @@ jobs:
           - target: { platform: linux, arch: x86_64, os: ubuntu-22.04 }
             target_type: template_debug
             float_precision: single
+            web_threads: true
+#          - target: { platform: web, arch: wasm32, os: ubuntu-22.04 }
+#            target_type: template_debug
+#            float_precision: single
+#            web_threads: false
+#          - target: { platform: web, arch: wasm32, os: ubuntu-22.04 }
+#            target_type: template_debug
+#            float_precision: single
+#            web_threads: true
 #          - target: { platform: android, arch: arm64, os: ubuntu-22.04 }
 #            target_type: template_debug
 #            float_precision: single
@@ -73,5 +79,8 @@ jobs:
       arch: ${{ matrix.target.arch }}
       target_type: ${{ matrix.target_type }}
       float_precision: ${{ matrix.float_precision }}
+      backends: ${{ matrix.target.platform == 'web' && 'core,webgl' || '' }}
+      web_threads: ${{ matrix.web_threads }}
       run_tests: true
+      upload_artifact: ${{ matrix.target.platform == 'web' }}
       save_cache: ${{ github.event_name == 'push' }}

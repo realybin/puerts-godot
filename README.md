@@ -4,8 +4,8 @@
 
 It provides:
 
-- V8, Node.js, QuickJS, and Lua backends.
-- Multiple independent `PuertsEnvironment` runtimes.
+- V8, Node.js, QuickJS, Lua, and browser JavaScript (WebGL) backends.
+- Multiple independent `PuertsEnvironment` runtimes, except WebGL.
 - Godot object bindings and C++ static bindings.
 
 > [!NOTE]
@@ -42,7 +42,7 @@ func _exit_tree() -> void:
 		env.dispose()
 ```
 
-Keep the environment alive while using its script values. `dispose()` invalidates those values; initialize again only after disposal completes.
+Keep the environment alive while using its script values. See [object lifetime](docs/object-allocating.md) for disposal rules.
 
 ## Documentation
 
@@ -58,14 +58,14 @@ Keep the environment alive while using its script values. `dispose()` invalidate
 
 ## Supported backends
 
-| Platform        | V8+  | Nodejs+ | Quickjs | Lua  |
-|-----------------|------|---------|---------|------|
-| Windows(x86_64) | Yes  | Yes     | Yes     | Yes  |
-| Linux(x86_64)   | Yes  | Yes     | Yes     | Yes  |
-| macOS(arm64)    | Yes* | Yes*    | Yes*    | Yes* |
-| Android(armv8)  | Yes  | Yes     | Yes     | Yes  |
-| iOS             | ?    | ?       | ?       | ?    |
-| Web(wasm32)     | x    | x       | Yes     | Yes  |
+| Platform        | V8+  | Nodejs+ | Quickjs | Lua  | Browser JS |
+|-----------------|------|---------|---------|------|------------|
+| Windows(x86_64) | Yes  | Yes     | Yes     | Yes  | —          |
+| Linux(x86_64)   | Yes  | Yes     | Yes     | Yes  | —          |
+| macOS(arm64)    | Yes* | Yes*    | Yes*    | Yes* | —          |
+| Android(armv8)  | Yes  | Yes     | Yes     | Yes  | —          |
+| iOS             | ?    | ?       | ?       | ?    | —          |
+| Web(wasm32)     | x    | x       | Yes     | Yes  | Yes        |
 
 
 +: Use one of them, do not use V8 both Nodejs in the same process, especially in linux, it may cause some issues, pr wellcome.
@@ -76,13 +76,15 @@ Keep the environment alive while using its script values. `dispose()` invalidate
 
 x: No plan to support, V8 and Nodejs cannot run in Web
 
+`PuertsWebglBackend` uses the browser JavaScript engine. See [Backends](docs/backends.md#browser-javascript-webgl) and [Web builds](docs/build.md#web-builds).
+
 ## Example project
 
 [puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) contains a complete project.
 
 ## Roadmap
 
-- [ ] [WebGL support](https://puerts.github.io/en/docs/puerts/unity/knowjs/webgl/)
+- [x] [WebGL support](docs/backends.md#browser-javascript-webgl)
 - [ ] HELP WANTED in technical writing
 - [ ] Stable release
 - [ ] Better API design

@@ -10,7 +10,7 @@ res://puerts_core.gdextension
 res://puerts_v8.gdextension
 ```
 
-Use `PuertsNodejsBackend`, `PuertsQuickjsBackend`, or `PuertsLuaBackend` with its matching extension when V8 is not appropriate. Each `.gdextension` must list its libraries and any native dependencies for the target platform.
+Other [backends](backends.md) use their matching extension. Each `.gdextension` must list its libraries and native dependencies. For browser JavaScript, follow [Web builds](build.md#web-builds).
 
 ## First runtime
 
@@ -40,7 +40,7 @@ func _exit_tree() -> void:
 		_env.dispose()
 ```
 
-Share an environment when scripts span scenes. `dispose()` is safe to call repeatedly and invalidates all `PuertsScriptValue` wrappers and script callables from that runtime. Reinitialize only after the current operation has returned; old wrappers cannot be reused.
+Share an environment across scenes and keep it alive while using its values. This example uses V8; WebGL has different [initialization and lifetime rules](backends.md#browser-javascript-webgl).
 
 ## Values and errors
 

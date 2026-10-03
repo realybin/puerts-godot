@@ -55,7 +55,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--backends",
         default=",".join(BACKENDS),
-        help="Comma-separated backends: core,v8,nodejs,quickjs,lua",
+        help="Comma-separated backends: " + ",".join(BACKENDS),
+    )
+    parser.add_argument(
+        "--threads",
+        choices=["true", "false"],
+        default="true",
+        help="Web threading support; match the SCons threads option (default: true).",
     )
     return parser.parse_args()
 
@@ -126,7 +132,7 @@ def required_patches(platform: str, backends: set[str]) -> list[str]:
     ]
 
 
-def build_backend(platform: str, puerts_arch: str, config: str, backend: str) -> None:
+def build_backend(platform: str, puerts_arch: str, config: str, backend: str, threads: bool = True) -> None:
     backend_dir = NATIVE_DIR / backend
     if not backend_dir.is_dir():
         raise FileNotFoundError(f"Backend directory not found: {backend_dir}")
@@ -147,8 +153,33 @@ def build_backend(platform: str, puerts_arch: str, config: str, backend: str) ->
     if platform == "android":
         env.setdefault("ANDROID_NDK", str(Path.home() / "android-ndk-r27d"))
     elif platform == "web":
-        for key, flags in (("CFLAGS", "-pthread -fPIC"), ("CXXFLAGS", "-pthread -fPIC"), ("LDFLAGS", "-pthread")):
+        compiler_flags = "-pthread -fPIC" if threads else "-fPIC"
+        for key, flags in (
+            ("CFLAGS", compiler_flags),
+            ("CXXFLAGS", compiler_flags),
+            ("LDFLAGS", "-pthread" if threads else ""),
+        ):
             env[key] = f"{env.get(key, '')} {flags}".strip()
+        build_dir = f"build_wasm_{puerts_arch}_{backend}" + ("_debug" if config != "Release" else "")
+        if (backend_dir / build_dir / "CMakeCache.txt").is_file():
+            # CMake caches these flags after the first configure. Update them
+            # explicitly when switching between threaded and non-threaded Web.
+            run(
+                [
+                    "cmake",
+                    "-S",
+                    ".",
+                    "-B",
+                    build_dir,
+                    f"-DCMAKE_C_FLAGS={env['CFLAGS']}",
+                    f"-DCMAKE_CXX_FLAGS={env['CXXFLAGS']}",
+                    f"-DCMAKE_EXE_LINKER_FLAGS={env['LDFLAGS']}",
+                    f"-DCMAKE_SHARED_LINKER_FLAGS={env['LDFLAGS']}",
+                    f"-DCMAKE_MODULE_LINKER_FLAGS={env['LDFLAGS']}",
+                ],
+                backend_dir,
+                env,
+            )
 
     run(cmd, backend_dir, env)
 
@@ -205,23 +236,25 @@ def main() -> int:
         print(f"[make_puerts] unsupported arch mapping for platform={args.platform}, arch={arch}", file=sys.stderr)
         return 2
 
-    for name in required_patches(args.platform, set(backends)):
-        ensure_patch(name)
-
-    run(["npm", "ci"], UNITY_DIR)
-
     supported = supported_backends(args.platform)
     skipped = [backend for backend in backends if backend not in supported]
     for backend in skipped:
         print(f"[make_puerts] skip unsupported backend {backend} on {args.platform}")
-    build_list = [backend for backend in backends if backend in supported]
+    selected = [backend for backend in backends if backend in supported]
+    if "webgl" in selected and "puerts" not in selected:
+        selected.insert(0, "puerts")
+    build_list = [backend for backend in selected if backend != "webgl"]
+    if not build_list:
+        print("[make_puerts] no backend was selected for this platform.", file=sys.stderr)
+        return 2
+
+    for name in required_patches(args.platform, set(build_list)):
+        ensure_patch(name)
+
+    run(["npm", "ci"], UNITY_DIR)
 
     for backend in build_list:
-        build_backend(args.platform, puerts_arch, args.config, backend)
-
-    if not build_list:
-        print("[make_puerts] no backend was built.", file=sys.stderr)
-        return 2
+        build_backend(args.platform, puerts_arch, args.config, backend, args.threads == "true")
 
     if "papi-nodejs" in build_list:
         copy_nodejs_deps(args.platform, arch)
@@ -230,7 +263,11 @@ def main() -> int:
     print(f"  platform: {args.platform}")
     print(f"  arch: {arch} -> {puerts_arch}")
     print(f"  config: {args.config}")
+    if args.platform == "web":
+        print(f"  threads: {args.threads}")
     print(f"  built: {', '.join(build_list)}")
+    if "webgl" in selected:
+        print("  webgl: built by SCons from src/PuertsWebgl; no native engine dependency")
     if skipped:
         print(f"  skipped: {', '.join(skipped)}")
 

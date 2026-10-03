@@ -1,0 +1,4 @@
+!*.gdextension
+.godot/
+bin/
+

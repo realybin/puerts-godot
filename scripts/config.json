@@ -9,15 +9,16 @@
   },
   "backends": {
     "core": {"native": "puerts", "source": "PuertsCore", "library": "PuertsCore", "extension": "puerts_core.gdextension", "entry": "puerts_core_library_init"},
-    "v8": {"native": "papi-v8", "source": "PuertsV8", "library": "PapiV8", "extension": "puerts_v8.gdextension", "entry": "puerts_v8_library_init"},
-    "nodejs": {"native": "papi-nodejs", "source": "PuertsNodejs", "library": "PapiNodejs", "extension": "puerts_nodejs.gdextension", "entry": "puerts_nodejs_library_init"},
+    "v8": {"native": "papi-v8", "source": "PuertsV8", "library": "PapiV8", "extension": "puerts_v8.gdextension", "entry": "puerts_v8_library_init", "platforms": ["windows", "macos", "linux", "android", "ios"]},
+    "nodejs": {"native": "papi-nodejs", "source": "PuertsNodejs", "library": "PapiNodejs", "extension": "puerts_nodejs.gdextension", "entry": "puerts_nodejs_library_init", "platforms": ["windows", "macos", "linux", "android", "ios"]},
     "quickjs": {"native": "papi-quickjs", "source": "PuertsQuickjs", "library": "PapiQuickjs", "extension": "puerts_quickjs.gdextension", "entry": "puerts_quickjs_library_init"},
-    "lua": {"native": "papi-lua", "source": "PuertsLua", "library": "PapiLua", "extension": "puerts_lua.gdextension", "entry": "puerts_lua_library_init"}
+    "lua": {"native": "papi-lua", "source": "PuertsLua", "library": "PapiLua", "extension": "puerts_lua.gdextension", "entry": "puerts_lua_library_init"},
+    "webgl": {"native": "webgl", "source": "PuertsWebgl", "library": "PuertsWebgl", "extension": "puerts_webgl.gdextension", "entry": "puerts_webgl_library_init", "platforms": ["web"]}
   },
-  "web_backends": ["core", "quickjs", "lua"],
   "runtime_test_platforms": ["windows", "macos", "linux"],
   "runtime_test_backends": ["lua", "quickjs", "v8"],
   "patches": [
+    {"file": "puerts-web-cmake-build", "platform": "web", "backends": ["core", "quickjs", "lua"]},
     {"file": "papi-lua-object-new-nullptr", "backends": ["lua"]},
     {"file": "papi-lua-value-ref-release", "backends": ["lua"]},
     {"file": "papi-quickjs-string-buffer", "backends": ["quickjs"]},
