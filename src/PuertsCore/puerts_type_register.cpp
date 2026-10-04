@@ -81,14 +81,38 @@ Object *require_holder_object(puerts::internal::CallbackContext &p_frame) {
 	return object;
 }
 
-bool call_reflected_method(Object *p_object, TypeRecord::Method *p_method, puerts::internal::CallbackContext &p_frame, Variant &r_result) {
+String get_method_target_name(const TypeRecord::Method *p_method) {
+	if (p_method == nullptr || p_method->owner_type == nullptr) {
+		return "unknown method";
+	}
+	return String(p_method->owner_type->name) + "." + String(p_method->name);
+}
+
+bool call_reflected_method(
+		Object *p_object,
+		const TypeRecord::Method *p_method,
+		puerts::internal::CallbackContext &p_frame,
+		Variant &r_result) {
 	// MethodBind resolution is intentionally performed once while building the
 	// type record. Godot may still reject virtual-only or compatibility entries;
 	// keep that boundary explicit instead of forwarding a null bind into the FFI.
 	if (p_method == nullptr || p_method->method_bind == nullptr) {
-		const String target = p_method != nullptr ? String(p_method->owner_class_name) + "." + String(p_method->name) : "unknown method";
-		throw_script_error(p_frame.api(), p_frame.callback_info(), "MethodBind not found: " + target);
+		throw_script_error(p_frame.api(), p_frame.callback_info(), "MethodBind not found: " + get_method_target_name(p_method));
 		return false;
+	}
+
+	const int argument_count = p_frame.argument_count();
+	const GDExtensionObjectPtr object = p_object != nullptr ? p_object->_owner : nullptr;
+
+	// ptrcall cannot report argument errors. Calls with extra arguments must
+	// use the checked Variant path.
+	if (p_method->use_no_args_ptrcall && argument_count == 0) {
+		godot::gdextension_interface::object_method_bind_ptrcall(
+				p_method->method_bind,
+				object,
+				nullptr,
+				nullptr);
+		return true;
 	}
 
 	puerts::internal::CallArguments args;
@@ -96,16 +120,16 @@ bool call_reflected_method(Object *p_object, TypeRecord::Method *p_method, puert
 	GDExtensionCallError call_error{ GDEXTENSION_CALL_OK, 0, 0 };
 	godot::gdextension_interface::object_method_bind_call(
 			p_method->method_bind,
-			p_object != nullptr ? p_object->_owner : nullptr,
+			object,
 			reinterpret_cast<const GDExtensionConstVariantPtr *>(args.pointers.data()),
-			args.pointers.size(),
+			argument_count,
 			r_result._native_ptr(),
 			&call_error);
 	if (call_error.error != GDEXTENSION_CALL_OK) {
 		throw_script_error(
 				p_frame.api(),
 				p_frame.callback_info(),
-				puerts::internal::format_call_error(String(p_method->owner_class_name) + "." + String(p_method->name), call_error));
+				puerts::internal::format_call_error(get_method_target_name(p_method), call_error));
 		return false;
 	}
 	return true;
@@ -119,7 +143,7 @@ void dispatch_callback(pesapi_ffi *p_apis, pesapi_callback_info p_info, Callback
 	}
 }
 
-void return_reflected_method(Object *p_object, TypeRecord::Method *p_method, puerts::internal::CallbackContext &p_frame) {
+void return_reflected_method(Object *p_object, const TypeRecord::Method *p_method, puerts::internal::CallbackContext &p_frame) {
 	Variant result;
 	if (call_reflected_method(p_object, p_method, p_frame, result)) {
 		puerts::return_variant(p_frame.api(), p_frame.callback_info(), p_frame.script_env(), p_frame.puerts_environment(), result);
@@ -404,7 +428,7 @@ void *PuertsTypeRegister::object_default_constructor_callback(struct pesapi_ffi 
 }
 
 void PuertsTypeRegister::object_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	auto *method = static_cast<TypeRecord::Method *>(apis->get_userdata(info));
+	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		if (Object *object = require_holder_object(context); object != nullptr) {
 			return_reflected_method(object, method, context);
@@ -413,7 +437,7 @@ void PuertsTypeRegister::object_method_callback(struct pesapi_ffi *apis, pesapi_
 }
 
 void PuertsTypeRegister::object_static_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	auto *method = static_cast<TypeRecord::Method *>(apis->get_userdata(info));
+	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		return_reflected_method(nullptr, method, context);
 	});

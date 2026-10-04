@@ -29,7 +29,7 @@ struct StringNameEqual {
 	}
 };
 
-using ReflectedMethodIndex = puerts_eastl::hash_map<StringName, TypeRecord::Method *, StringNameHash, StringNameEqual>;
+using ReflectedMethodIndex = puerts_eastl::hash_map<StringName, const TypeRecord::Method *, StringNameHash, StringNameEqual>;
 
 bool should_skip_reflected_property(const Dictionary &p_property_dict) {
 	const uint32_t usage = p_property_dict["usage"];
@@ -41,8 +41,12 @@ bool is_read_only_reflected_property(const Dictionary &p_property_dict) {
 	return (static_cast<uint32_t>(p_property_dict["usage"]) & PROPERTY_USAGE_READ_ONLY) != 0;
 }
 
+bool method_has_return(const MethodInfo &p_method_info) {
+	return p_method_info.return_val.type != Variant::NIL || (p_method_info.return_val.usage & PROPERTY_USAGE_NIL_IS_VARIANT);
+}
+
 uint32_t get_method_compatibility_hash(const MethodInfo &p_method_info) {
-	const bool has_return = (p_method_info.return_val.type != Variant::NIL) || (p_method_info.return_val.usage & PROPERTY_USAGE_NIL_IS_VARIANT);
+	const bool has_return = method_has_return(p_method_info);
 
 	uint32_t hash = hash_murmur3_one_32(has_return);
 	hash = hash_murmur3_one_32(p_method_info.arguments.size(), hash);
@@ -155,18 +159,19 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_methods(TypeRecord *p_t
 	for (const auto &i : p_method_list) {
 		const Dictionary method_dict = i;
 		const MethodInfo method_info = MethodInfo::from_dict(method_dict);
-		const uint32_t method_flags = static_cast<uint32_t>(method_dict["flags"]);
+		const uint32_t method_flags = method_info.flags;
 		TypeRecord::Method method;
-		method.name = method_dict["name"];
-		method.owner_class_name = p_type->name;
+		method.owner_type = p_type;
+		method.name = method_info.name;
 		method.has_arguments = !method_info.arguments.is_empty();
-		if ((method_flags & METHOD_FLAG_VIRTUAL) == 0 && ClassDB::class_has_method(method.owner_class_name, method.name, true)) {
+		method.use_no_args_ptrcall = !method.has_arguments && !method_has_return(method_info) && (method_flags & METHOD_FLAG_VARARG) == 0;
+		if ((method_flags & METHOD_FLAG_VIRTUAL) == 0 && ClassDB::class_has_method(p_type->name, method.name, true)) {
 			// Resolve once while building the immutable type record. Reflected calls
 			// then enter Godot without a lazy lookup branch or shared-state write.
 			// The existence check also rejects pseudo-virtual entries such as
 			// Object.free, which intentionally has no MethodBind despite its flags.
 			method.method_bind = godot::gdextension_interface::classdb_get_method_bind(
-					static_cast<GDExtensionConstStringNamePtr>(method.owner_class_name._native_ptr()),
+					static_cast<GDExtensionConstStringNamePtr>(p_type->name._native_ptr()),
 					static_cast<GDExtensionConstStringNamePtr>(method.name._native_ptr()),
 					get_method_compatibility_hash(method_info));
 		}
@@ -178,9 +183,9 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_methods(TypeRecord *p_t
 	}
 }
 
-static ReflectedMethodIndex build_instance_method_index(TypeRecord *p_type) {
+static ReflectedMethodIndex build_instance_method_index(const TypeRecord *p_type) {
 	size_t method_count = 0;
-	for (TypeRecord *type = p_type; type != nullptr; type = type->base) {
+	for (const TypeRecord *type = p_type; type != nullptr; type = type->base) {
 		method_count += type->instance_methods.size();
 	}
 
@@ -189,7 +194,7 @@ static ReflectedMethodIndex build_instance_method_index(TypeRecord *p_type) {
 	ReflectedMethodIndex methods;
 	methods.reserve(method_count);
 	while (p_type != nullptr) {
-		for (TypeRecord::Method &method : p_type->instance_methods) {
+		for (const TypeRecord::Method &method : p_type->instance_methods) {
 			methods.insert({ method.name, &method });
 		}
 		p_type = p_type->base;
@@ -197,7 +202,7 @@ static ReflectedMethodIndex build_instance_method_index(TypeRecord *p_type) {
 	return methods;
 }
 
-static TypeRecord::Method *find_reflected_method(const ReflectedMethodIndex &p_methods, const StringName &p_name) {
+static const TypeRecord::Method *find_reflected_method(const ReflectedMethodIndex &p_methods, const StringName &p_name) {
 	const auto found = p_methods.find(p_name);
 	return found == p_methods.end() ? nullptr : found->second;
 }

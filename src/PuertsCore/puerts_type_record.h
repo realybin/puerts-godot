@@ -22,9 +22,10 @@ struct PuertsTypeRegister::TypeRecord {
 	};
 
 	struct Method {
+		const TypeRecord *owner_type = nullptr;
 		godot::StringName name;
-		godot::StringName owner_class_name;
 		bool has_arguments = false;
+		bool use_no_args_ptrcall = false;
 		GDExtensionMethodBindPtr method_bind = nullptr;
 		pesapi_callback callback = nullptr;
 		void *userdata = nullptr;
@@ -32,8 +33,8 @@ struct PuertsTypeRegister::TypeRecord {
 
 	struct Property {
 		godot::StringName name;
-		Method *getter_method = nullptr;
-		Method *setter_method = nullptr;
+		const Method *getter_method = nullptr;
+		const Method *setter_method = nullptr;
 		bool indexed = false;
 		int64_t int_constant = 0;
 		pesapi_callback getter = nullptr;

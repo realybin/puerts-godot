@@ -119,88 +119,88 @@ TypeBuilder<T> define_type() {
 
 template <typename T, typename... Args>
 ConstructorSpec make_constructor() {
-	return ConstructorSpec{ &internal::constructor_wrapper<T, Args...>::callback, internal::finalizer<T>::get() };
+	return ConstructorSpec{ &internal::ConstructorCallback<T, Args...>::callback, internal::finalizer<T>::get() };
 }
 
 template <auto Function>
 MethodSpec make_function() {
-	return MethodSpec{ &internal::static_function_wrapper<Function>::callback, nullptr };
+	return MethodSpec{ &internal::FunctionCallback<Function>::callback, nullptr };
 }
 
 template <auto Method>
 MethodSpec make_method() {
-	return MethodSpec{ &internal::member_function_wrapper<Method>::callback, nullptr };
+	return MethodSpec{ &internal::MemberMethodCallback<Method>::callback, nullptr };
 }
 
 template <auto Method>
 MethodSpec make_extension_method() {
-	return MethodSpec{ &internal::extension_method_wrapper<Method>::callback, nullptr };
+	return MethodSpec{ &internal::ExtensionMethodCallback<Method>::callback, nullptr };
 }
 
-template <typename C, typename R, const char *MethodName, int MinArity = 0, bool WriteBack = true>
+template <typename C, typename R, const char *MethodName, int MinArity = 0, bool WriteBack = true, uint32_t MethodHash = 0>
 MethodSpec make_vararg_method() {
-	return MethodSpec{ &internal::vararg_member_method_wrapper<C, R, MethodName, MinArity, WriteBack>::callback, nullptr };
+	return MethodSpec{ &internal::VarargMethodCallback<C, R, MethodName, MinArity, WriteBack, MethodHash>::callback, nullptr };
 }
 
 template <auto Function>
-OverloadSpec<internal::static_function_wrapper<Function>> make_overload() {
+OverloadSpec<internal::FunctionCallback<Function>> make_overload() {
 	return {};
 }
 
 template <auto Method>
-OverloadSpec<internal::member_function_wrapper<Method>> make_method_overload() {
+OverloadSpec<internal::MemberMethodCallback<Method>> make_method_overload() {
 	return {};
 }
 
 template <auto Method>
-OverloadSpec<internal::extension_method_wrapper<Method>> make_extension_method_overload() {
+OverloadSpec<internal::ExtensionMethodCallback<Method>> make_extension_method_overload() {
 	return {};
 }
 
 template <typename T, typename... Args>
-ConstructorOverloadSpec<internal::constructor_wrapper<T, Args...>> make_constructor_overload() {
+ConstructorOverloadSpec<internal::ConstructorCallback<T, Args...>> make_constructor_overload() {
 	return {};
 }
 
 template <typename... Overloads>
 MethodSpec combine_overloads(OverloadSpec<Overloads>...) {
-	return MethodSpec{ &internal::overload_combiner<Overloads...>::callback, nullptr };
+	return MethodSpec{ &internal::OverloadCallback<true, Overloads...>::callback, nullptr };
 }
 
 template <typename... Overloads>
 MethodSpec combine_default_overloads(OverloadSpec<Overloads>...) {
-	return MethodSpec{ &internal::default_overload_combiner<Overloads...>::callback, nullptr };
+	return MethodSpec{ &internal::OverloadCallback<false, Overloads...>::callback, nullptr };
 }
 
 template <typename... Overloads>
 ConstructorSpec combine_constructors(ConstructorOverloadSpec<Overloads>...) {
 	using first_overload = eastl::tuple_element_t<0, eastl::tuple<Overloads...>>;
-	return ConstructorSpec{ &internal::constructor_combiner<Overloads...>::callback, internal::finalizer<typename first_overload::target_type>::get() };
+	return ConstructorSpec{ &internal::ConstructorOverloadCallback<Overloads...>::callback, internal::finalizer<typename first_overload::target_type>::get() };
 }
 
 template <auto Member>
 PropertySpec make_property() {
-	return PropertySpec{ &internal::property_wrapper<Member>::getter, &internal::property_wrapper<Member>::setter, nullptr, nullptr };
+	return PropertySpec{ &internal::MemberPropertyCallbacks<Member>::getter, &internal::MemberPropertyCallbacks<Member>::setter, nullptr, nullptr };
 }
 
 template <auto ConstantValue>
 PropertySpec make_enum_constant() {
-	return PropertySpec{ &internal::enum_constant_property_wrapper<ConstantValue>::getter, nullptr, nullptr, nullptr };
+	return PropertySpec{ &internal::EnumConstantGetter<ConstantValue>::getter, nullptr, nullptr, nullptr };
 }
 
 template <auto Getter>
 PropertySpec make_value_constant() {
-	return PropertySpec{ &internal::static_function_wrapper<Getter>::callback, nullptr, nullptr, nullptr };
+	return PropertySpec{ &internal::FunctionCallback<Getter>::callback, nullptr, nullptr, nullptr };
 }
 
 template <typename EnumTag>
 PropertySpec make_enum_group() {
-	return PropertySpec{ &internal::enum_group_property_wrapper<EnumTag>::getter, nullptr, nullptr, nullptr };
+	return PropertySpec{ &internal::EnumGroupGetter<EnumTag>::getter, nullptr, nullptr, nullptr };
 }
 
 template <typename C, const char *SignalName>
 PropertySpec make_signal_property() {
-	return PropertySpec{ &internal::signal_property_wrapper<C, SignalName>::getter, nullptr, nullptr, nullptr };
+	return PropertySpec{ &internal::SignalGetter<C, SignalName>::getter, nullptr, nullptr, nullptr };
 }
 
 } // namespace puerts

@@ -46,6 +46,16 @@ _G.binding_cases = {
 	end,
 
 	reflected_objects = function()
+		local Image = load_type("Image")
+		local image = Image.create_empty(4, 4, true, Image.Format.FORMAT_RGBA8)
+		expect(image:has_mipmaps(), "image starts with mipmaps")
+		expect_throws(function()
+			image:clear_mipmaps(1)
+		end, "Too many arguments", "void method arity rejection")
+		expect(image:has_mipmaps(), "rejected call leaves mipmaps intact")
+		expect(image:clear_mipmaps() == nil, "void method returns nil")
+		expect(not image:has_mipmaps(), "void method clears mipmaps")
+
 		local RandomNumberGenerator = load_type("RandomNumberGenerator")
 		local rng = RandomNumberGenerator()
 		rng.seed = 13579
@@ -221,6 +231,39 @@ _G.binding_cases = {
 			data.lightmap_textures = {}
 		end, "read-only", "readonly property rejection")
 
+	end,
+
+	static_argument_conversion = function()
+		local Vector2 = load_type("Vector2")
+		local Vector2i = load_type("Vector2i")
+		local vector = Vector2(3, 4)
+		expect(vector:dot(vector) == 25 and vector:dot(boxed_vector) == 25, "raw and boxed argument conversion")
+		expect(vector:dot(Vector2i(3, 4)) == 25 and vector:dot(boxed_int_vector) == 25, "cross-type argument conversion")
+		local copy = Vector2(vector)
+		copy.x = 10
+		expect(vector.x == 3, "copy constructor keeps value independence")
+		local normalized = vector:normalized()
+		expect(near(normalized:length(), 1, 1e-6) and vector:length() == 5, "returned value keeps value independence")
+		boxed_vector.x = 0
+		expect(boxed_vector:length() == 4, "boxed receiver mutation writes back")
+		local ints = load_type("PackedInt32Array")()
+		ints:append(-3.75)
+		ints:append(2147483648)
+		expect(ints:get(0) == -3 and ints:get(1) == -2147483648, "numeric fallback preserves narrowing")
+		expect_throws(function()
+			ints:append("oops")
+		end, "Argument type does not match", "scalar type rejection")
+		local floats = load_type("PackedFloat64Array")()
+		floats:append(3)
+		floats:append(1.25)
+		expect(floats:get(0) == 3 and floats:get(1) == 1.25, "integer and floating-point scalar conversion")
+		local wide = load_type("PackedInt64Array")()
+		wide:append(4294967297)
+		floats:append(4294967297)
+		expect(wide:get(0) == 4294967297 and floats:get(2) == 4294967297, "64-bit integer fallback conversion")
+		backend_object:set_block_signals(true)
+		expect(backend_object:is_blocking_signals(), "boolean argument conversion")
+		backend_object:set_block_signals(false)
 	end,
 
 	builtin_static_binding = function()

@@ -423,9 +423,15 @@ export function generateClassBinding(
 
 		const symbol = `puerts_vararg_method_name_${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(method.name)}`;
 		varargNameDefs.push(`inline constexpr char ${symbol}[] = "${method.name}";`);
-		const writeBack = method.is_const ? ", false" : "";
+		let callOptions = method.is_const ? ", false" : "";
+		if (classSource === "classes") {
+			if (!Number.isInteger(method.hash) || method.hash! < 0 || method.hash! > 0xFFFFFFFF) {
+				throw new Error(`Missing or invalid method hash for ${className}.${method.name}.`);
+			}
+			callOptions = `, ${!method.is_const}, ${method.hash}`;
+		}
 		bindingLines.push(
-			`\t\t\t.method("${method.name}", puerts::make_vararg_method<godot::${className}, ${mapApiMethodReturnType(method)}, ${symbol}, ${(method.arguments ?? []).length}${writeBack}>())`,
+			`\t\t\t.method("${method.name}", puerts::make_vararg_method<godot::${className}, ${mapApiMethodReturnType(method)}, ${symbol}, ${(method.arguments ?? []).length}${callOptions}>())`,
 		);
 		emittedMethodNames.add(method.name);
 	}

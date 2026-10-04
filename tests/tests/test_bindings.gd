@@ -44,3 +44,9 @@ func test_binding_errors() -> bool:
 
 func test_builtin_bindings() -> bool:
 	return run_binding_case("builtin_static_binding")
+
+
+func test_static_argument_conversion() -> bool:
+	env.set_global("boxed_vector", Vector2(3, 4))
+	env.set_global("boxed_int_vector", Vector2i(3, 4))
+	return run_binding_case("static_argument_conversion")
