@@ -14,6 +14,10 @@ It provides:
 > [!WARNING]
 > Experimental, use with caution, and expect breaking changes in the future before the 1.0 release.
 
+Showcase:
+
+https://github.com/user-attachments/assets/2026e5d9-a95b-466b-8918-cfe784a2e6da
+
 ## Quick example
 
 ```gdscript
