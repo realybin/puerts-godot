@@ -14,6 +14,30 @@ value.length(); // 5
 
 ClassDB fallback constructors are zero-argument. Static bindings may expose other constructors. Script-created `Node` objects remain script-owned after `add_child()`; see [Object Allocation and Lifetime](object-allocating.md).
 
+## Type mapping
+
+Default mapping for Godot `Variant` values passed to script:
+
+| Godot | ECMAScript | Lua |
+|-------|------------|-----|
+| `null` | `null` | `nil` |
+| `bool` | `boolean` | `boolean` |
+| `int` | `number` in the signed 32-bit range; otherwise `bigint` | `integer` |
+| `float` | `number` | `number` |
+| `String`, `StringName` | `string` | `string` |
+| `Object` | Bound object | Bound `userdata` |
+| Other built-ins (`Vector2`, `Array`, `Dictionary`, `Callable`, packed arrays, etc.) | Bound value | Bound `userdata` |
+| `PuertsScriptValue` | Original script value | Original script value |
+
+Containers keep their Godot APIs. `to_native()` unwraps Godot values; script objects, arrays, tables, and functions remain `PuertsScriptValue`, without recursive conversion. A `PuertsScriptValue` can only be passed back to its own environment.
+
+Core compile-time macros for `PackedByteArray` (disabled by default):
+
+- `VARIANT_TO_SCRIPT_PACKED_BYTE_ARRAY_CAST`: copies `PackedByteArray` to script binary.
+- `SCRIPT_TO_VARIANT_PACKED_BYTE_ARRAY_CAST`: copies script binary to `PackedByteArray` when converting to `Variant`, including `to_native()`.
+
+Script binary uses `ArrayBuffer` in V8/Node.js/QuickJS, `Uint8Array` in WebGL, and buffer `userdata` in Lua. `to_binary()` explicitly copies script binary regardless of these macros.
+
 ## Callables and signals
 
 `to_callable(function)` retains the function and closure. Keep the callable to disconnect it:
