@@ -25,8 +25,8 @@ Default mapping for Godot `Variant` values passed to script:
 | `int` | `number` in the signed 32-bit range; otherwise `bigint` | `integer` |
 | `float` | `number` | `number` |
 | `String`, `StringName` | `string` | `string` |
-| `Object` | Bound object | Bound `userdata` |
-| Other built-ins (`Vector2`, `Array`, `Dictionary`, `Callable`, packed arrays, etc.) | Bound value | Bound `userdata` |
+| `Object` | Godot object wrapper | Godot object `userdata` |
+| Other built-ins (`Vector2`, `Array`, `Dictionary`, `Callable`, packed arrays, etc.) | Godot value wrapper | Godot value `userdata` |
 | `PuertsScriptValue` | Original script value | Original script value |
 
 Containers keep their Godot APIs. `to_native()` unwraps Godot values; script objects, arrays, tables, and functions remain `PuertsScriptValue`, without recursive conversion. A `PuertsScriptValue` can only be passed back to its own environment.
