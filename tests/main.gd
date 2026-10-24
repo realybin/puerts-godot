@@ -11,7 +11,7 @@ var skipped := 0
 
 
 func _ready() -> void:
-	if not ClassDB.class_exists("PuertsEnvironment") or not ClassDB.class_exists("PuertsStringNameCachePool"):
+	if not ClassDB.class_exists("PuertsEnvironment") or not ClassDB.class_exists("PuertsStringNameUtf8Cache"):
 		record_failure("bootstrap", "PuertsCore extension is not loaded")
 	else:
 		run_tests()

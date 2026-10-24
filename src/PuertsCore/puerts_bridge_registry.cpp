@@ -14,16 +14,16 @@ PuertsBridgeRegistry::~PuertsBridgeRegistry() {
 }
 
 bool PuertsBridgeRegistry::is_handle(void *p_handle) {
-	return (reinterpret_cast<uintptr_t>(p_handle) & HANDLE_TAG) != 0;
+	return (reinterpret_cast<uintptr_t>(p_handle) & kHandleTag) != 0;
 }
 
 void *PuertsBridgeRegistry::encode_handle(HandleId p_handle_id) {
-	return reinterpret_cast<void *>((p_handle_id << 1U) | HANDLE_TAG);
+	return reinterpret_cast<void *>((p_handle_id << 1U) | kHandleTag);
 }
 
 bool PuertsBridgeRegistry::decode_handle(void *p_handle, HandleId &r_handle_id) {
 	const uintptr_t raw = reinterpret_cast<uintptr_t>(p_handle);
-	if ((raw & HANDLE_TAG) == 0) {
+	if ((raw & kHandleTag) == 0) {
 		return false;
 	}
 
@@ -32,7 +32,7 @@ bool PuertsBridgeRegistry::decode_handle(void *p_handle, HandleId &r_handle_id) 
 }
 
 PuertsBridgeRegistry::HandleId PuertsBridgeRegistry::take_handle_id() {
-	if (next_handle_id_ > MAX_HANDLE_ID) {
+	if (next_handle_id_ > kMaxHandleId) {
 		return 0;
 	}
 	return next_handle_id_++;
@@ -127,11 +127,11 @@ void PuertsBridgeRegistry::clear() {
 	}
 }
 
-void *PuertsBridgeRegistry::bind_object(Object *p_object, const void *p_type_id) {
+void *PuertsBridgeRegistry::bind_non_owning_object(Object *p_object, const void *p_type_id) {
 	return store_object(p_object, p_type_id, false);
 }
 
-void *PuertsBridgeRegistry::own_object(Object *p_object, const void *p_type_id) {
+void *PuertsBridgeRegistry::adopt_object(Object *p_object, const void *p_type_id) {
 	return store_object(p_object, p_type_id, true);
 }
 
@@ -141,7 +141,7 @@ void *PuertsBridgeRegistry::box_variant(const Variant &p_value, const void *p_ty
 		return nullptr;
 	}
 	Entry entry;
-	entry.kind = Kind::Variant;
+	entry.kind = Kind::BoxedVariant;
 	entry.value = p_value;
 	entry.type_id = p_type_id;
 	entries_.try_emplace(handle_id, eastl::move(entry));
@@ -159,9 +159,9 @@ PuertsBridgeRegistry::ObjectBinding PuertsBridgeRegistry::find_object(Object *p_
 	return { encode_handle(found->second.handle_id), found->second.type_id };
 }
 
-const Variant *PuertsBridgeRegistry::find_box(void *p_handle) const {
+const Variant *PuertsBridgeRegistry::find_boxed_variant(void *p_handle) const {
 	const Entry *entry = find_entry(p_handle);
-	return entry != nullptr && entry->kind == Kind::Variant ? &entry->value : nullptr;
+	return entry != nullptr && entry->kind == Kind::BoxedVariant ? &entry->value : nullptr;
 }
 
 bool PuertsBridgeRegistry::try_get_variant(void *p_handle, const void *p_type_id, Variant &r_value) const {
@@ -177,9 +177,9 @@ bool PuertsBridgeRegistry::try_get_variant(void *p_handle, const void *p_type_id
 	return true;
 }
 
-bool PuertsBridgeRegistry::update_box(void *p_handle, const Variant &p_value) {
+bool PuertsBridgeRegistry::update_boxed_variant(void *p_handle, const Variant &p_value) {
 	Entry *entry = find_entry(p_handle);
-	if (entry == nullptr || entry->kind != Kind::Variant) {
+	if (entry == nullptr || entry->kind != Kind::BoxedVariant) {
 		return false;
 	}
 	entry->value = p_value;
@@ -195,7 +195,7 @@ bool PuertsBridgeRegistry::try_get_object(void *p_handle, Object *&r_object) con
 	return true;
 }
 
-bool PuertsBridgeRegistry::release(void *p_handle) {
+bool PuertsBridgeRegistry::release_handle(void *p_handle) {
 	HandleId handle_id = 0;
 	if (!decode_handle(p_handle, handle_id)) {
 		return false;

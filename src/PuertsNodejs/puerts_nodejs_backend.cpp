@@ -59,7 +59,7 @@ void puerts_nodejs_terminate_execution(pesapi_env_ref p_env_ref) {
 	NodejsTerminateExecution(GetNodejsIsolate(p_env_ref));
 }
 
-const PuertsBackendFunctions puerts_nodejs_functions = {
+const PuertsBackendFunctionTable puerts_nodejs_functions = {
 	&puerts_nodejs_get_api_version,
 	&puerts_nodejs_get_ffi,
 	&puerts_nodejs_create_env_ref,

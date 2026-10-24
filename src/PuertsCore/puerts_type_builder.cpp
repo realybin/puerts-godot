@@ -15,7 +15,7 @@ using namespace godot;
 
 namespace {
 
-using TypeRecord = PuertsTypeRegister::TypeRecord;
+using TypeRecord = PuertsTypeRegistry::TypeRecord;
 
 struct StringNameHash {
 	size_t operator()(const StringName &p_name) const {
@@ -33,8 +33,8 @@ using ReflectedMethodIndex = puerts_eastl::hash_map<StringName, const TypeRecord
 
 bool should_skip_reflected_property(const Dictionary &p_property_dict) {
 	const uint32_t usage = p_property_dict["usage"];
-	constexpr uint32_t ignored_usage = PROPERTY_USAGE_CATEGORY | PROPERTY_USAGE_GROUP | PROPERTY_USAGE_SUBGROUP;
-	return (usage & ignored_usage) != 0;
+	constexpr uint32_t kIgnoredPropertyUsage = PROPERTY_USAGE_CATEGORY | PROPERTY_USAGE_GROUP | PROPERTY_USAGE_SUBGROUP;
+	return (usage & kIgnoredPropertyUsage) != 0;
 }
 
 bool is_read_only_reflected_property(const Dictionary &p_property_dict) {
@@ -101,12 +101,12 @@ void copy_properties(puerts_eastl::vector<TypeRecord::Property> &r_properties, c
 
 } // namespace
 
-PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_object_type(PuertsTypeRegister &p_registry, const StringName &p_name) {
+PuertsTypeRegistry::TypeRecordOwner PuertsTypeRegistry::TypeRecordBuilder::build_object_type(PuertsTypeRegistry &p_registry, const StringName &p_name) {
 	if (!ClassDB::class_exists(p_name)) {
 		return {};
 	}
 
-	TypeOwner owner(memnew(TypeRecord));
+	TypeRecordOwner owner(memnew(TypeRecord));
 	TypeRecord *type = owner.get();
 	type->type_id = type;
 	type->kind = TypeRecord::Kind::ReflectedObject;
@@ -128,8 +128,8 @@ PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_object_ty
 	return owner;
 }
 
-PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_static_type(const puerts::TypeDefinition &p_definition) {
-	TypeOwner owner(memnew(TypeRecord));
+PuertsTypeRegistry::TypeRecordOwner PuertsTypeRegistry::TypeRecordBuilder::build_static_type(const puerts::TypeDefinition &p_definition) {
+	TypeRecordOwner owner(memnew(TypeRecord));
 	TypeRecord *type = owner.get();
 	type->type_id = p_definition.type_id;
 	type->kind = TypeRecord::Kind::StaticBinding;
@@ -148,7 +148,7 @@ PuertsTypeRegister::TypeOwner PuertsTypeRegister::RecordBuilder::build_static_ty
 	return owner;
 }
 
-void PuertsTypeRegister::RecordBuilder::append_reflected_methods(TypeRecord *p_type, const TypedArray<Dictionary> &p_method_list) {
+void PuertsTypeRegistry::TypeRecordBuilder::append_reflected_methods(TypeRecord *p_type, const TypedArray<Dictionary> &p_method_list) {
 	size_t static_method_count = 0;
 	for (const auto &entry : p_method_list) {
 		const Dictionary method_dict = entry;
@@ -176,7 +176,7 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_methods(TypeRecord *p_t
 					get_method_compatibility_hash(method_info));
 		}
 		const bool is_static = (method_flags & METHOD_FLAG_STATIC) != 0;
-		method.callback = is_static ? &PuertsTypeRegister::object_static_method_callback : &PuertsTypeRegister::object_method_callback;
+		method.callback = is_static ? &PuertsTypeRegistry::object_static_method_callback : &PuertsTypeRegistry::object_method_callback;
 
 		puerts_eastl::vector<TypeRecord::Method> &target_methods = is_static ? p_type->static_methods : p_type->instance_methods;
 		target_methods.push_back(method);
@@ -207,7 +207,7 @@ static const TypeRecord::Method *find_reflected_method(const ReflectedMethodInde
 	return found == p_methods.end() ? nullptr : found->second;
 }
 
-void PuertsTypeRegister::RecordBuilder::append_reflected_properties(TypeRecord *p_type, const TypedArray<Dictionary> &p_property_list) {
+void PuertsTypeRegistry::TypeRecordBuilder::append_reflected_properties(TypeRecord *p_type, const TypedArray<Dictionary> &p_property_list) {
 	p_type->instance_properties.reserve(p_property_list.size());
 	const ReflectedMethodIndex methods = build_instance_method_index(p_type);
 
@@ -226,37 +226,37 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_properties(TypeRecord *
 			continue;
 		}
 		property.indexed = property.getter_method->has_arguments;
-		property.getter = &PuertsTypeRegister::object_property_getter_callback;
+		property.getter = &PuertsTypeRegistry::object_property_getter_callback;
 		if (!is_read_only_reflected_property(property_dict)) {
 			if (!property.indexed) {
 				property.setter_method = find_reflected_method(
 						methods,
 						ClassDB::class_get_property_setter(p_type->name, property.name));
 			}
-			property.setter = &PuertsTypeRegister::object_property_setter_callback;
+			property.setter = &PuertsTypeRegistry::object_property_setter_callback;
 		}
 		p_type->instance_properties.push_back(property);
 	}
 }
 
-void PuertsTypeRegister::RecordBuilder::append_reflected_signals(TypeRecord *p_type, const StringName &p_name) {
+void PuertsTypeRegistry::TypeRecordBuilder::append_reflected_signals(TypeRecord *p_type, const StringName &p_name) {
 	const TypedArray<Dictionary> signal_list = ClassDB::class_get_signal_list(p_name, true);
 	p_type->instance_properties.reserve(p_type->instance_properties.size() + signal_list.size());
 	for (const auto &entry : signal_list) {
 		const Dictionary signal_dict = entry;
 		TypeRecord::Property signal_property;
 		signal_property.name = signal_dict["name"];
-		signal_property.getter = &PuertsTypeRegister::object_signal_getter_callback;
+		signal_property.getter = &PuertsTypeRegistry::object_signal_getter_callback;
 		p_type->instance_properties.push_back(signal_property);
 	}
 }
 
-void PuertsTypeRegister::RecordBuilder::append_reflected_enum_groups(PuertsTypeRegister &p_registry, TypeRecord *p_type, const StringName &p_name) {
+void PuertsTypeRegistry::TypeRecordBuilder::append_reflected_enum_groups(PuertsTypeRegistry &p_registry, TypeRecord *p_type, const StringName &p_name) {
 	const PackedStringArray enum_names = ClassDB::class_get_enum_list(p_name, true);
 	p_type->static_properties.reserve(p_type->static_properties.size() + enum_names.size());
 	for (const auto &enum_name_value : enum_names) {
 		const StringName enum_name = enum_name_value;
-		TypeOwner enum_owner(memnew(TypeRecord));
+		TypeRecordOwner enum_owner(memnew(TypeRecord));
 		TypeRecord *enum_type = enum_owner.get();
 		enum_type->type_id = enum_type;
 		enum_type->kind = TypeRecord::Kind::StaticBinding;
@@ -269,20 +269,20 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_enum_groups(PuertsTypeR
 			TypeRecord::Property constant;
 			constant.name = enum_constant_name;
 			constant.int_constant = ClassDB::class_get_integer_constant(p_name, enum_constant_name);
-			constant.getter = &PuertsTypeRegister::integer_constant_getter_callback;
+			constant.getter = &PuertsTypeRegistry::integer_constant_getter_callback;
 			enum_type->static_properties.push_back(constant);
 		}
 		p_registry.store_type(puerts_eastl::move(enum_owner));
 
 		TypeRecord::Property enum_group_property;
 		enum_group_property.name = enum_name;
-		enum_group_property.getter = &PuertsTypeRegister::enum_group_getter_callback;
+		enum_group_property.getter = &PuertsTypeRegistry::enum_group_getter_callback;
 		enum_group_property.getter_userdata = enum_type;
 		p_type->static_properties.push_back(enum_group_property);
 	}
 }
 
-void PuertsTypeRegister::RecordBuilder::append_reflected_integer_constants(TypeRecord *p_type, const StringName &p_name, const PackedStringArray &p_integer_constants) {
+void PuertsTypeRegistry::TypeRecordBuilder::append_reflected_integer_constants(TypeRecord *p_type, const StringName &p_name, const PackedStringArray &p_integer_constants) {
 	p_type->static_properties.reserve(p_type->static_properties.size() + p_integer_constants.size());
 
 	for (const auto &integer_constant : p_integer_constants) {
@@ -295,7 +295,7 @@ void PuertsTypeRegister::RecordBuilder::append_reflected_integer_constants(TypeR
 		TypeRecord::Property constant;
 		constant.name = constant_name;
 		constant.int_constant = ClassDB::class_get_integer_constant(p_name, constant_name);
-		constant.getter = &PuertsTypeRegister::integer_constant_getter_callback;
+		constant.getter = &PuertsTypeRegistry::integer_constant_getter_callback;
 		p_type->static_properties.push_back(constant);
 	}
 }

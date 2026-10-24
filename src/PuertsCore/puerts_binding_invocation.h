@@ -101,7 +101,7 @@ template <typename Binding>
 struct CheckedMethodCallback {
 	static void callback(pesapi_ffi *apis, pesapi_callback_info info) {
 		CallbackContext frame(apis, info);
-		if (!frame.require() || !frame.require_argument_count(Binding::arity)) {
+		if (!frame.require() || !frame.require_argument_count(Binding::kArity)) {
 			return;
 		}
 		(void)Binding::template invoke<false>(apis, info, frame);
@@ -110,7 +110,7 @@ struct CheckedMethodCallback {
 
 template <auto Callable, typename C, typename R, bool WriteBack, typename... Args>
 struct InstanceMethodCallback : CheckedMethodCallback<InstanceMethodCallback<Callable, C, R, WriteBack, Args...>> {
-	static constexpr int arity = static_cast<int>(sizeof...(Args));
+	static constexpr int kArity = static_cast<int>(sizeof...(Args));
 
 	template <bool Probe>
 	static bool invoke(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
@@ -131,7 +131,7 @@ struct FunctionCallback;
 
 template <typename R, typename... Args, R (*Function)(Args...)>
 struct FunctionCallback<Function> : CheckedMethodCallback<FunctionCallback<Function>> {
-	static constexpr int arity = static_cast<int>(sizeof...(Args));
+	static constexpr int kArity = static_cast<int>(sizeof...(Args));
 
 	template <bool Probe>
 	static bool invoke(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
@@ -164,7 +164,7 @@ struct MemberMethodCallback<Method> : InstanceMethodCallback<Method, C, R, false
 template <typename T, typename... Args>
 struct ConstructorCallback {
 	using target_type = T;
-	static constexpr int arity = static_cast<int>(sizeof...(Args));
+	static constexpr int kArity = static_cast<int>(sizeof...(Args));
 
 	template <bool Probe>
 	static bool invoke(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame, void *&r_instance) {
@@ -209,7 +209,7 @@ private:
 			if (object == nullptr) {
 				return nullptr;
 			}
-			if (void *handle = frame.environment_data()->bridge.own_object(object, static_type_id<T>::get()); handle != nullptr) {
+			if (void *handle = frame.environment_context()->bridge.adopt_object(object, static_type_id<T>::get()); handle != nullptr) {
 				return handle;
 			}
 			godot::memdelete(object);
@@ -329,22 +329,22 @@ template <auto ConstantValue>
 struct EnumConstantGetter {
 	using constant_type = unqualified_t<decltype(ConstantValue)>;
 	static_assert(eastl::is_integral_v<constant_type> || eastl::is_enum_v<constant_type>, "Enum constant binding requires an integral or enum constant value.");
-	static constexpr int64_t value = static_cast<int64_t>(ConstantValue);
+	static constexpr int64_t kValue = static_cast<int64_t>(ConstantValue);
 
 	static void getter(pesapi_ffi *apis, pesapi_callback_info info) {
 		pesapi_env env = apis->get_env(info);
-		if (value >= INT32_MIN && value <= INT32_MAX) {
-			apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(value)));
+		if (kValue >= INT32_MIN && kValue <= INT32_MAX) {
+			apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(kValue)));
 			return;
 		}
-		apis->add_return(info, apis->create_int64(env, value));
+		apis->add_return(info, apis->create_int64(env, kValue));
 	}
 };
 
 template <typename EnumTag>
 struct EnumGroupGetter {
 	static void getter(pesapi_ffi *apis, pesapi_callback_info info) {
-		PuertsTypeRegister &registry = PuertsTypeRegister::get_singleton();
+		PuertsTypeRegistry &registry = PuertsTypeRegistry::get_singleton();
 		const void *enum_type_id = static_type_id<EnumTag>::get();
 		if (!registry.has_type(enum_type_id)) {
 			apis->throw_by_string(info, "Enum type is not registered.");
@@ -381,7 +381,7 @@ struct SignalGetter {
 			apis->throw_by_string(info, message.get_data());
 			return;
 		}
-		puerts::return_variant(
+		puerts::return_variant_to_script(
 				apis,
 				info,
 				frame.script_env(),
@@ -394,7 +394,7 @@ template <bool Probe, typename... Overloads>
 struct OverloadCallback {
 	template <typename Overload>
 	static bool invoke_matching_arity(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
-		if (frame.argument_count() != Overload::arity) {
+		if (frame.argument_count() != Overload::kArity) {
 			return false;
 		}
 		if constexpr (Probe) {
@@ -420,7 +420,7 @@ template <typename... Overloads>
 struct ConstructorOverloadCallback {
 	template <typename Overload>
 	static bool try_construct(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame, void *&r_instance) {
-		return frame.argument_count() == Overload::arity && Overload::template invoke<true>(apis, info, frame, r_instance);
+		return frame.argument_count() == Overload::kArity && Overload::template invoke<true>(apis, info, frame, r_instance);
 	}
 
 	static void *callback(pesapi_ffi *apis, pesapi_callback_info info) {

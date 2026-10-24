@@ -25,7 +25,7 @@ class PuertsScriptValue : public godot::RefCounted {
 	GDCLASS(PuertsScriptValue, godot::RefCounted)
 
 	PuertsEnvironment *environment_ = nullptr;
-	pesapi_ffi *ffi_ = nullptr;
+	pesapi_ffi *api_ = nullptr;
 	pesapi_value_ref value_ref_ = nullptr;
 	void *cache_key_ = nullptr;
 	size_t registry_index_ = 0;
@@ -66,7 +66,7 @@ private:
 	friend class PuertsEnvironment;
 	friend class puerts::internal::PuertsScriptCallable;
 
-	void initialize(PuertsEnvironment *p_environment, pesapi_ffi *p_ffi, pesapi_value_ref p_value_ref);
+	void initialize(PuertsEnvironment *p_environment, pesapi_ffi *p_api, pesapi_value_ref p_value_ref);
 	void release_value_ref();
 	template <typename Result, typename Function>
 	Result with_value(Result p_fallback, Function &&p_function, bool p_may_reenter = false) const;

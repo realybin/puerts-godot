@@ -20,42 +20,35 @@ func per_backend() -> bool:
 
 
 func test_invalid_initialization() -> bool:
-	var pool: Object = ClassDB.instantiate("PuertsStringNameCachePool")
-	pool.initialize(0)
+	var pool: Object = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 	var node := Node.new()
-	var uninitialized: Object = ClassDB.instantiate("PuertsStringNameCachePool")
-	for arguments in [[null, pool], [node, pool], [backend, null], [backend, uninitialized]]:
+	for arguments in [[null, pool], [node, pool], [backend, null]]:
 		equal(env.initialize(arguments[0], arguments[1]), ERR_INVALID_PARAMETER, "invalid initialize arguments")
-		check(not env.is_alive(), "failed initialize leaves environment dead")
+		check(not env.is_ready(), "failed initialize leaves environment dead")
 	node.free()
 	check(not errors.is_empty(), "invalid initialize reports errors")
 	return true
 
 
-func test_cache_pool_policies() -> bool:
-	var pool: Object = ClassDB.instantiate("PuertsStringNameCachePool")
-	for policy in [0, 1, 2]:
-		equal(pool.initialize(policy, 2), OK, "initialize cache policy")
-		equal(env.initialize(backend, pool), OK, "initialize with cache policy")
-		for index in range(4):
-			env.set_global("value_%d" % index, index)
-			equal(native(env.get_global("value_%d" % index)), index, "cache-backed lookup")
-		pool.clear()
-		equal(native(env.get_global("value_0")), 0, "lookup after cache clear")
-	equal(pool.initialize(99, 8), ERR_INVALID_PARAMETER, "invalid cache policy")
-	equal(pool.get_policy(), 2, "rejected policy preserves configuration")
+func test_utf8_cache() -> bool:
+	var pool: Object = ClassDB.instantiate("PuertsStringNameUtf8Cache")
+	equal(env.initialize(backend, pool), OK, "initialize with default-constructed cache")
+	for index in range(4):
+		env.set_global("value_%d" % index, index)
+		equal(native(env.get_global("value_%d" % index)), index, "cache-backed lookup")
+	pool.clear()
+	equal(native(env.get_global("value_0")), 0, "lookup after cache clear")
 	return true
 
 
 func test_reentrant_initialization() -> bool:
-	var pool: Object = ClassDB.instantiate("PuertsStringNameCachePool")
-	pool.initialize()
+	var pool: Object = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 	var proxy := ReentrantBackend.new()
 	proxy.environment = env
 	proxy.delegate = backend
 	proxy.pool = pool
 	equal(env.initialize(proxy, pool), OK, "outer initialization")
 	equal(proxy.nested_result, ERR_BUSY, "nested initialization is rejected")
-	check(env.is_alive(), "outer initialization remains usable")
+	check(env.is_ready(), "outer initialization remains usable")
 	proxy.environment = null
 	return true

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "puerts_type_register.h"
+#include "puerts_type_registry.h"
 
 #include "puerts_bridge_registry.h"
 #include "puerts_environment.h"
@@ -21,11 +21,11 @@ extern "C" void *GetRegisterApi();
 
 namespace {
 
-using TypeRecord = PuertsTypeRegister::TypeRecord;
+using TypeRecord = PuertsTypeRegistry::TypeRecord;
 
-void throw_script_error(pesapi_ffi *p_apis, pesapi_callback_info p_info, const String &p_message) {
+void throw_script_error(pesapi_ffi *p_api, pesapi_callback_info p_info, const String &p_message) {
 	const CharString utf8 = p_message.utf8();
-	p_apis->throw_by_string(p_info, utf8.get_data());
+	p_api->throw_by_string(p_info, utf8.get_data());
 }
 
 bool should_index_builtin_variant(const TypeRecord *p_type) {
@@ -54,7 +54,7 @@ void build_call_arguments(
 	const int argc = p_frame.argument_count();
 	r_arguments.resize(argc);
 	for (int i = 0; i < argc; ++i) {
-		r_arguments.values[i] = puerts::script_to_variant(
+		r_arguments.values[i] = puerts::script_value_to_variant(
 				p_frame.puerts_environment(),
 				p_frame.script_env(),
 				p_frame.argument_value(i));
@@ -67,7 +67,7 @@ Object *resolve_holder_object(puerts::internal::CallbackContext &p_frame) {
 		return nullptr;
 	}
 	Object *object = nullptr;
-	if (p_frame.environment_data()->bridge.try_get_object(holder, object)) {
+	if (p_frame.environment_context()->bridge.try_get_object(holder, object)) {
 		return object;
 	}
 	return PuertsBridgeRegistry::is_handle(holder) ? nullptr : static_cast<Object *>(holder);
@@ -136,8 +136,8 @@ bool call_reflected_method(
 }
 
 template <typename Callback>
-void dispatch_callback(pesapi_ffi *p_apis, pesapi_callback_info p_info, Callback &&p_callback) {
-	puerts::internal::CallbackContext context(p_apis, p_info);
+void dispatch_callback(pesapi_ffi *p_api, pesapi_callback_info p_info, Callback &&p_callback) {
+	puerts::internal::CallbackContext context(p_api, p_info);
 	if (context.require()) {
 		p_callback(context);
 	}
@@ -146,52 +146,52 @@ void dispatch_callback(pesapi_ffi *p_apis, pesapi_callback_info p_info, Callback
 void return_reflected_method(Object *p_object, const TypeRecord::Method *p_method, puerts::internal::CallbackContext &p_frame) {
 	Variant result;
 	if (call_reflected_method(p_object, p_method, p_frame, result)) {
-		puerts::return_variant(p_frame.api(), p_frame.callback_info(), p_frame.script_env(), p_frame.puerts_environment(), result);
+		puerts::return_variant_to_script(p_frame.api(), p_frame.callback_info(), p_frame.script_env(), p_frame.puerts_environment(), result);
 	}
 }
 
 } // namespace
 
-PuertsTypeRegister &PuertsTypeRegister::get_singleton() {
-	static PuertsTypeRegister singleton;
+PuertsTypeRegistry &PuertsTypeRegistry::get_singleton() {
+	static PuertsTypeRegistry singleton;
 	return singleton;
 }
 
-PuertsTypeRegister::PuertsTypeRegister() {
+PuertsTypeRegistry::PuertsTypeRegistry() {
 	reg_api_ = *static_cast<pesapi_registry_api *>(GetRegisterApi());
 	registry_ = reg_api_.create_registry();
 	reg_api_.on_class_not_found(registry_, [](const void *type_id) -> int {
-		PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
-		return type_register.ensure_registered(type_id);
+		PuertsTypeRegistry &type_registry = PuertsTypeRegistry::get_singleton();
+		return type_registry.ensure_registered(type_id);
 	});
 }
 
-void PuertsTypeRegister::TypeRecordDeleter::operator()(TypeRecord *p_type) const {
+void PuertsTypeRegistry::TypeRecordDeleter::operator()(TypeRecord *p_type) const {
 	memdelete(p_type);
 }
 
-PuertsTypeRegister::~PuertsTypeRegister() = default;
+PuertsTypeRegistry::~PuertsTypeRegistry() = default;
 
-pesapi_registry PuertsTypeRegister::get_registry() const {
+pesapi_registry PuertsTypeRegistry::get_registry() const {
 	return registry_;
 }
 
-PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_record(const void *p_type_id) const {
+PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_record(const void *p_type_id) const {
 	const auto found = types_by_id_.find(p_type_id);
 	return found == types_by_id_.end() ? nullptr : found->second;
 }
 
-const void *PuertsTypeRegister::get_builtin_type_id(Variant::Type p_type) const {
+const void *PuertsTypeRegistry::get_builtin_type_id(Variant::Type p_type) const {
 	const TypeRecord *type = builtin_types_[static_cast<int>(p_type)];
 	return type != nullptr ? type->type_id : nullptr;
 }
 
-bool PuertsTypeRegister::has_type(const void *p_type_id) const {
+bool PuertsTypeRegistry::has_type(const void *p_type_id) const {
 	return find_record(p_type_id) != nullptr;
 }
 
-void PuertsTypeRegister::register_static_type(const puerts::TypeDefinition &p_definition) {
-	TypeOwner owner = RecordBuilder::build_static_type(p_definition);
+void PuertsTypeRegistry::register_static_type(const puerts::TypeDefinition &p_definition) {
+	TypeRecordOwner owner = TypeRecordBuilder::build_static_type(p_definition);
 	TypeRecord *type = owner.get();
 	if (type->base_id != nullptr) {
 		type->base = find_record(type->base_id);
@@ -199,13 +199,13 @@ void PuertsTypeRegister::register_static_type(const puerts::TypeDefinition &p_de
 	store_type(puerts_eastl::move(owner));
 }
 
-PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_or_add_object_record(const StringName &p_name) {
+PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_or_add_object_record(const StringName &p_name) {
 	auto found = reflected_types_by_name_.find(p_name);
 	if (found != reflected_types_by_name_.end()) {
 		return found->second;
 	}
 
-	TypeOwner owner = RecordBuilder::build_object_type(*this, p_name);
+	TypeRecordOwner owner = TypeRecordBuilder::build_object_type(*this, p_name);
 	if (owner == nullptr) {
 		return nullptr;
 	}
@@ -215,12 +215,12 @@ PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_or_add_object_record(co
 	return type;
 }
 
-const void *PuertsTypeRegister::find_or_add_object_type(const StringName &p_name) {
+const void *PuertsTypeRegistry::find_or_add_object_type(const StringName &p_name) {
 	TypeRecord *type = find_or_add_object_record(p_name);
 	return type != nullptr ? type->type_id : nullptr;
 }
 
-PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_type_by_name(const StringName &p_name) {
+PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_type_by_name(const StringName &p_name) {
 	auto found = types_by_name_.find(p_name);
 	if (found != types_by_name_.end()) {
 		return found->second;
@@ -240,7 +240,7 @@ PuertsTypeRegister::TypeRecord *PuertsTypeRegister::find_type_by_name(const Stri
 	return find_or_add_object_record(p_name);
 }
 
-bool PuertsTypeRegister::ensure_registered(TypeRecord *p_type) {
+bool PuertsTypeRegistry::ensure_registered(TypeRecord *p_type) {
 	switch (p_type->registration_state) {
 		case TypeRecord::RegistrationState::Registered:
 			return true;
@@ -265,12 +265,12 @@ bool PuertsTypeRegister::ensure_registered(TypeRecord *p_type) {
 	return true;
 }
 
-bool PuertsTypeRegister::ensure_registered(const void *p_type_id) {
+bool PuertsTypeRegistry::ensure_registered(const void *p_type_id) {
 	TypeRecord *type = find_record(p_type_id);
 	return type != nullptr && ensure_registered(type);
 }
 
-bool PuertsTypeRegister::is_assignable(const void *p_type_id, const void *p_base_id) const {
+bool PuertsTypeRegistry::is_assignable(const void *p_type_id, const void *p_base_id) const {
 	for (TypeRecord *type = find_record(p_type_id); type != nullptr; type = type->base) {
 		if (type->type_id == p_base_id) {
 			return true;
@@ -279,7 +279,7 @@ bool PuertsTypeRegister::is_assignable(const void *p_type_id, const void *p_base
 	return false;
 }
 
-bool PuertsTypeRegister::native_to_variant(void *p_pointer, const void *p_type_id, Variant &r_value) const {
+bool PuertsTypeRegistry::native_handle_to_variant(void *p_pointer, const void *p_type_id, Variant &r_value) const {
 	const TypeRecord *type = find_record(p_type_id);
 	if (type == nullptr || type->kind != TypeRecord::Kind::StaticBinding || type->to_variant == nullptr) {
 		return false;
@@ -288,7 +288,7 @@ bool PuertsTypeRegister::native_to_variant(void *p_pointer, const void *p_type_i
 	return true;
 }
 
-void PuertsTypeRegister::store_type(TypeOwner p_owner) {
+void PuertsTypeRegistry::store_type(TypeRecordOwner p_owner) {
 	TypeRecord *type = p_owner.get();
 	owned_types_.push_back(puerts_eastl::move(p_owner));
 	types_by_id_.insert({ type->type_id, type });
@@ -311,7 +311,7 @@ void PuertsTypeRegister::store_type(TypeOwner p_owner) {
 	}
 }
 
-bool PuertsTypeRegister::resolve_base_type(TypeRecord *p_type) {
+bool PuertsTypeRegistry::resolve_base_type(TypeRecord *p_type) {
 	if (p_type->base != nullptr) {
 		return true;
 	}
@@ -325,10 +325,10 @@ bool PuertsTypeRegister::resolve_base_type(TypeRecord *p_type) {
 	return p_type->base != nullptr;
 }
 
-void PuertsTypeRegister::register_type(TypeRecord *p_type) {
+void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
 	pesapi_constructor constructor = p_type->constructor;
 	if (constructor == nullptr) {
-		constructor = p_type->kind == TypeRecord::Kind::ReflectedObject && p_type->constructible ? &PuertsTypeRegister::object_default_constructor_callback : &PuertsTypeRegister::no_constructor_callback;
+		constructor = p_type->kind == TypeRecord::Kind::ReflectedObject && p_type->constructible ? &PuertsTypeRegistry::object_default_constructor_callback : &PuertsTypeRegistry::no_constructor_callback;
 	}
 
 	CharString class_name = String(p_type->name).utf8();
@@ -366,7 +366,7 @@ void PuertsTypeRegister::register_type(TypeRecord *p_type) {
 			reg_api_.set_property_info(
 					registry_, p_type->type_id, i, property_name.get_data(), p_is_static,
 					property->getter,
-					property->setter != nullptr ? property->setter : &PuertsTypeRegister::read_only_property_setter_callback,
+					property->setter != nullptr ? property->setter : &PuertsTypeRegistry::read_only_property_setter_callback,
 					property->getter_userdata != nullptr ? property->getter_userdata : property,
 					property->setter != nullptr && property->setter_userdata != nullptr ? property->setter_userdata : property,
 					true);
@@ -377,27 +377,27 @@ void PuertsTypeRegister::register_type(TypeRecord *p_type) {
 	bind_properties(p_type->instance_properties, false);
 	bind_properties(p_type->static_properties, true);
 
-	reg_api_.trace_native_object_lifecycle(registry_, p_type->type_id, nullptr, &PuertsTypeRegister::on_native_binding_exit);
+	reg_api_.trace_native_object_lifecycle(registry_, p_type->type_id, nullptr, &PuertsTypeRegistry::on_native_binding_exit);
 
 	p_type->registration_state = TypeRecord::RegistrationState::Registered;
 }
 
-void PuertsTypeRegister::on_native_binding_exit(void *ptr, void *class_data, void *environment_data_ptr, void *userdata) {
-	auto *environment_data = static_cast<PuertsEnvironmentData *>(environment_data_ptr);
-	if (environment_data == nullptr || !environment_data->accepts_calls()) {
+void PuertsTypeRegistry::on_native_binding_exit(void *ptr, void *class_data, void *environment_context_ptr, void *userdata) {
+	auto *environment_context = static_cast<PuertsEnvironmentContext *>(environment_context_ptr);
+	if (environment_context == nullptr || !environment_context->accepts_callbacks()) {
 		return;
 	}
-	Ref<PuertsEnvironment> keep_alive(environment_data->environment);
-	environment_data->bridge.release(ptr);
+	Ref<PuertsEnvironment> keep_alive(environment_context->environment);
+	environment_context->bridge.release_handle(ptr);
 }
 
-void *PuertsTypeRegister::no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void *PuertsTypeRegistry::no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	const auto *type = static_cast<const TypeRecord *>(apis->get_userdata(info));
 	throw_script_error(apis, info, "No constructor available for " + String(type->name));
 	return nullptr;
 }
 
-void *PuertsTypeRegister::object_default_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void *PuertsTypeRegistry::object_default_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	puerts::internal::CallbackContext frame(apis, info);
 	if (!frame.require()) {
 		return nullptr;
@@ -416,7 +416,7 @@ void *PuertsTypeRegister::object_default_constructor_callback(struct pesapi_ffi 
 		return nullptr;
 	}
 
-	void *handle = frame.environment_data()->bridge.own_object(
+	void *handle = frame.environment_context()->bridge.adopt_object(
 			object,
 			type->type_id);
 	if (handle == nullptr) {
@@ -427,7 +427,7 @@ void *PuertsTypeRegister::object_default_constructor_callback(struct pesapi_ffi 
 	return handle;
 }
 
-void PuertsTypeRegister::object_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::object_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		if (Object *object = require_holder_object(context); object != nullptr) {
@@ -436,14 +436,14 @@ void PuertsTypeRegister::object_method_callback(struct pesapi_ffi *apis, pesapi_
 	});
 }
 
-void PuertsTypeRegister::object_static_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::object_static_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		return_reflected_method(nullptr, method, context);
 	});
 }
 
-void PuertsTypeRegister::object_property_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::object_property_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		Object *object = require_holder_object(context);
@@ -459,11 +459,11 @@ void PuertsTypeRegister::object_property_getter_callback(struct pesapi_ffi *apis
 		} else {
 			result = ClassDB::class_get_property(object, property->name);
 		}
-		puerts::return_variant(apis, info, context.script_env(), context.puerts_environment(), result);
+		puerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), result);
 	});
 }
 
-void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::object_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		Object *object = require_holder_object(context);
@@ -476,21 +476,21 @@ void PuertsTypeRegister::object_property_setter_callback(struct pesapi_ffi *apis
 			return;
 		}
 
-		const Variant value = puerts::script_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(0));
+		const Variant value = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(0));
 		if (ClassDB::class_set_property(object, property->name, value) != OK) {
 			throw_script_error(apis, info, "Failed to set property: " + String(property->name));
 		}
 	});
 }
 
-void PuertsTypeRegister::object_signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::object_signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		Object *object = require_holder_object(context);
 		if (object == nullptr) {
 			return;
 		}
-		puerts::return_variant(
+		puerts::return_variant_to_script(
 				apis,
 				info,
 				context.script_env(),
@@ -499,9 +499,9 @@ void PuertsTypeRegister::object_signal_getter_callback(struct pesapi_ffi *apis, 
 	});
 }
 
-void PuertsTypeRegister::enum_group_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::enum_group_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *enum_type = static_cast<TypeRecord *>(apis->get_userdata(info));
-	PuertsTypeRegister &registry = PuertsTypeRegister::get_singleton();
+	PuertsTypeRegistry &registry = PuertsTypeRegistry::get_singleton();
 	if (!registry.ensure_registered(enum_type)) {
 		throw_script_error(apis, info, "Failed to register enum type: " + String(enum_type->name));
 		return;
@@ -511,7 +511,7 @@ void PuertsTypeRegister::enum_group_getter_callback(struct pesapi_ffi *apis, pes
 	apis->add_return(info, apis->create_class(env, enum_type->type_id));
 }
 
-void PuertsTypeRegister::integer_constant_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::integer_constant_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
 	pesapi_env env = apis->get_env(info);
 	if (property->int_constant >= INT32_MIN && property->int_constant <= INT32_MAX) {
@@ -521,12 +521,12 @@ void PuertsTypeRegister::integer_constant_getter_callback(struct pesapi_ffi *api
 	apis->add_return(info, apis->create_int64(env, property->int_constant));
 }
 
-void PuertsTypeRegister::read_only_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::read_only_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	const auto *property = static_cast<const TypeRecord::Property *>(apis->get_userdata(info));
 	throw_script_error(apis, info, "Property is read-only: " + String(property->name));
 }
 
-void PuertsTypeRegister::load_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::load_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	pesapi_env env = apis->get_env(info);
 	if (apis->get_args_len(info) < 1) {
 		apis->add_return(info, apis->create_null(env));
@@ -534,9 +534,9 @@ void PuertsTypeRegister::load_type_callback(struct pesapi_ffi *apis, pesapi_call
 	}
 
 	const String class_name = puerts::internal::read_utf8_string(apis, env, apis->get_arg(info, 0));
-	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
-	auto *type = type_register.find_type_by_name(class_name);
-	if (type == nullptr || !type_register.ensure_registered(type)) {
+	PuertsTypeRegistry &type_registry = PuertsTypeRegistry::get_singleton();
+	auto *type = type_registry.find_type_by_name(class_name);
+	if (type == nullptr || !type_registry.ensure_registered(type)) {
 		throw_script_error(apis, info, "Type not found: " + class_name);
 		return;
 	}

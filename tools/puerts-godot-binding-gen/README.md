@@ -48,9 +48,9 @@ npm run build
 Run these three commands to update the project bindings for Godot 4.7:
 
 ```bash
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-5.json --godot-version-macro 4.7 --classes-json ./config/puerts_builtin_classes.json --output ../../src/PuertsCore/puerts_builtin_bindings.4_7.generated.inc
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-5.json --godot-version-macro 4.7 --classes-json ./config/puerts_object_profile_classes.json --output ../../src/PuertsCore/puerts_object_profile_bindings.4_7.generated.inc
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-5.json --godot-version-macro 4.7 --target globalscope --output ../../src/PuertsCore/puerts_global_scope.4_7.generated.inc
+node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --godot-version-macro 4.7 --classes-json ./config/puerts_builtin_classes.json --output ../../src/PuertsCore/puerts_builtin_bindings.4_7.generated.inc
+node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --godot-version-macro 4.7 --classes-json ./config/puerts_object_profile_classes.json --output ../../src/PuertsCore/puerts_object_profile_bindings.4_7.generated.inc
+node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --godot-version-macro 4.7 --target globalscope --output ../../src/PuertsCore/puerts_global_scope.4_7.generated.inc
 ```
 
 ## NPM shortcuts

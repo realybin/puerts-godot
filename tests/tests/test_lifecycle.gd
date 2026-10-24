@@ -21,7 +21,7 @@ func test_reentrant_dispose() -> bool:
 	env.set_error_callback(Callable())
 	equal(value, null, "failed eval")
 	equal(calls[0], 1, "one error callback")
-	check(not env.is_alive(), "dispose is deferred until active eval finishes")
+	check(not env.is_ready(), "dispose is deferred until active eval finishes")
 	return true
 
 
@@ -31,7 +31,7 @@ func test_dispose_during_coercion() -> bool:
 	env.set_global("owner", env)
 	var value = env.eval("({toString() { owner.dispose(); return 'coerced'; }})")
 	equal(value.to_string(), "coerced", "coercion completes")
-	check(not env.is_alive() and not value.is_valid(), "coercion disposal invalidates the environment and source")
+	check(not env.is_ready() and not value.is_valid(), "coercion disposal invalidates the environment and source")
 	return true
 
 
@@ -240,7 +240,7 @@ func test_dispose_during_callable() -> bool:
 	env.set_global("owner", env)
 	var callback: Callable = native(evaluate("return to_callable(function() owner:dispose(); return 42 end)", "to_callable(() => { owner.dispose(); return 42; })"))
 	equal(callback.call(), 42, "active callable completes before disposal")
-	check(not env.is_alive() and not callback.is_valid(), "callback and environment invalidated")
+	check(not env.is_ready() and not callback.is_valid(), "callback and environment invalidated")
 	return true
 
 
@@ -253,15 +253,14 @@ func test_log_callback_can_replace_itself() -> bool:
 	)
 	evaluate("log_info('done'); return 42", "log_info('done'); 42")
 	equal(calls[0], 1, "log callback completes after clearing itself")
-	check(not env.is_alive(), "logging defers disposal")
+	check(not env.is_ready(), "logging defers disposal")
 	return true
 
 
 func test_reinitialization_keeps_old_handles_invalid() -> bool:
 	var old_value = root_value()
 	var old_callback: Callable = native(evaluate("return to_callable(function() return 1 end)", "to_callable(() => 1)"))
-	var pool: Object = ClassDB.instantiate("PuertsStringNameCachePool")
-	pool.initialize()
+	var pool: Object = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 	equal(env.initialize(backend, pool), OK, "replace live runtime")
 	check(not old_value.is_valid() and not old_callback.is_valid(), "old generation stays invalid")
 	var fresh = root_value()

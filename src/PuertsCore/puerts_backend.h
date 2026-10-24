@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-struct PuertsBackendFunctions {
+struct PuertsBackendFunctionTable {
 	int (*get_api_version)() = nullptr;
 	pesapi_ffi *(*get_ffi)() = nullptr;
 	pesapi_env_ref (*create_env_ref)() = nullptr;

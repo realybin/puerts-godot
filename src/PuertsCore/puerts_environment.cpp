@@ -6,7 +6,7 @@
 #include "puerts_runtime.h"
 #include "puerts_script_callable.h"
 #include "puerts_script_value.h"
-#include "puerts_type_register.h"
+#include "puerts_type_registry.h"
 
 #include <godot_cpp/core/object.hpp>
 
@@ -16,16 +16,16 @@ extern "C" int GetPapiVersion();
 
 namespace {
 
-constexpr char load_type_property_name[] = "load_type";
-constexpr char to_callable_property_name[] = "to_callable";
-constexpr char log_error_property_name[] = "log_error";
-constexpr char log_warn_property_name[] = "log_warn";
-constexpr char log_info_property_name[] = "log_info";
+constexpr char kLoadTypePropertyName[] = "load_type";
+constexpr char kToCallablePropertyName[] = "to_callable";
+constexpr char kLogErrorPropertyName[] = "log_error";
+constexpr char kLogWarnPropertyName[] = "log_warn";
+constexpr char kLogInfoPropertyName[] = "log_info";
 
 } // namespace
 
 PuertsEnvironment::OperationScope::OperationScope(PuertsEnvironment *p_environment) {
-	if (p_environment == nullptr || !p_environment->is_alive()) {
+	if (p_environment == nullptr || !p_environment->is_ready()) {
 		return;
 	}
 	environment_ = p_environment;
@@ -40,9 +40,9 @@ PuertsEnvironment::OperationScope::~OperationScope() {
 }
 
 void PuertsEnvironment::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("initialize", "backend", "string_name_cache_pool"), &PuertsEnvironment::initialize);
+	ClassDB::bind_method(D_METHOD("initialize", "backend", "string_name_utf8_cache"), &PuertsEnvironment::initialize);
 	ClassDB::bind_method(D_METHOD("dispose"), &PuertsEnvironment::dispose);
-	ClassDB::bind_method(D_METHOD("is_alive"), &PuertsEnvironment::is_alive);
+	ClassDB::bind_method(D_METHOD("is_ready"), &PuertsEnvironment::is_ready);
 	ClassDB::bind_method(D_METHOD("get_backend"), &PuertsEnvironment::get_backend);
 	ClassDB::bind_method(D_METHOD("set_error_callback", "callback"), &PuertsEnvironment::set_error_callback);
 	ClassDB::bind_method(D_METHOD("set_warn_callback", "callback"), &PuertsEnvironment::set_warn_callback);
@@ -62,38 +62,34 @@ PuertsEnvironment::~PuertsEnvironment() {
 	dispose_internal();
 }
 
-Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNameCachePool> &p_string_name_cache_pool) {
-	if (environment_data_.state == PuertsEnvironmentState::Ready && backend_functions_ != nullptr && !backend_functions_->supports_dispose) {
+Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNameUtf8Cache> &p_string_name_utf8_cache) {
+	if (environment_context_.state == PuertsEnvironmentState::Ready && backend_functions_ != nullptr && !backend_functions_->supports_dispose) {
 		log_lifecycle_rejection("This Puerts backend does not support environment reinitialization.");
 		return ERR_ALREADY_IN_USE;
 	}
-	if (environment_data_.state == PuertsEnvironmentState::Initializing || environment_data_.state == PuertsEnvironmentState::Disposing || active_operations_ != 0) {
+	if (environment_context_.state == PuertsEnvironmentState::Initializing || environment_context_.state == PuertsEnvironmentState::Disposing || active_operations_ != 0) {
 		log_error("Puerts environment is busy.");
 		return ERR_BUSY;
 	}
 	Ref<PuertsEnvironment> keep_alive(this);
 	Ref<RefCounted> backend(Object::cast_to<RefCounted>(p_backend));
 	dispose();
-	environment_data_.state = PuertsEnvironmentState::Initializing;
+	environment_context_.state = PuertsEnvironmentState::Initializing;
 	struct InitializationGuard {
-		PuertsEnvironmentData &data;
+		PuertsEnvironmentContext &data;
 		~InitializationGuard() {
 			if (data.state == PuertsEnvironmentState::Initializing) {
 				data.state = PuertsEnvironmentState::Uninitialized;
 			}
 		}
-	} initialization_guard{ environment_data_ };
+	} initialization_guard{ environment_context_ };
 
 	if (p_backend == nullptr) {
 		log_error("Puerts backend is null.");
 		return ERR_INVALID_PARAMETER;
 	}
-	if (p_string_name_cache_pool.is_null()) {
-		log_error("Puerts StringName cache pool is null.");
-		return ERR_INVALID_PARAMETER;
-	}
-	if (!p_string_name_cache_pool->is_initialized()) {
-		log_error("Puerts StringName cache pool is not initialized.");
+	if (p_string_name_utf8_cache.is_null()) {
+		log_error("Puerts StringName UTF-8 cache is null.");
 		return ERR_INVALID_PARAMETER;
 	}
 	if (backend.is_null()) {
@@ -118,7 +114,7 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		return ERR_UNCONFIGURED;
 	}
 
-	const auto *functions = reinterpret_cast<const PuertsBackendFunctions *>(static_cast<uintptr_t>(functions_address));
+	const auto *functions = reinterpret_cast<const PuertsBackendFunctionTable *>(static_cast<uintptr_t>(functions_address));
 	if (functions->get_api_version == nullptr || functions->get_ffi == nullptr || functions->create_env_ref == nullptr || functions->destroy_env_ref == nullptr) {
 		log_error("Puerts backend function table is incomplete.");
 		return ERR_UNCONFIGURED;
@@ -131,41 +127,41 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 		return ERR_CANT_CREATE;
 	}
 
-	ffi_ = functions->get_ffi();
-	if (ffi_ == nullptr) {
+	api_ = functions->get_ffi();
+	if (api_ == nullptr) {
 		log_error("Puerts backend returned a null pesapi ffi.");
 		return ERR_CANT_CREATE;
 	}
 
 	env_ref_ = functions->create_env_ref();
 	if (env_ref_ == nullptr) {
-		ffi_ = nullptr;
+		api_ = nullptr;
 		log_error("Puerts backend failed to create an environment.");
 		return ERR_CANT_CREATE;
 	}
 
 	backend_functions_ = functions;
 	backend_ref_ = backend;
-	string_name_cache_pool_ = p_string_name_cache_pool;
-	environment_data_.state = PuertsEnvironmentState::Ready;
-	environment_data_.environment = this;
+	string_name_utf8_cache_ = p_string_name_utf8_cache;
+	environment_context_.state = PuertsEnvironmentState::Ready;
+	environment_context_.environment = this;
 	OperationScope operation(this);
-	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentHandleScope scope(api_, env_ref_);
 	pesapi_env env = scope.env();
-	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
-	ffi_->set_registry(env, type_register.get_registry());
-	ffi_->set_env_private(env, &environment_data_);
+	PuertsTypeRegistry &type_registry = PuertsTypeRegistry::get_singleton();
+	api_->set_registry(env, type_registry.get_registry());
+	api_->set_env_private(env, &environment_context_);
 
-	pesapi_value load_type = ffi_->create_function(env, &PuertsTypeRegister::load_type_callback, nullptr, nullptr);
-	ffi_->set_property(env, ffi_->global(env), load_type_property_name, load_type);
-	pesapi_value to_callable = ffi_->create_function(env, &PuertsEnvironment::script_to_callable_callback, nullptr, nullptr);
-	ffi_->set_property(env, ffi_->global(env), to_callable_property_name, to_callable);
-	pesapi_value log_error = ffi_->create_function(env, &PuertsEnvironment::script_log_error_callback, nullptr, nullptr);
-	ffi_->set_property(env, ffi_->global(env), log_error_property_name, log_error);
-	pesapi_value log_warn = ffi_->create_function(env, &PuertsEnvironment::script_log_warn_callback, nullptr, nullptr);
-	ffi_->set_property(env, ffi_->global(env), log_warn_property_name, log_warn);
-	pesapi_value log_info = ffi_->create_function(env, &PuertsEnvironment::script_log_info_callback, nullptr, nullptr);
-	ffi_->set_property(env, ffi_->global(env), log_info_property_name, log_info);
+	pesapi_value load_type = api_->create_function(env, &PuertsTypeRegistry::load_type_callback, nullptr, nullptr);
+	api_->set_property(env, api_->global(env), kLoadTypePropertyName, load_type);
+	pesapi_value to_callable = api_->create_function(env, &PuertsEnvironment::script_to_callable_callback, nullptr, nullptr);
+	api_->set_property(env, api_->global(env), kToCallablePropertyName, to_callable);
+	pesapi_value log_error = api_->create_function(env, &PuertsEnvironment::script_log_error_callback, nullptr, nullptr);
+	api_->set_property(env, api_->global(env), kLogErrorPropertyName, log_error);
+	pesapi_value log_warn = api_->create_function(env, &PuertsEnvironment::script_log_warn_callback, nullptr, nullptr);
+	api_->set_property(env, api_->global(env), kLogWarnPropertyName, log_warn);
+	pesapi_value log_info = api_->create_function(env, &PuertsEnvironment::script_log_info_callback, nullptr, nullptr);
+	api_->set_property(env, api_->global(env), kLogInfoPropertyName, log_info);
 
 	if (!backend_functions_->supports_dispose) {
 		page_lifetime_ref_ = keep_alive;
@@ -174,7 +170,7 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 }
 
 void PuertsEnvironment::dispose() {
-	if (environment_data_.state != PuertsEnvironmentState::Ready) {
+	if (environment_context_.state != PuertsEnvironmentState::Ready) {
 		return;
 	}
 	if (backend_functions_ != nullptr && !backend_functions_->supports_dispose) {
@@ -182,7 +178,7 @@ void PuertsEnvironment::dispose() {
 		return;
 	}
 	if (active_operations_ != 0) {
-		environment_data_.state = PuertsEnvironmentState::DisposePending;
+		environment_context_.state = PuertsEnvironmentState::DisposePending;
 		return;
 	}
 	Ref<PuertsEnvironment> keep_alive(this);
@@ -191,42 +187,42 @@ void PuertsEnvironment::dispose() {
 
 void PuertsEnvironment::end_operation() {
 	--active_operations_;
-	if (active_operations_ == 0 && environment_data_.state == PuertsEnvironmentState::DisposePending) {
+	if (active_operations_ == 0 && environment_context_.state == PuertsEnvironmentState::DisposePending) {
 		dispose_internal();
 	}
 }
 
 void PuertsEnvironment::dispose_internal() {
-	if (environment_data_.state != PuertsEnvironmentState::Ready && environment_data_.state != PuertsEnvironmentState::DisposePending) {
+	if (environment_context_.state != PuertsEnvironmentState::Ready && environment_context_.state != PuertsEnvironmentState::DisposePending) {
 		return;
 	}
-	environment_data_.state = PuertsEnvironmentState::Disposing;
+	environment_context_.state = PuertsEnvironmentState::Disposing;
 	invalidate_script_values();
 
 	if (env_ref_ != nullptr) {
 		{
-			puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
-			ffi_->set_env_private(scope.env(), nullptr);
+			puerts::internal::EnvironmentHandleScope scope(api_, env_ref_);
+			api_->set_env_private(scope.env(), nullptr);
 		}
 
-		environment_data_.bridge.clear();
+		environment_context_.bridge.clear();
 	}
-	environment_data_.environment = nullptr;
+	environment_context_.environment = nullptr;
 
 	if (env_ref_ != nullptr) {
 		backend_functions_->destroy_env_ref(env_ref_);
 	}
 
 	env_ref_ = nullptr;
-	ffi_ = nullptr;
+	api_ = nullptr;
 	backend_functions_ = nullptr;
 	backend_ref_.unref();
-	string_name_cache_pool_.unref();
-	environment_data_.state = PuertsEnvironmentState::Uninitialized;
+	string_name_utf8_cache_.unref();
+	environment_context_.state = PuertsEnvironmentState::Uninitialized;
 }
 
-bool PuertsEnvironment::is_alive() const {
-	return environment_data_.state == PuertsEnvironmentState::Ready;
+bool PuertsEnvironment::is_ready() const {
+	return environment_context_.state == PuertsEnvironmentState::Ready;
 }
 
 Object *PuertsEnvironment::get_backend() const {
@@ -318,18 +314,18 @@ void PuertsEnvironment::emit_log(const Callable &p_callback, const String &p_mes
 	callback.call(p_message);
 }
 
-static String read_log_message_arg(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_callback_info p_info) {
-	return puerts::internal::read_utf8_string(p_apis, p_env, p_apis->get_arg(p_info, 0));
+static String read_log_message_arg(pesapi_ffi *p_api, pesapi_env p_env, pesapi_callback_info p_info) {
+	return puerts::internal::read_utf8_string(p_api, p_env, p_api->get_arg(p_info, 0));
 }
 
 template <void (PuertsEnvironment::*LogFunction)(const String &)>
-void PuertsEnvironment::dispatch_log_callback(pesapi_ffi *p_apis, pesapi_callback_info p_info) {
-	const pesapi_env env = p_apis->get_env(p_info);
-	const auto *environment_data = static_cast<const PuertsEnvironmentData *>(p_apis->get_env_private(env));
-	if (environment_data == nullptr || environment_data->environment == nullptr) {
+void PuertsEnvironment::dispatch_log_callback(pesapi_ffi *p_api, pesapi_callback_info p_info) {
+	const pesapi_env env = p_api->get_env(p_info);
+	const auto *environment_context = static_cast<const PuertsEnvironmentContext *>(p_api->get_env_private(env));
+	if (environment_context == nullptr || environment_context->environment == nullptr) {
 		return;
 	}
-	(environment_data->environment->*LogFunction)(read_log_message_arg(p_apis, env, p_info));
+	(environment_context->environment->*LogFunction)(read_log_message_arg(p_api, env, p_info));
 }
 
 void PuertsEnvironment::script_log_error_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -366,7 +362,7 @@ void PuertsEnvironment::script_to_callable_callback(struct pesapi_ffi *apis, pes
 		return;
 	}
 
-	puerts::return_variant(
+	puerts::return_variant_to_script(
 			apis,
 			info,
 			frame.script_env(),
@@ -374,8 +370,8 @@ void PuertsEnvironment::script_to_callable_callback(struct pesapi_ffi *apis, pes
 			puerts::internal::make_script_callable(script_function));
 }
 
-const CharString &PuertsEnvironment::get_cached_utf8(const StringName &p_name) {
-	return string_name_cache_pool_->get_cached_utf8(p_name);
+CharString PuertsEnvironment::get_utf8(const StringName &p_name) {
+	return string_name_utf8_cache_->get_utf8(p_name);
 }
 
 void PuertsEnvironment::register_script_value(PuertsScriptValue *p_value) {

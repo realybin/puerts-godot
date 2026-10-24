@@ -105,7 +105,7 @@ public:
 	}
 
 	void register_type() const {
-		PuertsTypeRegister::get_singleton().register_static_type(definition_);
+		PuertsTypeRegistry::get_singleton().register_static_type(definition_);
 	}
 
 private:

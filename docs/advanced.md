@@ -14,15 +14,9 @@ For V8 and Node.js, `to_int()` reads BigInt; ordinary ECMAScript Number values s
 
 ## StringName cache
 
-`PuertsStringNameCachePool` caches UTF-8 names used for globals, properties, methods, and chunk names.
+`PuertsStringNameUtf8Cache` caches UTF-8 names used for globals, properties, methods, and chunk names. It is ready to use after construction and grows on demand.
 
-| Policy | Behavior |
-|--------|----------|
-| `POLICY_HASH_MAP` | Caches up to `capacity` entries (default 512). |
-| `POLICY_FIXED_HASH_MAP` | Uses fixed storage for 1024 entries; ignores `capacity`. |
-| `POLICY_NO_CACHE` | Converts each name on demand. |
-
-When a cache reaches capacity, it clears all entries; it is not an LRU. Share a pool only between environments used on the same thread. `clear()` and reinitialization do not invalidate script values.
+Call `clear()` to discard cached entries. Returned UTF-8 values and existing script values remain valid after clearing. Share a cache only between environments used on the same thread.
 
 ## Reentry and threads
 

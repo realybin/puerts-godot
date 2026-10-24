@@ -33,12 +33,7 @@ func _ready():
 func _setup_puerts() -> bool:
 	env = PuertsEnvironment.new()
 	var backend := PuertsV8Backend.new()
-	var pool := PuertsStringNameCachePool.new()
-	var pool_err := pool.initialize(PuertsStringNameCachePool.POLICY_HASH_MAP)
-	if pool_err != OK:
-		push_error("StringName cache pool initialize failed: %d" % pool_err)
-		env = null
-		return false
+	var pool := PuertsStringNameUtf8Cache.new()
 
 	env.set_error_callback(func(message: String):
 		push_error("[E][puerts] %s" % message)

@@ -20,9 +20,7 @@ extends Node
 var _env: PuertsEnvironment
 
 func _ready() -> void:
-	var pool := PuertsStringNameCachePool.new()
-	if pool.initialize() != OK:
-		return
+	var pool := PuertsStringNameUtf8Cache.new()
 	_env = PuertsEnvironment.new()
 	_env.set_error_callback(func(message: String): push_error(message))
 	if _env.initialize(PuertsV8Backend.new(), pool) != OK:
@@ -32,7 +30,7 @@ func _ready() -> void:
 		print(value.to_native()) # 42
 
 func _process(_delta: float) -> void:
-	if _env != null and _env.is_alive():
+	if _env != null and _env.is_ready():
 		_env.tick() # V8 and Node.js
 
 func _exit_tree() -> void:

@@ -23,12 +23,12 @@ enum class PuertsEnvironmentState {
 	Disposing,
 };
 
-struct PuertsEnvironmentData {
+struct PuertsEnvironmentContext {
 	PuertsEnvironmentState state = PuertsEnvironmentState::Uninitialized;
 	PuertsEnvironment *environment = nullptr;
 	PuertsBridgeRegistry bridge;
 
-	[[nodiscard]] bool accepts_calls() const {
+	[[nodiscard]] bool accepts_callbacks() const {
 		return state == PuertsEnvironmentState::Ready || state == PuertsEnvironmentState::DisposePending;
 	}
 };
@@ -50,16 +50,16 @@ struct CallArguments {
 	}
 };
 
-godot::String read_utf8_string(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_value p_value);
+godot::String read_utf8_string(pesapi_ffi *p_api, pesapi_env p_env, pesapi_value p_value);
 godot::String format_call_error(const godot::String &p_target_name, const GDExtensionCallError &p_call_error);
 
 class EnvironmentHandleScope {
 public:
-	EnvironmentHandleScope(pesapi_ffi *p_apis, pesapi_env_ref p_env_ref) :
-			api_(p_apis),
-			placement_(p_apis->open_scope_placement != nullptr && p_apis->close_scope_placement != nullptr),
-			scope_(placement_ ? p_apis->open_scope_placement(p_env_ref, &memory_) : p_apis->open_scope(p_env_ref)),
-			script_env_(p_apis->get_env_from_ref(p_env_ref)) {
+	EnvironmentHandleScope(pesapi_ffi *p_api, pesapi_env_ref p_env_ref) :
+			api_(p_api),
+			placement_(p_api->open_scope_placement != nullptr && p_api->close_scope_placement != nullptr),
+			scope_(placement_ ? p_api->open_scope_placement(p_env_ref, &memory_) : p_api->open_scope(p_env_ref)),
+			script_env_(p_api->get_env_from_ref(p_env_ref)) {
 	}
 
 	~EnvironmentHandleScope() {
@@ -95,21 +95,21 @@ public:
 		bool variant_loaded = false;
 	};
 
-	CallbackContext(pesapi_ffi *p_apis, pesapi_callback_info p_info) :
-			api_(p_apis),
+	CallbackContext(pesapi_ffi *p_api, pesapi_callback_info p_info) :
+			api_(p_api),
 			callback_info_(p_info),
-			script_env_(p_apis->get_env(p_info)),
-			argument_count_(p_apis->get_args_len(p_info)) {
+			script_env_(p_api->get_env(p_info)),
+			argument_count_(p_api->get_args_len(p_info)) {
 		arguments_.resize(static_cast<size_t>(argument_count_));
-		environment_data_ = const_cast<PuertsEnvironmentData *>(static_cast<const PuertsEnvironmentData *>(api_->get_env_private(script_env_)));
-		puerts_environment_ = environment_data_ != nullptr ? environment_data_->environment : nullptr;
+		environment_context_ = const_cast<PuertsEnvironmentContext *>(static_cast<const PuertsEnvironmentContext *>(api_->get_env_private(script_env_)));
+		puerts_environment_ = environment_context_ != nullptr ? environment_context_->environment : nullptr;
 	}
 
 	[[nodiscard]] pesapi_ffi *api() const { return api_; }
 	[[nodiscard]] pesapi_callback_info callback_info() const { return callback_info_; }
 	[[nodiscard]] pesapi_env script_env() const { return script_env_; }
 	[[nodiscard]] int argument_count() const { return argument_count_; }
-	[[nodiscard]] PuertsEnvironmentData *environment_data() const { return environment_data_; }
+	[[nodiscard]] PuertsEnvironmentContext *environment_context() const { return environment_context_; }
 	[[nodiscard]] PuertsEnvironment *puerts_environment() const { return puerts_environment_; }
 	[[nodiscard]] bool require_argument_count(int p_expected) const {
 		if (argument_count_ == p_expected) {
@@ -177,7 +177,7 @@ public:
 	}
 
 	[[nodiscard]] bool require() const {
-		if (environment_data_ == nullptr || !environment_data_->accepts_calls()) {
+		if (environment_context_ == nullptr || !environment_context_->accepts_callbacks()) {
 			api_->throw_by_string(callback_info_, "Puerts environment is not available.");
 			return false;
 		}
@@ -203,7 +203,7 @@ private:
 	const void *holder_type_id_ = nullptr;
 	bool holder_boxed_variant_loaded_ = false;
 	const godot::Variant *holder_boxed_variant_ = nullptr;
-	PuertsEnvironmentData *environment_data_ = nullptr;
+	PuertsEnvironmentContext *environment_context_ = nullptr;
 	PuertsEnvironment *puerts_environment_ = nullptr;
 
 	void ensure_holder_loaded() {
@@ -227,7 +227,7 @@ private:
 			return;
 		}
 
-		holder_boxed_variant_ = environment_data_->bridge.find_box(holder_ptr_);
+		holder_boxed_variant_ = environment_context_->bridge.find_boxed_variant(holder_ptr_);
 	}
 };
 

@@ -13,7 +13,7 @@ struct PuertsBackendDescriptor {
 	const char *backend_id = "";
 	const char *backend_name = "";
 	const char *language_id = "";
-	const PuertsBackendFunctions *functions = nullptr;
+	const PuertsBackendFunctionTable *functions = nullptr;
 };
 
 namespace puerts_backend_resource {

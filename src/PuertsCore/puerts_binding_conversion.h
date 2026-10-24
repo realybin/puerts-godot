@@ -8,7 +8,7 @@
 #include "puerts_bridge_registry.h"
 #include "puerts_environment.h"
 #include "puerts_runtime.h"
-#include "puerts_type_register.h"
+#include "puerts_type_registry.h"
 
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/core/binder_common.hpp>
@@ -101,12 +101,12 @@ inline const godot::Variant &load_variant_argument(
 	godot::Variant &variant = p_frame.variant(p_index);
 	if (!argument.variant_loaded) {
 		if (p_native_argument == nullptr ||
-				!puerts::native_to_variant(
+				!puerts::native_handle_to_variant(
 						p_frame.puerts_environment(),
 						p_native_argument->native_handle,
 						p_native_argument->native_type_id,
 						variant)) {
-			variant = puerts::script_to_variant(p_frame.puerts_environment(), p_frame.script_env(), p_frame.argument_value(p_index));
+			variant = puerts::script_value_to_variant(p_frame.puerts_environment(), p_frame.script_env(), p_frame.argument_value(p_index));
 		}
 		argument.variant_loaded = true;
 	}
@@ -191,7 +191,7 @@ Target *resolve_native_pointer(
 	if (type_id == static_type_id<Target>::get()) {
 		return static_cast<Target *>(p_argument.native_handle);
 	}
-	if (!PuertsTypeRegister::get_singleton().is_assignable(type_id, static_type_id<Target>::get())) {
+	if (!PuertsTypeRegistry::get_singleton().is_assignable(type_id, static_type_id<Target>::get())) {
 		(void)p_frame.reject(info, "Native object type does not match the bound signature.");
 		return nullptr;
 	}
@@ -254,14 +254,14 @@ bool assign_converted_argument(
 
 template <bool Probe>
 bool convert_call_arguments(
-		pesapi_ffi *p_apis,
+		pesapi_ffi *p_api,
 		pesapi_callback_info p_info,
 		CallbackContext &p_frame,
 		CallArguments &r_arguments) {
 	const int argument_count = p_frame.argument_count();
 	r_arguments.resize(argument_count);
 	for (int i = 0; i < argument_count; ++i) {
-		if (!assign_converted_argument<Probe, godot::Variant>(p_apis, p_info, p_frame, i, r_arguments.values[i])) {
+		if (!assign_converted_argument<Probe, godot::Variant>(p_api, p_info, p_frame, i, r_arguments.values[i])) {
 			return false;
 		}
 	}
@@ -275,7 +275,7 @@ inline void add_variant_return_value(
 		pesapi_env env,
 		PuertsEnvironment *environment,
 		T &&value) {
-	puerts::return_variant(apis, info, env, environment, godot::Variant(eastl::forward<T>(value)));
+	puerts::return_variant_to_script(apis, info, env, environment, godot::Variant(eastl::forward<T>(value)));
 }
 
 template <typename T>
@@ -330,7 +330,7 @@ void write_return_value(pesapi_ffi *apis, pesapi_callback_info info, pesapi_env 
 			// Registration is immutable after module startup. Cache this template-
 			// specific decision so hot return paths do not hash the type ID.
 			static const bool has_static_type_registration =
-					PuertsTypeRegister::get_singleton().has_type(static_type_id<target_type>::get());
+					PuertsTypeRegistry::get_singleton().has_type(static_type_id<target_type>::get());
 			if (has_static_type_registration) {
 				add_native_owned_return(apis, info, env, eastl::forward<Value>(value));
 			} else {
@@ -384,7 +384,7 @@ struct BoundReceiver<T, true> {
 
 	void write_back() const {
 		if (boxed_handle != nullptr) {
-			frame->environment_data()->bridge.update_box(boxed_handle, godot::Variant(storage));
+			frame->environment_context()->bridge.update_boxed_variant(boxed_handle, godot::Variant(storage));
 		}
 	}
 };
@@ -421,7 +421,7 @@ BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, C
 	if (const void *holder_type_id = frame.holder_type_id(); holder_type_id != nullptr) {
 		const void *expected_type_id = static_type_id<typename BoundReceiver<T>::target_type>::get();
 		if (holder_type_id != expected_type_id &&
-				!PuertsTypeRegister::get_singleton().is_assignable(holder_type_id, expected_type_id)) {
+				!PuertsTypeRegistry::get_singleton().is_assignable(holder_type_id, expected_type_id)) {
 			apis->throw_by_string(info, "Native object type does not match the bound signature.");
 			return instance;
 		}
@@ -443,7 +443,7 @@ BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, C
 
 	if constexpr (eastl::is_base_of_v<godot::Object, typename BoundReceiver<T>::target_type>) {
 		godot::Object *resolved = nullptr;
-		if (frame.environment_data()->bridge.try_get_object(holder, resolved)) {
+		if (frame.environment_context()->bridge.try_get_object(holder, resolved)) {
 			if (resolved == nullptr) {
 				apis->throw_by_string(info, "Native object is no longer valid.");
 				return instance;

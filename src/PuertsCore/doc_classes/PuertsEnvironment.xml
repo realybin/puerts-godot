@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsEnvironment" inherits="RefCounted">
 	<brief_description>Owns one script runtime.</brief_description>
-	<description>Initialize with a backend and cache pool. Keep it alive while using its values, and use one thread. WebGL retains its environment until page unload.</description>
+	<description>Initialize with a backend and UTF-8 name cache. Keep it alive while using its values, and use one thread. WebGL retains its environment until page unload.</description>
 	<methods>
 		<method name="initialize">
 			<return type="int" enum="Error" />
 			<param index="0" name="backend" type="Object" />
-			<param index="1" name="string_name_cache_pool" type="PuertsStringNameCachePool" />
-			<description>Creates a runtime from the backend and initialized cache pool, disposing an idle previous runtime. Returns ERR_BUSY during an active operation or lifecycle change. WebGL returns ERR_ALREADY_IN_USE when reinitialized, or ERR_CANT_CREATE when another environment exists.</description>
+			<param index="1" name="string_name_utf8_cache" type="PuertsStringNameUtf8Cache" />
+			<description>Creates a runtime from the backend and UTF-8 name cache, disposing an idle previous runtime. Returns ERR_BUSY during an active operation or lifecycle change. WebGL returns ERR_ALREADY_IN_USE when reinitialized, or ERR_CANT_CREATE when another environment exists.</description>
 		</method>
 		<method name="dispose">
 			<return type="void" />
 			<description>Invalidates values and callables, then releases the runtime after active operations return. Safe to repeat. WebGL reports an error and leaves the environment alive.</description>
 		</method>
-		<method name="is_alive" qualifiers="const">
+		<method name="is_ready" qualifiers="const">
 			<return type="bool" />
 			<description>Returns true while the environment accepts operations.</description>
 		</method>

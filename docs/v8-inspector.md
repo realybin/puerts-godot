@@ -6,7 +6,7 @@ V8 and Node.js expose a remote inspector. After initialization, open a port and 
 _env.open_debugger(9229)
 
 func _process(_delta: float) -> void:
-	if _env != null and _env.is_alive():
+	if _env != null and _env.is_ready():
 		_env.tick()
 		_env.debugger_tick()
 ```

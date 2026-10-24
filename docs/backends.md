@@ -26,9 +26,7 @@ After installing the [Web extensions](build.md#web-builds):
 extends Node
 
 func _ready() -> void:
-	var pool = ClassDB.instantiate("PuertsStringNameCachePool")
-	if pool.initialize() != OK:
-		return
+	var pool = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 	var env = ClassDB.instantiate("PuertsEnvironment")
 	if env.initialize(ClassDB.instantiate("PuertsWebglBackend"), pool) != OK:
 		return

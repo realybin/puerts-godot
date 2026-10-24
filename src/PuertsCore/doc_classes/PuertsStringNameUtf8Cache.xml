@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="PuertsStringNameUtf8Cache" inherits="RefCounted">
+	<brief_description>Caches UTF-8 name conversions.</brief_description>
+	<description>Ready to use after construction. It is not synchronized and grows on demand. Previously returned UTF-8 values remain valid when the cache is cleared.</description>
+	<methods>
+		<method name="clear">
+			<return type="void" />
+			<description>Discards all cached names. Existing script values are not affected.</description>
+		</method>
+	</methods>
+</class>

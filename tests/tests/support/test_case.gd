@@ -45,8 +45,7 @@ static func backend_class(name: String) -> String:
 func new_environment(engine: Object) -> Object:
 	var environment: Object = ClassDB.instantiate("PuertsEnvironment")
 	environment.set_error_callback(func(message: String): errors.append(message))
-	var pool: Object = ClassDB.instantiate("PuertsStringNameCachePool")
-	pool.initialize(0, 512)
+	var pool: Object = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 	if not equal(environment.initialize(engine, pool), OK, "initialize environment"):
 		return null
 	environments.append(environment)

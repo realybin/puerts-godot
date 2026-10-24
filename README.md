@@ -26,9 +26,7 @@ extends Node
 var env: PuertsEnvironment
 
 func _ready() -> void:
-	var pool := PuertsStringNameCachePool.new()
-	if pool.initialize() != OK:
-		return
+	var pool := PuertsStringNameUtf8Cache.new()
 	env = PuertsEnvironment.new()
 	if env.initialize(PuertsV8Backend.new(), pool) != OK:
 		return
@@ -38,7 +36,7 @@ func _ready() -> void:
 		print(result.to_native()) # 42
 
 func _process(_delta: float) -> void:
-	if env != null and env.is_alive():
+	if env != null and env.is_ready():
 		env.tick()
 
 func _exit_tree() -> void:

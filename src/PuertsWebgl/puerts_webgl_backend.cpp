@@ -6,7 +6,7 @@
 
 namespace {
 
-const PuertsBackendFunctions puerts_webgl_functions = {
+const PuertsBackendFunctionTable puerts_webgl_functions = {
 	&puerts_webgl_get_api_version,
 	&puerts_webgl_get_ffi,
 	&puerts_webgl_create_env_ref,

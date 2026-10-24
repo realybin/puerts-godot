@@ -59,7 +59,7 @@ void puerts_v8_terminate_execution(pesapi_env_ref p_env_ref) {
 	TerminateExecution(GetV8Isolate(p_env_ref));
 }
 
-const PuertsBackendFunctions puerts_v8_functions = {
+const PuertsBackendFunctionTable puerts_v8_functions = {
 	&puerts_v8_get_api_version,
 	&puerts_v8_get_ffi,
 	&puerts_v8_create_env_ref,

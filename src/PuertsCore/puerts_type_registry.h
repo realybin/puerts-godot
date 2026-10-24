@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-#ifndef PUERTS_GODOT_PUERTS_TYPE_REGISTER_H
-#define PUERTS_GODOT_PUERTS_TYPE_REGISTER_H
+#ifndef PUERTS_GODOT_PUERTS_TYPE_REGISTRY_H
+#define PUERTS_GODOT_PUERTS_TYPE_REGISTRY_H
 
 #include "pesapi.h"
 #include "puerts_eastl.h"
@@ -14,11 +14,11 @@ namespace puerts {
 struct TypeDefinition;
 }
 
-class PuertsTypeRegister {
+class PuertsTypeRegistry {
 public:
 	struct TypeRecord;
 
-	static PuertsTypeRegister &get_singleton();
+	static PuertsTypeRegistry &get_singleton();
 
 	[[nodiscard]] pesapi_registry get_registry() const;
 
@@ -28,17 +28,17 @@ public:
 	[[nodiscard]] bool has_type(const void *p_type_id) const;
 	bool ensure_registered(const void *p_type_id);
 	[[nodiscard]] bool is_assignable(const void *p_type_id, const void *p_base_type_id) const;
-	bool native_to_variant(void *p_pointer, const void *p_type_id, godot::Variant &r_value) const;
+	bool native_handle_to_variant(void *p_pointer, const void *p_type_id, godot::Variant &r_value) const;
 
-	static void on_native_binding_exit(void *ptr, void *class_data, void *environment_data, void *userdata);
+	static void on_native_binding_exit(void *ptr, void *class_data, void *environment_context, void *userdata);
 	static void load_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 
 private:
-	class RecordBuilder;
+	class TypeRecordBuilder;
 	struct TypeRecordDeleter {
 		void operator()(TypeRecord *p_type) const;
 	};
-	using TypeOwner = puerts_eastl::unique_ptr<TypeRecord, TypeRecordDeleter>;
+	using TypeRecordOwner = puerts_eastl::unique_ptr<TypeRecord, TypeRecordDeleter>;
 
 	struct StringNameHash {
 		size_t operator()(const godot::StringName &p_name) const {
@@ -52,8 +52,8 @@ private:
 		}
 	};
 
-	PuertsTypeRegister();
-	~PuertsTypeRegister();
+	PuertsTypeRegistry();
+	~PuertsTypeRegistry();
 
 	static void *object_default_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void *no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
@@ -69,7 +69,7 @@ private:
 	[[nodiscard]] TypeRecord *find_record(const void *p_type_id) const;
 	[[nodiscard]] TypeRecord *find_type_by_name(const godot::StringName &p_name);
 	[[nodiscard]] TypeRecord *find_or_add_object_record(const godot::StringName &p_name);
-	void store_type(TypeOwner p_owner);
+	void store_type(TypeRecordOwner p_owner);
 	bool resolve_base_type(TypeRecord *p_type);
 	void register_type(TypeRecord *p_type);
 	bool ensure_registered(TypeRecord *p_type);
@@ -80,7 +80,7 @@ private:
 	puerts_eastl::hash_map<godot::StringName, TypeRecord *, StringNameHash, StringNameEqual> reflected_types_by_name_;
 	puerts_eastl::hash_map<const void *, TypeRecord *> types_by_id_;
 	TypeRecord *builtin_types_[godot::Variant::VARIANT_MAX] = {};
-	puerts_eastl::vector<TypeOwner> owned_types_;
+	puerts_eastl::vector<TypeRecordOwner> owned_types_;
 };
 
-#endif // PUERTS_GODOT_PUERTS_TYPE_REGISTER_H
+#endif // PUERTS_GODOT_PUERTS_TYPE_REGISTRY_H

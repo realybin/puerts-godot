@@ -6,7 +6,7 @@
 #include "puerts_bridge_registry.h"
 #include "puerts_runtime.h"
 #include "puerts_script_value.h"
-#include "puerts_type_register.h"
+#include "puerts_type_registry.h"
 
 #include <godot_cpp/core/error_macros.hpp>
 #include <godot_cpp/core/object.hpp>
@@ -14,19 +14,19 @@
 using namespace godot;
 
 Ref<PuertsScriptValue> PuertsEnvironment::eval(const String &p_code, const StringName &p_chunk_name) {
-	if (!is_alive()) {
+	if (!is_ready()) {
 		log_error("Puerts environment is not initialized.");
 		return {};
 	}
 
 	OperationScope operation(this);
-	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentHandleScope scope(api_, env_ref_);
 	pesapi_env env = scope.env();
 	CharString code_utf8 = p_code.utf8();
-	const CharString &chunk_name_utf8 = get_cached_utf8(p_chunk_name);
-	pesapi_value result = ffi_->eval(env, reinterpret_cast<const uint8_t *>(code_utf8.get_data()), code_utf8.length(), chunk_name_utf8.get_data());
+	const CharString chunk_name_utf8 = get_utf8(p_chunk_name);
+	pesapi_value result = api_->eval(env, reinterpret_cast<const uint8_t *>(code_utf8.get_data()), code_utf8.length(), chunk_name_utf8.get_data());
 
-	if (ffi_->has_caught(scope.scope())) {
+	if (api_->has_caught(scope.scope())) {
 		log_error(read_exception(scope.scope()));
 		return {};
 	}
@@ -36,38 +36,38 @@ Ref<PuertsScriptValue> PuertsEnvironment::eval(const String &p_code, const Strin
 }
 
 void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_value) {
-	if (!is_alive()) {
+	if (!is_ready()) {
 		log_error("Puerts environment is not initialized.");
 		return;
 	}
 
 	OperationScope operation(this);
-	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentHandleScope scope(api_, env_ref_);
 	pesapi_env env = scope.env();
 	bool converted = false;
 	pesapi_value script_value = variant_to_script(env, p_value, &converted, nullptr);
 	if (!converted) {
 		return;
 	}
-	const CharString &name_utf8 = get_cached_utf8(p_name);
-	ffi_->set_property(env, ffi_->global(env), name_utf8.get_data(), script_value);
-	if (ffi_->has_caught(scope.scope())) {
+	const CharString name_utf8 = get_utf8(p_name);
+	api_->set_property(env, api_->global(env), name_utf8.get_data(), script_value);
+	if (api_->has_caught(scope.scope())) {
 		log_error(read_exception(scope.scope()));
 		return;
 	}
 }
 
 Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
-	if (!is_alive()) {
+	if (!is_ready()) {
 		log_error("Puerts environment is not initialized.");
 		return {};
 	}
 
 	OperationScope operation(this);
-	puerts::internal::EnvironmentHandleScope scope(ffi_, env_ref_);
+	puerts::internal::EnvironmentHandleScope scope(api_, env_ref_);
 	pesapi_env env = scope.env();
-	const CharString &name_utf8 = get_cached_utf8(p_name);
-	pesapi_value value = ffi_->get_property(env, ffi_->global(env), name_utf8.get_data());
+	const CharString name_utf8 = get_utf8(p_name);
+	pesapi_value value = api_->get_property(env, api_->global(env), name_utf8.get_data());
 	// Backends differ here:
 	// - some report property getter failures via `has_caught(scope)`
 	// - some simply return a null `pesapi_value`
@@ -95,7 +95,7 @@ pesapi_value PuertsEnvironment::variant_to_script(
 			*r_error_message = p_message;
 		}
 		log_error(p_message);
-		return ffi_->create_null(p_env);
+		return api_->create_null(p_env);
 	};
 	if (r_success != nullptr) {
 		*r_success = true;
@@ -104,41 +104,41 @@ pesapi_value PuertsEnvironment::variant_to_script(
 		*r_error_message = String();
 	}
 
-	PuertsBridgeRegistry &bridge = environment_data_.bridge;
-	PuertsTypeRegister &type_register = PuertsTypeRegister::get_singleton();
+	PuertsBridgeRegistry &bridge = environment_context_.bridge;
+	PuertsTypeRegistry &type_registry = PuertsTypeRegistry::get_singleton();
 
 	switch (p_value.get_type()) {
 		case Variant::NIL:
-			return ffi_->create_null(p_env);
+			return api_->create_null(p_env);
 		case Variant::BOOL:
-			return ffi_->create_boolean(p_env, static_cast<bool>(p_value));
+			return api_->create_boolean(p_env, static_cast<bool>(p_value));
 		case Variant::INT: {
 			const auto int_value = static_cast<int64_t>(p_value);
 			if (int_value >= -2147483648LL && int_value <= 2147483647LL) {
-				return ffi_->create_int32(p_env, static_cast<int32_t>(int_value));
+				return api_->create_int32(p_env, static_cast<int32_t>(int_value));
 			}
-			return ffi_->create_int64(p_env, int_value);
+			return api_->create_int64(p_env, int_value);
 		}
 		case Variant::FLOAT:
-			return ffi_->create_double(p_env, static_cast<double>(p_value));
+			return api_->create_double(p_env, static_cast<double>(p_value));
 		case Variant::STRING: {
 			CharString text = String(p_value).utf8();
-			return ffi_->create_string_utf8(p_env, text.get_data(), text.length());
+			return api_->create_string_utf8(p_env, text.get_data(), text.length());
 		}
 		case Variant::STRING_NAME: {
 			CharString text = String(StringName(p_value)).utf8();
-			return ffi_->create_string_utf8(p_env, text.get_data(), text.length());
+			return api_->create_string_utf8(p_env, text.get_data(), text.length());
 		}
 #if VARIANT_TO_SCRIPT_PACKED_BYTE_ARRAY_CAST
 		case Variant::PACKED_BYTE_ARRAY: {
 			PackedByteArray bytes = p_value;
-			return ffi_->create_binary_by_value(p_env, bytes.ptrw(), bytes.size());
+			return api_->create_binary_by_value(p_env, bytes.ptrw(), bytes.size());
 		}
 #endif
 		case Variant::OBJECT: {
 			Object *object = p_value;
 			if (object == nullptr) {
-				return ffi_->create_null(p_env);
+				return api_->create_null(p_env);
 			}
 			auto *script_value = Object::cast_to<PuertsScriptValue>(object);
 			if (script_value != nullptr) {
@@ -148,79 +148,79 @@ pesapi_value PuertsEnvironment::variant_to_script(
 				if (script_value->get_environment() != this) {
 					return fail("Puerts script value belongs to another PuertsEnvironment.");
 				}
-				return ffi_->get_value_from_ref(p_env, script_value->value_ref_);
+				return api_->get_value_from_ref(p_env, script_value->value_ref_);
 			}
 
 			if (const PuertsBridgeRegistry::ObjectBinding binding = bridge.find_object(object); binding.handle != nullptr) {
-				pesapi_value script_object = ffi_->native_object_to_value(p_env, binding.type_id, binding.handle, false);
+				pesapi_value script_object = api_->native_object_to_value(p_env, binding.type_id, binding.handle, false);
 				return script_object != nullptr ? script_object : fail("Failed to wrap native object for script conversion.");
 			}
 
-			const void *type_id = type_register.find_or_add_object_type(object->get_class());
-			if (type_register.ensure_registered(type_id)) {
-				void *handle = bridge.bind_object(object, type_id);
+			const void *type_id = type_registry.find_or_add_object_type(object->get_class());
+			if (type_registry.ensure_registered(type_id)) {
+				void *handle = bridge.bind_non_owning_object(object, type_id);
 				if (handle != nullptr) {
-					pesapi_value script_object = ffi_->native_object_to_value(p_env, type_id, handle, false);
+					pesapi_value script_object = api_->native_object_to_value(p_env, type_id, handle, false);
 					if (script_object != nullptr) {
 						return script_object;
 					}
-					bridge.release(handle);
+					bridge.release_handle(handle);
 				}
 			}
 
 			return fail("Failed to wrap native object for script conversion.");
 		}
 		default:
-			const void *type_id = type_register.get_builtin_type_id(p_value.get_type());
-			if (type_register.ensure_registered(type_id)) {
+			const void *type_id = type_registry.get_builtin_type_id(p_value.get_type());
+			if (type_registry.ensure_registered(type_id)) {
 				void *handle = bridge.box_variant(p_value, type_id);
 				if (handle != nullptr) {
-					pesapi_value script_object = ffi_->native_object_to_value(p_env, type_id, handle, false);
+					pesapi_value script_object = api_->native_object_to_value(p_env, type_id, handle, false);
 					if (script_object != nullptr) {
 						return script_object;
 					}
-					bridge.release(handle);
+					bridge.release_handle(handle);
 				}
 			}
 			return fail("Failed to wrap builtin value for script conversion.");
 	}
 }
 
-Variant PuertsEnvironment::script_to_variant(pesapi_env p_env, pesapi_value p_value) {
-	if (ffi_->is_null(p_env, p_value) || ffi_->is_undefined(p_env, p_value)) {
+Variant PuertsEnvironment::script_value_to_variant(pesapi_env p_env, pesapi_value p_value) {
+	if (api_->is_null(p_env, p_value) || api_->is_undefined(p_env, p_value)) {
 		return {};
 	}
-	if (ffi_->is_boolean(p_env, p_value)) {
-		return ffi_->get_value_bool(p_env, p_value) != 0;
+	if (api_->is_boolean(p_env, p_value)) {
+		return api_->get_value_bool(p_env, p_value) != 0;
 	}
-	if (ffi_->is_int32(p_env, p_value)) {
-		return ffi_->get_value_int32(p_env, p_value);
+	if (api_->is_int32(p_env, p_value)) {
+		return api_->get_value_int32(p_env, p_value);
 	}
-	if (ffi_->is_uint32(p_env, p_value)) {
-		return ffi_->get_value_uint32(p_env, p_value);
+	if (api_->is_uint32(p_env, p_value)) {
+		return api_->get_value_uint32(p_env, p_value);
 	}
-	if (ffi_->is_int64(p_env, p_value)) {
-		return ffi_->get_value_int64(p_env, p_value);
+	if (api_->is_int64(p_env, p_value)) {
+		return api_->get_value_int64(p_env, p_value);
 	}
-	if (ffi_->is_uint64(p_env, p_value)) {
-		return ffi_->get_value_uint64(p_env, p_value);
+	if (api_->is_uint64(p_env, p_value)) {
+		return api_->get_value_uint64(p_env, p_value);
 	}
-	if (ffi_->is_double(p_env, p_value)) {
-		return ffi_->get_value_double(p_env, p_value);
+	if (api_->is_double(p_env, p_value)) {
+		return api_->get_value_double(p_env, p_value);
 	}
-	if (ffi_->is_string(p_env, p_value)) {
+	if (api_->is_string(p_env, p_value)) {
 		return read_string(p_env, p_value);
 	}
 #if SCRIPT_TO_VARIANT_PACKED_BYTE_ARRAY_CAST
-	if (ffi_->is_binary(p_env, p_value)) {
+	if (api_->is_binary(p_env, p_value)) {
 		return read_binary(p_env, p_value);
 	}
 #endif
-	void *handle = ffi_->get_native_object_ptr(p_env, p_value);
+	void *handle = api_->get_native_object_ptr(p_env, p_value);
 	if (handle != nullptr) {
-		if (const void *type_id = ffi_->get_native_object_typeid(p_env, p_value); type_id != nullptr) {
+		if (const void *type_id = api_->get_native_object_typeid(p_env, p_value); type_id != nullptr) {
 			Variant native_value;
-			if (native_to_variant(handle, type_id, native_value)) {
+			if (native_handle_to_variant(handle, type_id, native_value)) {
 				return native_value;
 			}
 		}
@@ -229,23 +229,23 @@ Variant PuertsEnvironment::script_to_variant(pesapi_env p_env, pesapi_value p_va
 	return create_script_value(p_env, p_value);
 }
 
-bool PuertsEnvironment::native_to_variant(void *p_handle, const void *p_type_id, Variant &r_value) {
+bool PuertsEnvironment::native_handle_to_variant(void *p_handle, const void *p_type_id, Variant &r_value) {
 	if (PuertsBridgeRegistry::is_handle(p_handle)) {
-		return environment_data_.bridge.try_get_variant(p_handle, p_type_id, r_value);
+		return environment_context_.bridge.try_get_variant(p_handle, p_type_id, r_value);
 	}
-	return PuertsTypeRegister::get_singleton().native_to_variant(p_handle, p_type_id, r_value);
+	return PuertsTypeRegistry::get_singleton().native_handle_to_variant(p_handle, p_type_id, r_value);
 }
 
-bool puerts::native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, Variant &r_value) {
-	return p_environment->native_to_variant(p_handle, p_type_id, r_value);
+bool puerts::native_handle_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, Variant &r_value) {
+	return p_environment->native_handle_to_variant(p_handle, p_type_id, r_value);
 }
 
-Variant puerts::script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) {
-	return p_environment->script_to_variant(p_env, p_value);
+Variant puerts::script_value_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) {
+	return p_environment->script_value_to_variant(p_env, p_value);
 }
 
-bool puerts::return_variant(
-		pesapi_ffi *p_apis,
+bool puerts::return_variant_to_script(
+		pesapi_ffi *p_api,
 		pesapi_callback_info p_info,
 		pesapi_env p_env,
 		PuertsEnvironment *p_environment,
@@ -255,23 +255,23 @@ bool puerts::return_variant(
 	pesapi_value value = p_environment->variant_to_script(p_env, p_value, &converted, &error);
 	if (!converted) {
 		const CharString message = (error.is_empty() ? String("Failed to convert Variant to script value.") : error).utf8();
-		p_apis->throw_by_string(p_info, message.get_data());
+		p_api->throw_by_string(p_info, message.get_data());
 		return false;
 	}
-	p_apis->add_return(p_info, value);
+	p_api->add_return(p_info, value);
 	return true;
 }
 
 Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, pesapi_value p_value) {
-	bool cacheable = p_value != nullptr && ffi_->is_object(p_env, p_value);
+	bool cacheable = p_value != nullptr && api_->is_object(p_env, p_value);
 	if (!cacheable && p_value != nullptr) {
-		cacheable = ffi_->get_native_object_ptr(p_env, p_value) != nullptr &&
-				ffi_->get_native_object_typeid(p_env, p_value) != nullptr;
+		cacheable = api_->get_native_object_ptr(p_env, p_value) != nullptr &&
+				api_->get_native_object_typeid(p_env, p_value) != nullptr;
 	}
 	void *cache_key = nullptr;
 	if (cacheable) {
 		void *private_ptr = nullptr;
-		if (ffi_->get_private(p_env, p_value, &private_ptr)) {
+		if (api_->get_private(p_env, p_value, &private_ptr)) {
 			auto cached = script_value_cache_.find(private_ptr);
 			if (cached != script_value_cache_.end()) {
 				cache_key = cached->first;
@@ -287,14 +287,14 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 		}
 	}
 
-	pesapi_value_ref value_ref = ffi_->create_value_ref(p_env, p_value, 0);
+	pesapi_value_ref value_ref = api_->create_value_ref(p_env, p_value, 0);
 	if (value_ref == nullptr) {
 		return {};
 	}
 
 	Ref<PuertsScriptValue> script_value;
 	script_value.instantiate();
-	script_value->initialize(this, ffi_, value_ref);
+	script_value->initialize(this, api_, value_ref);
 	register_script_value(script_value.ptr());
 	if (!cacheable) {
 		return script_value;
@@ -305,8 +305,8 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 		cache_key = reinterpret_cast<void *>((next_cache_key_++ << 1U) | 1U);
 		script_value_cache_.emplace(cache_key, script_value.ptr());
 		void *attached_key = nullptr;
-		const bool attached = ffi_->set_private(p_env, p_value, cache_key) &&
-				ffi_->get_private(p_env, p_value, &attached_key) && attached_key == cache_key;
+		const bool attached = api_->set_private(p_env, p_value, cache_key) &&
+				api_->get_private(p_env, p_value, &attached_key) && attached_key == cache_key;
 		if (!attached) {
 			script_value_cache_.erase(cache_key);
 			cache_key = nullptr;
@@ -317,7 +317,7 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 }
 
 String PuertsEnvironment::read_exception(pesapi_scope p_scope) const {
-	const char *message = ffi_->get_exception_as_string(p_scope, true);
+	const char *message = api_->get_exception_as_string(p_scope, true);
 	if (message == nullptr) {
 		return "Unknown script exception.";
 	}
@@ -325,12 +325,12 @@ String PuertsEnvironment::read_exception(pesapi_scope p_scope) const {
 }
 
 String PuertsEnvironment::read_string(pesapi_env p_env, pesapi_value p_value) const {
-	return puerts::internal::read_utf8_string(ffi_, p_env, p_value);
+	return puerts::internal::read_utf8_string(api_, p_env, p_value);
 }
 
 PackedByteArray PuertsEnvironment::read_binary(pesapi_env p_env, pesapi_value p_value) const {
 	size_t size = 0;
-	void *buffer = ffi_->get_value_binary(p_env, p_value, &size);
+	void *buffer = api_->get_value_binary(p_env, p_value, &size);
 	if (size == 0) {
 		return {};
 	}

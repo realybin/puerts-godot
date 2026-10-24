@@ -33,7 +33,7 @@ void puerts_quickjs_low_memory_notification(pesapi_env_ref p_env_ref) {
 	RunGC(p_env_ref);
 }
 
-const PuertsBackendFunctions puerts_quickjs_functions = {
+const PuertsBackendFunctionTable puerts_quickjs_functions = {
 	&puerts_quickjs_get_api_version,
 	&puerts_quickjs_get_ffi,
 	&puerts_quickjs_create_env_ref,

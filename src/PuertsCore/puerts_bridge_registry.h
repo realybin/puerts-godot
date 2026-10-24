@@ -24,26 +24,26 @@ public:
 
 	void clear();
 
-	void *bind_object(godot::Object *p_object, const void *p_type_id);
-	void *own_object(godot::Object *p_object, const void *p_type_id);
+	void *bind_non_owning_object(godot::Object *p_object, const void *p_type_id);
+	void *adopt_object(godot::Object *p_object, const void *p_type_id);
 	void *box_variant(const godot::Variant &p_value, const void *p_type_id);
 
 	[[nodiscard]] ObjectBinding find_object(godot::Object *p_object) const;
 	[[nodiscard]] static bool is_handle(void *p_handle);
-	[[nodiscard]] const godot::Variant *find_box(void *p_handle) const;
+	[[nodiscard]] const godot::Variant *find_boxed_variant(void *p_handle) const;
 	bool try_get_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value) const;
-	bool update_box(void *p_handle, const godot::Variant &p_value);
+	bool update_boxed_variant(void *p_handle, const godot::Variant &p_value);
 	bool try_get_object(void *p_handle, godot::Object *&r_object) const;
-	bool release(void *p_handle);
+	bool release_handle(void *p_handle);
 
 private:
 	enum class Kind {
 		Object,
-		Variant,
+		BoxedVariant,
 	};
 
 	struct Entry {
-		Kind kind = Kind::Variant;
+		Kind kind = Kind::BoxedVariant;
 		bool script_owned = false;
 		godot::ObjectID object_id;
 		godot::Variant value;
@@ -58,8 +58,8 @@ private:
 		const void *type_id = nullptr;
 	};
 
-	static constexpr uintptr_t HANDLE_TAG = 1;
-	static constexpr HandleId MAX_HANDLE_ID = UINTPTR_MAX >> 1U;
+	static constexpr uintptr_t kHandleTag = 1;
+	static constexpr HandleId kMaxHandleId = UINTPTR_MAX >> 1U;
 
 	EntryMap entries_;
 	puerts_eastl::hash_map<uint64_t, ObjectRecord> object_entries_;

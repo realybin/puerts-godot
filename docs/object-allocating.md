@@ -21,9 +21,9 @@ The same object reuses one bridge record in an environment. Borrowed wrappers re
 
 The following applies to V8, Node.js, QuickJS, and Lua. [WebGL](backends.md#browser-javascript-webgl) retains its environment until page unload and rejects disposal and reinitialization.
 
-`dispose()` immediately makes `is_alive()` false and invalidates all values and callables. Cleanup releases script references, strong `RefCounted` references, boxed values, and script-owned non-`RefCounted` objects. Borrowed objects remain Godot-owned. Repeated disposal is safe.
+`dispose()` immediately makes `is_ready()` false and invalidates all values and callables. Cleanup releases script references, strong `RefCounted` references, boxed values, and script-owned non-`RefCounted` objects. Borrowed objects remain Godot-owned. Repeated disposal is safe.
 
-If disposal is requested during a script operation or callback, new operations are rejected and cleanup waits for the outer operation. `initialize()` returns `ERR_BUSY` during initialization, an active operation, or disposal. Use one thread for an environment, its values, and its cache pool.
+If disposal is requested during a script operation or callback, new operations are rejected and cleanup waits for the outer operation. `initialize()` returns `ERR_BUSY` during initialization, an active operation, or disposal. Use one thread for an environment, its values, and its UTF-8 name cache.
 
 Calling `initialize()` on an idle environment first disposes the previous runtime, even if new setup fails. A successful call starts a new generation; old values and callables stay invalid and must be reacquired. Log callbacks remain configured.
 

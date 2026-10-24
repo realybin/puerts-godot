@@ -7,7 +7,7 @@
 #include "puerts_backend.h"
 #include "puerts_eastl.h"
 #include "puerts_runtime.h"
-#include "puerts_string_name_cache_pool.h"
+#include "puerts_string_name_utf8_cache.h"
 
 #include <cstdint>
 
@@ -25,13 +25,13 @@
 #include <EASTL/utility.h>
 
 class PuertsScriptValue;
-class PuertsTypeRegister;
+class PuertsTypeRegistry;
 class PuertsEnvironment;
 
 namespace puerts {
-godot::Variant script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
-bool native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
-bool return_variant(pesapi_ffi *p_apis, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
+godot::Variant script_value_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
+bool native_handle_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
+bool return_variant_to_script(pesapi_ffi *p_api, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 } //namespace puerts
 
 class PuertsEnvironment : public godot::RefCounted {
@@ -40,10 +40,10 @@ class PuertsEnvironment : public godot::RefCounted {
 	godot::Ref<godot::RefCounted> backend_ref_;
 	// Non-disposable browser runtimes keep their owner alive for the page lifetime.
 	godot::Ref<PuertsEnvironment> page_lifetime_ref_;
-	const PuertsBackendFunctions *backend_functions_ = nullptr;
-	pesapi_ffi *ffi_ = nullptr;
+	const PuertsBackendFunctionTable *backend_functions_ = nullptr;
+	pesapi_ffi *api_ = nullptr;
 	pesapi_env_ref env_ref_ = nullptr;
-	PuertsEnvironmentData environment_data_;
+	PuertsEnvironmentContext environment_context_;
 	uint32_t active_operations_ = 0;
 	bool reporting_lifecycle_rejection_ = false;
 	puerts_eastl::vector<PuertsScriptValue *> script_values_;
@@ -61,9 +61,9 @@ public:
 	PuertsEnvironment() = default;
 	~PuertsEnvironment() override;
 
-	godot::Error initialize(godot::Object *p_backend, const godot::Ref<PuertsStringNameCachePool> &p_string_name_cache_pool);
+	godot::Error initialize(godot::Object *p_backend, const godot::Ref<PuertsStringNameUtf8Cache> &p_string_name_utf8_cache);
 	void dispose();
-	bool is_alive() const;
+	bool is_ready() const;
 	[[nodiscard]] godot::Object *get_backend() const;
 	void set_error_callback(const godot::Callable &p_callback);
 	void set_warn_callback(const godot::Callable &p_callback);
@@ -96,10 +96,10 @@ private:
 	};
 
 	friend class PuertsScriptValue;
-	friend class PuertsTypeRegister;
-	friend godot::Variant puerts::script_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
-	friend bool puerts::native_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
-	friend bool puerts::return_variant(pesapi_ffi *p_apis, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
+	friend class PuertsTypeRegistry;
+	friend godot::Variant puerts::script_value_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
+	friend bool puerts::native_handle_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
+	friend bool puerts::return_variant_to_script(pesapi_ffi *p_api, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 
 	void log_error(const godot::String &p_message);
 	void log_lifecycle_rejection(const godot::String &p_message);
@@ -107,19 +107,19 @@ private:
 	void log_info(const godot::String &p_message);
 	void emit_log(const godot::Callable &p_callback, const godot::String &p_message);
 	template <void (PuertsEnvironment::*LogFunction)(const godot::String &)>
-	static void dispatch_log_callback(struct pesapi_ffi *p_apis, pesapi_callback_info p_info);
+	static void dispatch_log_callback(struct pesapi_ffi *p_api, pesapi_callback_info p_info);
 	static void script_log_error_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void script_log_warn_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void script_log_info_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void script_to_callable_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
-	[[nodiscard]] const godot::CharString &get_cached_utf8(const godot::StringName &p_name);
+	[[nodiscard]] godot::CharString get_utf8(const godot::StringName &p_name);
 	pesapi_value variant_to_script(
 			pesapi_env p_env,
 			const godot::Variant &p_value,
 			bool *r_success = nullptr,
 			godot::String *r_error_message = nullptr);
-	godot::Variant script_to_variant(pesapi_env p_env, pesapi_value p_value);
-	bool native_to_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value);
+	godot::Variant script_value_to_variant(pesapi_env p_env, pesapi_value p_value);
+	bool native_handle_to_variant(void *p_handle, const void *p_type_id, godot::Variant &r_value);
 	godot::Ref<PuertsScriptValue> create_script_value(pesapi_env p_env, pesapi_value p_value);
 	godot::String read_exception(pesapi_scope p_scope) const;
 	godot::String read_string(pesapi_env p_env, pesapi_value p_value) const;
@@ -132,7 +132,7 @@ private:
 
 	template <typename Function, typename... Args>
 	bool call_backend(Function p_function, const godot::String &p_error_message, Args &&...p_args) {
-		if (!is_alive()) {
+		if (!is_ready()) {
 			log_error("Puerts environment is not initialized.");
 			return false;
 		}
@@ -150,7 +150,7 @@ private:
 		}
 	}
 
-	godot::Ref<PuertsStringNameCachePool> string_name_cache_pool_;
+	godot::Ref<PuertsStringNameUtf8Cache> string_name_utf8_cache_;
 };
 
 #endif // PUERTS_GODOT_PUERTS_ENVIRONMENT_H

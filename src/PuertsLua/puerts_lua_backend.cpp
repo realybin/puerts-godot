@@ -28,7 +28,7 @@ void puerts_lua_destroy_env_ref(pesapi_env_ref p_env_ref) {
 	DestroyLuaPapiEnvRef(p_env_ref);
 }
 
-constexpr PuertsBackendFunctions puerts_lua_functions = {
+constexpr PuertsBackendFunctionTable puerts_lua_functions = {
 	&puerts_lua_get_api_version,
 	&puerts_lua_get_ffi,
 	&puerts_lua_create_env_ref,

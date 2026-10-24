@@ -7,10 +7,10 @@
 
 namespace puerts::internal {
 
-godot::String read_utf8_string(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_value p_value) {
-	constexpr size_t INLINE_UTF8_BUFFER_SIZE = 256;
+godot::String read_utf8_string(pesapi_ffi *p_api, pesapi_env p_env, pesapi_value p_value) {
+	constexpr size_t kInlineUtf8BufferSize = 256;
 	size_t size = 0;
-	const char *inline_text = p_apis->get_value_string_utf8(p_env, p_value, nullptr, &size);
+	const char *inline_text = p_api->get_value_string_utf8(p_env, p_value, nullptr, &size);
 	ERR_FAIL_COND_V_MSG(size >= static_cast<size_t>(INT64_MAX), godot::String(), "Script string is too large.");
 	if (inline_text != nullptr) {
 		return godot::String::utf8(inline_text, static_cast<int64_t>(size));
@@ -18,10 +18,10 @@ godot::String read_utf8_string(pesapi_ffi *p_apis, pesapi_env p_env, pesapi_valu
 
 	// Most identifiers and log messages fit in the inline storage. The fixed
 	// vector only falls back to the heap for unusually long script strings.
-	puerts_eastl::fixed_vector<char, INLINE_UTF8_BUFFER_SIZE> buffer;
+	puerts_eastl::fixed_vector<char, kInlineUtf8BufferSize> buffer;
 	buffer.resize(size + 1);
 	const size_t capacity = size;
-	p_apis->get_value_string_utf8(p_env, p_value, buffer.data(), &size);
+	p_api->get_value_string_utf8(p_env, p_value, buffer.data(), &size);
 	ERR_FAIL_COND_V_MSG(size > capacity, godot::String(), "Script string changed length during conversion.");
 	buffer[size] = '\0';
 	return godot::String::utf8(buffer.data(), static_cast<int64_t>(size));

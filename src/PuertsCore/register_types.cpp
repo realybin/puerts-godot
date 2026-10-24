@@ -11,7 +11,7 @@
 #include "puerts_builtin_binding.h"
 #include "puerts_environment.h"
 #include "puerts_script_value.h"
-#include "puerts_string_name_cache_pool.h"
+#include "puerts_string_name_utf8_cache.h"
 
 void initialize_puerts_core_module(godot::ModuleInitializationLevel p_level) {
 	if (p_level != godot::MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -20,7 +20,7 @@ void initialize_puerts_core_module(godot::ModuleInitializationLevel p_level) {
 
 	GDREGISTER_CLASS(PuertsEnvironment);
 	GDREGISTER_CLASS(PuertsScriptValue);
-	GDREGISTER_CLASS(PuertsStringNameCachePool);
+	GDREGISTER_CLASS(PuertsStringNameUtf8Cache);
 	register_puerts_builtin_bindings();
 }
 
