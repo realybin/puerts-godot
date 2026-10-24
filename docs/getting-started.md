@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if _env != null and _env.is_ready():
-		_env.tick() # V8 and Node.js
+		_env.tick() # V8 and Node.js's logic tick
 
 func _exit_tree() -> void:
 	if _env != null:
@@ -40,12 +40,35 @@ func _exit_tree() -> void:
 
 Share an environment across scenes and keep it alive while using its values. This example uses V8; WebGL has different [initialization and lifetime rules](backends.md#browser-javascript-webgl).
 
-## Values and errors
+## Values
 
-`set_global()` and script calls convert Godot `Variant` values. `eval()`, `get_global()`, `get_property()`, `call()`, and `call_method()` return `PuertsScriptValue` wrappers.
-
-Use `to_float()` for an ECMAScript Number, `to_int()` for a backend integer (V8 and Node.js require BigInt), `unwrap_native()` for a Godot value, and `to_native()` when the result type varies. `to_native()` does not recursively turn script objects into Godot containers.
-
-Register `set_error_callback()`, `set_warn_callback()`, and `set_info_callback()` for synchronous messages. Script helpers `log_error()`, `log_warn()`, and `log_info()` use those callbacks. A failed evaluation or call returns `null`; a successful script `null` has a valid wrapper whose `is_null()` is true.
+* `set_global()` `get_global()`
+* `eval()`
+* `get_property()` `call()` `call_method()` `PuertsScriptValue`
+* `to_float()` `to_int()` `unwrap_native()` `to_native()`
 
 See [conventions](conventions.md), [object lifetime](object-allocating.md), and the Godot editor API reference for the remaining methods.
+
+## Errors
+
+> planning
+
+We provide these to godot:
+
+```gdscript
+_env.set_error_callback(func(message: String): ...(message))
+_env.set_warn_callback(func(message: String): ...(message))
+_env.set_info_callback(func(message: String): ...(message))
+```
+
+And you can use
+
+```javascript
+log_error("..")
+log_warn("...")
+log_info("...")
+```
+
+to trigger the callback.
+
+It is not necessary to set the callback.

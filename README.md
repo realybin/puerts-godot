@@ -87,7 +87,7 @@ x: No plan to support, V8 and Nodejs cannot run in Web
 ## Roadmap
 
 - [x] [WebGL support](docs/backends.md#browser-javascript-webgl)
-- [ ] HELP WANTED in technical writing
+- [x] Working on technical writing
 - [ ] Stable release
 - [ ] Better API design
 - [ ] Performance optimization
