@@ -14,6 +14,8 @@ It provides:
 > [!WARNING]
 > Experimental, use with caution, and expect breaking changes in the future before the 1.0 release.
 
+Read in: **English** | [简体中文](README.zh-CN.md)
+
 Showcase:
 
 https://github.com/user-attachments/assets/2026e5d9-a95b-466b-8918-cfe784a2e6da
@@ -47,8 +49,6 @@ func _exit_tree() -> void:
 Keep the environment alive while using its script values. See [object lifetime](docs/lifetime.md) for disposal rules.
 
 ## Documentation
-
-Read in: **English** | [简体中文](README.zh-CN.md)
 
 - [Getting started](docs/getting-started.md)
 - [Backends](docs/backends.md)

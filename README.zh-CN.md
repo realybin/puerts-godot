@@ -48,8 +48,6 @@ func _exit_tree() -> void:
 
 ## 文档
 
-其他语言：English | **简体中文**
-
 - [入门](docs/zh-CN/getting-started.md)
 - [后端](docs/zh-CN/backends.md)
 - [约定](docs/zh-CN/conventions.md)
