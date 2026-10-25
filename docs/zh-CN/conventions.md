@@ -33,7 +33,7 @@ import Godot, { Node as GodotNode } from "godot";
 
 | Godot                                              | 脚本             |
 |----------------------------------------------------|------------------|
-| `null`  `bool` `int` `float` String`、`StringName` | Cast             |
+| `null`  `bool` `int` `float` `String` `StringName` | Cast             |
 | `Object`                                           | 包装             |
 | 内置类型（如 `Vector2`、`Array`、`Dictionary` 等） | 包装             |
 | `PuertsScriptValue`                                | Raw Script Value |

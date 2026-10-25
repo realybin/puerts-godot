@@ -33,7 +33,7 @@ Default mapping for Godot `Variant` values passed to script:
 
 | Godot                                                             | Script           |
 |-------------------------------------------------------------------|------------------|
-| `null`, `bool`, `int`, `float`, `String`, `StringName`            | Cast             |
+| `null`  `bool`  `int`  `float`  `String`  `StringName`            | Cast             |
 | `Object`                                                          | Wrapper          |
 | Built-in types (such as `Vector2`, `Array`, `Dictionary`, etc.)   | Wrapper          |
 | `PuertsScriptValue`                                               | Raw Script Value |
