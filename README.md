@@ -1,6 +1,6 @@
 # puerts-godot
 
-`puerts-godot` runs ECMAScript and Lua in Godot through Puerts GDExtensions.
+`puerts-godot` runs ECMAScript and Lua in Godot through Puerts.
 
 It provides:
 
@@ -44,19 +44,22 @@ func _exit_tree() -> void:
 		env.dispose()
 ```
 
-Keep the environment alive while using its script values. See [object lifetime](docs/object-allocating.md) for disposal rules.
+Keep the environment alive while using its script values. See [object lifetime](docs/lifetime.md) for disposal rules.
 
 ## Documentation
+
+Read in: **English** | [简体中文](README.zh-CN.md)
 
 - [Getting started](docs/getting-started.md)
 - [Backends](docs/backends.md)
 - [Conventions](docs/conventions.md)
 - [Static binding](docs/static-binding.md)
-- [Object allocation and lifetime](docs/object-allocating.md)
+- [Object lifetime](docs/lifetime.md)
+- [StringName cache](docs/u8-cache.md)
 - [Advanced usage](docs/advanced.md)
 - [V8 inspector](docs/v8-inspector.md)
-- [Build guide](docs/build.md)
-- [Test runner](docs/testing.md)
+- [Build](docs/build.md)
+- [Testing](docs/testing.md)
 
 ## Supported backends
 

@@ -1,10 +1,10 @@
-# Binding Conventions
+# Conventions
 
-The environment provides `load_type()`, `to_callable()`, and logging helpers.
+We provide some helper functions.
 
-## Types
+## Loading types
 
-`load_type(name)` checks static bindings before Godot ClassDB. Cache a type used repeatedly.
+`load_type(name)` queries static bindings first, then Godot ClassDB. Cache a type that is used repeatedly.
 
 ```javascript
 const Vector2 = load_type("Vector2");
@@ -12,35 +12,42 @@ const value = new Vector2(3.0, 4.0);
 value.length(); // 5
 ```
 
-ClassDB fallback constructors are zero-argument. Static bindings may expose other constructors. Script-created `Node` objects remain script-owned after `add_child()`; see [Object Allocation and Lifetime](object-allocating.md).
+> [!NOTE]
+> Types obtained from ClassDB only support zero-argument construction. Static bindings may expose other constructors.
+
+### Using import
+
+For convenience, we also provide a Babel plugin based on the rewritten output, so you can use `import` to load types.
+
+That is, you can write:
+
+```javascript
+import Godot, { Node as GodotNode } from "godot";
+```
+
+See [README.md](../src/PuertsRuntime/ECMAScript/babel-plugin-godot-import-rewrite/README.md) for details.
 
 ## Type mapping
 
 Default mapping for Godot `Variant` values passed to script:
 
-| Godot                                                                               | ECMAScript                                              | Lua                     |
-|-------------------------------------------------------------------------------------|---------------------------------------------------------|-------------------------|
-| `null`                                                                              | `null`                                                  | `nil`                   |
-| `bool`                                                                              | `boolean`                                               | `boolean`               |
-| `int`                                                                               | `number` in the signed 32-bit range; otherwise `bigint` | `integer`               |
-| `float`                                                                             | `number`                                                | `number`                |
-| `String`, `StringName`                                                              | `string`                                                | `string`                |
-| `Object`                                                                            | Godot object wrapper                                    | Godot object `userdata` |
-| Other built-ins (`Vector2`, `Array`, `Dictionary`, `Callable`, packed arrays, etc.) | Godot value wrapper                                     | Godot value `userdata`  |
-| `PuertsScriptValue`                                                                 | Original script value                                   | Original script value   |
+| Godot                                                             | Script           |
+|-------------------------------------------------------------------|------------------|
+| `null`, `bool`, `int`, `float`, `String`, `StringName`            | Cast             |
+| `Object`                                                          | Wrapper          |
+| Built-in types (such as `Vector2`, `Array`, `Dictionary`, etc.)   | Wrapper          |
+| `PuertsScriptValue`                                               | Raw Script Value |
 
-Containers keep their Godot APIs. `to_native()` unwraps Godot values; script objects, arrays, tables, and functions remain `PuertsScriptValue`, without recursive conversion. A `PuertsScriptValue` can only be passed back to its own environment.
+Casts for `PackedByteArray`:
 
-Core compile-time macros for `PackedByteArray` (disabled by default):
+- `VARIANT_TO_SCRIPT_PACKED_BYTE_ARRAY_CAST`: copies `PackedByteArray` into the script's ByteArray type.
+- `SCRIPT_TO_VARIANT_PACKED_BYTE_ARRAY_CAST`: copies the script binary into `PackedByteArray` when converting to `Variant`, including `to_native()`.
 
-- `VARIANT_TO_SCRIPT_PACKED_BYTE_ARRAY_CAST`: copies `PackedByteArray` to script binary.
-- `SCRIPT_TO_VARIANT_PACKED_BYTE_ARRAY_CAST`: copies script binary to `PackedByteArray` when converting to `Variant`, including `to_native()`.
+This is not recommended, however, as it incurs extra overhead; so the default is wrapping.
 
-Script binary uses `ArrayBuffer` in V8/Node.js/QuickJS, `Uint8Array` in WebGL, and buffer `userdata` in Lua. `to_binary()` explicitly copies script binary regardless of these macros.
+## Callable & Signal
 
-## Callables and signals
-
-`to_callable(function)` retains the function and closure. Keep the callable to disconnect it:
+`to_callable(function)` retains the function and its closure. Keep the callable to disconnect it:
 
 ```javascript
 const callback = to_callable(() => log_info("timeout"));
@@ -48,9 +55,9 @@ timer.timeout.connect(callback);
 timer.timeout.disconnect(callback);
 ```
 
-Disposal invalidates script callables. A signal connection also retains its callable until disconnected or its emitter is destroyed.
+Disposing the environment invalidates script callables. A signal connection also retains its callable until it is disconnected or its emitter is destroyed.
 
-## Enums, constants, and globals
+## Enums, Constants, and GlobalScope
 
 Enums are nested static members. Constants are read-only static properties. Global functions and constants are members of `GlobalScope`.
 
@@ -71,4 +78,7 @@ Operator overloads are static methods named by the operator map:
 const sum = Vector2.op_Addition(new Vector2(1, 2), new Vector2(3, 4));
 ```
 
-See the [operator map](../tools/puerts-godot-operator-model/index.js).
+> [!NOTE]
+> We do it this way because JavaScript does not support operator overloading.
+
+See the [operator map](../tools/puerts-godot-operator-model/index.js) for more mappings.

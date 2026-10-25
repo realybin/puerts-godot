@@ -1,27 +1,21 @@
 # Advanced Usage
 
-Reuse environments, loaded types, and script functions. Batch related work in one script call to reduce conversion and FFI overhead. Use static bindings for custom C++ types and typed reads when the result type is known.
-
-For V8 and Node.js, `to_int()` reads BigInt; ordinary ECMAScript Number values should use `to_float()` or `to_native()`.
+## Performance
 
 > [!NOTE]
-> When constructing containers such as `Array`, use typed constructors with matching typed arguments whenever possible. For example:
-> ```gdscript
-> Array(base: Array, type: int, class_name: StringName, script: Variant)
-> Dictionary(base: Dictionary, key_type: int, key_class_name: StringName, key_script: Variant, value_type: int, value_class_name: StringName, value_script: Variant)
-> ```
-> Ensure each argument uses the exact expected type to avoid unnecessary conversions and dynamic type resolution.
+> If you hit performance problems caused by limitations in our design, please report them in an Issue.
 
-## StringName cache
+* Reuse environments, loaded types, and script functions.
+* Batch related work into a single script call to reduce conversion and FFI overhead.
+* Use static bindings for custom C++ types.
+* Use typed reads when the result type is known.
+* For containers such as `Array`, use typed constructors with matching argument types whenever possible. For example:
+  ```gdscript
+  Array(base: Array, type: int, class_name: StringName, script: Variant)
+  Dictionary(base: Dictionary, key_type: int, key_class_name: StringName, key_script: Variant, value_type: int, value_class_name: StringName, value_script: Variant)
+  ```
+    Make sure each argument uses exactly the expected type to avoid unnecessary conversions and dynamic type resolution.
 
-`PuertsStringNameUtf8Cache` caches UTF-8 names used for globals, properties, methods, and chunk names. It is ready to use after construction and grows on demand.
+## Reentry and Threads
 
-Call `clear()` to discard cached entries. Returned UTF-8 values and existing script values remain valid after clearing. Share a cache only between environments used on the same thread.
-
-## Reentry and threads
-
-Use an environment and its values on one thread; WebGL requires the browser main thread. Synchronous callbacks may reenter it. See [object lifetime](object-allocating.md#disposal-and-reinitialization) for disposal during callbacks.
-
-## Runtime hooks
-
-Call `tick()` for V8 and Node.js. Call `debugger_tick()` while their inspector is open. `low_memory_notification()` is available for V8, Node.js, and QuickJS; it may trigger collection but does not guarantee immediate finalization. See [Backends](backends.md).
+Use an environment and its values on a single thread; WebGL requires the browser main thread. For disposal during callbacks, see [object lifetime](lifetime.md#disposal-and-reinitialization).
