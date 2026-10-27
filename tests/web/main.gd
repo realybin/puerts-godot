@@ -18,12 +18,12 @@ func _ready() -> void:
 		check(false, "run this project as a Web export with Extensions Support")
 		finish()
 		return
-	for name in ["PuertsEnvironment", "PuertsStringNameUtf8Cache", "PuertsWebglBackend"]:
+	for name in ["PuertsEnvironment", "PuertsStringNameUtf8Cache", "PuertsWebBackend"]:
 		if not check(ClassDB.class_exists(name), "extension class loaded: " + name):
 			finish()
 			return
 	pool = ClassDB.instantiate("PuertsStringNameUtf8Cache")
-	backend = ClassDB.instantiate("PuertsWebglBackend")
+	backend = ClassDB.instantiate("PuertsWebBackend")
 	env = ClassDB.instantiate("PuertsEnvironment")
 	env.set_error_callback(func(message: String): errors.append(message))
 	if not equal(env.initialize(backend, pool), OK, "initialize browser environment"):
@@ -46,10 +46,10 @@ func test_values() -> void:
 	var text: Variant = evaluate("'Puerts-你好-😀'")
 	if text != null:
 		equal(text.to_string(), "Puerts-你好-😀", "UTF-8 string")
-	var changing_text: Variant = evaluate("globalThis.webglCoercions = 0; ({toString() { return ++globalThis.webglCoercions === 1 ? 'snapshot-你好' : 'a much longer replacement'; }})")
+	var changing_text: Variant = evaluate("globalThis.webCoercions = 0; ({toString() { return ++globalThis.webCoercions === 1 ? 'snapshot-你好' : 'a much longer replacement'; }})")
 	if changing_text != null:
 		equal(changing_text.to_string(), "snapshot-你好", "string conversion uses one snapshot")
-		var coercions: Variant = evaluate("globalThis.webglCoercions")
+		var coercions: Variant = evaluate("globalThis.webCoercions")
 		if coercions != null:
 			equal(coercions.to_int(), 1, "string conversion invokes toString once")
 	var dom: Variant = evaluate("typeof document === 'object'")
@@ -78,14 +78,14 @@ func test_bindings_and_callbacks() -> void:
 
 func test_errors() -> void:
 	var count := errors.size()
-	equal(env.eval("throw new Error('webgl-smoke-exception')"), null, "exception fails evaluation")
-	check(errors.size() > count and "webgl-smoke-exception" in errors[-1], "exception reaches error callback")
+	equal(env.eval("throw new Error('web-smoke-exception')"), null, "exception fails evaluation")
+	check(errors.size() > count and "web-smoke-exception" in errors[-1], "exception reaches error callback")
 	var recovered: Variant = evaluate("6 * 7")
 	if recovered != null:
 		equal(recovered.to_native(), 42, "evaluation recovers after exception")
-	equal(env.eval("globalThis.webglStackReads = 0; throw {get stack() { return ++globalThis.webglStackReads === 1 ? 'webgl-stack-snapshot' : 'a much longer replacement stack'; }}"), null, "exception with changing stack getter fails evaluation")
-	check(errors[-1] == "webgl-stack-snapshot", "exception formatting preserves its first stack snapshot")
-	var stack_reads: Variant = evaluate("globalThis.webglStackReads")
+	equal(env.eval("globalThis.webStackReads = 0; throw {get stack() { return ++globalThis.webStackReads === 1 ? 'web-stack-snapshot' : 'a much longer replacement stack'; }}"), null, "exception with changing stack getter fails evaluation")
+	check(errors[-1] == "web-stack-snapshot", "exception formatting preserves its first stack snapshot")
+	var stack_reads: Variant = evaluate("globalThis.webStackReads")
 	if stack_reads != null:
 		equal(stack_reads.to_int(), 1, "exception formatting reads stack once")
 
@@ -143,7 +143,7 @@ func native_add(left: int, right: int) -> int:
 
 
 func evaluate(source: String) -> Variant:
-	var value: Variant = env.eval(source, "webgl-smoke.js")
+	var value: Variant = env.eval(source, "web-smoke.js")
 	check(value != null and value.is_valid(), "evaluate: " + source)
 	return value
 
@@ -153,7 +153,7 @@ func check(condition: bool, message: String) -> bool:
 		passed += 1
 	else:
 		failed += 1
-	var line := "[webgl-smoke] %s %s" % ["PASS" if condition else "FAIL", message]
+	var line := "[web-smoke] %s %s" % ["PASS" if condition else "FAIL", message]
 	output.append(line)
 	print(line)
 	return condition
@@ -164,12 +164,12 @@ func equal(actual: Variant, expected: Variant, message: String) -> bool:
 
 
 func finish() -> void:
-	var summary := "[webgl-smoke] summary passed=%d failed=%d" % [passed, failed]
+	var summary := "[web-smoke] summary passed=%d failed=%d" % [passed, failed]
 	output.append(summary)
 	print(summary)
 	$Results.text = "\n".join(output)
 	if OS.has_feature("web"):
-		JavaScriptBridge.eval("globalThis.puertsWebglSmoke = %s" % JSON.stringify({
+		JavaScriptBridge.eval("globalThis.puertsWebSmoke = %s" % JSON.stringify({
 			"complete": true,
 			"threads": OS.has_feature("threads"),
 			"passed": passed,

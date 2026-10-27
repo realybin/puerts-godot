@@ -4,8 +4,8 @@
 
 主要特性：
 
-- 支持 V8、Node.js、QuickJS、Lua 及浏览器 JavaScript（WebGL）后端。
-- 除 WebGL 外，可运行多个相互独立的 `PuertsEnvironment` 运行时。
+- 支持 V8、Node.js、QuickJS、Lua 及浏览器 JavaScript（Web）后端。
+- 除 Web 后端外，可运行多个相互独立的 `PuertsEnvironment` 运行时。
 - 提供 Godot 对象绑定与 C++ 静态绑定。
 
 > [!NOTE]
@@ -79,7 +79,7 @@ func _exit_tree() -> void:
 
 x：暂无支持计划；V8 与 Node.js 无法运行于 Web。
 
-`PuertsWebglBackend` 使用浏览器的 JavaScript 引擎。参见[后端](docs/zh-CN/backends.md#浏览器-javascript-webgl)与 [Web 构建](docs/zh-CN/build.md#web-构建)。
+`PuertsWebBackend` 使用浏览器的 JavaScript 引擎。参见[后端](docs/zh-CN/backends.md#浏览器-javascript-web)与 [Web 构建](docs/zh-CN/build.md#web-构建)。
 
 ## 示例项目
 
@@ -87,7 +87,7 @@ x：暂无支持计划；V8 与 Node.js 无法运行于 Web。
 
 ## Roadmap
 
-- [x] [支持 WebGL](docs/zh-CN/backends.md#浏览器-javascript-webgl)
+- [x] [支持 Web](docs/zh-CN/backends.md#浏览器-javascript-web)
 - [x] Working on technical writing
 - [ ] 稳定版本发布
 - [ ] API 设计改进

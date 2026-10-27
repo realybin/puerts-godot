@@ -13,7 +13,7 @@
     "nodejs": {"native": "papi-nodejs", "source": "PuertsNodejs", "library": "PapiNodejs", "extension": "puerts_nodejs.gdextension", "entry": "puerts_nodejs_library_init", "platforms": ["windows", "macos", "linux", "android", "ios"]},
     "quickjs": {"native": "papi-quickjs", "source": "PuertsQuickjs", "library": "PapiQuickjs", "extension": "puerts_quickjs.gdextension", "entry": "puerts_quickjs_library_init"},
     "lua": {"native": "papi-lua", "source": "PuertsLua", "library": "PapiLua", "extension": "puerts_lua.gdextension", "entry": "puerts_lua_library_init"},
-    "webgl": {"native": "webgl", "source": "PuertsWebgl", "library": "PuertsWebgl", "extension": "puerts_webgl.gdextension", "entry": "puerts_webgl_library_init", "platforms": ["web"]}
+    "web": {"native": "web", "source": "PuertsWeb", "library": "PuertsWeb", "extension": "puerts_web.gdextension", "entry": "puerts_web_library_init", "platforms": ["web"]}
   },
   "runtime_test_platforms": ["windows", "macos", "linux"],
   "runtime_test_backends": ["lua", "quickjs", "v8"],

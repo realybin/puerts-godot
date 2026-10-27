@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://main.gd" id="1_smoke"]
 
-[node name="WebglSmoke" type="Control"]
+[node name="WebSmoke" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,5 +17,5 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = 940.0
 offset_bottom = 620.0
-text = "Puerts WebGL smoke test is starting..."
+text = "Puerts Web smoke test is starting..."
 

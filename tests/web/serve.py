@@ -15,7 +15,7 @@ class WebHandler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--directory", default="build/webgl-smoke")
+    parser.add_argument("--directory", default="build/web-smoke")
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     handler = partial(WebHandler, directory=args.directory)

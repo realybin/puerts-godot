@@ -85,21 +85,19 @@ default_args = []
 built_libraries = {}
 
 
-def _embed_webgl_runtime(target, source, env):
+def _embed_web_runtime(target, source, env):
     with open(str(source[0]), encoding="utf-8") as runtime_file:
         runtime_source = runtime_file.read()
-    if ')PUERTS_WEBGL"' in runtime_source:
-        raise ValueError("WebGL runtime contains the reserved raw-string delimiter")
+    if ')PUERTS_WEB"' in runtime_source:
+        raise ValueError("Web runtime contains the reserved raw-string delimiter")
     os.makedirs(os.path.dirname(str(target[0])), exist_ok=True)
     with open(str(target[0]), "w", encoding="utf-8", newline="\n") as header:
         header.write(
             "// SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors\n"
             "// SPDX-License-Identifier: BSD-3-Clause\n"
-            "// Generated from puerts_webgl_runtime.js by SCons.\n"
+            "// Generated from puerts_web_runtime.js by SCons.\n"
             "#pragma once\n"
-            'inline constexpr char puerts_webgl_runtime_source[] = R"PUERTS_WEBGL(\n'
-            + runtime_source
-            + '\n)PUERTS_WEBGL";\n'
+            'inline constexpr char puerts_web_runtime_source[] = R"PUERTS_WEB(\n' + runtime_source + '\n)PUERTS_WEB";\n'
         )
 
 
@@ -153,7 +151,7 @@ for project_info in project_infos:
 
     project_env = env.Clone()
     runtime_binary = None
-    if project_info.backend_dir != "webgl":
+    if project_info.backend_dir != "web":
         try:
             lib_path, runtime_binary = resolve_puerts_paths(
                 puerts_root=puerts_path,
@@ -212,15 +210,15 @@ for project_info in project_infos:
             sys.exit(1)
         link_archives.extend(ios_archives)
         project_env.Append(LINKFLAGS=[f"-Wl,-force_load,{archive}" for archive in link_archives])
-    elif project_info.backend_dir != "webgl":
+    elif project_info.backend_dir != "web":
         project_env.Append(LIBS=[project_info.lib_name])
 
     sources = Glob("src/{}/*.cpp".format(project_info.source_dir))
-    if project_info.backend_dir == "webgl":
+    if project_info.backend_dir == "web":
         runtime_header = project_env.Command(
-            "src/gen/puerts_webgl_runtime.generated.h",
-            "src/PuertsWebgl/puerts_webgl_runtime.js",
-            _embed_webgl_runtime,
+            "src/gen/puerts_web_runtime.generated.h",
+            "src/PuertsWeb/puerts_web_runtime.js",
+            _embed_web_runtime,
         )
         project_env.Append(CPPPATH=["src/gen"])
         # Link the existing core module so the class registry is shared and
@@ -261,7 +259,7 @@ for project_info in project_infos:
         source=sources,
     )
     built_libraries[project_info.backend_dir] = library
-    if project_info.backend_dir == "webgl":
+    if project_info.backend_dir == "web":
         project_env.Depends(library, built_libraries["puerts"])
     if env["platform"] == "macos":
         project_env.AddPostAction(library, _ensure_loader_rpath_action)

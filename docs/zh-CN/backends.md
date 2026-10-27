@@ -8,13 +8,13 @@
 | `PuertsNodejsBackend`  | ECMAScript |
 | `PuertsQuickjsBackend` | ECMAScript |
 | `PuertsLuaBackend`     | Lua        |
-| `PuertsWebglBackend`   | ECMAScript |
+| `PuertsWebBackend`     | ECMAScript |
 
 > 一个进程中请选择 V8 或 Node.js；同时加载两者可能产生冲突，尤其在 Linux 上。
 
-## 浏览器 JavaScript (WebGL)
+## 浏览器 JavaScript (Web)
 
-`PuertsWebglBackend` 运行在浏览器的 JavaScript 引擎中，持有相同的 `globalThis`，包括 DOM 访问。
+`PuertsWebBackend` 运行在浏览器的 JavaScript 引擎中，持有相同的 `globalThis`，包括 DOM 访问。
 
 我们只会支持单例，所以你只能使用一个 `PuertsEnvironment`。
 
@@ -23,7 +23,7 @@
 ```gdscript
 var pool = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 var env = ClassDB.instantiate("PuertsEnvironment")
-if env.initialize(ClassDB.instantiate("PuertsWebglBackend"), pool) != OK:
+if env.initialize(ClassDB.instantiate("PuertsWebBackend"), pool) != OK:
 	return
 var title = env.eval("document.title")
 if title != null:

@@ -19,7 +19,7 @@
 
 ## 释放与重新初始化
 
-> 以下内容适用于 V8、Node.js、QuickJS 和 Lua。[WebGL](backends.md#浏览器-javascript-webgl) 会保持其环境直到页面卸载也就是单例。
+> 以下内容适用于 V8、Node.js、QuickJS 和 Lua。[Web 后端](backends.md#浏览器-javascript-web) 会保持其环境直到页面卸载也就是单例。
 
 `dispose()` 会立即令 `is_ready()` 返回 false，并使所有值和可调用对象失效。清理过程会释放脚本引用、强 `RefCounted` 引用、装箱值以及脚本拥有的非 `RefCounted` 对象。借用对象仍归 Godot 所有。
 

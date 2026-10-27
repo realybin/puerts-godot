@@ -8,13 +8,13 @@ We currently support:
 | `PuertsNodejsBackend`  | ECMAScript |
 | `PuertsQuickjsBackend` | ECMAScript |
 | `PuertsLuaBackend`     | Lua        |
-| `PuertsWebglBackend`   | ECMAScript |
+| `PuertsWebBackend`     | ECMAScript |
 
 > Use either V8 or Node.js in a process; loading both may conflict, especially on Linux.
 
-## Browser JavaScript (WebGL)
+## Browser JavaScript (Web)
 
-`PuertsWebglBackend` runs in the browser's JavaScript engine and shares the same `globalThis`, including DOM access.
+`PuertsWebBackend` runs in the browser's JavaScript engine and shares the same `globalThis`, including DOM access.
 
 We only support a singleton, so you can use only one `PuertsEnvironment`.
 
@@ -23,7 +23,7 @@ After installing the [Web extensions](build.md#web-builds):
 ```gdscript
 var pool = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 var env = ClassDB.instantiate("PuertsEnvironment")
-if env.initialize(ClassDB.instantiate("PuertsWebglBackend"), pool) != OK:
+if env.initialize(ClassDB.instantiate("PuertsWebBackend"), pool) != OK:
 	return
 var title = env.eval("document.title")
 if title != null:

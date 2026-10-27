@@ -19,7 +19,7 @@ The same object reuses one bridge record in an environment. Borrowed wrappers re
 
 ## Disposal and reinitialization
 
-> The following applies to V8, Node.js, QuickJS, and Lua. [WebGL](backends.md#browser-javascript-webgl) keeps its environment until page unload, i.e. it is a singleton.
+> The following applies to V8, Node.js, QuickJS, and Lua. [The Web backend](backends.md#browser-javascript-web) keeps its environment until page unload, i.e. it is a singleton.
 
 `dispose()` immediately makes `is_ready()` false and invalidates all values and callables. Cleanup releases script references, strong `RefCounted` references, boxed values, and script-owned non-`RefCounted` objects. Borrowed objects remain Godot-owned.
 

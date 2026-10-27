@@ -18,4 +18,4 @@
 
 ## Reentry and Threads
 
-Use an environment and its values on a single thread; WebGL requires the browser main thread. For disposal during callbacks, see [object lifetime](lifetime.md#disposal-and-reinitialization).
+Use an environment and its values on a single thread; the Web backend requires the browser main thread. For disposal during callbacks, see [object lifetime](lifetime.md#disposal-and-reinitialization).

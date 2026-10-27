@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-#ifndef PUERTS_GODOT_PUERTS_WEBGL_BACKEND_H
-#define PUERTS_GODOT_PUERTS_WEBGL_BACKEND_H
+#ifndef PUERTS_GODOT_PUERTS_WEB_BACKEND_H
+#define PUERTS_GODOT_PUERTS_WEB_BACKEND_H
 
 #include "PuertsCore/puerts_backend_resource.h"
 
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
-class PuertsWebglBackend : public godot::Resource {
-	GDCLASS(PuertsWebglBackend, godot::Resource)
+class PuertsWebBackend : public godot::Resource {
+	GDCLASS(PuertsWebBackend, godot::Resource)
 
 protected:
 	static void _bind_methods();
@@ -22,4 +22,4 @@ public:
 	[[nodiscard]] uint64_t _puerts_get_functions_ptr() const;
 };
 
-#endif // PUERTS_GODOT_PUERTS_WEBGL_BACKEND_H
+#endif // PUERTS_GODOT_PUERTS_WEB_BACKEND_H

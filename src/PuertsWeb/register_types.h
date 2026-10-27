@@ -5,5 +5,5 @@
 
 #include <godot_cpp/core/class_db.hpp>
 
-void initialize_puerts_webgl_module(godot::ModuleInitializationLevel p_level);
-void uninitialize_puerts_webgl_module(godot::ModuleInitializationLevel p_level);
+void initialize_puerts_web_module(godot::ModuleInitializationLevel p_level);
+void uninitialize_puerts_web_module(godot::ModuleInitializationLevel p_level);

@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 // Exercise the browser bridge independently of Godot/Emscripten.
-// Run with: node --expose-gc --test tests/webgl/runtime.test.cjs
+// Run with: node --expose-gc --test tests/web/runtime.test.cjs
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const vm = require("node:vm");
 const test = require("node:test");
 const path = require("node:path");
 
-const source = fs.readFileSync(path.join(__dirname, "../../src/PuertsWebgl/puerts_webgl_runtime.js"), "utf8");
+const source = fs.readFileSync(path.join(__dirname, "../../src/PuertsWeb/puerts_web_runtime.js"), "utf8");
 
 function fixture(options = {}) {
 	let heap = new Uint8Array(64 * 1024);

@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "puerts_webgl_ffi.h"
+#include "puerts_web_ffi.h"
 
 #include "ScriptClassRegistry.h"
-#include "puerts_webgl_runtime.generated.h"
+#include "puerts_web_runtime.generated.h"
 
 #include <godot_cpp/classes/json.hpp>
 #include <godot_cpp/core/error_macros.hpp>
@@ -24,12 +24,12 @@ namespace {
 // EM_JS is carried in the side module and installed by Emscripten's dynamic
 // loader. Pass function pointers explicitly: main-module exports belong to Godot.
 // clang-format off
-EM_JS(int, webgl_initialize_bridge, (const char *source, uintptr_t describe, uintptr_t callback, uintptr_t construct, uintptr_t finalize), {
+EM_JS(int, web_initialize_bridge, (const char *source, uintptr_t describe, uintptr_t callback, uintptr_t construct, uintptr_t finalize), {
 	if (typeof document === 'undefined') {
-		console.error('Puerts WebGL requires the browser main thread.');
+		console.error('Puerts Web requires the browser main thread.');
 		return 0;
 	}
-	if (Module['puertsGodotWebgl'])
+	if (Module['puertsGodotWeb'])
 		return 1;
 	const heap = () => {
 		if (HEAPU8.buffer !== wasmMemory.buffer)
@@ -51,7 +51,7 @@ EM_JS(int, webgl_initialize_bridge, (const char *source, uintptr_t describe, uin
 	const call = (ptr, ...args) => wasmTable.get(ptr)(...args);
 	try {
 		const factory = (0, eval)('(' + readUTF8(source) + ')');
-		Module['puertsGodotWebgl'] = factory({
+		Module['puertsGodotWeb'] = factory({
 			heap,
 			readUTF8,
 			call,
@@ -62,12 +62,12 @@ EM_JS(int, webgl_initialize_bridge, (const char *source, uintptr_t describe, uin
 		});
 		return 1;
 	} catch (error) {
-		console.error('Puerts WebGL bridge initialization failed:', error);
+		console.error('Puerts Web bridge initialization failed:', error);
 		return 0;
 	}
 });
 
-EM_JS(double, webgl_dispatch, (uintptr_t env, const char *op, double a, double b, double c, double d), {
+EM_JS(double, web_dispatch, (uintptr_t env, const char *op, double a, double b, double c, double d), {
 	if (HEAPU8.buffer !== wasmMemory.buffer)
 		updateMemoryViews();
 	let end = op;
@@ -75,7 +75,7 @@ EM_JS(double, webgl_dispatch, (uintptr_t env, const char *op, double a, double b
 		++end;
 	const bytes = HEAPU8.subarray(op, end);
 	const name = new TextDecoder().decode(bytes.buffer instanceof ArrayBuffer ? bytes : bytes.slice());
-	return Module['puertsGodotWebgl'].dispatch(env, name, a, b, c, d);
+	return Module['puertsGodotWeb'].dispatch(env, name, a, b, c, d);
 });
 // clang-format on
 
@@ -129,7 +129,7 @@ WebEnvironment *environment(pesapi_env p_env) {
 }
 
 double dispatch(WebEnvironment *p_env, const char *p_operation, double p_a = 0, double p_b = 0, double p_c = 0, double p_d = 0) {
-	return p_env != nullptr && p_env->alive ? webgl_dispatch(address(p_env), p_operation, p_a, p_b, p_c, p_d) : 0;
+	return p_env != nullptr && p_env->alive ? web_dispatch(address(p_env), p_operation, p_a, p_b, p_c, p_d) : 0;
 }
 
 pesapi_value value(double p_handle) {
@@ -165,7 +165,7 @@ struct CallbackScratchScope {
 	}
 };
 
-extern "C" void webgl_native_callback(WebEnvironment *p_env, pesapi_callback p_callback, uint32_t p_info) {
+extern "C" void web_native_callback(WebEnvironment *p_env, pesapi_callback p_callback, uint32_t p_info) {
 	if (!p_env->alive) {
 		return;
 	}
@@ -174,7 +174,7 @@ extern "C" void webgl_native_callback(WebEnvironment *p_env, pesapi_callback p_c
 	p_callback(&ffi, reinterpret_cast<pesapi_callback_info>(&info));
 }
 
-extern "C" void *webgl_native_construct(WebEnvironment *p_env, pesapi_constructor p_constructor, uint32_t p_info) {
+extern "C" void *web_native_construct(WebEnvironment *p_env, pesapi_constructor p_constructor, uint32_t p_info) {
 	if (!p_env->alive || p_constructor == nullptr) {
 		return nullptr;
 	}
@@ -183,7 +183,7 @@ extern "C" void *webgl_native_construct(WebEnvironment *p_env, pesapi_constructo
 	return p_constructor(&ffi, reinterpret_cast<pesapi_callback_info>(&info));
 }
 
-extern "C" void webgl_native_finalize(WebEnvironment *p_env, pesapi_finalize p_finalize, void *p_ptr, void *p_data, void *p_private) {
+extern "C" void web_native_finalize(WebEnvironment *p_env, pesapi_finalize p_finalize, void *p_ptr, void *p_data, void *p_private) {
 	if (p_env->alive && p_finalize != nullptr) {
 		CallbackScratchScope scope(p_env);
 		p_finalize(&ffi, p_ptr, p_data, p_private);
@@ -221,7 +221,7 @@ godot::Array describe_properties(puerts::ScriptPropertyInfo *p_properties) {
 	return result;
 }
 
-extern "C" const char *webgl_describe_class(WebEnvironment *p_env, const void *p_type) {
+extern "C" const char *web_describe_class(WebEnvironment *p_env, const void *p_type) {
 	const auto *definition = puerts::LoadClassByID(reinterpret_cast<puerts::ScriptClassRegistry *>(p_env->registry), p_type);
 	if (definition == nullptr) {
 		return nullptr;
@@ -600,11 +600,11 @@ void set_registry(pesapi_env p_env, pesapi_registry p_registry) {
 
 } // namespace
 
-int puerts_webgl_get_api_version() {
+int puerts_web_get_api_version() {
 	return PESAPI_VERSION;
 }
 
-pesapi_ffi *puerts_webgl_get_ffi() {
+pesapi_ffi *puerts_web_get_ffi() {
 	static bool initialized = false;
 	if (initialized) {
 		return &ffi;
@@ -701,12 +701,12 @@ pesapi_ffi *puerts_webgl_get_ffi() {
 	return &ffi;
 }
 
-pesapi_env_ref puerts_webgl_create_env_ref() {
+pesapi_env_ref puerts_web_create_env_ref() {
 	if (browser_environment != nullptr) {
 		ERR_PRINT("The browser JavaScript backend supports only one environment per page.");
 		return nullptr;
 	}
-	if (!webgl_initialize_bridge(puerts_webgl_runtime_source, address(&webgl_describe_class), address(&webgl_native_callback), address(&webgl_native_construct), address(&webgl_native_finalize))) {
+	if (!web_initialize_bridge(puerts_web_runtime_source, address(&web_describe_class), address(&web_native_callback), address(&web_native_construct), address(&web_native_finalize))) {
 		return nullptr;
 	}
 	auto *env = new WebEnvironment;
@@ -723,7 +723,7 @@ pesapi_env_ref puerts_webgl_create_env_ref() {
 	return reinterpret_cast<pesapi_env_ref>(env);
 }
 
-void puerts_webgl_destroy_env_ref(pesapi_env_ref p_ref) {
+void puerts_web_destroy_env_ref(pesapi_env_ref p_ref) {
 	// The host realm and its callbacks remain live until the page is unloaded.
 	// PuertsEnvironment rejects disposal for this backend before reaching here.
 	(void)p_ref;

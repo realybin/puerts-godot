@@ -4,8 +4,8 @@
 
 It provides:
 
-- V8, Node.js, QuickJS, Lua, and browser JavaScript (WebGL) backends.
-- Multiple independent `PuertsEnvironment` runtimes, except WebGL.
+- V8, Node.js, QuickJS, Lua, and browser JavaScript (Web) backends.
+- Multiple independent `PuertsEnvironment` runtimes, except the Web backend.
 - Godot object bindings and C++ static bindings.
 
 > [!NOTE]
@@ -81,7 +81,7 @@ Keep the environment alive while using its script values. See [object lifetime](
 
 x: No plan to support, V8 and Nodejs cannot run in Web
 
-`PuertsWebglBackend` uses the browser JavaScript engine. See [Backends](docs/backends.md#browser-javascript-webgl) and [Web builds](docs/build.md#web-builds).
+`PuertsWebBackend` uses the browser JavaScript engine. See [Backends](docs/backends.md#browser-javascript-web) and [Web builds](docs/build.md#web-builds).
 
 ## Example project
 
@@ -89,7 +89,7 @@ x: No plan to support, V8 and Nodejs cannot run in Web
 
 ## Roadmap
 
-- [x] [WebGL support](docs/backends.md#browser-javascript-webgl)
+- [x] [Web support](docs/backends.md#browser-javascript-web)
 - [x] Working on technical writing
 - [ ] Stable release
 - [ ] Better API design

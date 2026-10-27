@@ -79,7 +79,7 @@ jobs:
       arch: ${{ matrix.target.arch }}
       target_type: ${{ matrix.target_type }}
       float_precision: ${{ matrix.float_precision }}
-      backends: ${{ matrix.target.platform == 'web' && 'core,webgl' || '' }}
+      backends: ${{ matrix.target.platform == 'web' && 'core,web' || '' }}
       web_threads: ${{ matrix.web_threads }}
       run_tests: true
       upload_artifact: ${{ matrix.target.platform == 'web' }}

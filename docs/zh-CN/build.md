@@ -22,7 +22,7 @@ git submodule update --init --recursive
 - `--platform`：`windows|macos|linux|android|ios|web`
 - `--arch`：`x86_64|x86_32|arm64|arm32|wasm32`
 - `--config`：`Debug|Release`
-- `--backends`：`core,v8,nodejs,quickjs,lua,webgl`
+- `--backends`：`core,v8,nodejs,quickjs,lua,web`
 - `--threads`：Web `true|false`
 
 元数据 [`scripts/config.json`](../../scripts/config.json)。
@@ -54,8 +54,8 @@ scons target=template_release platform=linux arch=x86_64 precision=single api_ve
 ## Web 构建
 
 ```bash
-python scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,webgl --threads false
-scons target=template_debug platform=web arch=wasm32 precision=single api_version=4.7 backends=core,webgl threads=false
+python scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,web --threads false
+scons target=template_debug platform=web arch=wasm32 precision=single api_version=4.7 backends=core,web threads=false
 ```
 
 另外还要调整为

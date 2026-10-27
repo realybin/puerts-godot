@@ -22,7 +22,7 @@ Common arguments:
 - `--platform`: `windows|macos|linux|android|ios|web`
 - `--arch`: `x86_64|x86_32|arm64|arm32|wasm32`
 - `--config`: `Debug|Release`
-- `--backends`: `core,v8,nodejs,quickjs,lua,webgl`
+- `--backends`: `core,v8,nodejs,quickjs,lua,web`
 - `--threads`: Web `true|false`
 
 Metadata: [`scripts/config.json`](../scripts/config.json).
@@ -54,8 +54,8 @@ Output goes to `bin/`.
 ## Web builds
 
 ```bash
-python scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,webgl --threads false
-scons target=template_debug platform=web arch=wasm32 precision=single api_version=4.7 backends=core,webgl threads=false
+python scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,web --threads false
+scons target=template_debug platform=web arch=wasm32 precision=single api_version=4.7 backends=core,web threads=false
 ```
 
 Also set the following headers:

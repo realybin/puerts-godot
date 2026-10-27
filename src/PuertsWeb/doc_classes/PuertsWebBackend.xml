@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="PuertsWebglBackend" inherits="Resource">
+<class name="PuertsWebBackend" inherits="Resource">
 	<brief_description>Selects the browser JavaScript engine for Web exports.</brief_description>
 	<description>Web-only backend using the browser's JavaScript engine and global object. Requires the browser main thread, WeakRef, FinalizationRegistry, and CSP permission for unsafe-eval. One [PuertsEnvironment] is retained until page unload; disposal and reinitialization are unsupported. Debug with browser DevTools.</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />
-			<description>Returns [code]webgl[/code].</description>
+			<description>Returns [code]web[/code].</description>
 		</method>
 		<method name="get_backend_name" qualifiers="const">
 			<return type="String" />

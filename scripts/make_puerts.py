@@ -241,9 +241,9 @@ def main() -> int:
     for backend in skipped:
         print(f"[make_puerts] skip unsupported backend {backend} on {args.platform}")
     selected = [backend for backend in backends if backend in supported]
-    if "webgl" in selected and "puerts" not in selected:
+    if "web" in selected and "puerts" not in selected:
         selected.insert(0, "puerts")
-    build_list = [backend for backend in selected if backend != "webgl"]
+    build_list = [backend for backend in selected if backend != "web"]
     if not build_list:
         print("[make_puerts] no backend was selected for this platform.", file=sys.stderr)
         return 2
@@ -266,8 +266,8 @@ def main() -> int:
     if args.platform == "web":
         print(f"  threads: {args.threads}")
     print(f"  built: {', '.join(build_list)}")
-    if "webgl" in selected:
-        print("  webgl: built by SCons from src/PuertsWebgl; no native engine dependency")
+    if "web" in selected:
+        print("  web: built by SCons from src/PuertsWeb; no native engine dependency")
     if skipped:
         print(f"  skipped: {', '.join(skipped)}")
 

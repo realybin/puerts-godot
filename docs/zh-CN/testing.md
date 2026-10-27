@@ -11,16 +11,16 @@ python scripts/run_tests.py --godot C:\path\to\Godot_v4.x.x-stable_win64_console
 JavaScript 运行时测试（Node.js）：
 
 ```bash
-node --expose-gc --test tests/webgl/runtime.test.cjs
+node --expose-gc --test tests/web/runtime.test.cjs
 ```
 
-对于 Godot，请以 Debug 模式[构建 Core 和 WebGL](build.md#web-构建)，并将 `.wasm` 文件复制到 `tests/webgl/bin/`。随附的导出预设不使用线程；如需线程构建，请启用 `variant/thread_support`。安装匹配的导出模板，然后运行：
+对于 Godot，请以 Debug 模式[构建 Core 和 Web](build.md#web-构建)，并将 `.wasm` 文件复制到 `tests/web/bin/`。随附的导出预设不使用线程；如需线程构建，请启用 `variant/thread_support`。安装匹配的导出模板，然后运行：
 
 ```bash
-mkdir -p build/webgl-smoke
-godot --headless --path tests/webgl --editor --import
-godot --headless --path tests/webgl --export-debug Web ../../build/webgl-smoke/index.html
-python tests/webgl/serve.py --directory build/webgl-smoke
+mkdir -p build/web-smoke
+godot --headless --path tests/web --editor --import
+godot --headless --path tests/web --export-debug Web ../../build/web-smoke/index.html
+python tests/web/serve.py --directory build/web-smoke
 ```
 
-OK: `globalThis.puertsWebglSmoke.complete === true` and `globalThis.puertsWebglSmoke.failed === 0`
+OK: `globalThis.puertsWebSmoke.complete === true` and `globalThis.puertsWebSmoke.failed === 0`

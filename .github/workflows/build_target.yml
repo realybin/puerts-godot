@@ -160,21 +160,21 @@ jobs:
         run: |
           python3 scripts/run_tests.py --platform "${{ inputs.platform }}" --godot godot --timeout 120
 
-      - name: Run WebGL runtime tests
+      - name: Run Web runtime tests
         if: ${{ inputs.run_tests && inputs.platform == 'web' }}
         shell: bash
-        run: node --expose-gc --test tests/webgl/runtime.test.cjs
+        run: node --expose-gc --test tests/web/runtime.test.cjs
 
-      - name: Stage WebGL extension descriptors
+      - name: Stage Web extension descriptors
         if: ${{ inputs.upload_artifact && inputs.platform == 'web' }}
         shell: bash
         env:
           FLOAT_PRECISION: ${{ inputs.float_precision }}
         run: |
-          if compgen -G "bin/PuertsWebgl.web.*.wasm" >/dev/null; then
-            cp tests/webgl/puerts_core.gdextension tests/webgl/puerts_webgl.gdextension bin/
+          if compgen -G "bin/PuertsWeb.web.*.wasm" >/dev/null; then
+            cp tests/web/puerts_core.gdextension tests/web/puerts_web.gdextension bin/
             if [ "$FLOAT_PRECISION" = "double" ]; then
-              sed -i 's/\.wasm32/.double.wasm32/g' bin/puerts_core.gdextension bin/puerts_webgl.gdextension
+              sed -i 's/\.wasm32/.double.wasm32/g' bin/puerts_core.gdextension bin/puerts_web.gdextension
             fi
           fi
 

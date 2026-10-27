@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-// Link the production WebGL and Core side modules into an Emscripten main
+// Link the production Web and Core side modules into an Emscripten main
 // module. These tests use PESAPI directly and never initialize the Godot engine.
-#include "puerts_webgl_ffi.h"
+#include "puerts_web_ffi.h"
 
 #include <emscripten.h>
 
@@ -22,7 +22,7 @@ pesapi_env_ref smoke_reference = nullptr;
 
 void require(bool p_condition, const char *p_expression, int p_line) {
 	if (!p_condition) {
-		std::fprintf(stderr, "[webgl-ffi] FAIL line=%d assertion=%s\n", p_line, p_expression);
+		std::fprintf(stderr, "[web-ffi] FAIL line=%d assertion=%s\n", p_line, p_expression);
 		std::fflush(stderr);
 		std::exit(1);
 	}
@@ -59,7 +59,7 @@ public:
 };
 
 pesapi_value evaluate(pesapi_ffi *p_ffi, pesapi_env p_env, const char *p_code) {
-	return p_ffi->eval(p_env, reinterpret_cast<const uint8_t *>(p_code), std::strlen(p_code), "webgl-ffi-smoke.js");
+	return p_ffi->eval(p_env, reinterpret_cast<const uint8_t *>(p_code), std::strlen(p_code), "web-ffi-smoke.js");
 }
 
 void validate_api(pesapi_ffi *p_ffi) {
@@ -446,11 +446,11 @@ void test_references(pesapi_ffi *p_ffi, pesapi_env p_env, pesapi_env_ref p_ref, 
 
 } // namespace
 
-extern "C" EMSCRIPTEN_KEEPALIVE int puerts_webgl_ffi_smoke() {
-	CHECK(puerts_webgl_get_api_version() == PESAPI_VERSION);
-	auto *ffi = puerts_webgl_get_ffi();
+extern "C" EMSCRIPTEN_KEEPALIVE int puerts_web_ffi_smoke() {
+	CHECK(puerts_web_get_api_version() == PESAPI_VERSION);
+	auto *ffi = puerts_web_get_ffi();
 	validate_api(ffi);
-	const auto reference = puerts_webgl_create_env_ref();
+	const auto reference = puerts_web_create_env_ref();
 	CHECK(reference != nullptr && ffi->env_ref_is_valid(reference));
 	smoke_ffi = ffi;
 	smoke_reference = reference;
@@ -480,12 +480,12 @@ extern "C" EMSCRIPTEN_KEEPALIVE int puerts_webgl_ffi_smoke() {
 	ffi->set_env_private(env, nullptr);
 	CHECK(ffi->get_env_private(env) == nullptr && ffi->env_ref_is_valid(reference));
 	// The production singleton remains allocated until this page exits.
-	std::puts("[webgl-ffi] PASS");
+	std::puts("[web-ffi] PASS");
 	std::fflush(stdout);
 	return 0;
 }
 
-extern "C" EMSCRIPTEN_KEEPALIVE int puerts_webgl_ffi_memory_growth(uintptr_t p_pointer, uint32_t p_length) {
+extern "C" EMSCRIPTEN_KEEPALIVE int puerts_web_ffi_memory_growth(uintptr_t p_pointer, uint32_t p_length) {
 	CHECK(smoke_ffi != nullptr && smoke_reference != nullptr);
 	CHECK(smoke_ffi->env_ref_is_valid(smoke_reference));
 	Scope scope(smoke_ffi, smoke_reference);
@@ -508,11 +508,11 @@ extern "C" EMSCRIPTEN_KEEPALIVE int puerts_webgl_ffi_memory_growth(uintptr_t p_p
 	const void *bytes = smoke_ffi->get_value_binary(env, binary, &length);
 	CHECK(bytes != nullptr && length == sizeof(expected_binary) && std::memcmp(bytes, expected_binary, length) == 0);
 	CHECK(!smoke_ffi->has_caught(scope.get()));
-	std::puts("[webgl-ffi] MEMORY_GROWTH PASS");
+	std::puts("[web-ffi] MEMORY_GROWTH PASS");
 	std::fflush(stdout);
 	return 0;
 }
 
 int main() {
-	return puerts_webgl_ffi_smoke();
+	return puerts_web_ffi_smoke();
 }

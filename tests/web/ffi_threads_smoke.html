@@ -22,7 +22,7 @@ const message = text => {
       return path.includes("Puerts") ? "../../bin/" + path.split(/[\\/]/).pop() : path;
     }
   });
-  if (!window.ffiResult.messages.includes("[webgl-ffi] PASS")) throw new Error("The production shared-memory FFI smoke did not pass");
+  if (!window.ffiResult.messages.includes("[web-ffi] PASS")) throw new Error("The production shared-memory FFI smoke did not pass");
   const previousBuffer = memory.buffer;
   const previousHeap = module.HEAPU8;
   const workerSource = `onmessage = ({ data: memory }) => {
@@ -46,9 +46,9 @@ const message = text => {
   // exported entry below must refresh its own production bridge views.
   const staleView = previousHeap ? previousHeap.byteLength : previousBuffer.byteLength;
   if (staleView !== payload.pointer) throw new Error("The old heap view unexpectedly changed before the bridge probe");
-  message(`[webgl-ffi] WORKER_GROWTH ${payload.pointer}->${payload.after} stale_view=${staleView}`);
-  const result = module._puerts_webgl_ffi_memory_growth(payload.pointer, payload.length);
-  if (result !== 0 || !window.ffiResult.messages.includes("[webgl-ffi] MEMORY_GROWTH PASS")) throw new Error("Shared memory growth regression failed");
+  message(`[web-ffi] WORKER_GROWTH ${payload.pointer}->${payload.after} stale_view=${staleView}`);
+  const result = module._puerts_web_ffi_memory_growth(payload.pointer, payload.length);
+  if (result !== 0 || !window.ffiResult.messages.includes("[web-ffi] MEMORY_GROWTH PASS")) throw new Error("Shared memory growth regression failed");
   worker.terminate();
   URL.revokeObjectURL(workerUrl);
   window.ffiResult.status = "passed";

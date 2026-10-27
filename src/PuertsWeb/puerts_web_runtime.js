@@ -6,14 +6,14 @@
 	"use strict";
 
 	const environments = new Map();
-	// Match Unity WebGL by using one host realm for the lifetime of the page.
+	// Match Unity Web by using one host realm for the lifetime of the page.
 	// Keep this explicit so accidental recreation cannot reuse native state.
 	let activeEnvironment = null;
 	const encoder = new TextEncoder();
 	let nextId = 1;
 
 	function id() {
-		if (nextId > 0xffffffff) throw new Error("Puerts WebGL handle space exhausted");
+		if (nextId > 0xffffffff) throw new Error("Puerts Web handle space exhausted");
 		return nextId++;
 	}
 
@@ -59,7 +59,7 @@
 
 	function closeScope(env, scope) {
 		if (env.stack[env.stack.length - 1] !== scope) {
-			throw new Error("Puerts WebGL scopes must close in reverse order");
+			throw new Error("Puerts Web scopes must close in reverse order");
 		}
 		env.stack.pop();
 		for (const handle of scope.handles) env.values.delete(handle);
@@ -75,13 +75,13 @@
 	}
 
 	function value(env, handle) {
-		if (!env.values.has(handle)) throw new Error("Invalid or expired Puerts WebGL value handle");
+		if (!env.values.has(handle)) throw new Error("Invalid or expired Puerts Web value handle");
 		return env.values.get(handle);
 	}
 
 	function active(env) {
-		if (env.disposed) throw new Error("Puerts WebGL environment has been disposed");
-		if (env !== activeEnvironment) throw new Error("Puerts WebGL environment was not initialized");
+		if (env.disposed) throw new Error("Puerts Web environment has been disposed");
+		if (env !== activeEnvironment) throw new Error("Puerts Web environment was not initialized");
 	}
 
 	function memory(ptr, size) {
@@ -89,7 +89,7 @@
 		ptr >>>= 0;
 		size >>>= 0;
 		if (ptr > heap.byteLength || size > heap.byteLength - ptr) {
-			throw new RangeError("Puerts WebGL memory access is out of bounds");
+			throw new RangeError("Puerts Web memory access is out of bounds");
 		}
 		return heap.subarray(ptr, ptr + size);
 	}
@@ -288,10 +288,10 @@
 
 	function initialize(env) {
 		if (activeEnvironment) {
-			throw new Error("Puerts WebGL supports one JavaScript environment per page; it cannot be recreated while active");
+			throw new Error("Puerts Web supports one JavaScript environment per page; it cannot be recreated while active");
 		}
 		if (typeof WeakRef !== "function" || typeof FinalizationRegistry !== "function") {
-			throw new Error("Puerts WebGL requires browser support for WeakRef and FinalizationRegistry");
+			throw new Error("Puerts Web requires browser support for WeakRef and FinalizationRegistry");
 		}
 		// globalThis also works in Web Workers.  Emscripten's module and its
 		// browser APIs remain in this same realm, so native objects can be
@@ -301,7 +301,7 @@
 		try {
 			env.evaluate("0");
 		} catch (error) {
-			throw new Error("Puerts WebGL cannot evaluate JavaScript in its browser realm. Check the page Content Security Policy and its unsafe-eval permission. " + String(error));
+			throw new Error("Puerts Web cannot evaluate JavaScript in its browser realm. Check the page Content Security Policy and its unsafe-eval permission. " + String(error));
 		}
 		env.finalizers = new FinalizationRegistry(({ record, generation }) => {
 			// An older wrapper's queued finalizer must not release its replacement.
@@ -314,7 +314,7 @@
 
 	function dispose(env) {
 		if (env === activeEnvironment) {
-			throw new Error("The active Puerts WebGL environment cannot be destroyed; reload the page to restart it");
+			throw new Error("The active Puerts Web environment cannot be destroyed; reload the page to restart it");
 		}
 		if (env.disposed) return 1;
 		env.disposed = true;
@@ -340,7 +340,7 @@
 		let env = environments.get(envId);
 		if (op === "init") {
 			if (env) {
-				rememberError(env, new Error("Puerts WebGL environment cannot be initialized more than once"));
+				rememberError(env, new Error("Puerts Web environment cannot be initialized more than once"));
 				return 0;
 			}
 			env = {
@@ -363,7 +363,7 @@
 				case "open_scope": return openScope(env).id;
 				case "close_scope": {
 					const scope = env.scopes.get(a);
-					if (!scope) throw new Error("Invalid Puerts WebGL scope");
+					if (!scope) throw new Error("Invalid Puerts Web scope");
 					closeScope(env, scope);
 					return 1;
 				}
@@ -454,13 +454,13 @@
 				case "create_value_ref": { const ref = id(); env.refs.set(ref, { value: value(env, a), weak: undefined }); return ref; }
 				case "get_value_from_ref": {
 					const ref = env.refs.get(a);
-					if (!ref) throw new Error("Invalid Puerts WebGL value reference");
+					if (!ref) throw new Error("Invalid Puerts Web value reference");
 					return addValue(env, ref.weak ? ref.weak.deref() : ref.value);
 				}
 				case "release_value_ref": return +env.refs.delete(a);
 				case "set_ref_weak": {
 					const ref = env.refs.get(a);
-					if (!ref) throw new Error("Invalid Puerts WebGL value reference");
+					if (!ref) throw new Error("Invalid Puerts Web value reference");
 					if (!ref.weak && isObject(ref.value)) { ref.weak = new WeakRef(ref.value); ref.value = undefined; }
 					return 1;
 				}
@@ -486,12 +486,12 @@
 					return addValue(env, Reflect.apply(value(env, a), b ? value(env, b) : undefined, args));
 				}
 				case "eval": {
-					const path = c ? api.readUTF8(c).replace(/[\r\n\u2028\u2029]/g, "") : "puerts-webgl.js";
+					const path = c ? api.readUTF8(c).replace(/[\r\n\u2028\u2029]/g, "") : "puerts-web.js";
 					return addValue(env, env.evaluate(api.readUTF8(a, b) + "\n//# sourceURL=" + path));
 				}
 				case "global": return addValue(env, env.realm);
 				case "set_env_private": env.private = a; return 1;
-				default: throw new Error("Unknown Puerts WebGL bridge operation: " + op);
+				default: throw new Error("Unknown Puerts Web bridge operation: " + op);
 			}
 		} catch (error) {
 			rememberError(env, error);
