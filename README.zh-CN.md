@@ -56,6 +56,7 @@ func _exit_tree() -> void:
 - [StringName 缓存](docs/zh-CN/u8-cache.md)
 - [进阶用法](docs/zh-CN/advanced.md)
 - [V8 检查器](docs/zh-CN/v8-inspector.md)
+- [IDE](docs/zh-CN/ide.md)
 - [构建](docs/zh-CN/build.md)
 - [测试](docs/zh-CN/testing.md)
 

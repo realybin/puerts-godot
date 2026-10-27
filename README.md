@@ -58,6 +58,7 @@ Keep the environment alive while using its script values. See [object lifetime](
 - [StringName cache](docs/u8-cache.md)
 - [Advanced usage](docs/advanced.md)
 - [V8 inspector](docs/v8-inspector.md)
+- [IDE](docs/ide.md)
 - [Build](docs/build.md)
 - [Testing](docs/testing.md)
 
