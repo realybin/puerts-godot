@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
+# SPDX-License-Identifier: BSD-3-Clause
+
 extends RefCounted
 class_name PuertsNativeEsmLoader
 
