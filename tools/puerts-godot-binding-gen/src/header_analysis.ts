@@ -54,12 +54,12 @@ function countMethodOverloads(cleanedHeader: string, methodNames: Iterable<strin
 	let match: RegExpExecArray | null = re.exec(cleanedHeader);
 	while (match) {
 		const prefix = (match[2] ?? "").trim();
-		if (!/^(return|if|for|while|switch|else|do)\\b/.test(prefix)) {
+		if (!/^(return|if|for|while|switch|else|do)\b/.test(prefix)) {
 			const methodName = match[3];
 			const argsRaw = match[4] ?? "";
 			const argsNoDefault = argsRaw
-				.replace(/\\s*=\\s*[^,]+/g, "")
-				.replace(/\\s+/g, " ")
+				.replace(/\s*=\s*[^,]+/g, "")
+				.replace(/\s+/g, " ")
 				.trim();
 			const signature = `${match[1] ? "S" : "I"}|${match[5] ? "C" : "N"}|${argsNoDefault}`;
 			counts.get(methodName)?.add(signature);
