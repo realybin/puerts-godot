@@ -78,3 +78,12 @@ repos:
 #     - id: new-local-hook
 # To add external repo hooks, bring the indentation back to:
 # - repo: my-remote-hook
+
+  - repo: local
+    hooks:
+      - id: license-headers
+        name: license-headers
+        language: python
+        entry: python scripts/check_license_headers.py
+        files: \.(c|h|cpp|hpp|cc|hh|inc|gd|ts|js)$
+        types_or: [text]
