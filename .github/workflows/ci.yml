@@ -83,4 +83,5 @@ jobs:
       web_threads: ${{ matrix.web_threads }}
       run_tests: true
       upload_artifact: ${{ matrix.target.platform == 'web' }}
+      restore_cache: true
       save_cache: ${{ github.event_name == 'push' }}

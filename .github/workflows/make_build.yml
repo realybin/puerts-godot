@@ -29,6 +29,8 @@ on:
         options:
           - single
           - double
+      restore_cache: { description: "Restore build cache", type: boolean, required: false, default: false }
+      save_cache: { description: "Save build cache", type: boolean, required: false, default: false }
 
 jobs:
   prepare:
@@ -93,7 +95,8 @@ jobs:
       godot_version: ${{ matrix.godot.godot_version }}
       run_tests: true
       upload_artifact: true
-      save_cache: true
+      restore_cache: ${{ inputs.restore_cache }}
+      save_cache: ${{ inputs.save_cache }}
       artifact_name: puerts-godot-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float_precision }}-${{ matrix.target_type }}-godot-${{ matrix.godot.api_version }}${{ matrix.target.platform == 'web' && format('-{0}', inputs.web_threads && 'threads' || 'nothreads') || '' }}
 
   merge:

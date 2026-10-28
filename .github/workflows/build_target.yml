@@ -50,6 +50,10 @@ on:
         required: false
         type: string
         default: ""
+      restore_cache:
+        required: false
+        type: boolean
+        default: false
       save_cache:
         required: false
         type: boolean
@@ -75,7 +79,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "20"
-          cache: "npm"
+          cache: ${{ inputs.restore_cache && 'npm' || '' }}
           cache-dependency-path: thirdparty/puerts/unity/package-lock.json
 
       - name: Install Android NDK
@@ -115,6 +119,7 @@ jobs:
             "${extra_args[@]}"
 
       - name: Restore .scons_cache
+        if: ${{ inputs.restore_cache }}
         uses: ./godot-cpp/.github/actions/godot-cache-restore
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
