@@ -16,7 +16,7 @@ Files: README.md
  .gitignore
  SConstruct
  methods.py
- patches/*
+ thirdparty/patches/*
  misc/scripts/*
  src/*
  docs/*

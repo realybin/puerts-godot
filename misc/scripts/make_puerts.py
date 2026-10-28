@@ -23,7 +23,7 @@ UNITY_DIR = PUERTS_REPO_DIR / "unity"
 NATIVE_DIR = UNITY_DIR / "native"
 NODE_LIB_DIR = NATIVE_DIR / "papi-nodejs" / ".backends" / "papi-nodejs" / "lib"
 BIN_DIR = REPO_ROOT / "bin"
-PATCHES_DIR = REPO_ROOT / "patches"
+PATCHES_DIR = REPO_ROOT / "thirdparty" / "patches"
 
 BACKEND_ALIASES = {name: entry["native"] for name, entry in BACKENDS.items()}
 CANONICAL_BACKENDS = set(BACKEND_ALIASES.values())
