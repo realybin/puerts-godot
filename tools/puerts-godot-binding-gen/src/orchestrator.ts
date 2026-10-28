@@ -224,7 +224,7 @@ function renderOutput(
 	generatedEnums: GeneratedEnumBinding[],
 	propertyHelpers: string[],
 ): string {
-	const generatedNamespace = `${args.registerFunction}_generated_detail`;
+	const generatedNamespace = "puerts_generated";
 	const inheritedIncludeLines = selectedClasses
 		.map((c) => c.inherits?.trim())
 		.filter((name): name is string => !!name && name.length > 0)
@@ -261,9 +261,9 @@ function renderOutput(
 	const uniqueIncludes = dedupe(includeLines).sort();
 	const enumTagDeclLines = generatedEnums.length > 0
 		? [
-			"namespace puerts_generated_enum_tags {",
+			"namespace puerts_generated {",
 			...generatedEnums.map((e) => `struct ${e.tagStructName} {};`),
-			"} // namespace puerts_generated_enum_tags",
+			"} // namespace puerts_generated",
 			"",
 		]
 		: [];
@@ -334,7 +334,7 @@ export function generateBindings(args: CliArgs): void {
 		throw new Error("No classes selected for generation.");
 	}
 
-	const helperNamespace = `${args.registerFunction}_generated_detail`;
+	const helperNamespace = "puerts_generated";
 	const customRules = loadPropertyRules(propertyRulesPath);
 	const customRulesByClass = groupByClassName(customRules);
 	const { generated, generatedEnums, propertyHelpers, missingPropertyNotes } = buildGeneratedArtifacts(

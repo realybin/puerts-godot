@@ -48,6 +48,7 @@ counter.value = 5.0;
 | Instance method     | `method("name", make_method<&T::method>())`                          |
 | Static function     | `static_method("name", make_function<&function>())`                  |
 | Property            | `property("name", make_property<&T::member>())`                      |
+| Finalizer           | `finalizer(&fn)` / `no_finalize()`                                   |
 
 Use an explicit member-pointer cast for overloaded methods. `combine_overloads()` combines method signatures.
 
@@ -55,6 +56,6 @@ Use an explicit member-pointer cast for overloaded methods. `combine_overloads()
 
 Register the base first, then use `.extends<Base>()` on the derived type. Each type needs its own `PUERTS_SCRIPT_TYPE` and constructor. The registry models one simple base relationship; multiple or virtual inheritance is not adjusted.
 
-Plain C++ values use the generated finalizer and are deleted when their script wrapper is collected or the environment is disposed. Godot `Object` subclasses follow the bridge ownership rules in [Object Allocation and Lifetime](lifetime.md). Plain C++ types do not gain a Godot `Variant` representation automatically.
+Plain C++ values use the generated finalizer and are deleted when their script wrapper is collected or the environment is disposed. Use `.finalizer(&fn)` to replace it, or `.no_finalize()` when the instance is owned elsewhere. Never set a finalizer on a Godot `Object` subclass. Godot `Object` subclasses follow the bridge ownership rules in [Object Allocation and Lifetime](lifetime.md). Plain C++ types do not gain a Godot `Variant` representation automatically.
 
 The builder and macro are declared in [puerts_static_binding.h](../src/PuertsCore/puerts_static_binding.h). Generated bindings are registered by [puerts_builtin_binding.cpp](../src/PuertsCore/puerts_builtin_binding.cpp).

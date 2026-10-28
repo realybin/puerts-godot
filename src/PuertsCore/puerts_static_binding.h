@@ -57,15 +57,21 @@ public:
 
 	TypeBuilder &constructor(const ConstructorSpec &p_binding) {
 		definition_.constructor = p_binding.constructor;
-		if (p_binding.finalize != nullptr) {
-			definition_.finalize = p_binding.finalize;
-		}
 		return *this;
 	}
 
 	template <typename... Args>
 	TypeBuilder &constructor() {
 		return constructor(make_constructor<T, Args...>());
+	}
+
+	TypeBuilder &finalizer(pesapi_finalize p_finalize) {
+		definition_.finalize = p_finalize;
+		return *this;
+	}
+
+	TypeBuilder &no_finalize() {
+		return finalizer(nullptr);
 	}
 
 	TypeBuilder &static_method(const char *p_name, const MethodSpec &p_binding) {
@@ -119,7 +125,7 @@ TypeBuilder<T> define_type() {
 
 template <typename T, typename... Args>
 ConstructorSpec make_constructor() {
-	return ConstructorSpec{ &internal::ConstructorCallback<T, Args...>::callback, internal::finalizer<T>::get() };
+	return ConstructorSpec{ &internal::ConstructorCallback<T, Args...>::callback };
 }
 
 template <auto Function>
@@ -137,23 +143,19 @@ MethodSpec make_extension_method() {
 	return MethodSpec{ &internal::ExtensionMethodCallback<Method>::callback, nullptr };
 }
 
-template <typename C, typename R, const char *MethodName, int MinArity = 0, bool WriteBack = true, uint32_t MethodHash = 0>
+template <typename C, typename R, const char *MethodName, int MinArity = 0, bool WriteBack = true>
 MethodSpec make_vararg_method() {
-	return MethodSpec{ &internal::VarargMethodCallback<C, R, MethodName, MinArity, WriteBack, MethodHash>::callback, nullptr };
+	return MethodSpec{ &internal::VarargMethodCallback<C, R, MethodName, MinArity, WriteBack>::callback, nullptr };
 }
 
-template <auto Function>
-OverloadSpec<internal::FunctionCallback<Function>> make_overload() {
+// Extension methods name their receiver explicitly, so they need their own factory.
+template <auto Method>
+OverloadSpec<internal::ExtensionMethodCallback<Method>> make_extension_overload() {
 	return {};
 }
 
 template <auto Method>
-OverloadSpec<internal::MemberMethodCallback<Method>> make_method_overload() {
-	return {};
-}
-
-template <auto Method>
-OverloadSpec<internal::ExtensionMethodCallback<Method>> make_extension_method_overload() {
+OverloadSpec<typename internal::OverloadEntry<Method>::type> make_overload() {
 	return {};
 }
 
@@ -164,18 +166,13 @@ ConstructorOverloadSpec<internal::ConstructorCallback<T, Args...>> make_construc
 
 template <typename... Overloads>
 MethodSpec combine_overloads(OverloadSpec<Overloads>...) {
-	return MethodSpec{ &internal::OverloadCallback<true, Overloads...>::callback, nullptr };
-}
-
-template <typename... Overloads>
-MethodSpec combine_default_overloads(OverloadSpec<Overloads>...) {
-	return MethodSpec{ &internal::OverloadCallback<false, Overloads...>::callback, nullptr };
+	return MethodSpec{ &internal::OverloadCallback<Overloads...>::callback, nullptr };
 }
 
 template <typename... Overloads>
 ConstructorSpec combine_constructors(ConstructorOverloadSpec<Overloads>...) {
-	using first_overload = eastl::tuple_element_t<0, eastl::tuple<Overloads...>>;
-	return ConstructorSpec{ &internal::ConstructorOverloadCallback<Overloads...>::callback, internal::finalizer<typename first_overload::target_type>::get() };
+	static_assert(sizeof...(Overloads) > 0, "combine_constructors requires at least one overload.");
+	return ConstructorSpec{ &internal::ConstructorOverloadCallback<Overloads...>::callback };
 }
 
 template <auto Member>
@@ -184,18 +181,18 @@ PropertySpec make_property() {
 }
 
 template <auto ConstantValue>
-PropertySpec make_enum_constant() {
+PropertySpec make_constant() {
 	return PropertySpec{ &internal::EnumConstantGetter<ConstantValue>::getter, nullptr, nullptr, nullptr };
 }
 
 template <auto Getter>
-PropertySpec make_value_constant() {
+PropertySpec make_constant_getter() {
 	return PropertySpec{ &internal::FunctionCallback<Getter>::callback, nullptr, nullptr, nullptr };
 }
 
 template <typename EnumTag>
-PropertySpec make_enum_group() {
-	return PropertySpec{ &internal::EnumGroupGetter<EnumTag>::getter, nullptr, nullptr, nullptr };
+PropertySpec make_enum_type() {
+	return PropertySpec{ &internal::EnumTypeGetter<EnumTag>::getter, nullptr, nullptr, nullptr };
 }
 
 template <typename C, const char *SignalName>

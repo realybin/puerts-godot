@@ -48,6 +48,7 @@ counter.value = 5.0;
 | 实例方法     | `method("name", make_method<&T::method>())`                          |
 | 静态函数     | `static_method("name", make_function<&function>())`                  |
 | 属性         | `property("name", make_property<&T::member>())`                      |
+| 终结器       | `finalizer(&fn)` / `no_finalize()`                                   |
 
 重载方法请使用显式的成员指针转换。`combine_overloads()` 用于组合方法签名。
 
@@ -55,6 +56,6 @@ counter.value = 5.0;
 
 先注册基类，再在派生类型上使用 `.extends<Base>()`。每个类型都需要自己的 `PUERTS_SCRIPT_TYPE` 和构造函数。注册表只建模一层简单的基类关系；多重继承或虚继承不会被调整。
 
-普通 C++ 值使用生成的终结器，在其脚本包装器被回收或环境被释放时删除。Godot `Object` 的子类遵循[对象分配与生命周期](lifetime.md)中的桥接所有权规则。普通 C++ 类型不会自动获得 Godot `Variant` 表示。
+普通 C++ 值使用生成的终结器，在其脚本包装器被回收或环境被释放时删除。可用 `.finalizer(&fn)` 替换它，或在实例由其他方持有时用 `.no_finalize()`。不要给 Godot `Object` 的子类设置终结器。Godot `Object` 的子类遵循[对象分配与生命周期](lifetime.md)中的桥接所有权规则。普通 C++ 类型不会自动获得 Godot `Variant` 表示。
 
 构建器和宏声明于 [puerts_static_binding.h](../../src/PuertsCore/puerts_static_binding.h)。生成的绑定由 [puerts_builtin_binding.cpp](../../src/PuertsCore/puerts_builtin_binding.cpp) 注册。

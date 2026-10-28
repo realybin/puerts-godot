@@ -26,21 +26,21 @@ function utilityCppMethodName(name: string): string {
 }
 
 function utilityCallbackName(name: string): string {
-	return `puerts_global_scope_utility_${sanitizeIdentifier(toSnakeCase(name))}_generated`;
+	return `global_scope_utility_${sanitizeIdentifier(toSnakeCase(name))}`;
 }
 
 function singletonSymbolName(name: string): string {
-	return `puerts_global_scope_singleton_name_${sanitizeIdentifier(toSnakeCase(name))}_generated`;
+	return `global_scope_singleton_${sanitizeIdentifier(toSnakeCase(name))}`;
 }
 
 function buildGlobalEnumBinding(enumDef: ApiEnum): GlobalEnumBinding {
 	const nameKey = sanitizeIdentifier(toSnakeCase(enumDef.name.replaceAll(".", "_")));
 	const propertyName = enumDef.name.includes(".") ? enumDef.name.split(".").at(-1)! : enumDef.name;
-	const tagStructName = `puerts_global_scope_${nameKey}_enum_tag_generated`;
-	const tagType = `puerts_generated_global_scope_types::${tagStructName}`;
-	const registerFunctionName = `register_${nameKey}_global_scope_enum_generated`;
+	const tagStructName = `global_scope_${nameKey}_enum_tag`;
+	const tagType = `puerts_generated::${tagStructName}`;
+	const registerFunctionName = `register_enum_global_scope_${nameKey}`;
 	const staticPropertyLines = (enumDef.values ?? [])
-		.map((value) => `\t\t\t.static_property("${value.name}", puerts::make_enum_constant<${Math.trunc(value.value)}>())`)
+		.map((value) => `\t\t\t.static_property("${value.name}", puerts::make_constant<${Math.trunc(value.value)}>())`)
 		.join("\n");
 
 	return {
@@ -142,7 +142,7 @@ function buildUtilityBinding(fn: ApiMethod): { bindingLine: string; helperCode?:
 	}
 
 	return {
-		bindingLine: `\t\t\t.static_method("${fn.name}", ${utilityCallbackName(fn.name)})`,
+		bindingLine: `\t\t\t.static_method("${fn.name}", &puerts_generated::${utilityCallbackName(fn.name)})`,
 		helperCode: fn.name === "is_instance_valid" ? buildSpecialUtilityHelper(fn) : buildVarargUtilityHelper(fn),
 	};
 }
@@ -204,27 +204,30 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	lines.push("#include <godot_cpp/variant/string_name.hpp>");
 	lines.push("#include <godot_cpp/variant/utility_functions.hpp>");
 	lines.push("");
-	lines.push("namespace puerts_generated_global_scope_types {");
+	lines.push("namespace puerts_generated {");
 	lines.push("struct GlobalScope {};");
 	lines.push("struct GlobalScopeVariant {};");
 	for (const binding of globalEnums) {
 		lines.push(`struct ${binding.tagStructName} {};`);
 	}
-	lines.push("} // namespace puerts_generated_global_scope_types");
+	lines.push("} // namespace puerts_generated");
 	lines.push("");
-	for (const singleton of singletonNames) {
-		lines.push(`inline constexpr char ${singletonSymbolName(singleton.name)}[] = "${singleton.name}";`);
-	}
 	if (singletonNames.length > 0) {
+		lines.push("namespace puerts_generated {");
+		for (const singleton of singletonNames) {
+			lines.push(`inline constexpr char ${singletonSymbolName(singleton.name)}[] = "${singleton.name}";`);
+		}
+		lines.push("} // namespace puerts_generated");
 		lines.push("");
 	}
-	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated_global_scope_types::GlobalScope, "GlobalScope")');
-	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated_global_scope_types::GlobalScopeVariant, "GlobalScope.Variant")');
+	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScope, "GlobalScope")');
+	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScopeVariant, "GlobalScope.Variant")');
 	for (const binding of globalEnums) {
 		lines.push(binding.scriptTypeLine);
 	}
 	lines.push("");
-	lines.push("inline void puerts_global_scope_singleton_getter_generated(pesapi_ffi *apis, pesapi_callback_info info) {");
+	lines.push("namespace puerts_generated {");
+	lines.push("inline void global_scope_singleton_getter(pesapi_ffi *apis, pesapi_callback_info info) {");
 	lines.push("\tconst char *singleton_name = static_cast<const char *>(apis->get_userdata(info));");
 	lines.push("\tif (singleton_name == nullptr) {");
 	lines.push('\t\tapis->throw_by_string(info, "Singleton metadata is missing.");');
@@ -257,15 +260,16 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 			lines.push(binding.helperCode);
 		}
 	}
+	lines.push("} // namespace puerts_generated");
 	lines.push("");
 	for (const binding of globalEnums) {
 		lines.push(binding.code.trimEnd());
 		lines.push("");
 	}
-	lines.push("inline void register_global_scope_variant_generated() {");
-	lines.push("\tpuerts::define_type<puerts_generated_global_scope_types::GlobalScopeVariant>()");
-	lines.push(`\t\t\t.static_property("Type", puerts::make_enum_group<${variantType.tagType}>())`);
-	lines.push(`\t\t\t.static_property("Operator", puerts::make_enum_group<${variantOperator.tagType}>())`);
+	lines.push("inline void register_type_global_scope_variant() {");
+	lines.push("\tpuerts::define_type<puerts_generated::GlobalScopeVariant>()");
+	lines.push(`\t\t\t.static_property("Type", puerts::make_enum_type<${variantType.tagType}>())`);
+	lines.push(`\t\t\t.static_property("Operator", puerts::make_enum_type<${variantOperator.tagType}>())`);
 	lines.push("\t\t\t.register_type();");
 	lines.push("}");
 	lines.push("");
@@ -273,20 +277,20 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	for (const binding of globalEnums) {
 		lines.push(`\t${binding.registerFunctionName}();`);
 	}
-	lines.push("\tregister_global_scope_variant_generated();");
-	lines.push("\tpuerts::define_type<puerts_generated_global_scope_types::GlobalScope>()");
+	lines.push("\tregister_type_global_scope_variant();");
+	lines.push("\tpuerts::define_type<puerts_generated::GlobalScope>()");
 	for (const binding of utilityBindings) {
 		lines.push(binding.bindingLine);
 	}
 	for (const singleton of singletonNames) {
 		lines.push(
-			`\t\t\t.static_property("${singleton.name}", &puerts_global_scope_singleton_getter_generated, nullptr, (void *)${singletonSymbolName(singleton.name)})`,
+			`\t\t\t.static_property("${singleton.name}", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::${singletonSymbolName(singleton.name)})`,
 		);
 	}
 	for (const binding of topLevelEnumBindings) {
-		lines.push(`\t\t\t.static_property("${binding.propertyName}", puerts::make_enum_group<${binding.tagType}>())`);
+		lines.push(`\t\t\t.static_property("${binding.propertyName}", puerts::make_enum_type<${binding.tagType}>())`);
 	}
-	lines.push('\t\t\t.static_property("Variant", puerts::make_enum_group<puerts_generated_global_scope_types::GlobalScopeVariant>())');
+	lines.push('\t\t\t.static_property("Variant", puerts::make_enum_type<puerts_generated::GlobalScopeVariant>())');
 	lines.push("\t\t\t.register_type();");
 	lines.push("}");
 	lines.push("");

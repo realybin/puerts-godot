@@ -39,8 +39,8 @@ function buildPropertySetterStatement(rule: PropertyRule): string {
 function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; setterName: string; code: string } {
 	const typeName = mapPropertyValueType(rule.type);
 	const base = makePropertyHelperBaseName(rule.class, rule.name);
-	const getterName = `${base}_getter_generated`;
-	const setterName = `${base}_setter_generated`;
+	const getterName = `${base}_getter`;
+	const setterName = `${base}_setter`;
 	const getterExpr = buildPropertyGetterExpr(rule);
 	const setterStmt = buildPropertySetterStatement(rule);
 
@@ -56,7 +56,7 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\tpuerts::internal::write_return_value<${typeName}>(apis, info, context.script_env(), context.puerts_environment(), ${getterExpr});`,
+		`\tpuerts::internal::write_return_value<${typeName}>(apis, context, ${getterExpr});`,
 		"}",
 		"",
 		`inline void ${setterName}(pesapi_ffi *apis, pesapi_callback_info info) {`,
@@ -70,7 +70,7 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 		"\t\treturn;",
 		"\t}",
 		"",
-		`\tif (!puerts::internal::convert_script_argument<false, ${typeName}>(apis, info, context, 0, [&](auto &&value) {`,
+		`\tif (!puerts::internal::convert_script_argument<${typeName}>(apis, context, 0, [&](auto &&value) {`,
 		`\t\t\t${setterStmt}`,
 		"\t\t})) {",
 		"\t\treturn;",

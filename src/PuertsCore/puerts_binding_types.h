@@ -73,7 +73,6 @@ struct PropertySpec {
 
 struct ConstructorSpec {
 	pesapi_constructor constructor = nullptr;
-	pesapi_finalize finalize = nullptr;
 };
 
 } // namespace puerts

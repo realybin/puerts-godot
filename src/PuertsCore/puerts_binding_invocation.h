@@ -15,10 +15,9 @@
 
 namespace puerts::internal {
 
-template <bool Probe, size_t I, typename Arguments, typename Consumer, typename... Converted>
+template <size_t I, typename Arguments, typename Consumer, typename... Converted>
 bool convert_arguments_at(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
 		CallbackContext &frame,
 		Consumer &p_consumer,
 		Converted &&...p_converted) {
@@ -28,10 +27,9 @@ bool convert_arguments_at(
 	} else {
 		using arg_type = typename eastl::tuple_element<I, Arguments>::type;
 		bool converted = false;
-		if (!convert_script_argument<Probe, arg_type>(apis, info, frame, static_cast<int>(I), [&](auto &&p_value) {
-				converted = convert_arguments_at<Probe, I + 1, Arguments>(
+		if (!convert_script_argument<arg_type>(apis, frame, static_cast<int>(I), [&](auto &&p_value) {
+				converted = convert_arguments_at<I + 1, Arguments>(
 						apis,
-						info,
 						frame,
 						p_consumer,
 						eastl::forward<Converted>(p_converted)...,
@@ -43,35 +41,28 @@ bool convert_arguments_at(
 	}
 }
 
-template <bool Probe, typename... Args, typename Consumer>
+template <typename... Args, typename Consumer>
 bool convert_script_arguments(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
 		CallbackContext &frame,
 		Consumer &&p_consumer) {
 	using arguments = eastl::tuple<Args...>;
-	return convert_arguments_at<Probe, 0, arguments>(apis, info, frame, p_consumer);
+	return convert_arguments_at<0, arguments>(apis, frame, p_consumer);
 }
 
 template <typename R, typename Callable>
 void invoke_and_return_value(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
 		CallbackContext &frame,
 		Callable &&callable) {
 	if constexpr (eastl::is_void_v<R>) {
 		(void)eastl::forward<Callable>(callable)();
 	} else {
-		write_return_value<R>(
-				apis,
-				info,
-				frame.script_env(),
-				frame.puerts_environment(),
-				eastl::forward<Callable>(callable)());
+		write_return_value<R>(apis, frame, eastl::forward<Callable>(callable)());
 	}
 }
 
-template <typename C, bool Probe, bool WriteBack, typename... Args, typename InvokeFn>
+template <typename C, bool WriteBack, typename... Args, typename InvokeFn>
 bool invoke_receiver(
 		pesapi_ffi *apis,
 		pesapi_callback_info info,
@@ -79,13 +70,10 @@ bool invoke_receiver(
 		InvokeFn &&p_invoke) {
 	BoundReceiver<C> instance = resolve_receiver<C>(apis, info, frame);
 	if (!instance.is_valid()) {
-		if constexpr (Probe) {
-			return true;
-		}
-		return false;
+		return !frame.report_errors();
 	}
 
-	if (!convert_script_arguments<Probe, Args...>(apis, info, frame, [&](auto &&...p_args) {
+	if (!convert_script_arguments<Args...>(apis, frame, [&](auto &&...p_args) {
 			p_invoke(instance.get(), eastl::forward<decltype(p_args)>(p_args)...);
 		})) {
 		return false;
@@ -98,24 +86,23 @@ bool invoke_receiver(
 }
 
 template <typename Binding>
-struct CheckedMethodCallback {
+struct MethodEntryCallback {
 	static void callback(pesapi_ffi *apis, pesapi_callback_info info) {
 		CallbackContext frame(apis, info);
 		if (!frame.require() || !frame.require_argument_count(Binding::kArity)) {
 			return;
 		}
-		(void)Binding::template invoke<false>(apis, info, frame);
+		(void)Binding::invoke(apis, info, frame);
 	}
 };
 
 template <auto Callable, typename C, typename R, bool WriteBack, typename... Args>
-struct InstanceMethodCallback : CheckedMethodCallback<InstanceMethodCallback<Callable, C, R, WriteBack, Args...>> {
+struct ReceiverCallback : MethodEntryCallback<ReceiverCallback<Callable, C, R, WriteBack, Args...>> {
 	static constexpr int kArity = static_cast<int>(sizeof...(Args));
 
-	template <bool Probe>
 	static bool invoke(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
-		return invoke_receiver<C, Probe, WriteBack, Args...>(apis, info, frame, [&](C *instance, auto &&...p_args) {
-			invoke_and_return_value<R>(apis, info, frame, [&]() -> decltype(auto) {
+		return invoke_receiver<C, WriteBack, Args...>(apis, info, frame, [&](C *instance, auto &&...p_args) {
+			invoke_and_return_value<R>(apis, frame, [&]() -> decltype(auto) {
 				if constexpr (eastl::is_member_function_pointer_v<decltype(Callable)>) {
 					return (instance->*Callable)(eastl::forward<decltype(p_args)>(p_args)...);
 				} else {
@@ -130,13 +117,13 @@ template <auto Function>
 struct FunctionCallback;
 
 template <typename R, typename... Args, R (*Function)(Args...)>
-struct FunctionCallback<Function> : CheckedMethodCallback<FunctionCallback<Function>> {
+struct FunctionCallback<Function> : MethodEntryCallback<FunctionCallback<Function>> {
 	static constexpr int kArity = static_cast<int>(sizeof...(Args));
 
-	template <bool Probe>
 	static bool invoke(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
-		return convert_script_arguments<Probe, Args...>(apis, info, frame, [&](auto &&...p_args) {
-			invoke_and_return_value<R>(apis, info, frame, [&]() -> decltype(auto) {
+		(void)info;
+		return convert_script_arguments<Args...>(apis, frame, [&](auto &&...p_args) {
+			invoke_and_return_value<R>(apis, frame, [&]() -> decltype(auto) {
 				return Function(eastl::forward<decltype(p_args)>(p_args)...);
 			});
 		});
@@ -147,28 +134,42 @@ template <auto Method>
 struct MemberMethodCallback;
 
 template <typename C, typename R, typename... Args, R (C::*Method)(Args...)>
-struct MemberMethodCallback<Method> : InstanceMethodCallback<Method, C, R, true, Args...> {};
+struct MemberMethodCallback<Method> : ReceiverCallback<Method, C, R, true, Args...> {};
 
 template <auto Method, typename Enable = void>
 struct ExtensionMethodCallback;
 
 template <typename C, typename R, typename... Args, R (*Method)(C &, Args...)>
-struct ExtensionMethodCallback<Method, eastl::enable_if_t<!eastl::is_const_v<C>>> : InstanceMethodCallback<Method, C, R, true, Args...> {};
+struct ExtensionMethodCallback<Method, eastl::enable_if_t<!eastl::is_const_v<C>>> : ReceiverCallback<Method, C, R, true, Args...> {};
 
 template <typename C, typename R, typename... Args, R (*Method)(const C &, Args...)>
-struct ExtensionMethodCallback<Method, void> : InstanceMethodCallback<Method, C, R, false, Args...> {};
+struct ExtensionMethodCallback<Method, void> : ReceiverCallback<Method, C, R, false, Args...> {};
 
 template <typename C, typename R, typename... Args, R (C::*Method)(Args...) const>
-struct MemberMethodCallback<Method> : InstanceMethodCallback<Method, C, R, false, Args...> {};
+struct MemberMethodCallback<Method> : ReceiverCallback<Method, C, R, false, Args...> {};
+
+template <auto Callable>
+struct OverloadEntry {
+	using type = FunctionCallback<Callable>;
+};
+
+template <typename C, typename R, typename... Args, R (C::*Method)(Args...)>
+struct OverloadEntry<Method> {
+	using type = MemberMethodCallback<Method>;
+};
+
+template <typename C, typename R, typename... Args, R (C::*Method)(Args...) const>
+struct OverloadEntry<Method> {
+	using type = MemberMethodCallback<Method>;
+};
 
 template <typename T, typename... Args>
 struct ConstructorCallback {
 	using target_type = T;
 	static constexpr int kArity = static_cast<int>(sizeof...(Args));
 
-	template <bool Probe>
-	static bool invoke(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame, void *&r_instance) {
-		return convert_script_arguments<Probe, Args...>(apis, info, frame, [&](auto &&...p_args) {
+	static bool invoke(pesapi_ffi *apis, CallbackContext &frame, void *&r_instance) {
+		return convert_script_arguments<Args...>(apis, frame, [&](auto &&...p_args) {
 			r_instance = construct(frame, eastl::forward<decltype(p_args)>(p_args)...);
 		});
 	}
@@ -179,7 +180,7 @@ struct ConstructorCallback {
 			return nullptr;
 		}
 		void *instance = nullptr;
-		(void)invoke<false>(apis, info, frame, instance);
+		(void)invoke(apis, frame, instance);
 		return instance;
 	}
 
@@ -219,7 +220,7 @@ private:
 	}
 };
 
-template <typename C, typename R, const char *MethodName, int MinArity, bool WriteBack, uint32_t MethodHash>
+template <typename C, typename R, const char *MethodName, int MinArity, bool WriteBack>
 struct VarargMethodCallback {
 	static void callback(pesapi_ffi *apis, pesapi_callback_info info) {
 		CallbackContext frame(apis, info);
@@ -234,7 +235,7 @@ struct VarargMethodCallback {
 
 		CallArguments arguments;
 		if (!frame.require_minimum_argument_count(MinArity) ||
-				!convert_call_arguments<false>(apis, info, frame, arguments)) {
+				!convert_call_arguments(apis, frame, arguments)) {
 			return;
 		}
 
@@ -242,25 +243,12 @@ struct VarargMethodCallback {
 		godot::Variant result;
 		GDExtensionCallError call_error{ GDEXTENSION_CALL_OK, 0, 0 };
 		godot::Variant instance_variant;
-		if constexpr (eastl::is_base_of_v<godot::Object, C> && MethodHash != 0) {
-			static const GDExtensionMethodBindPtr method_bind = godot::gdextension_interface::classdb_get_method_bind(
-					C::get_class_static()._native_ptr(), method_name._native_ptr(), MethodHash);
-			if (method_bind == nullptr) {
-				call_error.error = GDEXTENSION_CALL_ERROR_INVALID_METHOD;
-			} else {
-				godot::gdextension_interface::object_method_bind_call(
-						method_bind, instance.get()->_owner,
-						reinterpret_cast<const GDExtensionConstVariantPtr *>(arguments.pointers.data()),
-						arguments.pointers.size(), result._native_ptr(), &call_error);
-			}
+		if constexpr (eastl::is_base_of_v<godot::Object, C>) {
+			instance_variant = godot::Variant(static_cast<godot::Object *>(instance.get()));
 		} else {
-			if constexpr (eastl::is_base_of_v<godot::Object, C>) {
-				instance_variant = godot::Variant(static_cast<godot::Object *>(instance.get()));
-			} else {
-				instance_variant = godot::Variant(*instance.get());
-			}
-			instance_variant.callp(method_name, arguments.pointers.empty() ? nullptr : arguments.pointers.data(), static_cast<int>(arguments.pointers.size()), result, call_error);
+			instance_variant = godot::Variant(*instance.get());
 		}
+		instance_variant.callp(method_name, arguments.pointers.empty() ? nullptr : arguments.pointers.data(), static_cast<int>(arguments.pointers.size()), result, call_error);
 
 		if (call_error.error != GDEXTENSION_CALL_OK) {
 			const godot::String target_name = godot::String(script_type_name<C>::value()) + "." + godot::String(method_name);
@@ -272,9 +260,9 @@ struct VarargMethodCallback {
 
 		if constexpr (!eastl::is_void_v<R>) {
 			if constexpr (eastl::is_same_v<unqualified_t<R>, godot::Variant>) {
-				write_return_value<R>(apis, info, frame.script_env(), frame.puerts_environment(), result);
+				write_return_value<R>(apis, frame, result);
 			} else {
-				write_return_value<R>(apis, info, frame.script_env(), frame.puerts_environment(), godot::VariantCaster<R>::cast(result));
+				write_return_value<R>(apis, frame, godot::VariantCaster<R>::cast(result));
 			}
 		}
 
@@ -301,7 +289,7 @@ struct MemberPropertyCallbacks<Member> {
 			return;
 		}
 
-		write_return_value<V>(apis, info, frame.script_env(), frame.puerts_environment(), instance.get()->*Member);
+		write_return_value<V>(apis, frame, instance.get()->*Member);
 	}
 
 	static void setter(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -315,7 +303,7 @@ struct MemberPropertyCallbacks<Member> {
 			return;
 		}
 
-		if (!convert_script_argument<false, V>(apis, info, frame, 0, [&](auto &&p_value) {
+		if (!convert_script_argument<V>(apis, frame, 0, [&](auto &&p_value) {
 				instance.get()->*Member = eastl::forward<decltype(p_value)>(p_value);
 			})) {
 			return;
@@ -342,7 +330,7 @@ struct EnumConstantGetter {
 };
 
 template <typename EnumTag>
-struct EnumGroupGetter {
+struct EnumTypeGetter {
 	static void getter(pesapi_ffi *apis, pesapi_callback_info info) {
 		PuertsTypeRegistry &registry = PuertsTypeRegistry::get_singleton();
 		const void *enum_type_id = static_type_id<EnumTag>::get();
@@ -390,19 +378,11 @@ struct SignalGetter {
 	}
 };
 
-template <bool Probe, typename... Overloads>
+template <typename... Overloads>
 struct OverloadCallback {
 	template <typename Overload>
-	static bool invoke_matching_arity(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
-		if (frame.argument_count() != Overload::kArity) {
-			return false;
-		}
-		if constexpr (Probe) {
-			return Overload::template invoke<true>(apis, info, frame);
-		} else {
-			(void)Overload::template invoke<false>(apis, info, frame);
-			return true;
-		}
+	static bool try_invoke(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
+		return frame.argument_count() == Overload::kArity && Overload::invoke(apis, info, frame);
 	}
 
 	static void callback(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -410,9 +390,16 @@ struct OverloadCallback {
 		if (!frame.require()) {
 			return;
 		}
-		if (!(invoke_matching_arity<Overloads>(apis, info, frame) || ...)) {
-			apis->throw_by_string(info, Probe ? "No overload matches the provided arguments." : "Argument count does not match the bound signature.");
+		frame.set_report_errors(false);
+		if (((frame.argument_count() == Overloads::kArity) || ...)) {
+			if ((try_invoke<Overloads>(apis, info, frame) || ...)) {
+				return;
+			}
+			const char *reason = frame.last_rejection();
+			apis->throw_by_string(info, reason != nullptr ? reason : "No overload matches the provided arguments.");
+			return;
 		}
+		apis->throw_by_string(info, "Argument count does not match the bound signature.");
 	}
 };
 
@@ -420,7 +407,7 @@ template <typename... Overloads>
 struct ConstructorOverloadCallback {
 	template <typename Overload>
 	static bool try_construct(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame, void *&r_instance) {
-		return frame.argument_count() == Overload::kArity && Overload::template invoke<true>(apis, info, frame, r_instance);
+		return frame.argument_count() == Overload::kArity && Overload::invoke(apis, frame, r_instance);
 	}
 
 	static void *callback(pesapi_ffi *apis, pesapi_callback_info info) {
@@ -428,6 +415,7 @@ struct ConstructorOverloadCallback {
 		if (!frame.require()) {
 			return nullptr;
 		}
+		frame.set_report_errors(false);
 		void *instance = nullptr;
 		if ((try_construct<Overloads>(apis, info, frame, instance) || ...)) {
 			return instance;

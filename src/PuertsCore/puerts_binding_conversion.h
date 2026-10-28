@@ -125,7 +125,6 @@ void consume_typed_argument(Consumer &p_consumer, Value &&p_value) {
 template <typename T, typename Consumer>
 bool convert_variant_argument(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
 		CallbackContext &frame,
 		int p_index,
 		Consumer &&p_consumer) {
@@ -159,7 +158,7 @@ bool convert_variant_argument(
 		native_argument = &frame.native_argument(p_index);
 		if (native_argument->native_handle == nullptr) {
 			if (apis->is_object(env, value)) {
-				return frame.reject(info, "Argument type does not match the bound signature.");
+				return frame.reject("Argument type does not match the bound signature.");
 			}
 		} else if (native_argument->native_type_id == static_type_id<value_type>::get() &&
 				!PuertsBridgeRegistry::is_handle(native_argument->native_handle)) {
@@ -171,7 +170,7 @@ bool convert_variant_argument(
 	const godot::Variant &variant = load_variant_argument(frame, p_index, native_argument);
 	if constexpr (variant_type_v<T> != GDEXTENSION_VARIANT_TYPE_NIL) {
 		if (!can_cast_variant<T>(variant)) {
-			return frame.reject(info, "Argument type does not match the bound signature.");
+			return frame.reject("Argument type does not match the bound signature.");
 		}
 	}
 	consume_typed_argument<T>(p_consumer, godot::VariantCaster<T>::cast(variant));
@@ -181,10 +180,9 @@ bool convert_variant_argument(
 template <typename Target>
 Target *resolve_native_pointer(
 		CallbackContext &p_frame,
-		CallbackContext::Argument &p_argument,
-		pesapi_callback_info info = nullptr) {
+		CallbackContext::Argument &p_argument) {
 	if (p_argument.native_handle == nullptr || PuertsBridgeRegistry::is_handle(p_argument.native_handle)) {
-		(void)p_frame.reject(info, "Native object is no longer valid.");
+		(void)p_frame.reject("Native object is no longer valid.");
 		return nullptr;
 	}
 	const void *type_id = p_argument.native_type_id;
@@ -192,7 +190,7 @@ Target *resolve_native_pointer(
 		return static_cast<Target *>(p_argument.native_handle);
 	}
 	if (!PuertsTypeRegistry::get_singleton().is_assignable(type_id, static_type_id<Target>::get())) {
-		(void)p_frame.reject(info, "Native object type does not match the bound signature.");
+		(void)p_frame.reject("Native object type does not match the bound signature.");
 		return nullptr;
 	}
 
@@ -201,10 +199,8 @@ Target *resolve_native_pointer(
 
 template <typename T, typename Consumer>
 bool convert_native_argument(
-		pesapi_ffi *apis,
 		CallbackContext &p_frame,
 		int p_index,
-		pesapi_callback_info info,
 		Consumer &&p_consumer) {
 	static_assert(!is_nonconst_lvalue_ref_v<T>, "Non-const reference arguments are not supported.");
 	using argument_type = unqualified_t<T>;
@@ -213,7 +209,7 @@ bool convert_native_argument(
 			eastl::remove_cv_t<eastl::remove_pointer_t<argument_type>>,
 			argument_type>;
 	CallbackContext::Argument &argument = p_frame.native_argument(p_index);
-	target_type *ptr = resolve_native_pointer<target_type>(p_frame, argument, info);
+	target_type *ptr = resolve_native_pointer<target_type>(p_frame, argument);
 	if (ptr == nullptr) {
 		return false;
 	}
@@ -225,43 +221,38 @@ bool convert_native_argument(
 	return true;
 }
 
-template <bool Probe, typename T, typename Consumer>
+template <typename T, typename Consumer>
 bool convert_script_argument(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
 		CallbackContext &frame,
 		int p_index,
 		Consumer &&p_consumer) {
-	pesapi_callback_info error_info = Probe ? nullptr : info;
 	if constexpr (has_variant_type_v<T>) {
-		return convert_variant_argument<T>(apis, error_info, frame, p_index, eastl::forward<Consumer>(p_consumer));
+		return convert_variant_argument<T>(apis, frame, p_index, eastl::forward<Consumer>(p_consumer));
 	} else {
-		return convert_native_argument<T>(apis, frame, p_index, error_info, eastl::forward<Consumer>(p_consumer));
+		return convert_native_argument<T>(frame, p_index, eastl::forward<Consumer>(p_consumer));
 	}
 }
 
-template <bool Probe, typename T>
+template <typename T>
 bool assign_converted_argument(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
 		CallbackContext &frame,
 		int p_index,
 		unqualified_t<T> &r_value) {
-	return convert_script_argument<Probe, T>(apis, info, frame, p_index, [&](auto &&p_value) {
+	return convert_script_argument<T>(apis, frame, p_index, [&](auto &&p_value) {
 		r_value = eastl::forward<decltype(p_value)>(p_value);
 	});
 }
 
-template <bool Probe>
-bool convert_call_arguments(
+inline bool convert_call_arguments(
 		pesapi_ffi *p_api,
-		pesapi_callback_info p_info,
 		CallbackContext &p_frame,
 		CallArguments &r_arguments) {
 	const int argument_count = p_frame.argument_count();
 	r_arguments.resize(argument_count);
 	for (int i = 0; i < argument_count; ++i) {
-		if (!assign_converted_argument<Probe, godot::Variant>(p_api, p_info, p_frame, i, r_arguments.values[i])) {
+		if (!assign_converted_argument<godot::Variant>(p_api, p_frame, i, r_arguments.values[i])) {
 			return false;
 		}
 	}
@@ -271,85 +262,76 @@ bool convert_call_arguments(
 template <typename T>
 inline void add_variant_return_value(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
-		pesapi_env env,
-		PuertsEnvironment *environment,
+		CallbackContext &frame,
 		T &&value) {
-	puerts::return_variant_to_script(apis, info, env, environment, godot::Variant(eastl::forward<T>(value)));
+	puerts::return_variant_to_script(apis, frame.callback_info(), frame.script_env(), frame.puerts_environment(), godot::Variant(eastl::forward<T>(value)));
 }
 
 template <typename T>
 inline void add_native_owned_return(
 		pesapi_ffi *apis,
-		pesapi_callback_info info,
-		pesapi_env env,
+		CallbackContext &frame,
 		T &&value) {
 	using target_type = unqualified_t<T>;
 	target_type *owned_value = memnew(target_type(eastl::forward<T>(value)));
-	pesapi_value script_value = apis->native_object_to_value(env, static_type_id<target_type>::get(), owned_value, true);
+	pesapi_value script_value = apis->native_object_to_value(frame.script_env(), static_type_id<target_type>::get(), owned_value, true);
 	if (script_value == nullptr) {
 		godot::memdelete(owned_value);
-		apis->throw_by_string(info, "Failed to wrap native return value.");
+		apis->throw_by_string(frame.callback_info(), "Failed to wrap native return value.");
 		return;
 	}
-	apis->add_return(info, script_value);
+	apis->add_return(frame.callback_info(), script_value);
 }
 
 template <typename R, typename Value>
-void write_return_value(pesapi_ffi *apis, pesapi_callback_info info, pesapi_env env, PuertsEnvironment *environment, Value &&value) {
+void write_return_value(pesapi_ffi *apis, CallbackContext &frame, Value &&value) {
 	using target_type = unqualified_t<R>;
 	if constexpr (eastl::is_same_v<target_type, bool>) {
-		apis->add_return(info, apis->create_boolean(env, value));
+		apis->add_return(frame.callback_info(), apis->create_boolean(frame.script_env(), value));
 	} else if constexpr (eastl::is_integral_v<target_type>) {
 		if constexpr (eastl::is_signed_v<target_type>) {
 			const auto int_value = static_cast<int64_t>(value);
 			if (int_value >= INT32_MIN && int_value <= INT32_MAX) {
-				apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(int_value)));
+				apis->add_return(frame.callback_info(), apis->create_int32(frame.script_env(), static_cast<int32_t>(int_value)));
 			} else {
-				apis->add_return(info, apis->create_int64(env, int_value));
+				apis->add_return(frame.callback_info(), apis->create_int64(frame.script_env(), int_value));
 			}
 		} else {
 			const auto int_value = static_cast<uint64_t>(value);
 			if (int_value <= static_cast<uint64_t>(INT32_MAX)) {
-				apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(int_value)));
+				apis->add_return(frame.callback_info(), apis->create_int32(frame.script_env(), static_cast<int32_t>(int_value)));
 			} else if (int_value <= static_cast<uint64_t>(INT64_MAX)) {
-				apis->add_return(info, apis->create_int64(env, static_cast<int64_t>(int_value)));
+				apis->add_return(frame.callback_info(), apis->create_int64(frame.script_env(), static_cast<int64_t>(int_value)));
 			} else {
-				apis->add_return(info, apis->create_uint64(env, int_value));
+				apis->add_return(frame.callback_info(), apis->create_uint64(frame.script_env(), int_value));
 			}
 		}
 	} else if constexpr (eastl::is_floating_point_v<target_type>) {
-		apis->add_return(info, apis->create_double(env, static_cast<double>(value)));
+		apis->add_return(frame.callback_info(), apis->create_double(frame.script_env(), static_cast<double>(value)));
 	} else if constexpr (is_string_like_v<R> || is_binary_like_v<R>) {
-		add_variant_return_value(apis, info, env, environment, eastl::forward<Value>(value));
+		add_variant_return_value(apis, frame, eastl::forward<Value>(value));
 	} else if constexpr (has_variant_type_v<R>) {
 		if constexpr (variant_type_v<R> == GDEXTENSION_VARIANT_TYPE_OBJECT ||
 				variant_type_v<R> == GDEXTENSION_VARIANT_TYPE_NIL) {
-			add_variant_return_value(apis, info, env, environment, eastl::forward<Value>(value));
+			add_variant_return_value(apis, frame, eastl::forward<Value>(value));
+		} else if (PuertsTypeRegistry::get_singleton().has_type(static_type_id<target_type>::get())) {
+			add_native_owned_return(apis, frame, eastl::forward<Value>(value));
 		} else {
-			// Registration is immutable after module startup. Cache this template-
-			// specific decision so hot return paths do not hash the type ID.
-			static const bool has_static_type_registration =
-					PuertsTypeRegistry::get_singleton().has_type(static_type_id<target_type>::get());
-			if (has_static_type_registration) {
-				add_native_owned_return(apis, info, env, eastl::forward<Value>(value));
-			} else {
-				// Generic value types like TypedArray<T> may not have dedicated static bindings.
-				// Return them through Variant to preserve engine-backed behavior in script.
-				add_variant_return_value(apis, info, env, environment, eastl::forward<Value>(value));
-			}
+			// Generic value types like TypedArray<T> may not have dedicated static bindings.
+			// Return them through Variant to preserve engine-backed behavior in script.
+			add_variant_return_value(apis, frame, eastl::forward<Value>(value));
 		}
 	} else if constexpr (eastl::is_pointer_v<R>) {
 		if (value == nullptr) {
-			apis->add_return(info, apis->create_null(env));
+			apis->add_return(frame.callback_info(), apis->create_null(frame.script_env()));
 			return;
 		}
 		using pointee_type = eastl::remove_cv_t<eastl::remove_pointer_t<R>>;
-		apis->add_return(info, apis->native_object_to_value(env, static_type_id<pointee_type>::get(), const_cast<pointee_type *>(value), false));
+		apis->add_return(frame.callback_info(), apis->native_object_to_value(frame.script_env(), static_type_id<pointee_type>::get(), const_cast<pointee_type *>(value), false));
 	} else if constexpr (eastl::is_lvalue_reference_v<R>) {
-		apis->add_return(info, apis->native_object_to_value(env, static_type_id<target_type>::get(), const_cast<target_type *>(&value), false));
+		apis->add_return(frame.callback_info(), apis->native_object_to_value(frame.script_env(), static_type_id<target_type>::get(), const_cast<target_type *>(&value), false));
 	} else {
-		add_native_owned_return(apis, info, env, eastl::forward<Value>(value));
+		add_native_owned_return(apis, frame, eastl::forward<Value>(value));
 	}
 }
 
@@ -361,7 +343,10 @@ struct is_boxed_receiver<T, eastl::enable_if_t<has_variant_type_v<unqualified_t<
 																								variant_type_v<unqualified_t<T>> != GDEXTENSION_VARIANT_TYPE_OBJECT &&
 																								variant_type_v<unqualified_t<T>> != GDEXTENSION_VARIANT_TYPE_NIL> {};
 
-template <typename T, bool UseStorage = is_boxed_receiver<T>::value>
+template <typename T>
+inline constexpr bool is_boxed_receiver_v = is_boxed_receiver<T>::value;
+
+template <typename T, bool Boxed = is_boxed_receiver_v<T>>
 struct BoundReceiver;
 
 template <typename T>
@@ -409,7 +394,7 @@ struct BoundReceiver<T, false> {
 template <typename T>
 BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, CallbackContext &frame) {
 	BoundReceiver<T> instance;
-	if constexpr (is_boxed_receiver<T>::value) {
+	if constexpr (is_boxed_receiver_v<T>) {
 		instance.frame = &frame;
 	}
 
@@ -427,7 +412,7 @@ BoundReceiver<T> resolve_receiver(pesapi_ffi *apis, pesapi_callback_info info, C
 		}
 	}
 
-	if constexpr (is_boxed_receiver<T>::value) {
+	if constexpr (is_boxed_receiver_v<T>) {
 		if (const godot::Variant *boxed_variant = frame.holder_boxed_variant(); boxed_variant != nullptr) {
 			if (boxed_variant->get_type() != godot::Variant::NIL &&
 					can_cast_variant<typename BoundReceiver<T>::target_type>(*boxed_variant)) {
