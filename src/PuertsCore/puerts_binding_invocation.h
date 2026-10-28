@@ -123,20 +123,20 @@ struct ReceiverInvoker {
 	}
 };
 
-template <auto Callable>
+template <auto Callable, typename Enable = void>
 struct InstanceMethodInvoker;
 
 template <typename C, typename R, typename... Args, R (C::*Method)(Args...)>
-struct InstanceMethodInvoker<Method> : ReceiverInvoker<Method, C, R, true, Args...> {};
+struct InstanceMethodInvoker<Method, void> : ReceiverInvoker<Method, C, R, true, Args...> {};
 
 template <typename C, typename R, typename... Args, R (C::*Method)(Args...) const>
-struct InstanceMethodInvoker<Method> : ReceiverInvoker<Method, C, R, false, Args...> {};
+struct InstanceMethodInvoker<Method, void> : ReceiverInvoker<Method, C, R, false, Args...> {};
 
 template <typename C, typename R, typename... Args, R (*Method)(C &, Args...)>
-struct InstanceMethodInvoker<Method> : ReceiverInvoker<Method, C, R, true, Args...> {};
+struct InstanceMethodInvoker<Method, eastl::enable_if_t<!eastl::is_const_v<C>>> : ReceiverInvoker<Method, C, R, true, Args...> {};
 
 template <typename C, typename R, typename... Args, R (*Method)(const C &, Args...)>
-struct InstanceMethodInvoker<Method> : ReceiverInvoker<Method, C, R, false, Args...> {};
+struct InstanceMethodInvoker<Method, void> : ReceiverInvoker<Method, C, R, false, Args...> {};
 
 template <typename T, typename... Args>
 struct ConstructorInvoker {
