@@ -21,9 +21,11 @@ import time
 from pathlib import Path
 
 try:
+    from .build_info import load_build_info
     from .gdextension import LibraryMapping, render_gdextension
     from .manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS
 except ImportError:
+    from build_info import load_build_info
     from gdextension import LibraryMapping, render_gdextension
     from manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS
 
@@ -33,6 +35,7 @@ RUNTIME_SUFFIXES = {".dll", ".so", ".dylib"}
 BUILD_ARTIFACT_PREFIXES = ("Puerts", "Papi", "libPuerts", "libPapi", "libnode")
 RUNTIME_BACKEND_NAMES = set(BACKENDS) - {"core"}
 DEFAULT_BACKENDS = ",".join(MANIFEST.runtime_tests.backends)
+VERSION_LABEL = load_build_info().label
 
 
 def _same_file(source: Path, target: Path) -> bool:
@@ -237,7 +240,7 @@ def rewrite_gdextension_files(project_dir: Path, platform_name: str, requested_b
         if not mappings:
             continue
         config_path = project_dir / backend.extension
-        rendered = render_gdextension(backend, "4.4", mappings)
+        rendered = render_gdextension(backend, "4.4", mappings, VERSION_LABEL)
         config_path.write_text(rendered, encoding="utf-8", newline="\n")
         updated.append(config_path.name)
     return updated

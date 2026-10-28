@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
-import importlib.util
 import shutil
 import sys
 import zipfile
@@ -13,9 +12,11 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 try:
+    from .build_info import load_build_info
     from .gdextension import LibraryMapping, render_gdextension
     from .manifest import BACKENDS, TARGETS, Backend
 except ImportError:
+    from build_info import load_build_info
     from gdextension import LibraryMapping, render_gdextension
     from manifest import BACKENDS, TARGETS, Backend
 
@@ -35,13 +36,6 @@ class Artifact:
     arch: str
     target: str
     variant: str
-
-
-def load_version() -> str:
-    spec = importlib.util.spec_from_file_location("puerts_godot_version", REPO_ROOT / "version.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return f"{module.major}.{module.minor}.{module.patch}"
 
 
 def scan_artifacts(root: Path, godot: str) -> list[Artifact]:
@@ -124,7 +118,7 @@ def native_dependencies(
 
 
 def render_descriptor(
-    backend: Backend, files: dict[str, Path], libraries: dict[tuple[str, str, str], str], godot: str
+    backend: Backend, files: dict[str, Path], libraries: dict[tuple[str, str, str], str], godot: str, version_label: str
 ) -> str:
     mappings = []
     for (platform, arch, target), arcname in sorted(libraries.items()):
@@ -151,7 +145,7 @@ def render_descriptor(
                     dependencies = (f"res://{core}",)
                 mappings.append(LibraryMapping(key, f"res://{arcname}", dependencies))
 
-    return render_gdextension(backend, godot, mappings)
+    return render_gdextension(backend, godot, mappings, version_label)
 
 
 def write_zip(path: Path, files: dict[str, Path], texts: dict[str, str]) -> int:
@@ -198,7 +192,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[package_release] unknown backends: {', '.join(sorted(unknown))}", file=sys.stderr)
         return 2
 
-    version = load_version()
+    build_info = load_build_info()
     docs = {f"{DIST_ROOT}/{name}": (REPO_ROOT / name).read_text(encoding="utf-8") for name in DOC_FILES}
     args.output.mkdir(parents=True, exist_ok=True)
 
@@ -211,10 +205,10 @@ def main(argv: list[str] | None = None) -> int:
         packaged = {platform for platform, _arch, _target in libraries}
         for platform in sorted(backend.platforms - packaged):
             print(f"[package_release] warn: {name} has no libraries for {platform}", file=sys.stderr)
-        descriptor = render_descriptor(backend, files, libraries, args.godot)
+        descriptor = render_descriptor(backend, files, libraries, args.godot, build_info.label)
         texts = {f"{DIST_ROOT}/{backend.extension}": descriptor}
         texts.update(docs)
-        path = args.output / f"puerts-godot-v{version}-godot{args.godot}-{name}.zip"
+        path = args.output / f"puerts-godot-v{build_info.version}-godot{args.godot}-{name}.zip"
         size = write_zip(path, files, texts)
         print(f"[package_release] {path} ({len(files)} files, {size / 1024 / 1024:.1f} MiB)")
     return 0

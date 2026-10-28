@@ -16,9 +16,13 @@ class LibraryMapping:
     dependencies: tuple[str, ...] = ()
 
 
-def render_gdextension(backend: Backend, compatibility: str, libraries: Iterable[LibraryMapping]) -> str:
+def render_gdextension(
+    backend: Backend, compatibility: str, libraries: Iterable[LibraryMapping], version_label: str
+) -> str:
     mappings = sorted(libraries)
     lines = [
+        f"; {version_label}",
+        "",
         "[configuration]",
         "",
         f'entry_symbol = "{backend.entry}"',
