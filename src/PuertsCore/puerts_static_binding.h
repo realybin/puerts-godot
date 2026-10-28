@@ -8,15 +8,6 @@
 
 namespace puerts {
 
-template <typename Overload>
-struct OverloadSpec {};
-
-template <typename Overload>
-struct ConstructorOverloadSpec {};
-
-template <typename T, typename... Args>
-ConstructorSpec make_constructor();
-
 template <godot::Variant::Operator Operator, typename R, typename T>
 R evaluate_operator(const T &value) {
 	godot::Variant result;
@@ -37,36 +28,41 @@ R evaluate_operator(const TLeft &left, const TRight &right) {
 
 template <typename T>
 class TypeBuilder {
+	using TypeRecord = PuertsTypeRegistry::TypeRecord;
+
 public:
 	TypeBuilder() {
-		definition_.type_id = static_type_id<T>::get();
-		definition_.name = script_type_name<T>::value();
-		definition_.finalize = internal::finalizer<T>::get();
+		record_.type_id = static_type_id<T>::get();
+		record_.kind = TypeRecord::Kind::StaticBinding;
+		record_.name = script_type_name<T>::value();
+		record_.finalize = internal::finalizer<T>::get();
 		if constexpr (internal::has_variant_type_v<T>) {
-			definition_.variant_type = static_cast<godot::Variant::Type>(godot::GetTypeInfo<T>::VARIANT_TYPE);
+			record_.variant_type = static_cast<godot::Variant::Type>(godot::GetTypeInfo<T>::VARIANT_TYPE);
 		}
-		definition_.to_variant = internal::variant_converter<T>::get();
+		record_.to_variant = internal::variant_converter<T>::get();
 	}
+
+	TypeBuilder(const TypeBuilder &) = delete;
+	TypeBuilder &operator=(const TypeBuilder &) = delete;
+	TypeBuilder(TypeBuilder &&) = default;
+	TypeBuilder &operator=(TypeBuilder &&) = default;
 
 	template <typename TBase>
 	TypeBuilder &extends() {
-		definition_.base_id = static_type_id<TBase>::get();
-		definition_.base_name = script_type_name<TBase>::value();
-		return *this;
-	}
-
-	TypeBuilder &constructor(const ConstructorSpec &p_binding) {
-		definition_.constructor = p_binding.constructor;
+		record_.base_id = static_type_id<TBase>::get();
+		record_.base_name = script_type_name<TBase>::value();
 		return *this;
 	}
 
 	template <typename... Args>
 	TypeBuilder &constructor() {
-		return constructor(make_constructor<T, Args...>());
+		using Invoker = internal::ConstructorInvoker<T, Args...>;
+		record_.constructor_overloads.push_back({ Invoker::kArity, &Invoker::invoke });
+		return *this;
 	}
 
 	TypeBuilder &finalizer(pesapi_finalize p_finalize) {
-		definition_.finalize = p_finalize;
+		record_.finalize = p_finalize;
 		return *this;
 	}
 
@@ -74,130 +70,107 @@ public:
 		return finalizer(nullptr);
 	}
 
-	TypeBuilder &static_method(const char *p_name, const MethodSpec &p_binding) {
-		definition_.static_methods.push_back({ godot::StringName(p_name), p_binding.callback, p_binding.userdata });
+	template <auto... Functions>
+	TypeBuilder &static_method(const char *p_name) {
+		return add_method<internal::StaticMethodInvoker<Functions>...>(record_.static_methods, p_name);
+	}
+
+	template <auto... Methods>
+	TypeBuilder &method(const char *p_name) {
+		return add_method<internal::InstanceMethodInvoker<Methods>...>(record_.instance_methods, p_name);
+	}
+
+	template <typename R, bool WriteBack = true>
+	TypeBuilder &vararg_method(const char *p_name, int p_min_arity = 0) {
+		TypeRecord::Method method;
+		method.name = godot::StringName(p_name);
+		method.overloads.push_back({ p_min_arity, -1, &internal::VarargMethodInvoker<T, R, WriteBack>::invoke });
+		record_.instance_methods.push_back(puerts_eastl::move(method));
 		return *this;
 	}
 
-	TypeBuilder &static_method(const char *p_name, pesapi_callback p_callback, void *p_userdata = nullptr) {
-		return static_method(p_name, MethodSpec{ p_callback, p_userdata });
-	}
-
-	TypeBuilder &method(const char *p_name, const MethodSpec &p_binding) {
-		definition_.instance_methods.push_back({ godot::StringName(p_name), p_binding.callback, p_binding.userdata });
+	template <uint32_t Hash, typename R = godot::Variant>
+	TypeBuilder &utility_function(const char *p_name, int p_arity = -1) {
+		TypeRecord::Method method;
+		method.name = godot::StringName(p_name);
+		method.utility_hash = Hash;
+		method.overloads.push_back({ p_arity < 0 ? 0 : p_arity, p_arity, &internal::UtilityFunctionInvoker<R>::invoke });
+		record_.static_methods.push_back(puerts_eastl::move(method));
 		return *this;
 	}
 
-	TypeBuilder &method(const char *p_name, pesapi_callback p_callback, void *p_userdata = nullptr) {
-		return method(p_name, MethodSpec{ p_callback, p_userdata });
-	}
-
-	TypeBuilder &property(const char *p_name, const PropertySpec &p_binding) {
-		definition_.instance_properties.push_back({ godot::StringName(p_name), p_binding.getter, p_binding.setter, p_binding.getter_userdata, p_binding.setter_userdata });
+	template <auto Getter, auto Setter = nullptr>
+	TypeBuilder &property(const char *p_name) {
+		TypeRecord::Property property;
+		property.name = godot::StringName(p_name);
+		property.getter = &internal::PropertyInvoker<Getter, Setter>::getter;
+		if constexpr (Setter != nullptr || eastl::is_member_object_pointer_v<decltype(Getter)>) {
+			property.setter = &internal::PropertyInvoker<Getter, Setter>::setter;
+		}
+		record_.instance_properties.push_back(puerts_eastl::move(property));
 		return *this;
 	}
 
-	TypeBuilder &property(const char *p_name, pesapi_callback p_getter, pesapi_callback p_setter = nullptr, void *p_getter_userdata = nullptr, void *p_setter_userdata = nullptr) {
-		return property(p_name, PropertySpec{ p_getter, p_setter, p_getter_userdata, p_setter_userdata });
-	}
-
-	TypeBuilder &static_property(const char *p_name, const PropertySpec &p_binding) {
-		definition_.static_properties.push_back({ godot::StringName(p_name), p_binding.getter, p_binding.setter, p_binding.getter_userdata, p_binding.setter_userdata });
+	template <auto Value>
+	TypeBuilder &constant(const char *p_name) {
+		TypeRecord::Property property;
+		property.name = godot::StringName(p_name);
+		if constexpr (eastl::is_function_v<eastl::remove_pointer_t<decltype(Value)>>) {
+			property.getter = &internal::ComputedConstantGetter<Value>::getter;
+		} else {
+			property.getter = &internal::ConstantGetter<Value>::getter;
+		}
+		record_.static_properties.push_back(puerts_eastl::move(property));
 		return *this;
 	}
 
-	TypeBuilder &static_property(const char *p_name, pesapi_callback p_getter, pesapi_callback p_setter = nullptr, void *p_getter_userdata = nullptr, void *p_setter_userdata = nullptr) {
-		return static_property(p_name, PropertySpec{ p_getter, p_setter, p_getter_userdata, p_setter_userdata });
+	template <typename EnumTag>
+	TypeBuilder &enum_type(const char *p_name) {
+		TypeRecord::Property property;
+		property.name = godot::StringName(p_name);
+		property.getter = &internal::EnumTypeGetter<EnumTag>::getter;
+		record_.static_properties.push_back(puerts_eastl::move(property));
+		return *this;
 	}
 
-	void register_type() const {
-		PuertsTypeRegistry::get_singleton().register_static_type(definition_);
+	template <const char *SignalName>
+	TypeBuilder &signal(const char *p_name) {
+		TypeRecord::Property property;
+		property.name = godot::StringName(p_name);
+		property.getter = &internal::SignalGetter<T, SignalName>::getter;
+		record_.instance_properties.push_back(puerts_eastl::move(property));
+		return *this;
+	}
+
+	TypeBuilder &singleton(const char *p_name) {
+		TypeRecord::Property property;
+		property.name = godot::StringName(p_name);
+		property.getter = &internal::SingletonGetter::getter;
+		record_.static_properties.push_back(puerts_eastl::move(property));
+		return *this;
+	}
+
+	void register_type() {
+		PuertsTypeRegistry::get_singleton().register_static_type(puerts_eastl::move(record_));
 	}
 
 private:
-	TypeDefinition definition_;
+	template <typename... Invokers>
+	TypeBuilder &add_method(puerts_eastl::vector<TypeRecord::Method> &r_methods, const char *p_name) {
+		static_assert(sizeof...(Invokers) > 0, "A method binding requires at least one callable.");
+		TypeRecord::Method method;
+		method.name = godot::StringName(p_name);
+		(method.overloads.push_back({ Invokers::kArity, Invokers::kArity, &Invokers::invoke }), ...);
+		r_methods.push_back(puerts_eastl::move(method));
+		return *this;
+	}
+
+	TypeRecord record_;
 };
 
 template <typename T>
 TypeBuilder<T> define_type() {
 	return TypeBuilder<T>();
-}
-
-template <typename T, typename... Args>
-ConstructorSpec make_constructor() {
-	return ConstructorSpec{ &internal::ConstructorCallback<T, Args...>::callback };
-}
-
-template <auto Function>
-MethodSpec make_function() {
-	return MethodSpec{ &internal::FunctionCallback<Function>::callback, nullptr };
-}
-
-template <auto Method>
-MethodSpec make_method() {
-	return MethodSpec{ &internal::MemberMethodCallback<Method>::callback, nullptr };
-}
-
-template <auto Method>
-MethodSpec make_extension_method() {
-	return MethodSpec{ &internal::ExtensionMethodCallback<Method>::callback, nullptr };
-}
-
-template <typename C, typename R, const char *MethodName, int MinArity = 0, bool WriteBack = true>
-MethodSpec make_vararg_method() {
-	return MethodSpec{ &internal::VarargMethodCallback<C, R, MethodName, MinArity, WriteBack>::callback, nullptr };
-}
-
-// Extension methods name their receiver explicitly, so they need their own factory.
-template <auto Method>
-OverloadSpec<internal::ExtensionMethodCallback<Method>> make_extension_overload() {
-	return {};
-}
-
-template <auto Method>
-OverloadSpec<typename internal::OverloadEntry<Method>::type> make_overload() {
-	return {};
-}
-
-template <typename T, typename... Args>
-ConstructorOverloadSpec<internal::ConstructorCallback<T, Args...>> make_constructor_overload() {
-	return {};
-}
-
-template <typename... Overloads>
-MethodSpec combine_overloads(OverloadSpec<Overloads>...) {
-	return MethodSpec{ &internal::OverloadCallback<Overloads...>::callback, nullptr };
-}
-
-template <typename... Overloads>
-ConstructorSpec combine_constructors(ConstructorOverloadSpec<Overloads>...) {
-	static_assert(sizeof...(Overloads) > 0, "combine_constructors requires at least one overload.");
-	return ConstructorSpec{ &internal::ConstructorOverloadCallback<Overloads...>::callback };
-}
-
-template <auto Member>
-PropertySpec make_property() {
-	return PropertySpec{ &internal::MemberPropertyCallbacks<Member>::getter, &internal::MemberPropertyCallbacks<Member>::setter, nullptr, nullptr };
-}
-
-template <auto ConstantValue>
-PropertySpec make_constant() {
-	return PropertySpec{ &internal::EnumConstantGetter<ConstantValue>::getter, nullptr, nullptr, nullptr };
-}
-
-template <auto Getter>
-PropertySpec make_constant_getter() {
-	return PropertySpec{ &internal::FunctionCallback<Getter>::callback, nullptr, nullptr, nullptr };
-}
-
-template <typename EnumTag>
-PropertySpec make_enum_type() {
-	return PropertySpec{ &internal::EnumTypeGetter<EnumTag>::getter, nullptr, nullptr, nullptr };
-}
-
-template <typename C, const char *SignalName>
-PropertySpec make_signal_property() {
-	return PropertySpec{ &internal::SignalGetter<C, SignalName>::getter, nullptr, nullptr, nullptr };
 }
 
 } // namespace puerts

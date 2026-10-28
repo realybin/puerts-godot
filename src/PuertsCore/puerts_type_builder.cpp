@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "puerts_binding_types.h"
 #include "puerts_type_record.h"
 
 #include <godot_cpp/classes/class_db_singleton.hpp>
@@ -75,30 +74,6 @@ uint32_t get_method_compatibility_hash(const MethodInfo &p_method_info) {
 	return hash_fmix32(hash);
 }
 
-void copy_methods(puerts_eastl::vector<TypeRecord::Method> &r_methods, const puerts_eastl::vector<puerts::MethodBinding> &p_bindings) {
-	r_methods.reserve(p_bindings.size());
-	for (const puerts::MethodBinding &binding : p_bindings) {
-		r_methods.push_back({});
-		TypeRecord::Method &method = r_methods.back();
-		method.name = binding.name;
-		method.callback = binding.callback;
-		method.userdata = binding.userdata;
-	}
-}
-
-void copy_properties(puerts_eastl::vector<TypeRecord::Property> &r_properties, const puerts_eastl::vector<puerts::PropertyBinding> &p_bindings) {
-	r_properties.reserve(p_bindings.size());
-	for (const puerts::PropertyBinding &binding : p_bindings) {
-		r_properties.push_back({});
-		TypeRecord::Property &property = r_properties.back();
-		property.name = binding.name;
-		property.getter = binding.getter;
-		property.setter = binding.setter;
-		property.getter_userdata = binding.getter_userdata;
-		property.setter_userdata = binding.setter_userdata;
-	}
-}
-
 } // namespace
 
 PuertsTypeRegistry::TypeRecordOwner PuertsTypeRegistry::TypeRecordBuilder::build_object_type(PuertsTypeRegistry &p_registry, const StringName &p_name) {
@@ -125,26 +100,6 @@ PuertsTypeRegistry::TypeRecordOwner PuertsTypeRegistry::TypeRecordBuilder::build
 	const PackedStringArray integer_constants = ClassDB::class_get_integer_constant_list(p_name, true);
 	append_reflected_enum_groups(p_registry, type, p_name);
 	append_reflected_integer_constants(type, p_name, integer_constants);
-	return owner;
-}
-
-PuertsTypeRegistry::TypeRecordOwner PuertsTypeRegistry::TypeRecordBuilder::build_static_type(const puerts::TypeDefinition &p_definition) {
-	TypeRecordOwner owner(memnew(TypeRecord));
-	TypeRecord *type = owner.get();
-	type->type_id = p_definition.type_id;
-	type->kind = TypeRecord::Kind::StaticBinding;
-	type->name = p_definition.name;
-	type->variant_type = p_definition.variant_type;
-	type->base_id = p_definition.base_id;
-	type->base_name = p_definition.base_name;
-	type->constructor = p_definition.constructor;
-	type->finalize = p_definition.finalize;
-	type->to_variant = p_definition.to_variant;
-	copy_methods(type->static_methods, p_definition.static_methods);
-	copy_methods(type->instance_methods, p_definition.instance_methods);
-	copy_properties(type->instance_properties, p_definition.instance_properties);
-	copy_properties(type->static_properties, p_definition.static_properties);
-
 	return owner;
 }
 

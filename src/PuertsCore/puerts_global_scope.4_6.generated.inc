@@ -12,9 +12,6 @@
 #include <godot_cpp/core/version.hpp>
 #if GODOT_VERSION_MAJOR == 4 && GODOT_VERSION_MINOR == 6
 
-#include <godot_cpp/classes/engine.hpp>
-#include <godot_cpp/godot.hpp>
-#include <godot_cpp/variant/string_name.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 namespace puerts_generated {
@@ -44,48 +41,6 @@ struct global_scope_variant_type_enum_tag {};
 struct global_scope_variant_operator_enum_tag {};
 } // namespace puerts_generated
 
-namespace puerts_generated {
-inline constexpr char global_scope_singleton_performance[] = "Performance";
-inline constexpr char global_scope_singleton_engine[] = "Engine";
-inline constexpr char global_scope_singleton_project_settings[] = "ProjectSettings";
-inline constexpr char global_scope_singleton_os[] = "OS";
-inline constexpr char global_scope_singleton_time[] = "Time";
-inline constexpr char global_scope_singleton_text_server_manager[] = "TextServerManager";
-inline constexpr char global_scope_singleton_navigation_server2_d_manager[] = "NavigationServer2DManager";
-inline constexpr char global_scope_singleton_physics_server2_d_manager[] = "PhysicsServer2DManager";
-inline constexpr char global_scope_singleton_navigation_server3_d_manager[] = "NavigationServer3DManager";
-inline constexpr char global_scope_singleton_physics_server3_d_manager[] = "PhysicsServer3DManager";
-inline constexpr char global_scope_singleton_navigation_mesh_generator[] = "NavigationMeshGenerator";
-inline constexpr char global_scope_singleton_ip[] = "IP";
-inline constexpr char global_scope_singleton_geometry2d[] = "Geometry2D";
-inline constexpr char global_scope_singleton_geometry3d[] = "Geometry3D";
-inline constexpr char global_scope_singleton_resource_loader[] = "ResourceLoader";
-inline constexpr char global_scope_singleton_resource_saver[] = "ResourceSaver";
-inline constexpr char global_scope_singleton_class_db[] = "ClassDB";
-inline constexpr char global_scope_singleton_marshalls[] = "Marshalls";
-inline constexpr char global_scope_singleton_translation_server[] = "TranslationServer";
-inline constexpr char global_scope_singleton_input[] = "Input";
-inline constexpr char global_scope_singleton_input_map[] = "InputMap";
-inline constexpr char global_scope_singleton_engine_debugger[] = "EngineDebugger";
-inline constexpr char global_scope_singleton_gd_extension_manager[] = "GDExtensionManager";
-inline constexpr char global_scope_singleton_resource_uid[] = "ResourceUID";
-inline constexpr char global_scope_singleton_worker_thread_pool[] = "WorkerThreadPool";
-inline constexpr char global_scope_singleton_theme_db[] = "ThemeDB";
-inline constexpr char global_scope_singleton_editor_interface[] = "EditorInterface";
-inline constexpr char global_scope_singleton_java_class_wrapper[] = "JavaClassWrapper";
-inline constexpr char global_scope_singleton_java_script_bridge[] = "JavaScriptBridge";
-inline constexpr char global_scope_singleton_audio_server[] = "AudioServer";
-inline constexpr char global_scope_singleton_camera_server[] = "CameraServer";
-inline constexpr char global_scope_singleton_display_server[] = "DisplayServer";
-inline constexpr char global_scope_singleton_native_menu[] = "NativeMenu";
-inline constexpr char global_scope_singleton_rendering_server[] = "RenderingServer";
-inline constexpr char global_scope_singleton_navigation_server2d[] = "NavigationServer2D";
-inline constexpr char global_scope_singleton_navigation_server3d[] = "NavigationServer3D";
-inline constexpr char global_scope_singleton_physics_server2d[] = "PhysicsServer2D";
-inline constexpr char global_scope_singleton_physics_server3d[] = "PhysicsServer3D";
-inline constexpr char global_scope_singleton_xr_server[] = "XRServer";
-} // namespace puerts_generated
-
 PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScope, "GlobalScope")
 PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScopeVariant, "GlobalScope.Variant")
 PUERTS_SCRIPT_TYPE(puerts_generated::global_scope_side_enum_tag, "GlobalScope.Side")
@@ -111,930 +66,632 @@ PUERTS_SCRIPT_TYPE(puerts_generated::global_scope_method_flags_enum_tag, "Global
 PUERTS_SCRIPT_TYPE(puerts_generated::global_scope_variant_type_enum_tag, "GlobalScope.Variant.Type")
 PUERTS_SCRIPT_TYPE(puerts_generated::global_scope_variant_operator_enum_tag, "GlobalScope.Variant.Operator")
 
-namespace puerts_generated {
-inline void global_scope_singleton_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	const char *singleton_name = static_cast<const char *>(apis->get_userdata(info));
-	if (singleton_name == nullptr) {
-		apis->throw_by_string(info, "Singleton metadata is missing.");
-		return;
-	}
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	godot::Engine *engine = godot::Engine::get_singleton();
-	if (engine == nullptr) {
-		apis->throw_by_string(info, "Godot Engine singleton is unavailable.");
-		return;
-	}
-	const godot::StringName singleton_key(singleton_name);
-	if (!engine->has_singleton(singleton_key)) {
-		apis->throw_by_string(info, "Requested singleton is unavailable.");
-		return;
-	}
-	godot::Object *singleton = engine->get_singleton(singleton_key);
-	if (singleton == nullptr) {
-		apis->add_return(info, apis->create_null(context.script_env()));
-		return;
-	}
-	puerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), godot::Variant(singleton));
-}
-
-inline void global_scope_utility_max(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("max")._native_ptr(), 3896050336);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: max");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant result;
-	utility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-	puerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), result);
-}
-
-inline void global_scope_utility_min(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("min")._native_ptr(), 3896050336);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: min");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant result;
-	utility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-	puerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), result);
-}
-
-inline void global_scope_utility_str(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("str")._native_ptr(), 32569176);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: str");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::String result;
-	utility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-	puerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), godot::Variant(result));
-}
-
-inline void global_scope_utility_print(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("print")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: print");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_print_rich(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("print_rich")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: print_rich");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_printerr(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("printerr")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: printerr");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_printt(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("printt")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: printt");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_prints(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("prints")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: prints");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_printraw(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("printraw")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: printraw");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_print_verbose(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("print_verbose")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: print_verbose");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_push_error(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("push_error")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: push_error");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_push_warning(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("push_warning")._native_ptr(), 2648703342);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: push_warning");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(context.argument_count());
-	for (int i = 0; i < context.argument_count(); ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	godot::Variant ignored_result;
-	utility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());
-}
-
-inline void global_scope_utility_is_instance_valid(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-	if (context.argument_count() != 1) {
-		apis->throw_by_string(info, "is_instance_valid expects exactly 1 argument(s).");
-		return;
-	}
-	static GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("is_instance_valid")._native_ptr(), 996128841);
-	if (utility_function == nullptr) {
-		apis->throw_by_string(info, "Failed to bind utility function: is_instance_valid");
-		return;
-	}
-	puerts::internal::CallArguments arguments;
-	arguments.resize(1);
-	for (int i = 0; i < 1; ++i) {
-		const size_t index = static_cast<size_t>(i);
-		arguments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));
-	}
-	bool result = false;
-	utility_function(&result, reinterpret_cast<GDExtensionConstTypePtr *>(arguments.pointers.data()), 1);
-	apis->add_return(info, apis->create_boolean(context.script_env(), result));
-}
-} // namespace puerts_generated
-
 inline void register_enum_global_scope_side() {
 	puerts::define_type<puerts_generated::global_scope_side_enum_tag>()
-			.static_property("SIDE_LEFT", puerts::make_constant<0>())
-			.static_property("SIDE_TOP", puerts::make_constant<1>())
-			.static_property("SIDE_RIGHT", puerts::make_constant<2>())
-			.static_property("SIDE_BOTTOM", puerts::make_constant<3>())
+			.constant<0>("SIDE_LEFT")
+			.constant<1>("SIDE_TOP")
+			.constant<2>("SIDE_RIGHT")
+			.constant<3>("SIDE_BOTTOM")
 			.register_type();
 }
 
 inline void register_enum_global_scope_corner() {
 	puerts::define_type<puerts_generated::global_scope_corner_enum_tag>()
-			.static_property("CORNER_TOP_LEFT", puerts::make_constant<0>())
-			.static_property("CORNER_TOP_RIGHT", puerts::make_constant<1>())
-			.static_property("CORNER_BOTTOM_RIGHT", puerts::make_constant<2>())
-			.static_property("CORNER_BOTTOM_LEFT", puerts::make_constant<3>())
+			.constant<0>("CORNER_TOP_LEFT")
+			.constant<1>("CORNER_TOP_RIGHT")
+			.constant<2>("CORNER_BOTTOM_RIGHT")
+			.constant<3>("CORNER_BOTTOM_LEFT")
 			.register_type();
 }
 
 inline void register_enum_global_scope_orientation() {
 	puerts::define_type<puerts_generated::global_scope_orientation_enum_tag>()
-			.static_property("VERTICAL", puerts::make_constant<1>())
-			.static_property("HORIZONTAL", puerts::make_constant<0>())
+			.constant<1>("VERTICAL")
+			.constant<0>("HORIZONTAL")
 			.register_type();
 }
 
 inline void register_enum_global_scope_clock_direction() {
 	puerts::define_type<puerts_generated::global_scope_clock_direction_enum_tag>()
-			.static_property("CLOCKWISE", puerts::make_constant<0>())
-			.static_property("COUNTERCLOCKWISE", puerts::make_constant<1>())
+			.constant<0>("CLOCKWISE")
+			.constant<1>("COUNTERCLOCKWISE")
 			.register_type();
 }
 
 inline void register_enum_global_scope_horizontal_alignment() {
 	puerts::define_type<puerts_generated::global_scope_horizontal_alignment_enum_tag>()
-			.static_property("HORIZONTAL_ALIGNMENT_LEFT", puerts::make_constant<0>())
-			.static_property("HORIZONTAL_ALIGNMENT_CENTER", puerts::make_constant<1>())
-			.static_property("HORIZONTAL_ALIGNMENT_RIGHT", puerts::make_constant<2>())
-			.static_property("HORIZONTAL_ALIGNMENT_FILL", puerts::make_constant<3>())
+			.constant<0>("HORIZONTAL_ALIGNMENT_LEFT")
+			.constant<1>("HORIZONTAL_ALIGNMENT_CENTER")
+			.constant<2>("HORIZONTAL_ALIGNMENT_RIGHT")
+			.constant<3>("HORIZONTAL_ALIGNMENT_FILL")
 			.register_type();
 }
 
 inline void register_enum_global_scope_vertical_alignment() {
 	puerts::define_type<puerts_generated::global_scope_vertical_alignment_enum_tag>()
-			.static_property("VERTICAL_ALIGNMENT_TOP", puerts::make_constant<0>())
-			.static_property("VERTICAL_ALIGNMENT_CENTER", puerts::make_constant<1>())
-			.static_property("VERTICAL_ALIGNMENT_BOTTOM", puerts::make_constant<2>())
-			.static_property("VERTICAL_ALIGNMENT_FILL", puerts::make_constant<3>())
+			.constant<0>("VERTICAL_ALIGNMENT_TOP")
+			.constant<1>("VERTICAL_ALIGNMENT_CENTER")
+			.constant<2>("VERTICAL_ALIGNMENT_BOTTOM")
+			.constant<3>("VERTICAL_ALIGNMENT_FILL")
 			.register_type();
 }
 
 inline void register_enum_global_scope_inline_alignment() {
 	puerts::define_type<puerts_generated::global_scope_inline_alignment_enum_tag>()
-			.static_property("INLINE_ALIGNMENT_TOP_TO", puerts::make_constant<0>())
-			.static_property("INLINE_ALIGNMENT_CENTER_TO", puerts::make_constant<1>())
-			.static_property("INLINE_ALIGNMENT_BASELINE_TO", puerts::make_constant<3>())
-			.static_property("INLINE_ALIGNMENT_BOTTOM_TO", puerts::make_constant<2>())
-			.static_property("INLINE_ALIGNMENT_TO_TOP", puerts::make_constant<0>())
-			.static_property("INLINE_ALIGNMENT_TO_CENTER", puerts::make_constant<4>())
-			.static_property("INLINE_ALIGNMENT_TO_BASELINE", puerts::make_constant<8>())
-			.static_property("INLINE_ALIGNMENT_TO_BOTTOM", puerts::make_constant<12>())
-			.static_property("INLINE_ALIGNMENT_TOP", puerts::make_constant<0>())
-			.static_property("INLINE_ALIGNMENT_CENTER", puerts::make_constant<5>())
-			.static_property("INLINE_ALIGNMENT_BOTTOM", puerts::make_constant<14>())
-			.static_property("INLINE_ALIGNMENT_IMAGE_MASK", puerts::make_constant<3>())
-			.static_property("INLINE_ALIGNMENT_TEXT_MASK", puerts::make_constant<12>())
+			.constant<0>("INLINE_ALIGNMENT_TOP_TO")
+			.constant<1>("INLINE_ALIGNMENT_CENTER_TO")
+			.constant<3>("INLINE_ALIGNMENT_BASELINE_TO")
+			.constant<2>("INLINE_ALIGNMENT_BOTTOM_TO")
+			.constant<0>("INLINE_ALIGNMENT_TO_TOP")
+			.constant<4>("INLINE_ALIGNMENT_TO_CENTER")
+			.constant<8>("INLINE_ALIGNMENT_TO_BASELINE")
+			.constant<12>("INLINE_ALIGNMENT_TO_BOTTOM")
+			.constant<0>("INLINE_ALIGNMENT_TOP")
+			.constant<5>("INLINE_ALIGNMENT_CENTER")
+			.constant<14>("INLINE_ALIGNMENT_BOTTOM")
+			.constant<3>("INLINE_ALIGNMENT_IMAGE_MASK")
+			.constant<12>("INLINE_ALIGNMENT_TEXT_MASK")
 			.register_type();
 }
 
 inline void register_enum_global_scope_euler_order() {
 	puerts::define_type<puerts_generated::global_scope_euler_order_enum_tag>()
-			.static_property("EULER_ORDER_XYZ", puerts::make_constant<0>())
-			.static_property("EULER_ORDER_XZY", puerts::make_constant<1>())
-			.static_property("EULER_ORDER_YXZ", puerts::make_constant<2>())
-			.static_property("EULER_ORDER_YZX", puerts::make_constant<3>())
-			.static_property("EULER_ORDER_ZXY", puerts::make_constant<4>())
-			.static_property("EULER_ORDER_ZYX", puerts::make_constant<5>())
+			.constant<0>("EULER_ORDER_XYZ")
+			.constant<1>("EULER_ORDER_XZY")
+			.constant<2>("EULER_ORDER_YXZ")
+			.constant<3>("EULER_ORDER_YZX")
+			.constant<4>("EULER_ORDER_ZXY")
+			.constant<5>("EULER_ORDER_ZYX")
 			.register_type();
 }
 
 inline void register_enum_global_scope_key() {
 	puerts::define_type<puerts_generated::global_scope_key_enum_tag>()
-			.static_property("KEY_NONE", puerts::make_constant<0>())
-			.static_property("KEY_SPECIAL", puerts::make_constant<4194304>())
-			.static_property("KEY_ESCAPE", puerts::make_constant<4194305>())
-			.static_property("KEY_TAB", puerts::make_constant<4194306>())
-			.static_property("KEY_BACKTAB", puerts::make_constant<4194307>())
-			.static_property("KEY_BACKSPACE", puerts::make_constant<4194308>())
-			.static_property("KEY_ENTER", puerts::make_constant<4194309>())
-			.static_property("KEY_KP_ENTER", puerts::make_constant<4194310>())
-			.static_property("KEY_INSERT", puerts::make_constant<4194311>())
-			.static_property("KEY_DELETE", puerts::make_constant<4194312>())
-			.static_property("KEY_PAUSE", puerts::make_constant<4194313>())
-			.static_property("KEY_PRINT", puerts::make_constant<4194314>())
-			.static_property("KEY_SYSREQ", puerts::make_constant<4194315>())
-			.static_property("KEY_CLEAR", puerts::make_constant<4194316>())
-			.static_property("KEY_HOME", puerts::make_constant<4194317>())
-			.static_property("KEY_END", puerts::make_constant<4194318>())
-			.static_property("KEY_LEFT", puerts::make_constant<4194319>())
-			.static_property("KEY_UP", puerts::make_constant<4194320>())
-			.static_property("KEY_RIGHT", puerts::make_constant<4194321>())
-			.static_property("KEY_DOWN", puerts::make_constant<4194322>())
-			.static_property("KEY_PAGEUP", puerts::make_constant<4194323>())
-			.static_property("KEY_PAGEDOWN", puerts::make_constant<4194324>())
-			.static_property("KEY_SHIFT", puerts::make_constant<4194325>())
-			.static_property("KEY_CTRL", puerts::make_constant<4194326>())
-			.static_property("KEY_META", puerts::make_constant<4194327>())
-			.static_property("KEY_ALT", puerts::make_constant<4194328>())
-			.static_property("KEY_CAPSLOCK", puerts::make_constant<4194329>())
-			.static_property("KEY_NUMLOCK", puerts::make_constant<4194330>())
-			.static_property("KEY_SCROLLLOCK", puerts::make_constant<4194331>())
-			.static_property("KEY_F1", puerts::make_constant<4194332>())
-			.static_property("KEY_F2", puerts::make_constant<4194333>())
-			.static_property("KEY_F3", puerts::make_constant<4194334>())
-			.static_property("KEY_F4", puerts::make_constant<4194335>())
-			.static_property("KEY_F5", puerts::make_constant<4194336>())
-			.static_property("KEY_F6", puerts::make_constant<4194337>())
-			.static_property("KEY_F7", puerts::make_constant<4194338>())
-			.static_property("KEY_F8", puerts::make_constant<4194339>())
-			.static_property("KEY_F9", puerts::make_constant<4194340>())
-			.static_property("KEY_F10", puerts::make_constant<4194341>())
-			.static_property("KEY_F11", puerts::make_constant<4194342>())
-			.static_property("KEY_F12", puerts::make_constant<4194343>())
-			.static_property("KEY_F13", puerts::make_constant<4194344>())
-			.static_property("KEY_F14", puerts::make_constant<4194345>())
-			.static_property("KEY_F15", puerts::make_constant<4194346>())
-			.static_property("KEY_F16", puerts::make_constant<4194347>())
-			.static_property("KEY_F17", puerts::make_constant<4194348>())
-			.static_property("KEY_F18", puerts::make_constant<4194349>())
-			.static_property("KEY_F19", puerts::make_constant<4194350>())
-			.static_property("KEY_F20", puerts::make_constant<4194351>())
-			.static_property("KEY_F21", puerts::make_constant<4194352>())
-			.static_property("KEY_F22", puerts::make_constant<4194353>())
-			.static_property("KEY_F23", puerts::make_constant<4194354>())
-			.static_property("KEY_F24", puerts::make_constant<4194355>())
-			.static_property("KEY_F25", puerts::make_constant<4194356>())
-			.static_property("KEY_F26", puerts::make_constant<4194357>())
-			.static_property("KEY_F27", puerts::make_constant<4194358>())
-			.static_property("KEY_F28", puerts::make_constant<4194359>())
-			.static_property("KEY_F29", puerts::make_constant<4194360>())
-			.static_property("KEY_F30", puerts::make_constant<4194361>())
-			.static_property("KEY_F31", puerts::make_constant<4194362>())
-			.static_property("KEY_F32", puerts::make_constant<4194363>())
-			.static_property("KEY_F33", puerts::make_constant<4194364>())
-			.static_property("KEY_F34", puerts::make_constant<4194365>())
-			.static_property("KEY_F35", puerts::make_constant<4194366>())
-			.static_property("KEY_KP_MULTIPLY", puerts::make_constant<4194433>())
-			.static_property("KEY_KP_DIVIDE", puerts::make_constant<4194434>())
-			.static_property("KEY_KP_SUBTRACT", puerts::make_constant<4194435>())
-			.static_property("KEY_KP_PERIOD", puerts::make_constant<4194436>())
-			.static_property("KEY_KP_ADD", puerts::make_constant<4194437>())
-			.static_property("KEY_KP_0", puerts::make_constant<4194438>())
-			.static_property("KEY_KP_1", puerts::make_constant<4194439>())
-			.static_property("KEY_KP_2", puerts::make_constant<4194440>())
-			.static_property("KEY_KP_3", puerts::make_constant<4194441>())
-			.static_property("KEY_KP_4", puerts::make_constant<4194442>())
-			.static_property("KEY_KP_5", puerts::make_constant<4194443>())
-			.static_property("KEY_KP_6", puerts::make_constant<4194444>())
-			.static_property("KEY_KP_7", puerts::make_constant<4194445>())
-			.static_property("KEY_KP_8", puerts::make_constant<4194446>())
-			.static_property("KEY_KP_9", puerts::make_constant<4194447>())
-			.static_property("KEY_MENU", puerts::make_constant<4194370>())
-			.static_property("KEY_HYPER", puerts::make_constant<4194371>())
-			.static_property("KEY_HELP", puerts::make_constant<4194373>())
-			.static_property("KEY_BACK", puerts::make_constant<4194376>())
-			.static_property("KEY_FORWARD", puerts::make_constant<4194377>())
-			.static_property("KEY_STOP", puerts::make_constant<4194378>())
-			.static_property("KEY_REFRESH", puerts::make_constant<4194379>())
-			.static_property("KEY_VOLUMEDOWN", puerts::make_constant<4194380>())
-			.static_property("KEY_VOLUMEMUTE", puerts::make_constant<4194381>())
-			.static_property("KEY_VOLUMEUP", puerts::make_constant<4194382>())
-			.static_property("KEY_MEDIAPLAY", puerts::make_constant<4194388>())
-			.static_property("KEY_MEDIASTOP", puerts::make_constant<4194389>())
-			.static_property("KEY_MEDIAPREVIOUS", puerts::make_constant<4194390>())
-			.static_property("KEY_MEDIANEXT", puerts::make_constant<4194391>())
-			.static_property("KEY_MEDIARECORD", puerts::make_constant<4194392>())
-			.static_property("KEY_HOMEPAGE", puerts::make_constant<4194393>())
-			.static_property("KEY_FAVORITES", puerts::make_constant<4194394>())
-			.static_property("KEY_SEARCH", puerts::make_constant<4194395>())
-			.static_property("KEY_STANDBY", puerts::make_constant<4194396>())
-			.static_property("KEY_OPENURL", puerts::make_constant<4194397>())
-			.static_property("KEY_LAUNCHMAIL", puerts::make_constant<4194398>())
-			.static_property("KEY_LAUNCHMEDIA", puerts::make_constant<4194399>())
-			.static_property("KEY_LAUNCH0", puerts::make_constant<4194400>())
-			.static_property("KEY_LAUNCH1", puerts::make_constant<4194401>())
-			.static_property("KEY_LAUNCH2", puerts::make_constant<4194402>())
-			.static_property("KEY_LAUNCH3", puerts::make_constant<4194403>())
-			.static_property("KEY_LAUNCH4", puerts::make_constant<4194404>())
-			.static_property("KEY_LAUNCH5", puerts::make_constant<4194405>())
-			.static_property("KEY_LAUNCH6", puerts::make_constant<4194406>())
-			.static_property("KEY_LAUNCH7", puerts::make_constant<4194407>())
-			.static_property("KEY_LAUNCH8", puerts::make_constant<4194408>())
-			.static_property("KEY_LAUNCH9", puerts::make_constant<4194409>())
-			.static_property("KEY_LAUNCHA", puerts::make_constant<4194410>())
-			.static_property("KEY_LAUNCHB", puerts::make_constant<4194411>())
-			.static_property("KEY_LAUNCHC", puerts::make_constant<4194412>())
-			.static_property("KEY_LAUNCHD", puerts::make_constant<4194413>())
-			.static_property("KEY_LAUNCHE", puerts::make_constant<4194414>())
-			.static_property("KEY_LAUNCHF", puerts::make_constant<4194415>())
-			.static_property("KEY_GLOBE", puerts::make_constant<4194416>())
-			.static_property("KEY_KEYBOARD", puerts::make_constant<4194417>())
-			.static_property("KEY_JIS_EISU", puerts::make_constant<4194418>())
-			.static_property("KEY_JIS_KANA", puerts::make_constant<4194419>())
-			.static_property("KEY_UNKNOWN", puerts::make_constant<8388607>())
-			.static_property("KEY_SPACE", puerts::make_constant<32>())
-			.static_property("KEY_EXCLAM", puerts::make_constant<33>())
-			.static_property("KEY_QUOTEDBL", puerts::make_constant<34>())
-			.static_property("KEY_NUMBERSIGN", puerts::make_constant<35>())
-			.static_property("KEY_DOLLAR", puerts::make_constant<36>())
-			.static_property("KEY_PERCENT", puerts::make_constant<37>())
-			.static_property("KEY_AMPERSAND", puerts::make_constant<38>())
-			.static_property("KEY_APOSTROPHE", puerts::make_constant<39>())
-			.static_property("KEY_PARENLEFT", puerts::make_constant<40>())
-			.static_property("KEY_PARENRIGHT", puerts::make_constant<41>())
-			.static_property("KEY_ASTERISK", puerts::make_constant<42>())
-			.static_property("KEY_PLUS", puerts::make_constant<43>())
-			.static_property("KEY_COMMA", puerts::make_constant<44>())
-			.static_property("KEY_MINUS", puerts::make_constant<45>())
-			.static_property("KEY_PERIOD", puerts::make_constant<46>())
-			.static_property("KEY_SLASH", puerts::make_constant<47>())
-			.static_property("KEY_0", puerts::make_constant<48>())
-			.static_property("KEY_1", puerts::make_constant<49>())
-			.static_property("KEY_2", puerts::make_constant<50>())
-			.static_property("KEY_3", puerts::make_constant<51>())
-			.static_property("KEY_4", puerts::make_constant<52>())
-			.static_property("KEY_5", puerts::make_constant<53>())
-			.static_property("KEY_6", puerts::make_constant<54>())
-			.static_property("KEY_7", puerts::make_constant<55>())
-			.static_property("KEY_8", puerts::make_constant<56>())
-			.static_property("KEY_9", puerts::make_constant<57>())
-			.static_property("KEY_COLON", puerts::make_constant<58>())
-			.static_property("KEY_SEMICOLON", puerts::make_constant<59>())
-			.static_property("KEY_LESS", puerts::make_constant<60>())
-			.static_property("KEY_EQUAL", puerts::make_constant<61>())
-			.static_property("KEY_GREATER", puerts::make_constant<62>())
-			.static_property("KEY_QUESTION", puerts::make_constant<63>())
-			.static_property("KEY_AT", puerts::make_constant<64>())
-			.static_property("KEY_A", puerts::make_constant<65>())
-			.static_property("KEY_B", puerts::make_constant<66>())
-			.static_property("KEY_C", puerts::make_constant<67>())
-			.static_property("KEY_D", puerts::make_constant<68>())
-			.static_property("KEY_E", puerts::make_constant<69>())
-			.static_property("KEY_F", puerts::make_constant<70>())
-			.static_property("KEY_G", puerts::make_constant<71>())
-			.static_property("KEY_H", puerts::make_constant<72>())
-			.static_property("KEY_I", puerts::make_constant<73>())
-			.static_property("KEY_J", puerts::make_constant<74>())
-			.static_property("KEY_K", puerts::make_constant<75>())
-			.static_property("KEY_L", puerts::make_constant<76>())
-			.static_property("KEY_M", puerts::make_constant<77>())
-			.static_property("KEY_N", puerts::make_constant<78>())
-			.static_property("KEY_O", puerts::make_constant<79>())
-			.static_property("KEY_P", puerts::make_constant<80>())
-			.static_property("KEY_Q", puerts::make_constant<81>())
-			.static_property("KEY_R", puerts::make_constant<82>())
-			.static_property("KEY_S", puerts::make_constant<83>())
-			.static_property("KEY_T", puerts::make_constant<84>())
-			.static_property("KEY_U", puerts::make_constant<85>())
-			.static_property("KEY_V", puerts::make_constant<86>())
-			.static_property("KEY_W", puerts::make_constant<87>())
-			.static_property("KEY_X", puerts::make_constant<88>())
-			.static_property("KEY_Y", puerts::make_constant<89>())
-			.static_property("KEY_Z", puerts::make_constant<90>())
-			.static_property("KEY_BRACKETLEFT", puerts::make_constant<91>())
-			.static_property("KEY_BACKSLASH", puerts::make_constant<92>())
-			.static_property("KEY_BRACKETRIGHT", puerts::make_constant<93>())
-			.static_property("KEY_ASCIICIRCUM", puerts::make_constant<94>())
-			.static_property("KEY_UNDERSCORE", puerts::make_constant<95>())
-			.static_property("KEY_QUOTELEFT", puerts::make_constant<96>())
-			.static_property("KEY_BRACELEFT", puerts::make_constant<123>())
-			.static_property("KEY_BAR", puerts::make_constant<124>())
-			.static_property("KEY_BRACERIGHT", puerts::make_constant<125>())
-			.static_property("KEY_ASCIITILDE", puerts::make_constant<126>())
-			.static_property("KEY_YEN", puerts::make_constant<165>())
-			.static_property("KEY_SECTION", puerts::make_constant<167>())
+			.constant<0>("KEY_NONE")
+			.constant<4194304>("KEY_SPECIAL")
+			.constant<4194305>("KEY_ESCAPE")
+			.constant<4194306>("KEY_TAB")
+			.constant<4194307>("KEY_BACKTAB")
+			.constant<4194308>("KEY_BACKSPACE")
+			.constant<4194309>("KEY_ENTER")
+			.constant<4194310>("KEY_KP_ENTER")
+			.constant<4194311>("KEY_INSERT")
+			.constant<4194312>("KEY_DELETE")
+			.constant<4194313>("KEY_PAUSE")
+			.constant<4194314>("KEY_PRINT")
+			.constant<4194315>("KEY_SYSREQ")
+			.constant<4194316>("KEY_CLEAR")
+			.constant<4194317>("KEY_HOME")
+			.constant<4194318>("KEY_END")
+			.constant<4194319>("KEY_LEFT")
+			.constant<4194320>("KEY_UP")
+			.constant<4194321>("KEY_RIGHT")
+			.constant<4194322>("KEY_DOWN")
+			.constant<4194323>("KEY_PAGEUP")
+			.constant<4194324>("KEY_PAGEDOWN")
+			.constant<4194325>("KEY_SHIFT")
+			.constant<4194326>("KEY_CTRL")
+			.constant<4194327>("KEY_META")
+			.constant<4194328>("KEY_ALT")
+			.constant<4194329>("KEY_CAPSLOCK")
+			.constant<4194330>("KEY_NUMLOCK")
+			.constant<4194331>("KEY_SCROLLLOCK")
+			.constant<4194332>("KEY_F1")
+			.constant<4194333>("KEY_F2")
+			.constant<4194334>("KEY_F3")
+			.constant<4194335>("KEY_F4")
+			.constant<4194336>("KEY_F5")
+			.constant<4194337>("KEY_F6")
+			.constant<4194338>("KEY_F7")
+			.constant<4194339>("KEY_F8")
+			.constant<4194340>("KEY_F9")
+			.constant<4194341>("KEY_F10")
+			.constant<4194342>("KEY_F11")
+			.constant<4194343>("KEY_F12")
+			.constant<4194344>("KEY_F13")
+			.constant<4194345>("KEY_F14")
+			.constant<4194346>("KEY_F15")
+			.constant<4194347>("KEY_F16")
+			.constant<4194348>("KEY_F17")
+			.constant<4194349>("KEY_F18")
+			.constant<4194350>("KEY_F19")
+			.constant<4194351>("KEY_F20")
+			.constant<4194352>("KEY_F21")
+			.constant<4194353>("KEY_F22")
+			.constant<4194354>("KEY_F23")
+			.constant<4194355>("KEY_F24")
+			.constant<4194356>("KEY_F25")
+			.constant<4194357>("KEY_F26")
+			.constant<4194358>("KEY_F27")
+			.constant<4194359>("KEY_F28")
+			.constant<4194360>("KEY_F29")
+			.constant<4194361>("KEY_F30")
+			.constant<4194362>("KEY_F31")
+			.constant<4194363>("KEY_F32")
+			.constant<4194364>("KEY_F33")
+			.constant<4194365>("KEY_F34")
+			.constant<4194366>("KEY_F35")
+			.constant<4194433>("KEY_KP_MULTIPLY")
+			.constant<4194434>("KEY_KP_DIVIDE")
+			.constant<4194435>("KEY_KP_SUBTRACT")
+			.constant<4194436>("KEY_KP_PERIOD")
+			.constant<4194437>("KEY_KP_ADD")
+			.constant<4194438>("KEY_KP_0")
+			.constant<4194439>("KEY_KP_1")
+			.constant<4194440>("KEY_KP_2")
+			.constant<4194441>("KEY_KP_3")
+			.constant<4194442>("KEY_KP_4")
+			.constant<4194443>("KEY_KP_5")
+			.constant<4194444>("KEY_KP_6")
+			.constant<4194445>("KEY_KP_7")
+			.constant<4194446>("KEY_KP_8")
+			.constant<4194447>("KEY_KP_9")
+			.constant<4194370>("KEY_MENU")
+			.constant<4194371>("KEY_HYPER")
+			.constant<4194373>("KEY_HELP")
+			.constant<4194376>("KEY_BACK")
+			.constant<4194377>("KEY_FORWARD")
+			.constant<4194378>("KEY_STOP")
+			.constant<4194379>("KEY_REFRESH")
+			.constant<4194380>("KEY_VOLUMEDOWN")
+			.constant<4194381>("KEY_VOLUMEMUTE")
+			.constant<4194382>("KEY_VOLUMEUP")
+			.constant<4194388>("KEY_MEDIAPLAY")
+			.constant<4194389>("KEY_MEDIASTOP")
+			.constant<4194390>("KEY_MEDIAPREVIOUS")
+			.constant<4194391>("KEY_MEDIANEXT")
+			.constant<4194392>("KEY_MEDIARECORD")
+			.constant<4194393>("KEY_HOMEPAGE")
+			.constant<4194394>("KEY_FAVORITES")
+			.constant<4194395>("KEY_SEARCH")
+			.constant<4194396>("KEY_STANDBY")
+			.constant<4194397>("KEY_OPENURL")
+			.constant<4194398>("KEY_LAUNCHMAIL")
+			.constant<4194399>("KEY_LAUNCHMEDIA")
+			.constant<4194400>("KEY_LAUNCH0")
+			.constant<4194401>("KEY_LAUNCH1")
+			.constant<4194402>("KEY_LAUNCH2")
+			.constant<4194403>("KEY_LAUNCH3")
+			.constant<4194404>("KEY_LAUNCH4")
+			.constant<4194405>("KEY_LAUNCH5")
+			.constant<4194406>("KEY_LAUNCH6")
+			.constant<4194407>("KEY_LAUNCH7")
+			.constant<4194408>("KEY_LAUNCH8")
+			.constant<4194409>("KEY_LAUNCH9")
+			.constant<4194410>("KEY_LAUNCHA")
+			.constant<4194411>("KEY_LAUNCHB")
+			.constant<4194412>("KEY_LAUNCHC")
+			.constant<4194413>("KEY_LAUNCHD")
+			.constant<4194414>("KEY_LAUNCHE")
+			.constant<4194415>("KEY_LAUNCHF")
+			.constant<4194416>("KEY_GLOBE")
+			.constant<4194417>("KEY_KEYBOARD")
+			.constant<4194418>("KEY_JIS_EISU")
+			.constant<4194419>("KEY_JIS_KANA")
+			.constant<8388607>("KEY_UNKNOWN")
+			.constant<32>("KEY_SPACE")
+			.constant<33>("KEY_EXCLAM")
+			.constant<34>("KEY_QUOTEDBL")
+			.constant<35>("KEY_NUMBERSIGN")
+			.constant<36>("KEY_DOLLAR")
+			.constant<37>("KEY_PERCENT")
+			.constant<38>("KEY_AMPERSAND")
+			.constant<39>("KEY_APOSTROPHE")
+			.constant<40>("KEY_PARENLEFT")
+			.constant<41>("KEY_PARENRIGHT")
+			.constant<42>("KEY_ASTERISK")
+			.constant<43>("KEY_PLUS")
+			.constant<44>("KEY_COMMA")
+			.constant<45>("KEY_MINUS")
+			.constant<46>("KEY_PERIOD")
+			.constant<47>("KEY_SLASH")
+			.constant<48>("KEY_0")
+			.constant<49>("KEY_1")
+			.constant<50>("KEY_2")
+			.constant<51>("KEY_3")
+			.constant<52>("KEY_4")
+			.constant<53>("KEY_5")
+			.constant<54>("KEY_6")
+			.constant<55>("KEY_7")
+			.constant<56>("KEY_8")
+			.constant<57>("KEY_9")
+			.constant<58>("KEY_COLON")
+			.constant<59>("KEY_SEMICOLON")
+			.constant<60>("KEY_LESS")
+			.constant<61>("KEY_EQUAL")
+			.constant<62>("KEY_GREATER")
+			.constant<63>("KEY_QUESTION")
+			.constant<64>("KEY_AT")
+			.constant<65>("KEY_A")
+			.constant<66>("KEY_B")
+			.constant<67>("KEY_C")
+			.constant<68>("KEY_D")
+			.constant<69>("KEY_E")
+			.constant<70>("KEY_F")
+			.constant<71>("KEY_G")
+			.constant<72>("KEY_H")
+			.constant<73>("KEY_I")
+			.constant<74>("KEY_J")
+			.constant<75>("KEY_K")
+			.constant<76>("KEY_L")
+			.constant<77>("KEY_M")
+			.constant<78>("KEY_N")
+			.constant<79>("KEY_O")
+			.constant<80>("KEY_P")
+			.constant<81>("KEY_Q")
+			.constant<82>("KEY_R")
+			.constant<83>("KEY_S")
+			.constant<84>("KEY_T")
+			.constant<85>("KEY_U")
+			.constant<86>("KEY_V")
+			.constant<87>("KEY_W")
+			.constant<88>("KEY_X")
+			.constant<89>("KEY_Y")
+			.constant<90>("KEY_Z")
+			.constant<91>("KEY_BRACKETLEFT")
+			.constant<92>("KEY_BACKSLASH")
+			.constant<93>("KEY_BRACKETRIGHT")
+			.constant<94>("KEY_ASCIICIRCUM")
+			.constant<95>("KEY_UNDERSCORE")
+			.constant<96>("KEY_QUOTELEFT")
+			.constant<123>("KEY_BRACELEFT")
+			.constant<124>("KEY_BAR")
+			.constant<125>("KEY_BRACERIGHT")
+			.constant<126>("KEY_ASCIITILDE")
+			.constant<165>("KEY_YEN")
+			.constant<167>("KEY_SECTION")
 			.register_type();
 }
 
 inline void register_enum_global_scope_key_modifier_mask() {
 	puerts::define_type<puerts_generated::global_scope_key_modifier_mask_enum_tag>()
-			.static_property("KEY_CODE_MASK", puerts::make_constant<8388607>())
-			.static_property("KEY_MODIFIER_MASK", puerts::make_constant<2130706432>())
-			.static_property("KEY_MASK_CMD_OR_CTRL", puerts::make_constant<16777216>())
-			.static_property("KEY_MASK_SHIFT", puerts::make_constant<33554432>())
-			.static_property("KEY_MASK_ALT", puerts::make_constant<67108864>())
-			.static_property("KEY_MASK_META", puerts::make_constant<134217728>())
-			.static_property("KEY_MASK_CTRL", puerts::make_constant<268435456>())
-			.static_property("KEY_MASK_KPAD", puerts::make_constant<536870912>())
-			.static_property("KEY_MASK_GROUP_SWITCH", puerts::make_constant<1073741824>())
+			.constant<8388607>("KEY_CODE_MASK")
+			.constant<2130706432>("KEY_MODIFIER_MASK")
+			.constant<16777216>("KEY_MASK_CMD_OR_CTRL")
+			.constant<33554432>("KEY_MASK_SHIFT")
+			.constant<67108864>("KEY_MASK_ALT")
+			.constant<134217728>("KEY_MASK_META")
+			.constant<268435456>("KEY_MASK_CTRL")
+			.constant<536870912>("KEY_MASK_KPAD")
+			.constant<1073741824>("KEY_MASK_GROUP_SWITCH")
 			.register_type();
 }
 
 inline void register_enum_global_scope_key_location() {
 	puerts::define_type<puerts_generated::global_scope_key_location_enum_tag>()
-			.static_property("KEY_LOCATION_UNSPECIFIED", puerts::make_constant<0>())
-			.static_property("KEY_LOCATION_LEFT", puerts::make_constant<1>())
-			.static_property("KEY_LOCATION_RIGHT", puerts::make_constant<2>())
+			.constant<0>("KEY_LOCATION_UNSPECIFIED")
+			.constant<1>("KEY_LOCATION_LEFT")
+			.constant<2>("KEY_LOCATION_RIGHT")
 			.register_type();
 }
 
 inline void register_enum_global_scope_mouse_button() {
 	puerts::define_type<puerts_generated::global_scope_mouse_button_enum_tag>()
-			.static_property("MOUSE_BUTTON_NONE", puerts::make_constant<0>())
-			.static_property("MOUSE_BUTTON_LEFT", puerts::make_constant<1>())
-			.static_property("MOUSE_BUTTON_RIGHT", puerts::make_constant<2>())
-			.static_property("MOUSE_BUTTON_MIDDLE", puerts::make_constant<3>())
-			.static_property("MOUSE_BUTTON_WHEEL_UP", puerts::make_constant<4>())
-			.static_property("MOUSE_BUTTON_WHEEL_DOWN", puerts::make_constant<5>())
-			.static_property("MOUSE_BUTTON_WHEEL_LEFT", puerts::make_constant<6>())
-			.static_property("MOUSE_BUTTON_WHEEL_RIGHT", puerts::make_constant<7>())
-			.static_property("MOUSE_BUTTON_XBUTTON1", puerts::make_constant<8>())
-			.static_property("MOUSE_BUTTON_XBUTTON2", puerts::make_constant<9>())
+			.constant<0>("MOUSE_BUTTON_NONE")
+			.constant<1>("MOUSE_BUTTON_LEFT")
+			.constant<2>("MOUSE_BUTTON_RIGHT")
+			.constant<3>("MOUSE_BUTTON_MIDDLE")
+			.constant<4>("MOUSE_BUTTON_WHEEL_UP")
+			.constant<5>("MOUSE_BUTTON_WHEEL_DOWN")
+			.constant<6>("MOUSE_BUTTON_WHEEL_LEFT")
+			.constant<7>("MOUSE_BUTTON_WHEEL_RIGHT")
+			.constant<8>("MOUSE_BUTTON_XBUTTON1")
+			.constant<9>("MOUSE_BUTTON_XBUTTON2")
 			.register_type();
 }
 
 inline void register_enum_global_scope_mouse_button_mask() {
 	puerts::define_type<puerts_generated::global_scope_mouse_button_mask_enum_tag>()
-			.static_property("MOUSE_BUTTON_MASK_LEFT", puerts::make_constant<1>())
-			.static_property("MOUSE_BUTTON_MASK_RIGHT", puerts::make_constant<2>())
-			.static_property("MOUSE_BUTTON_MASK_MIDDLE", puerts::make_constant<4>())
-			.static_property("MOUSE_BUTTON_MASK_MB_XBUTTON1", puerts::make_constant<128>())
-			.static_property("MOUSE_BUTTON_MASK_MB_XBUTTON2", puerts::make_constant<256>())
+			.constant<1>("MOUSE_BUTTON_MASK_LEFT")
+			.constant<2>("MOUSE_BUTTON_MASK_RIGHT")
+			.constant<4>("MOUSE_BUTTON_MASK_MIDDLE")
+			.constant<128>("MOUSE_BUTTON_MASK_MB_XBUTTON1")
+			.constant<256>("MOUSE_BUTTON_MASK_MB_XBUTTON2")
 			.register_type();
 }
 
 inline void register_enum_global_scope_joy_button() {
 	puerts::define_type<puerts_generated::global_scope_joy_button_enum_tag>()
-			.static_property("JOY_BUTTON_INVALID", puerts::make_constant<-1>())
-			.static_property("JOY_BUTTON_A", puerts::make_constant<0>())
-			.static_property("JOY_BUTTON_B", puerts::make_constant<1>())
-			.static_property("JOY_BUTTON_X", puerts::make_constant<2>())
-			.static_property("JOY_BUTTON_Y", puerts::make_constant<3>())
-			.static_property("JOY_BUTTON_BACK", puerts::make_constant<4>())
-			.static_property("JOY_BUTTON_GUIDE", puerts::make_constant<5>())
-			.static_property("JOY_BUTTON_START", puerts::make_constant<6>())
-			.static_property("JOY_BUTTON_LEFT_STICK", puerts::make_constant<7>())
-			.static_property("JOY_BUTTON_RIGHT_STICK", puerts::make_constant<8>())
-			.static_property("JOY_BUTTON_LEFT_SHOULDER", puerts::make_constant<9>())
-			.static_property("JOY_BUTTON_RIGHT_SHOULDER", puerts::make_constant<10>())
-			.static_property("JOY_BUTTON_DPAD_UP", puerts::make_constant<11>())
-			.static_property("JOY_BUTTON_DPAD_DOWN", puerts::make_constant<12>())
-			.static_property("JOY_BUTTON_DPAD_LEFT", puerts::make_constant<13>())
-			.static_property("JOY_BUTTON_DPAD_RIGHT", puerts::make_constant<14>())
-			.static_property("JOY_BUTTON_MISC1", puerts::make_constant<15>())
-			.static_property("JOY_BUTTON_PADDLE1", puerts::make_constant<16>())
-			.static_property("JOY_BUTTON_PADDLE2", puerts::make_constant<17>())
-			.static_property("JOY_BUTTON_PADDLE3", puerts::make_constant<18>())
-			.static_property("JOY_BUTTON_PADDLE4", puerts::make_constant<19>())
-			.static_property("JOY_BUTTON_TOUCHPAD", puerts::make_constant<20>())
-			.static_property("JOY_BUTTON_SDL_MAX", puerts::make_constant<21>())
-			.static_property("JOY_BUTTON_MAX", puerts::make_constant<128>())
+			.constant<-1>("JOY_BUTTON_INVALID")
+			.constant<0>("JOY_BUTTON_A")
+			.constant<1>("JOY_BUTTON_B")
+			.constant<2>("JOY_BUTTON_X")
+			.constant<3>("JOY_BUTTON_Y")
+			.constant<4>("JOY_BUTTON_BACK")
+			.constant<5>("JOY_BUTTON_GUIDE")
+			.constant<6>("JOY_BUTTON_START")
+			.constant<7>("JOY_BUTTON_LEFT_STICK")
+			.constant<8>("JOY_BUTTON_RIGHT_STICK")
+			.constant<9>("JOY_BUTTON_LEFT_SHOULDER")
+			.constant<10>("JOY_BUTTON_RIGHT_SHOULDER")
+			.constant<11>("JOY_BUTTON_DPAD_UP")
+			.constant<12>("JOY_BUTTON_DPAD_DOWN")
+			.constant<13>("JOY_BUTTON_DPAD_LEFT")
+			.constant<14>("JOY_BUTTON_DPAD_RIGHT")
+			.constant<15>("JOY_BUTTON_MISC1")
+			.constant<16>("JOY_BUTTON_PADDLE1")
+			.constant<17>("JOY_BUTTON_PADDLE2")
+			.constant<18>("JOY_BUTTON_PADDLE3")
+			.constant<19>("JOY_BUTTON_PADDLE4")
+			.constant<20>("JOY_BUTTON_TOUCHPAD")
+			.constant<21>("JOY_BUTTON_SDL_MAX")
+			.constant<128>("JOY_BUTTON_MAX")
 			.register_type();
 }
 
 inline void register_enum_global_scope_joy_axis() {
 	puerts::define_type<puerts_generated::global_scope_joy_axis_enum_tag>()
-			.static_property("JOY_AXIS_INVALID", puerts::make_constant<-1>())
-			.static_property("JOY_AXIS_LEFT_X", puerts::make_constant<0>())
-			.static_property("JOY_AXIS_LEFT_Y", puerts::make_constant<1>())
-			.static_property("JOY_AXIS_RIGHT_X", puerts::make_constant<2>())
-			.static_property("JOY_AXIS_RIGHT_Y", puerts::make_constant<3>())
-			.static_property("JOY_AXIS_TRIGGER_LEFT", puerts::make_constant<4>())
-			.static_property("JOY_AXIS_TRIGGER_RIGHT", puerts::make_constant<5>())
-			.static_property("JOY_AXIS_SDL_MAX", puerts::make_constant<6>())
-			.static_property("JOY_AXIS_MAX", puerts::make_constant<10>())
+			.constant<-1>("JOY_AXIS_INVALID")
+			.constant<0>("JOY_AXIS_LEFT_X")
+			.constant<1>("JOY_AXIS_LEFT_Y")
+			.constant<2>("JOY_AXIS_RIGHT_X")
+			.constant<3>("JOY_AXIS_RIGHT_Y")
+			.constant<4>("JOY_AXIS_TRIGGER_LEFT")
+			.constant<5>("JOY_AXIS_TRIGGER_RIGHT")
+			.constant<6>("JOY_AXIS_SDL_MAX")
+			.constant<10>("JOY_AXIS_MAX")
 			.register_type();
 }
 
 inline void register_enum_global_scope_midi_message() {
 	puerts::define_type<puerts_generated::global_scope_midi_message_enum_tag>()
-			.static_property("MIDI_MESSAGE_NONE", puerts::make_constant<0>())
-			.static_property("MIDI_MESSAGE_NOTE_OFF", puerts::make_constant<8>())
-			.static_property("MIDI_MESSAGE_NOTE_ON", puerts::make_constant<9>())
-			.static_property("MIDI_MESSAGE_AFTERTOUCH", puerts::make_constant<10>())
-			.static_property("MIDI_MESSAGE_CONTROL_CHANGE", puerts::make_constant<11>())
-			.static_property("MIDI_MESSAGE_PROGRAM_CHANGE", puerts::make_constant<12>())
-			.static_property("MIDI_MESSAGE_CHANNEL_PRESSURE", puerts::make_constant<13>())
-			.static_property("MIDI_MESSAGE_PITCH_BEND", puerts::make_constant<14>())
-			.static_property("MIDI_MESSAGE_SYSTEM_EXCLUSIVE", puerts::make_constant<240>())
-			.static_property("MIDI_MESSAGE_QUARTER_FRAME", puerts::make_constant<241>())
-			.static_property("MIDI_MESSAGE_SONG_POSITION_POINTER", puerts::make_constant<242>())
-			.static_property("MIDI_MESSAGE_SONG_SELECT", puerts::make_constant<243>())
-			.static_property("MIDI_MESSAGE_TUNE_REQUEST", puerts::make_constant<246>())
-			.static_property("MIDI_MESSAGE_TIMING_CLOCK", puerts::make_constant<248>())
-			.static_property("MIDI_MESSAGE_START", puerts::make_constant<250>())
-			.static_property("MIDI_MESSAGE_CONTINUE", puerts::make_constant<251>())
-			.static_property("MIDI_MESSAGE_STOP", puerts::make_constant<252>())
-			.static_property("MIDI_MESSAGE_ACTIVE_SENSING", puerts::make_constant<254>())
-			.static_property("MIDI_MESSAGE_SYSTEM_RESET", puerts::make_constant<255>())
+			.constant<0>("MIDI_MESSAGE_NONE")
+			.constant<8>("MIDI_MESSAGE_NOTE_OFF")
+			.constant<9>("MIDI_MESSAGE_NOTE_ON")
+			.constant<10>("MIDI_MESSAGE_AFTERTOUCH")
+			.constant<11>("MIDI_MESSAGE_CONTROL_CHANGE")
+			.constant<12>("MIDI_MESSAGE_PROGRAM_CHANGE")
+			.constant<13>("MIDI_MESSAGE_CHANNEL_PRESSURE")
+			.constant<14>("MIDI_MESSAGE_PITCH_BEND")
+			.constant<240>("MIDI_MESSAGE_SYSTEM_EXCLUSIVE")
+			.constant<241>("MIDI_MESSAGE_QUARTER_FRAME")
+			.constant<242>("MIDI_MESSAGE_SONG_POSITION_POINTER")
+			.constant<243>("MIDI_MESSAGE_SONG_SELECT")
+			.constant<246>("MIDI_MESSAGE_TUNE_REQUEST")
+			.constant<248>("MIDI_MESSAGE_TIMING_CLOCK")
+			.constant<250>("MIDI_MESSAGE_START")
+			.constant<251>("MIDI_MESSAGE_CONTINUE")
+			.constant<252>("MIDI_MESSAGE_STOP")
+			.constant<254>("MIDI_MESSAGE_ACTIVE_SENSING")
+			.constant<255>("MIDI_MESSAGE_SYSTEM_RESET")
 			.register_type();
 }
 
 inline void register_enum_global_scope_error() {
 	puerts::define_type<puerts_generated::global_scope_error_enum_tag>()
-			.static_property("OK", puerts::make_constant<0>())
-			.static_property("FAILED", puerts::make_constant<1>())
-			.static_property("ERR_UNAVAILABLE", puerts::make_constant<2>())
-			.static_property("ERR_UNCONFIGURED", puerts::make_constant<3>())
-			.static_property("ERR_UNAUTHORIZED", puerts::make_constant<4>())
-			.static_property("ERR_PARAMETER_RANGE_ERROR", puerts::make_constant<5>())
-			.static_property("ERR_OUT_OF_MEMORY", puerts::make_constant<6>())
-			.static_property("ERR_FILE_NOT_FOUND", puerts::make_constant<7>())
-			.static_property("ERR_FILE_BAD_DRIVE", puerts::make_constant<8>())
-			.static_property("ERR_FILE_BAD_PATH", puerts::make_constant<9>())
-			.static_property("ERR_FILE_NO_PERMISSION", puerts::make_constant<10>())
-			.static_property("ERR_FILE_ALREADY_IN_USE", puerts::make_constant<11>())
-			.static_property("ERR_FILE_CANT_OPEN", puerts::make_constant<12>())
-			.static_property("ERR_FILE_CANT_WRITE", puerts::make_constant<13>())
-			.static_property("ERR_FILE_CANT_READ", puerts::make_constant<14>())
-			.static_property("ERR_FILE_UNRECOGNIZED", puerts::make_constant<15>())
-			.static_property("ERR_FILE_CORRUPT", puerts::make_constant<16>())
-			.static_property("ERR_FILE_MISSING_DEPENDENCIES", puerts::make_constant<17>())
-			.static_property("ERR_FILE_EOF", puerts::make_constant<18>())
-			.static_property("ERR_CANT_OPEN", puerts::make_constant<19>())
-			.static_property("ERR_CANT_CREATE", puerts::make_constant<20>())
-			.static_property("ERR_QUERY_FAILED", puerts::make_constant<21>())
-			.static_property("ERR_ALREADY_IN_USE", puerts::make_constant<22>())
-			.static_property("ERR_LOCKED", puerts::make_constant<23>())
-			.static_property("ERR_TIMEOUT", puerts::make_constant<24>())
-			.static_property("ERR_CANT_CONNECT", puerts::make_constant<25>())
-			.static_property("ERR_CANT_RESOLVE", puerts::make_constant<26>())
-			.static_property("ERR_CONNECTION_ERROR", puerts::make_constant<27>())
-			.static_property("ERR_CANT_ACQUIRE_RESOURCE", puerts::make_constant<28>())
-			.static_property("ERR_CANT_FORK", puerts::make_constant<29>())
-			.static_property("ERR_INVALID_DATA", puerts::make_constant<30>())
-			.static_property("ERR_INVALID_PARAMETER", puerts::make_constant<31>())
-			.static_property("ERR_ALREADY_EXISTS", puerts::make_constant<32>())
-			.static_property("ERR_DOES_NOT_EXIST", puerts::make_constant<33>())
-			.static_property("ERR_DATABASE_CANT_READ", puerts::make_constant<34>())
-			.static_property("ERR_DATABASE_CANT_WRITE", puerts::make_constant<35>())
-			.static_property("ERR_COMPILATION_FAILED", puerts::make_constant<36>())
-			.static_property("ERR_METHOD_NOT_FOUND", puerts::make_constant<37>())
-			.static_property("ERR_LINK_FAILED", puerts::make_constant<38>())
-			.static_property("ERR_SCRIPT_FAILED", puerts::make_constant<39>())
-			.static_property("ERR_CYCLIC_LINK", puerts::make_constant<40>())
-			.static_property("ERR_INVALID_DECLARATION", puerts::make_constant<41>())
-			.static_property("ERR_DUPLICATE_SYMBOL", puerts::make_constant<42>())
-			.static_property("ERR_PARSE_ERROR", puerts::make_constant<43>())
-			.static_property("ERR_BUSY", puerts::make_constant<44>())
-			.static_property("ERR_SKIP", puerts::make_constant<45>())
-			.static_property("ERR_HELP", puerts::make_constant<46>())
-			.static_property("ERR_BUG", puerts::make_constant<47>())
-			.static_property("ERR_PRINTER_ON_FIRE", puerts::make_constant<48>())
+			.constant<0>("OK")
+			.constant<1>("FAILED")
+			.constant<2>("ERR_UNAVAILABLE")
+			.constant<3>("ERR_UNCONFIGURED")
+			.constant<4>("ERR_UNAUTHORIZED")
+			.constant<5>("ERR_PARAMETER_RANGE_ERROR")
+			.constant<6>("ERR_OUT_OF_MEMORY")
+			.constant<7>("ERR_FILE_NOT_FOUND")
+			.constant<8>("ERR_FILE_BAD_DRIVE")
+			.constant<9>("ERR_FILE_BAD_PATH")
+			.constant<10>("ERR_FILE_NO_PERMISSION")
+			.constant<11>("ERR_FILE_ALREADY_IN_USE")
+			.constant<12>("ERR_FILE_CANT_OPEN")
+			.constant<13>("ERR_FILE_CANT_WRITE")
+			.constant<14>("ERR_FILE_CANT_READ")
+			.constant<15>("ERR_FILE_UNRECOGNIZED")
+			.constant<16>("ERR_FILE_CORRUPT")
+			.constant<17>("ERR_FILE_MISSING_DEPENDENCIES")
+			.constant<18>("ERR_FILE_EOF")
+			.constant<19>("ERR_CANT_OPEN")
+			.constant<20>("ERR_CANT_CREATE")
+			.constant<21>("ERR_QUERY_FAILED")
+			.constant<22>("ERR_ALREADY_IN_USE")
+			.constant<23>("ERR_LOCKED")
+			.constant<24>("ERR_TIMEOUT")
+			.constant<25>("ERR_CANT_CONNECT")
+			.constant<26>("ERR_CANT_RESOLVE")
+			.constant<27>("ERR_CONNECTION_ERROR")
+			.constant<28>("ERR_CANT_ACQUIRE_RESOURCE")
+			.constant<29>("ERR_CANT_FORK")
+			.constant<30>("ERR_INVALID_DATA")
+			.constant<31>("ERR_INVALID_PARAMETER")
+			.constant<32>("ERR_ALREADY_EXISTS")
+			.constant<33>("ERR_DOES_NOT_EXIST")
+			.constant<34>("ERR_DATABASE_CANT_READ")
+			.constant<35>("ERR_DATABASE_CANT_WRITE")
+			.constant<36>("ERR_COMPILATION_FAILED")
+			.constant<37>("ERR_METHOD_NOT_FOUND")
+			.constant<38>("ERR_LINK_FAILED")
+			.constant<39>("ERR_SCRIPT_FAILED")
+			.constant<40>("ERR_CYCLIC_LINK")
+			.constant<41>("ERR_INVALID_DECLARATION")
+			.constant<42>("ERR_DUPLICATE_SYMBOL")
+			.constant<43>("ERR_PARSE_ERROR")
+			.constant<44>("ERR_BUSY")
+			.constant<45>("ERR_SKIP")
+			.constant<46>("ERR_HELP")
+			.constant<47>("ERR_BUG")
+			.constant<48>("ERR_PRINTER_ON_FIRE")
 			.register_type();
 }
 
 inline void register_enum_global_scope_property_hint() {
 	puerts::define_type<puerts_generated::global_scope_property_hint_enum_tag>()
-			.static_property("PROPERTY_HINT_NONE", puerts::make_constant<0>())
-			.static_property("PROPERTY_HINT_RANGE", puerts::make_constant<1>())
-			.static_property("PROPERTY_HINT_ENUM", puerts::make_constant<2>())
-			.static_property("PROPERTY_HINT_ENUM_SUGGESTION", puerts::make_constant<3>())
-			.static_property("PROPERTY_HINT_EXP_EASING", puerts::make_constant<4>())
-			.static_property("PROPERTY_HINT_LINK", puerts::make_constant<5>())
-			.static_property("PROPERTY_HINT_FLAGS", puerts::make_constant<6>())
-			.static_property("PROPERTY_HINT_LAYERS_2D_RENDER", puerts::make_constant<7>())
-			.static_property("PROPERTY_HINT_LAYERS_2D_PHYSICS", puerts::make_constant<8>())
-			.static_property("PROPERTY_HINT_LAYERS_2D_NAVIGATION", puerts::make_constant<9>())
-			.static_property("PROPERTY_HINT_LAYERS_3D_RENDER", puerts::make_constant<10>())
-			.static_property("PROPERTY_HINT_LAYERS_3D_PHYSICS", puerts::make_constant<11>())
-			.static_property("PROPERTY_HINT_LAYERS_3D_NAVIGATION", puerts::make_constant<12>())
-			.static_property("PROPERTY_HINT_LAYERS_AVOIDANCE", puerts::make_constant<37>())
-			.static_property("PROPERTY_HINT_FILE", puerts::make_constant<13>())
-			.static_property("PROPERTY_HINT_DIR", puerts::make_constant<14>())
-			.static_property("PROPERTY_HINT_GLOBAL_FILE", puerts::make_constant<15>())
-			.static_property("PROPERTY_HINT_GLOBAL_DIR", puerts::make_constant<16>())
-			.static_property("PROPERTY_HINT_RESOURCE_TYPE", puerts::make_constant<17>())
-			.static_property("PROPERTY_HINT_MULTILINE_TEXT", puerts::make_constant<18>())
-			.static_property("PROPERTY_HINT_EXPRESSION", puerts::make_constant<19>())
-			.static_property("PROPERTY_HINT_PLACEHOLDER_TEXT", puerts::make_constant<20>())
-			.static_property("PROPERTY_HINT_COLOR_NO_ALPHA", puerts::make_constant<21>())
-			.static_property("PROPERTY_HINT_OBJECT_ID", puerts::make_constant<22>())
-			.static_property("PROPERTY_HINT_TYPE_STRING", puerts::make_constant<23>())
-			.static_property("PROPERTY_HINT_NODE_PATH_TO_EDITED_NODE", puerts::make_constant<24>())
-			.static_property("PROPERTY_HINT_OBJECT_TOO_BIG", puerts::make_constant<25>())
-			.static_property("PROPERTY_HINT_NODE_PATH_VALID_TYPES", puerts::make_constant<26>())
-			.static_property("PROPERTY_HINT_SAVE_FILE", puerts::make_constant<27>())
-			.static_property("PROPERTY_HINT_GLOBAL_SAVE_FILE", puerts::make_constant<28>())
-			.static_property("PROPERTY_HINT_INT_IS_OBJECTID", puerts::make_constant<29>())
-			.static_property("PROPERTY_HINT_INT_IS_POINTER", puerts::make_constant<30>())
-			.static_property("PROPERTY_HINT_ARRAY_TYPE", puerts::make_constant<31>())
-			.static_property("PROPERTY_HINT_DICTIONARY_TYPE", puerts::make_constant<38>())
-			.static_property("PROPERTY_HINT_LOCALE_ID", puerts::make_constant<32>())
-			.static_property("PROPERTY_HINT_LOCALIZABLE_STRING", puerts::make_constant<33>())
-			.static_property("PROPERTY_HINT_NODE_TYPE", puerts::make_constant<34>())
-			.static_property("PROPERTY_HINT_HIDE_QUATERNION_EDIT", puerts::make_constant<35>())
-			.static_property("PROPERTY_HINT_PASSWORD", puerts::make_constant<36>())
-			.static_property("PROPERTY_HINT_TOOL_BUTTON", puerts::make_constant<39>())
-			.static_property("PROPERTY_HINT_ONESHOT", puerts::make_constant<40>())
-			.static_property("PROPERTY_HINT_GROUP_ENABLE", puerts::make_constant<42>())
-			.static_property("PROPERTY_HINT_INPUT_NAME", puerts::make_constant<43>())
-			.static_property("PROPERTY_HINT_FILE_PATH", puerts::make_constant<44>())
-			.static_property("PROPERTY_HINT_MAX", puerts::make_constant<45>())
+			.constant<0>("PROPERTY_HINT_NONE")
+			.constant<1>("PROPERTY_HINT_RANGE")
+			.constant<2>("PROPERTY_HINT_ENUM")
+			.constant<3>("PROPERTY_HINT_ENUM_SUGGESTION")
+			.constant<4>("PROPERTY_HINT_EXP_EASING")
+			.constant<5>("PROPERTY_HINT_LINK")
+			.constant<6>("PROPERTY_HINT_FLAGS")
+			.constant<7>("PROPERTY_HINT_LAYERS_2D_RENDER")
+			.constant<8>("PROPERTY_HINT_LAYERS_2D_PHYSICS")
+			.constant<9>("PROPERTY_HINT_LAYERS_2D_NAVIGATION")
+			.constant<10>("PROPERTY_HINT_LAYERS_3D_RENDER")
+			.constant<11>("PROPERTY_HINT_LAYERS_3D_PHYSICS")
+			.constant<12>("PROPERTY_HINT_LAYERS_3D_NAVIGATION")
+			.constant<37>("PROPERTY_HINT_LAYERS_AVOIDANCE")
+			.constant<13>("PROPERTY_HINT_FILE")
+			.constant<14>("PROPERTY_HINT_DIR")
+			.constant<15>("PROPERTY_HINT_GLOBAL_FILE")
+			.constant<16>("PROPERTY_HINT_GLOBAL_DIR")
+			.constant<17>("PROPERTY_HINT_RESOURCE_TYPE")
+			.constant<18>("PROPERTY_HINT_MULTILINE_TEXT")
+			.constant<19>("PROPERTY_HINT_EXPRESSION")
+			.constant<20>("PROPERTY_HINT_PLACEHOLDER_TEXT")
+			.constant<21>("PROPERTY_HINT_COLOR_NO_ALPHA")
+			.constant<22>("PROPERTY_HINT_OBJECT_ID")
+			.constant<23>("PROPERTY_HINT_TYPE_STRING")
+			.constant<24>("PROPERTY_HINT_NODE_PATH_TO_EDITED_NODE")
+			.constant<25>("PROPERTY_HINT_OBJECT_TOO_BIG")
+			.constant<26>("PROPERTY_HINT_NODE_PATH_VALID_TYPES")
+			.constant<27>("PROPERTY_HINT_SAVE_FILE")
+			.constant<28>("PROPERTY_HINT_GLOBAL_SAVE_FILE")
+			.constant<29>("PROPERTY_HINT_INT_IS_OBJECTID")
+			.constant<30>("PROPERTY_HINT_INT_IS_POINTER")
+			.constant<31>("PROPERTY_HINT_ARRAY_TYPE")
+			.constant<38>("PROPERTY_HINT_DICTIONARY_TYPE")
+			.constant<32>("PROPERTY_HINT_LOCALE_ID")
+			.constant<33>("PROPERTY_HINT_LOCALIZABLE_STRING")
+			.constant<34>("PROPERTY_HINT_NODE_TYPE")
+			.constant<35>("PROPERTY_HINT_HIDE_QUATERNION_EDIT")
+			.constant<36>("PROPERTY_HINT_PASSWORD")
+			.constant<39>("PROPERTY_HINT_TOOL_BUTTON")
+			.constant<40>("PROPERTY_HINT_ONESHOT")
+			.constant<42>("PROPERTY_HINT_GROUP_ENABLE")
+			.constant<43>("PROPERTY_HINT_INPUT_NAME")
+			.constant<44>("PROPERTY_HINT_FILE_PATH")
+			.constant<45>("PROPERTY_HINT_MAX")
 			.register_type();
 }
 
 inline void register_enum_global_scope_property_usage_flags() {
 	puerts::define_type<puerts_generated::global_scope_property_usage_flags_enum_tag>()
-			.static_property("PROPERTY_USAGE_NONE", puerts::make_constant<0>())
-			.static_property("PROPERTY_USAGE_STORAGE", puerts::make_constant<2>())
-			.static_property("PROPERTY_USAGE_EDITOR", puerts::make_constant<4>())
-			.static_property("PROPERTY_USAGE_INTERNAL", puerts::make_constant<8>())
-			.static_property("PROPERTY_USAGE_CHECKABLE", puerts::make_constant<16>())
-			.static_property("PROPERTY_USAGE_CHECKED", puerts::make_constant<32>())
-			.static_property("PROPERTY_USAGE_GROUP", puerts::make_constant<64>())
-			.static_property("PROPERTY_USAGE_CATEGORY", puerts::make_constant<128>())
-			.static_property("PROPERTY_USAGE_SUBGROUP", puerts::make_constant<256>())
-			.static_property("PROPERTY_USAGE_CLASS_IS_BITFIELD", puerts::make_constant<512>())
-			.static_property("PROPERTY_USAGE_NO_INSTANCE_STATE", puerts::make_constant<1024>())
-			.static_property("PROPERTY_USAGE_RESTART_IF_CHANGED", puerts::make_constant<2048>())
-			.static_property("PROPERTY_USAGE_SCRIPT_VARIABLE", puerts::make_constant<4096>())
-			.static_property("PROPERTY_USAGE_STORE_IF_NULL", puerts::make_constant<8192>())
-			.static_property("PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED", puerts::make_constant<16384>())
-			.static_property("PROPERTY_USAGE_SCRIPT_DEFAULT_VALUE", puerts::make_constant<32768>())
-			.static_property("PROPERTY_USAGE_CLASS_IS_ENUM", puerts::make_constant<65536>())
-			.static_property("PROPERTY_USAGE_NIL_IS_VARIANT", puerts::make_constant<131072>())
-			.static_property("PROPERTY_USAGE_ARRAY", puerts::make_constant<262144>())
-			.static_property("PROPERTY_USAGE_ALWAYS_DUPLICATE", puerts::make_constant<524288>())
-			.static_property("PROPERTY_USAGE_NEVER_DUPLICATE", puerts::make_constant<1048576>())
-			.static_property("PROPERTY_USAGE_HIGH_END_GFX", puerts::make_constant<2097152>())
-			.static_property("PROPERTY_USAGE_NODE_PATH_FROM_SCENE_ROOT", puerts::make_constant<4194304>())
-			.static_property("PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT", puerts::make_constant<8388608>())
-			.static_property("PROPERTY_USAGE_KEYING_INCREMENTS", puerts::make_constant<16777216>())
-			.static_property("PROPERTY_USAGE_DEFERRED_SET_RESOURCE", puerts::make_constant<33554432>())
-			.static_property("PROPERTY_USAGE_EDITOR_INSTANTIATE_OBJECT", puerts::make_constant<67108864>())
-			.static_property("PROPERTY_USAGE_EDITOR_BASIC_SETTING", puerts::make_constant<134217728>())
-			.static_property("PROPERTY_USAGE_READ_ONLY", puerts::make_constant<268435456>())
-			.static_property("PROPERTY_USAGE_SECRET", puerts::make_constant<536870912>())
-			.static_property("PROPERTY_USAGE_DEFAULT", puerts::make_constant<6>())
-			.static_property("PROPERTY_USAGE_NO_EDITOR", puerts::make_constant<2>())
+			.constant<0>("PROPERTY_USAGE_NONE")
+			.constant<2>("PROPERTY_USAGE_STORAGE")
+			.constant<4>("PROPERTY_USAGE_EDITOR")
+			.constant<8>("PROPERTY_USAGE_INTERNAL")
+			.constant<16>("PROPERTY_USAGE_CHECKABLE")
+			.constant<32>("PROPERTY_USAGE_CHECKED")
+			.constant<64>("PROPERTY_USAGE_GROUP")
+			.constant<128>("PROPERTY_USAGE_CATEGORY")
+			.constant<256>("PROPERTY_USAGE_SUBGROUP")
+			.constant<512>("PROPERTY_USAGE_CLASS_IS_BITFIELD")
+			.constant<1024>("PROPERTY_USAGE_NO_INSTANCE_STATE")
+			.constant<2048>("PROPERTY_USAGE_RESTART_IF_CHANGED")
+			.constant<4096>("PROPERTY_USAGE_SCRIPT_VARIABLE")
+			.constant<8192>("PROPERTY_USAGE_STORE_IF_NULL")
+			.constant<16384>("PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED")
+			.constant<32768>("PROPERTY_USAGE_SCRIPT_DEFAULT_VALUE")
+			.constant<65536>("PROPERTY_USAGE_CLASS_IS_ENUM")
+			.constant<131072>("PROPERTY_USAGE_NIL_IS_VARIANT")
+			.constant<262144>("PROPERTY_USAGE_ARRAY")
+			.constant<524288>("PROPERTY_USAGE_ALWAYS_DUPLICATE")
+			.constant<1048576>("PROPERTY_USAGE_NEVER_DUPLICATE")
+			.constant<2097152>("PROPERTY_USAGE_HIGH_END_GFX")
+			.constant<4194304>("PROPERTY_USAGE_NODE_PATH_FROM_SCENE_ROOT")
+			.constant<8388608>("PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT")
+			.constant<16777216>("PROPERTY_USAGE_KEYING_INCREMENTS")
+			.constant<33554432>("PROPERTY_USAGE_DEFERRED_SET_RESOURCE")
+			.constant<67108864>("PROPERTY_USAGE_EDITOR_INSTANTIATE_OBJECT")
+			.constant<134217728>("PROPERTY_USAGE_EDITOR_BASIC_SETTING")
+			.constant<268435456>("PROPERTY_USAGE_READ_ONLY")
+			.constant<536870912>("PROPERTY_USAGE_SECRET")
+			.constant<6>("PROPERTY_USAGE_DEFAULT")
+			.constant<2>("PROPERTY_USAGE_NO_EDITOR")
 			.register_type();
 }
 
 inline void register_enum_global_scope_method_flags() {
 	puerts::define_type<puerts_generated::global_scope_method_flags_enum_tag>()
-			.static_property("METHOD_FLAG_NORMAL", puerts::make_constant<1>())
-			.static_property("METHOD_FLAG_EDITOR", puerts::make_constant<2>())
-			.static_property("METHOD_FLAG_CONST", puerts::make_constant<4>())
-			.static_property("METHOD_FLAG_VIRTUAL", puerts::make_constant<8>())
-			.static_property("METHOD_FLAG_VARARG", puerts::make_constant<16>())
-			.static_property("METHOD_FLAG_STATIC", puerts::make_constant<32>())
-			.static_property("METHOD_FLAG_OBJECT_CORE", puerts::make_constant<64>())
-			.static_property("METHOD_FLAG_VIRTUAL_REQUIRED", puerts::make_constant<128>())
-			.static_property("METHOD_FLAGS_DEFAULT", puerts::make_constant<1>())
+			.constant<1>("METHOD_FLAG_NORMAL")
+			.constant<2>("METHOD_FLAG_EDITOR")
+			.constant<4>("METHOD_FLAG_CONST")
+			.constant<8>("METHOD_FLAG_VIRTUAL")
+			.constant<16>("METHOD_FLAG_VARARG")
+			.constant<32>("METHOD_FLAG_STATIC")
+			.constant<64>("METHOD_FLAG_OBJECT_CORE")
+			.constant<128>("METHOD_FLAG_VIRTUAL_REQUIRED")
+			.constant<1>("METHOD_FLAGS_DEFAULT")
 			.register_type();
 }
 
 inline void register_enum_global_scope_variant_type() {
 	puerts::define_type<puerts_generated::global_scope_variant_type_enum_tag>()
-			.static_property("TYPE_NIL", puerts::make_constant<0>())
-			.static_property("TYPE_BOOL", puerts::make_constant<1>())
-			.static_property("TYPE_INT", puerts::make_constant<2>())
-			.static_property("TYPE_FLOAT", puerts::make_constant<3>())
-			.static_property("TYPE_STRING", puerts::make_constant<4>())
-			.static_property("TYPE_VECTOR2", puerts::make_constant<5>())
-			.static_property("TYPE_VECTOR2I", puerts::make_constant<6>())
-			.static_property("TYPE_RECT2", puerts::make_constant<7>())
-			.static_property("TYPE_RECT2I", puerts::make_constant<8>())
-			.static_property("TYPE_VECTOR3", puerts::make_constant<9>())
-			.static_property("TYPE_VECTOR3I", puerts::make_constant<10>())
-			.static_property("TYPE_TRANSFORM2D", puerts::make_constant<11>())
-			.static_property("TYPE_VECTOR4", puerts::make_constant<12>())
-			.static_property("TYPE_VECTOR4I", puerts::make_constant<13>())
-			.static_property("TYPE_PLANE", puerts::make_constant<14>())
-			.static_property("TYPE_QUATERNION", puerts::make_constant<15>())
-			.static_property("TYPE_AABB", puerts::make_constant<16>())
-			.static_property("TYPE_BASIS", puerts::make_constant<17>())
-			.static_property("TYPE_TRANSFORM3D", puerts::make_constant<18>())
-			.static_property("TYPE_PROJECTION", puerts::make_constant<19>())
-			.static_property("TYPE_COLOR", puerts::make_constant<20>())
-			.static_property("TYPE_STRING_NAME", puerts::make_constant<21>())
-			.static_property("TYPE_NODE_PATH", puerts::make_constant<22>())
-			.static_property("TYPE_RID", puerts::make_constant<23>())
-			.static_property("TYPE_OBJECT", puerts::make_constant<24>())
-			.static_property("TYPE_CALLABLE", puerts::make_constant<25>())
-			.static_property("TYPE_SIGNAL", puerts::make_constant<26>())
-			.static_property("TYPE_DICTIONARY", puerts::make_constant<27>())
-			.static_property("TYPE_ARRAY", puerts::make_constant<28>())
-			.static_property("TYPE_PACKED_BYTE_ARRAY", puerts::make_constant<29>())
-			.static_property("TYPE_PACKED_INT32_ARRAY", puerts::make_constant<30>())
-			.static_property("TYPE_PACKED_INT64_ARRAY", puerts::make_constant<31>())
-			.static_property("TYPE_PACKED_FLOAT32_ARRAY", puerts::make_constant<32>())
-			.static_property("TYPE_PACKED_FLOAT64_ARRAY", puerts::make_constant<33>())
-			.static_property("TYPE_PACKED_STRING_ARRAY", puerts::make_constant<34>())
-			.static_property("TYPE_PACKED_VECTOR2_ARRAY", puerts::make_constant<35>())
-			.static_property("TYPE_PACKED_VECTOR3_ARRAY", puerts::make_constant<36>())
-			.static_property("TYPE_PACKED_COLOR_ARRAY", puerts::make_constant<37>())
-			.static_property("TYPE_PACKED_VECTOR4_ARRAY", puerts::make_constant<38>())
-			.static_property("TYPE_MAX", puerts::make_constant<39>())
+			.constant<0>("TYPE_NIL")
+			.constant<1>("TYPE_BOOL")
+			.constant<2>("TYPE_INT")
+			.constant<3>("TYPE_FLOAT")
+			.constant<4>("TYPE_STRING")
+			.constant<5>("TYPE_VECTOR2")
+			.constant<6>("TYPE_VECTOR2I")
+			.constant<7>("TYPE_RECT2")
+			.constant<8>("TYPE_RECT2I")
+			.constant<9>("TYPE_VECTOR3")
+			.constant<10>("TYPE_VECTOR3I")
+			.constant<11>("TYPE_TRANSFORM2D")
+			.constant<12>("TYPE_VECTOR4")
+			.constant<13>("TYPE_VECTOR4I")
+			.constant<14>("TYPE_PLANE")
+			.constant<15>("TYPE_QUATERNION")
+			.constant<16>("TYPE_AABB")
+			.constant<17>("TYPE_BASIS")
+			.constant<18>("TYPE_TRANSFORM3D")
+			.constant<19>("TYPE_PROJECTION")
+			.constant<20>("TYPE_COLOR")
+			.constant<21>("TYPE_STRING_NAME")
+			.constant<22>("TYPE_NODE_PATH")
+			.constant<23>("TYPE_RID")
+			.constant<24>("TYPE_OBJECT")
+			.constant<25>("TYPE_CALLABLE")
+			.constant<26>("TYPE_SIGNAL")
+			.constant<27>("TYPE_DICTIONARY")
+			.constant<28>("TYPE_ARRAY")
+			.constant<29>("TYPE_PACKED_BYTE_ARRAY")
+			.constant<30>("TYPE_PACKED_INT32_ARRAY")
+			.constant<31>("TYPE_PACKED_INT64_ARRAY")
+			.constant<32>("TYPE_PACKED_FLOAT32_ARRAY")
+			.constant<33>("TYPE_PACKED_FLOAT64_ARRAY")
+			.constant<34>("TYPE_PACKED_STRING_ARRAY")
+			.constant<35>("TYPE_PACKED_VECTOR2_ARRAY")
+			.constant<36>("TYPE_PACKED_VECTOR3_ARRAY")
+			.constant<37>("TYPE_PACKED_COLOR_ARRAY")
+			.constant<38>("TYPE_PACKED_VECTOR4_ARRAY")
+			.constant<39>("TYPE_MAX")
 			.register_type();
 }
 
 inline void register_enum_global_scope_variant_operator() {
 	puerts::define_type<puerts_generated::global_scope_variant_operator_enum_tag>()
-			.static_property("OP_EQUAL", puerts::make_constant<0>())
-			.static_property("OP_NOT_EQUAL", puerts::make_constant<1>())
-			.static_property("OP_LESS", puerts::make_constant<2>())
-			.static_property("OP_LESS_EQUAL", puerts::make_constant<3>())
-			.static_property("OP_GREATER", puerts::make_constant<4>())
-			.static_property("OP_GREATER_EQUAL", puerts::make_constant<5>())
-			.static_property("OP_ADD", puerts::make_constant<6>())
-			.static_property("OP_SUBTRACT", puerts::make_constant<7>())
-			.static_property("OP_MULTIPLY", puerts::make_constant<8>())
-			.static_property("OP_DIVIDE", puerts::make_constant<9>())
-			.static_property("OP_NEGATE", puerts::make_constant<10>())
-			.static_property("OP_POSITIVE", puerts::make_constant<11>())
-			.static_property("OP_MODULE", puerts::make_constant<12>())
-			.static_property("OP_POWER", puerts::make_constant<13>())
-			.static_property("OP_SHIFT_LEFT", puerts::make_constant<14>())
-			.static_property("OP_SHIFT_RIGHT", puerts::make_constant<15>())
-			.static_property("OP_BIT_AND", puerts::make_constant<16>())
-			.static_property("OP_BIT_OR", puerts::make_constant<17>())
-			.static_property("OP_BIT_XOR", puerts::make_constant<18>())
-			.static_property("OP_BIT_NEGATE", puerts::make_constant<19>())
-			.static_property("OP_AND", puerts::make_constant<20>())
-			.static_property("OP_OR", puerts::make_constant<21>())
-			.static_property("OP_XOR", puerts::make_constant<22>())
-			.static_property("OP_NOT", puerts::make_constant<23>())
-			.static_property("OP_IN", puerts::make_constant<24>())
-			.static_property("OP_MAX", puerts::make_constant<25>())
+			.constant<0>("OP_EQUAL")
+			.constant<1>("OP_NOT_EQUAL")
+			.constant<2>("OP_LESS")
+			.constant<3>("OP_LESS_EQUAL")
+			.constant<4>("OP_GREATER")
+			.constant<5>("OP_GREATER_EQUAL")
+			.constant<6>("OP_ADD")
+			.constant<7>("OP_SUBTRACT")
+			.constant<8>("OP_MULTIPLY")
+			.constant<9>("OP_DIVIDE")
+			.constant<10>("OP_NEGATE")
+			.constant<11>("OP_POSITIVE")
+			.constant<12>("OP_MODULE")
+			.constant<13>("OP_POWER")
+			.constant<14>("OP_SHIFT_LEFT")
+			.constant<15>("OP_SHIFT_RIGHT")
+			.constant<16>("OP_BIT_AND")
+			.constant<17>("OP_BIT_OR")
+			.constant<18>("OP_BIT_XOR")
+			.constant<19>("OP_BIT_NEGATE")
+			.constant<20>("OP_AND")
+			.constant<21>("OP_OR")
+			.constant<22>("OP_XOR")
+			.constant<23>("OP_NOT")
+			.constant<24>("OP_IN")
+			.constant<25>("OP_MAX")
 			.register_type();
 }
 
 inline void register_type_global_scope_variant() {
 	puerts::define_type<puerts_generated::GlobalScopeVariant>()
-			.static_property("Type", puerts::make_enum_type<puerts_generated::global_scope_variant_type_enum_tag>())
-			.static_property("Operator", puerts::make_enum_type<puerts_generated::global_scope_variant_operator_enum_tag>())
+			.enum_type<puerts_generated::global_scope_variant_type_enum_tag>("Type")
+			.enum_type<puerts_generated::global_scope_variant_operator_enum_tag>("Operator")
 			.register_type();
 }
 
@@ -1063,180 +720,180 @@ inline void register_puerts_global_scope_generated() {
 	register_enum_global_scope_variant_operator();
 	register_type_global_scope_variant();
 	puerts::define_type<puerts_generated::GlobalScope>()
-			.static_method("sin", puerts::make_function<&godot::UtilityFunctions::sin>())
-			.static_method("cos", puerts::make_function<&godot::UtilityFunctions::cos>())
-			.static_method("tan", puerts::make_function<&godot::UtilityFunctions::tan>())
-			.static_method("sinh", puerts::make_function<&godot::UtilityFunctions::sinh>())
-			.static_method("cosh", puerts::make_function<&godot::UtilityFunctions::cosh>())
-			.static_method("tanh", puerts::make_function<&godot::UtilityFunctions::tanh>())
-			.static_method("asin", puerts::make_function<&godot::UtilityFunctions::asin>())
-			.static_method("acos", puerts::make_function<&godot::UtilityFunctions::acos>())
-			.static_method("atan", puerts::make_function<&godot::UtilityFunctions::atan>())
-			.static_method("atan2", puerts::make_function<&godot::UtilityFunctions::atan2>())
-			.static_method("asinh", puerts::make_function<&godot::UtilityFunctions::asinh>())
-			.static_method("acosh", puerts::make_function<&godot::UtilityFunctions::acosh>())
-			.static_method("atanh", puerts::make_function<&godot::UtilityFunctions::atanh>())
-			.static_method("sqrt", puerts::make_function<&godot::UtilityFunctions::sqrt>())
-			.static_method("fmod", puerts::make_function<&godot::UtilityFunctions::fmod>())
-			.static_method("fposmod", puerts::make_function<&godot::UtilityFunctions::fposmod>())
-			.static_method("posmod", puerts::make_function<&godot::UtilityFunctions::posmod>())
-			.static_method("floor", puerts::make_function<&godot::UtilityFunctions::floor>())
-			.static_method("floorf", puerts::make_function<&godot::UtilityFunctions::floorf>())
-			.static_method("floori", puerts::make_function<&godot::UtilityFunctions::floori>())
-			.static_method("ceil", puerts::make_function<&godot::UtilityFunctions::ceil>())
-			.static_method("ceilf", puerts::make_function<&godot::UtilityFunctions::ceilf>())
-			.static_method("ceili", puerts::make_function<&godot::UtilityFunctions::ceili>())
-			.static_method("round", puerts::make_function<&godot::UtilityFunctions::round>())
-			.static_method("roundf", puerts::make_function<&godot::UtilityFunctions::roundf>())
-			.static_method("roundi", puerts::make_function<&godot::UtilityFunctions::roundi>())
-			.static_method("abs", puerts::make_function<&godot::UtilityFunctions::abs>())
-			.static_method("absf", puerts::make_function<&godot::UtilityFunctions::absf>())
-			.static_method("absi", puerts::make_function<&godot::UtilityFunctions::absi>())
-			.static_method("sign", puerts::make_function<&godot::UtilityFunctions::sign>())
-			.static_method("signf", puerts::make_function<&godot::UtilityFunctions::signf>())
-			.static_method("signi", puerts::make_function<&godot::UtilityFunctions::signi>())
-			.static_method("snapped", puerts::make_function<&godot::UtilityFunctions::snapped>())
-			.static_method("snappedf", puerts::make_function<&godot::UtilityFunctions::snappedf>())
-			.static_method("snappedi", puerts::make_function<&godot::UtilityFunctions::snappedi>())
-			.static_method("pow", puerts::make_function<&godot::UtilityFunctions::pow>())
-			.static_method("log", puerts::make_function<&godot::UtilityFunctions::log>())
-			.static_method("exp", puerts::make_function<&godot::UtilityFunctions::exp>())
-			.static_method("is_nan", puerts::make_function<&godot::UtilityFunctions::is_nan>())
-			.static_method("is_inf", puerts::make_function<&godot::UtilityFunctions::is_inf>())
-			.static_method("is_equal_approx", puerts::make_function<&godot::UtilityFunctions::is_equal_approx>())
-			.static_method("is_zero_approx", puerts::make_function<&godot::UtilityFunctions::is_zero_approx>())
-			.static_method("is_finite", puerts::make_function<&godot::UtilityFunctions::is_finite>())
-			.static_method("ease", puerts::make_function<&godot::UtilityFunctions::ease>())
-			.static_method("step_decimals", puerts::make_function<&godot::UtilityFunctions::step_decimals>())
-			.static_method("lerp", puerts::make_function<&godot::UtilityFunctions::lerp>())
-			.static_method("lerpf", puerts::make_function<&godot::UtilityFunctions::lerpf>())
-			.static_method("cubic_interpolate", puerts::make_function<&godot::UtilityFunctions::cubic_interpolate>())
-			.static_method("cubic_interpolate_angle", puerts::make_function<&godot::UtilityFunctions::cubic_interpolate_angle>())
-			.static_method("cubic_interpolate_in_time", puerts::make_function<&godot::UtilityFunctions::cubic_interpolate_in_time>())
-			.static_method("cubic_interpolate_angle_in_time", puerts::make_function<&godot::UtilityFunctions::cubic_interpolate_angle_in_time>())
-			.static_method("bezier_interpolate", puerts::make_function<&godot::UtilityFunctions::bezier_interpolate>())
-			.static_method("bezier_derivative", puerts::make_function<&godot::UtilityFunctions::bezier_derivative>())
-			.static_method("angle_difference", puerts::make_function<&godot::UtilityFunctions::angle_difference>())
-			.static_method("lerp_angle", puerts::make_function<&godot::UtilityFunctions::lerp_angle>())
-			.static_method("inverse_lerp", puerts::make_function<&godot::UtilityFunctions::inverse_lerp>())
-			.static_method("remap", puerts::make_function<&godot::UtilityFunctions::remap>())
-			.static_method("smoothstep", puerts::make_function<&godot::UtilityFunctions::smoothstep>())
-			.static_method("move_toward", puerts::make_function<&godot::UtilityFunctions::move_toward>())
-			.static_method("rotate_toward", puerts::make_function<&godot::UtilityFunctions::rotate_toward>())
-			.static_method("deg_to_rad", puerts::make_function<&godot::UtilityFunctions::deg_to_rad>())
-			.static_method("rad_to_deg", puerts::make_function<&godot::UtilityFunctions::rad_to_deg>())
-			.static_method("linear_to_db", puerts::make_function<&godot::UtilityFunctions::linear_to_db>())
-			.static_method("db_to_linear", puerts::make_function<&godot::UtilityFunctions::db_to_linear>())
-			.static_method("wrap", puerts::make_function<&godot::UtilityFunctions::wrap>())
-			.static_method("wrapi", puerts::make_function<&godot::UtilityFunctions::wrapi>())
-			.static_method("wrapf", puerts::make_function<&godot::UtilityFunctions::wrapf>())
-			.static_method("max", &puerts_generated::global_scope_utility_max)
-			.static_method("maxi", puerts::make_function<&godot::UtilityFunctions::maxi>())
-			.static_method("maxf", puerts::make_function<&godot::UtilityFunctions::maxf>())
-			.static_method("min", &puerts_generated::global_scope_utility_min)
-			.static_method("mini", puerts::make_function<&godot::UtilityFunctions::mini>())
-			.static_method("minf", puerts::make_function<&godot::UtilityFunctions::minf>())
-			.static_method("clamp", puerts::make_function<&godot::UtilityFunctions::clamp>())
-			.static_method("clampi", puerts::make_function<&godot::UtilityFunctions::clampi>())
-			.static_method("clampf", puerts::make_function<&godot::UtilityFunctions::clampf>())
-			.static_method("nearest_po2", puerts::make_function<&godot::UtilityFunctions::nearest_po2>())
-			.static_method("pingpong", puerts::make_function<&godot::UtilityFunctions::pingpong>())
-			.static_method("randomize", puerts::make_function<&godot::UtilityFunctions::randomize>())
-			.static_method("randi", puerts::make_function<&godot::UtilityFunctions::randi>())
-			.static_method("randf", puerts::make_function<&godot::UtilityFunctions::randf>())
-			.static_method("randi_range", puerts::make_function<&godot::UtilityFunctions::randi_range>())
-			.static_method("randf_range", puerts::make_function<&godot::UtilityFunctions::randf_range>())
-			.static_method("randfn", puerts::make_function<&godot::UtilityFunctions::randfn>())
-			.static_method("seed", puerts::make_function<&godot::UtilityFunctions::seed>())
-			.static_method("rand_from_seed", puerts::make_function<&godot::UtilityFunctions::rand_from_seed>())
-			.static_method("weakref", puerts::make_function<&godot::UtilityFunctions::weakref>())
-			.static_method("typeof", puerts::make_function<&godot::UtilityFunctions::type_of>())
-			.static_method("type_convert", puerts::make_function<&godot::UtilityFunctions::type_convert>())
-			.static_method("str", &puerts_generated::global_scope_utility_str)
-			.static_method("error_string", puerts::make_function<&godot::UtilityFunctions::error_string>())
-			.static_method("type_string", puerts::make_function<&godot::UtilityFunctions::type_string>())
-			.static_method("print", &puerts_generated::global_scope_utility_print)
-			.static_method("print_rich", &puerts_generated::global_scope_utility_print_rich)
-			.static_method("printerr", &puerts_generated::global_scope_utility_printerr)
-			.static_method("printt", &puerts_generated::global_scope_utility_printt)
-			.static_method("prints", &puerts_generated::global_scope_utility_prints)
-			.static_method("printraw", &puerts_generated::global_scope_utility_printraw)
-			.static_method("print_verbose", &puerts_generated::global_scope_utility_print_verbose)
-			.static_method("push_error", &puerts_generated::global_scope_utility_push_error)
-			.static_method("push_warning", &puerts_generated::global_scope_utility_push_warning)
-			.static_method("var_to_str", puerts::make_function<&godot::UtilityFunctions::var_to_str>())
-			.static_method("str_to_var", puerts::make_function<&godot::UtilityFunctions::str_to_var>())
-			.static_method("var_to_bytes", puerts::make_function<&godot::UtilityFunctions::var_to_bytes>())
-			.static_method("bytes_to_var", puerts::make_function<&godot::UtilityFunctions::bytes_to_var>())
-			.static_method("var_to_bytes_with_objects", puerts::make_function<&godot::UtilityFunctions::var_to_bytes_with_objects>())
-			.static_method("bytes_to_var_with_objects", puerts::make_function<&godot::UtilityFunctions::bytes_to_var_with_objects>())
-			.static_method("hash", puerts::make_function<&godot::UtilityFunctions::hash>())
-			.static_method("instance_from_id", puerts::make_function<&godot::UtilityFunctions::instance_from_id>())
-			.static_method("is_instance_id_valid", puerts::make_function<&godot::UtilityFunctions::is_instance_id_valid>())
-			.static_method("is_instance_valid", &puerts_generated::global_scope_utility_is_instance_valid)
-			.static_method("rid_allocate_id", puerts::make_function<&godot::UtilityFunctions::rid_allocate_id>())
-			.static_method("rid_from_int64", puerts::make_function<&godot::UtilityFunctions::rid_from_int64>())
-			.static_method("is_same", puerts::make_function<&godot::UtilityFunctions::is_same>())
-			.static_property("Performance", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_performance)
-			.static_property("Engine", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_engine)
-			.static_property("ProjectSettings", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_project_settings)
-			.static_property("OS", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_os)
-			.static_property("Time", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_time)
-			.static_property("TextServerManager", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_text_server_manager)
-			.static_property("NavigationServer2DManager", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_navigation_server2_d_manager)
-			.static_property("PhysicsServer2DManager", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_physics_server2_d_manager)
-			.static_property("NavigationServer3DManager", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_navigation_server3_d_manager)
-			.static_property("PhysicsServer3DManager", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_physics_server3_d_manager)
-			.static_property("NavigationMeshGenerator", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_navigation_mesh_generator)
-			.static_property("IP", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_ip)
-			.static_property("Geometry2D", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_geometry2d)
-			.static_property("Geometry3D", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_geometry3d)
-			.static_property("ResourceLoader", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_resource_loader)
-			.static_property("ResourceSaver", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_resource_saver)
-			.static_property("ClassDB", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_class_db)
-			.static_property("Marshalls", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_marshalls)
-			.static_property("TranslationServer", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_translation_server)
-			.static_property("Input", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_input)
-			.static_property("InputMap", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_input_map)
-			.static_property("EngineDebugger", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_engine_debugger)
-			.static_property("GDExtensionManager", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_gd_extension_manager)
-			.static_property("ResourceUID", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_resource_uid)
-			.static_property("WorkerThreadPool", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_worker_thread_pool)
-			.static_property("ThemeDB", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_theme_db)
-			.static_property("EditorInterface", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_editor_interface)
-			.static_property("JavaClassWrapper", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_java_class_wrapper)
-			.static_property("JavaScriptBridge", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_java_script_bridge)
-			.static_property("AudioServer", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_audio_server)
-			.static_property("CameraServer", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_camera_server)
-			.static_property("DisplayServer", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_display_server)
-			.static_property("NativeMenu", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_native_menu)
-			.static_property("RenderingServer", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_rendering_server)
-			.static_property("NavigationServer2D", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_navigation_server2d)
-			.static_property("NavigationServer3D", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_navigation_server3d)
-			.static_property("PhysicsServer2D", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_physics_server2d)
-			.static_property("PhysicsServer3D", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_physics_server3d)
-			.static_property("XRServer", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::global_scope_singleton_xr_server)
-			.static_property("Side", puerts::make_enum_type<puerts_generated::global_scope_side_enum_tag>())
-			.static_property("Corner", puerts::make_enum_type<puerts_generated::global_scope_corner_enum_tag>())
-			.static_property("Orientation", puerts::make_enum_type<puerts_generated::global_scope_orientation_enum_tag>())
-			.static_property("ClockDirection", puerts::make_enum_type<puerts_generated::global_scope_clock_direction_enum_tag>())
-			.static_property("HorizontalAlignment", puerts::make_enum_type<puerts_generated::global_scope_horizontal_alignment_enum_tag>())
-			.static_property("VerticalAlignment", puerts::make_enum_type<puerts_generated::global_scope_vertical_alignment_enum_tag>())
-			.static_property("InlineAlignment", puerts::make_enum_type<puerts_generated::global_scope_inline_alignment_enum_tag>())
-			.static_property("EulerOrder", puerts::make_enum_type<puerts_generated::global_scope_euler_order_enum_tag>())
-			.static_property("Key", puerts::make_enum_type<puerts_generated::global_scope_key_enum_tag>())
-			.static_property("KeyModifierMask", puerts::make_enum_type<puerts_generated::global_scope_key_modifier_mask_enum_tag>())
-			.static_property("KeyLocation", puerts::make_enum_type<puerts_generated::global_scope_key_location_enum_tag>())
-			.static_property("MouseButton", puerts::make_enum_type<puerts_generated::global_scope_mouse_button_enum_tag>())
-			.static_property("MouseButtonMask", puerts::make_enum_type<puerts_generated::global_scope_mouse_button_mask_enum_tag>())
-			.static_property("JoyButton", puerts::make_enum_type<puerts_generated::global_scope_joy_button_enum_tag>())
-			.static_property("JoyAxis", puerts::make_enum_type<puerts_generated::global_scope_joy_axis_enum_tag>())
-			.static_property("MIDIMessage", puerts::make_enum_type<puerts_generated::global_scope_midi_message_enum_tag>())
-			.static_property("Error", puerts::make_enum_type<puerts_generated::global_scope_error_enum_tag>())
-			.static_property("PropertyHint", puerts::make_enum_type<puerts_generated::global_scope_property_hint_enum_tag>())
-			.static_property("PropertyUsageFlags", puerts::make_enum_type<puerts_generated::global_scope_property_usage_flags_enum_tag>())
-			.static_property("MethodFlags", puerts::make_enum_type<puerts_generated::global_scope_method_flags_enum_tag>())
-			.static_property("Variant", puerts::make_enum_type<puerts_generated::GlobalScopeVariant>())
+			.static_method<&godot::UtilityFunctions::sin>("sin")
+			.static_method<&godot::UtilityFunctions::cos>("cos")
+			.static_method<&godot::UtilityFunctions::tan>("tan")
+			.static_method<&godot::UtilityFunctions::sinh>("sinh")
+			.static_method<&godot::UtilityFunctions::cosh>("cosh")
+			.static_method<&godot::UtilityFunctions::tanh>("tanh")
+			.static_method<&godot::UtilityFunctions::asin>("asin")
+			.static_method<&godot::UtilityFunctions::acos>("acos")
+			.static_method<&godot::UtilityFunctions::atan>("atan")
+			.static_method<&godot::UtilityFunctions::atan2>("atan2")
+			.static_method<&godot::UtilityFunctions::asinh>("asinh")
+			.static_method<&godot::UtilityFunctions::acosh>("acosh")
+			.static_method<&godot::UtilityFunctions::atanh>("atanh")
+			.static_method<&godot::UtilityFunctions::sqrt>("sqrt")
+			.static_method<&godot::UtilityFunctions::fmod>("fmod")
+			.static_method<&godot::UtilityFunctions::fposmod>("fposmod")
+			.static_method<&godot::UtilityFunctions::posmod>("posmod")
+			.static_method<&godot::UtilityFunctions::floor>("floor")
+			.static_method<&godot::UtilityFunctions::floorf>("floorf")
+			.static_method<&godot::UtilityFunctions::floori>("floori")
+			.static_method<&godot::UtilityFunctions::ceil>("ceil")
+			.static_method<&godot::UtilityFunctions::ceilf>("ceilf")
+			.static_method<&godot::UtilityFunctions::ceili>("ceili")
+			.static_method<&godot::UtilityFunctions::round>("round")
+			.static_method<&godot::UtilityFunctions::roundf>("roundf")
+			.static_method<&godot::UtilityFunctions::roundi>("roundi")
+			.static_method<&godot::UtilityFunctions::abs>("abs")
+			.static_method<&godot::UtilityFunctions::absf>("absf")
+			.static_method<&godot::UtilityFunctions::absi>("absi")
+			.static_method<&godot::UtilityFunctions::sign>("sign")
+			.static_method<&godot::UtilityFunctions::signf>("signf")
+			.static_method<&godot::UtilityFunctions::signi>("signi")
+			.static_method<&godot::UtilityFunctions::snapped>("snapped")
+			.static_method<&godot::UtilityFunctions::snappedf>("snappedf")
+			.static_method<&godot::UtilityFunctions::snappedi>("snappedi")
+			.static_method<&godot::UtilityFunctions::pow>("pow")
+			.static_method<&godot::UtilityFunctions::log>("log")
+			.static_method<&godot::UtilityFunctions::exp>("exp")
+			.static_method<&godot::UtilityFunctions::is_nan>("is_nan")
+			.static_method<&godot::UtilityFunctions::is_inf>("is_inf")
+			.static_method<&godot::UtilityFunctions::is_equal_approx>("is_equal_approx")
+			.static_method<&godot::UtilityFunctions::is_zero_approx>("is_zero_approx")
+			.static_method<&godot::UtilityFunctions::is_finite>("is_finite")
+			.static_method<&godot::UtilityFunctions::ease>("ease")
+			.static_method<&godot::UtilityFunctions::step_decimals>("step_decimals")
+			.static_method<&godot::UtilityFunctions::lerp>("lerp")
+			.static_method<&godot::UtilityFunctions::lerpf>("lerpf")
+			.static_method<&godot::UtilityFunctions::cubic_interpolate>("cubic_interpolate")
+			.static_method<&godot::UtilityFunctions::cubic_interpolate_angle>("cubic_interpolate_angle")
+			.static_method<&godot::UtilityFunctions::cubic_interpolate_in_time>("cubic_interpolate_in_time")
+			.static_method<&godot::UtilityFunctions::cubic_interpolate_angle_in_time>("cubic_interpolate_angle_in_time")
+			.static_method<&godot::UtilityFunctions::bezier_interpolate>("bezier_interpolate")
+			.static_method<&godot::UtilityFunctions::bezier_derivative>("bezier_derivative")
+			.static_method<&godot::UtilityFunctions::angle_difference>("angle_difference")
+			.static_method<&godot::UtilityFunctions::lerp_angle>("lerp_angle")
+			.static_method<&godot::UtilityFunctions::inverse_lerp>("inverse_lerp")
+			.static_method<&godot::UtilityFunctions::remap>("remap")
+			.static_method<&godot::UtilityFunctions::smoothstep>("smoothstep")
+			.static_method<&godot::UtilityFunctions::move_toward>("move_toward")
+			.static_method<&godot::UtilityFunctions::rotate_toward>("rotate_toward")
+			.static_method<&godot::UtilityFunctions::deg_to_rad>("deg_to_rad")
+			.static_method<&godot::UtilityFunctions::rad_to_deg>("rad_to_deg")
+			.static_method<&godot::UtilityFunctions::linear_to_db>("linear_to_db")
+			.static_method<&godot::UtilityFunctions::db_to_linear>("db_to_linear")
+			.static_method<&godot::UtilityFunctions::wrap>("wrap")
+			.static_method<&godot::UtilityFunctions::wrapi>("wrapi")
+			.static_method<&godot::UtilityFunctions::wrapf>("wrapf")
+			.utility_function<3896050336, godot::Variant>("max")
+			.static_method<&godot::UtilityFunctions::maxi>("maxi")
+			.static_method<&godot::UtilityFunctions::maxf>("maxf")
+			.utility_function<3896050336, godot::Variant>("min")
+			.static_method<&godot::UtilityFunctions::mini>("mini")
+			.static_method<&godot::UtilityFunctions::minf>("minf")
+			.static_method<&godot::UtilityFunctions::clamp>("clamp")
+			.static_method<&godot::UtilityFunctions::clampi>("clampi")
+			.static_method<&godot::UtilityFunctions::clampf>("clampf")
+			.static_method<&godot::UtilityFunctions::nearest_po2>("nearest_po2")
+			.static_method<&godot::UtilityFunctions::pingpong>("pingpong")
+			.static_method<&godot::UtilityFunctions::randomize>("randomize")
+			.static_method<&godot::UtilityFunctions::randi>("randi")
+			.static_method<&godot::UtilityFunctions::randf>("randf")
+			.static_method<&godot::UtilityFunctions::randi_range>("randi_range")
+			.static_method<&godot::UtilityFunctions::randf_range>("randf_range")
+			.static_method<&godot::UtilityFunctions::randfn>("randfn")
+			.static_method<&godot::UtilityFunctions::seed>("seed")
+			.static_method<&godot::UtilityFunctions::rand_from_seed>("rand_from_seed")
+			.static_method<&godot::UtilityFunctions::weakref>("weakref")
+			.static_method<&godot::UtilityFunctions::type_of>("typeof")
+			.static_method<&godot::UtilityFunctions::type_convert>("type_convert")
+			.utility_function<32569176, godot::String>("str")
+			.static_method<&godot::UtilityFunctions::error_string>("error_string")
+			.static_method<&godot::UtilityFunctions::type_string>("type_string")
+			.utility_function<2648703342, void>("print")
+			.utility_function<2648703342, void>("print_rich")
+			.utility_function<2648703342, void>("printerr")
+			.utility_function<2648703342, void>("printt")
+			.utility_function<2648703342, void>("prints")
+			.utility_function<2648703342, void>("printraw")
+			.utility_function<2648703342, void>("print_verbose")
+			.utility_function<2648703342, void>("push_error")
+			.utility_function<2648703342, void>("push_warning")
+			.static_method<&godot::UtilityFunctions::var_to_str>("var_to_str")
+			.static_method<&godot::UtilityFunctions::str_to_var>("str_to_var")
+			.static_method<&godot::UtilityFunctions::var_to_bytes>("var_to_bytes")
+			.static_method<&godot::UtilityFunctions::bytes_to_var>("bytes_to_var")
+			.static_method<&godot::UtilityFunctions::var_to_bytes_with_objects>("var_to_bytes_with_objects")
+			.static_method<&godot::UtilityFunctions::bytes_to_var_with_objects>("bytes_to_var_with_objects")
+			.static_method<&godot::UtilityFunctions::hash>("hash")
+			.static_method<&godot::UtilityFunctions::instance_from_id>("instance_from_id")
+			.static_method<&godot::UtilityFunctions::is_instance_id_valid>("is_instance_id_valid")
+			.utility_function<996128841, bool>("is_instance_valid", 1)
+			.static_method<&godot::UtilityFunctions::rid_allocate_id>("rid_allocate_id")
+			.static_method<&godot::UtilityFunctions::rid_from_int64>("rid_from_int64")
+			.static_method<&godot::UtilityFunctions::is_same>("is_same")
+			.singleton("Performance")
+			.singleton("Engine")
+			.singleton("ProjectSettings")
+			.singleton("OS")
+			.singleton("Time")
+			.singleton("TextServerManager")
+			.singleton("NavigationServer2DManager")
+			.singleton("PhysicsServer2DManager")
+			.singleton("NavigationServer3DManager")
+			.singleton("PhysicsServer3DManager")
+			.singleton("NavigationMeshGenerator")
+			.singleton("IP")
+			.singleton("Geometry2D")
+			.singleton("Geometry3D")
+			.singleton("ResourceLoader")
+			.singleton("ResourceSaver")
+			.singleton("ClassDB")
+			.singleton("Marshalls")
+			.singleton("TranslationServer")
+			.singleton("Input")
+			.singleton("InputMap")
+			.singleton("EngineDebugger")
+			.singleton("GDExtensionManager")
+			.singleton("ResourceUID")
+			.singleton("WorkerThreadPool")
+			.singleton("ThemeDB")
+			.singleton("EditorInterface")
+			.singleton("JavaClassWrapper")
+			.singleton("JavaScriptBridge")
+			.singleton("AudioServer")
+			.singleton("CameraServer")
+			.singleton("DisplayServer")
+			.singleton("NativeMenu")
+			.singleton("RenderingServer")
+			.singleton("NavigationServer2D")
+			.singleton("NavigationServer3D")
+			.singleton("PhysicsServer2D")
+			.singleton("PhysicsServer3D")
+			.singleton("XRServer")
+			.enum_type<puerts_generated::global_scope_side_enum_tag>("Side")
+			.enum_type<puerts_generated::global_scope_corner_enum_tag>("Corner")
+			.enum_type<puerts_generated::global_scope_orientation_enum_tag>("Orientation")
+			.enum_type<puerts_generated::global_scope_clock_direction_enum_tag>("ClockDirection")
+			.enum_type<puerts_generated::global_scope_horizontal_alignment_enum_tag>("HorizontalAlignment")
+			.enum_type<puerts_generated::global_scope_vertical_alignment_enum_tag>("VerticalAlignment")
+			.enum_type<puerts_generated::global_scope_inline_alignment_enum_tag>("InlineAlignment")
+			.enum_type<puerts_generated::global_scope_euler_order_enum_tag>("EulerOrder")
+			.enum_type<puerts_generated::global_scope_key_enum_tag>("Key")
+			.enum_type<puerts_generated::global_scope_key_modifier_mask_enum_tag>("KeyModifierMask")
+			.enum_type<puerts_generated::global_scope_key_location_enum_tag>("KeyLocation")
+			.enum_type<puerts_generated::global_scope_mouse_button_enum_tag>("MouseButton")
+			.enum_type<puerts_generated::global_scope_mouse_button_mask_enum_tag>("MouseButtonMask")
+			.enum_type<puerts_generated::global_scope_joy_button_enum_tag>("JoyButton")
+			.enum_type<puerts_generated::global_scope_joy_axis_enum_tag>("JoyAxis")
+			.enum_type<puerts_generated::global_scope_midi_message_enum_tag>("MIDIMessage")
+			.enum_type<puerts_generated::global_scope_error_enum_tag>("Error")
+			.enum_type<puerts_generated::global_scope_property_hint_enum_tag>("PropertyHint")
+			.enum_type<puerts_generated::global_scope_property_usage_flags_enum_tag>("PropertyUsageFlags")
+			.enum_type<puerts_generated::global_scope_method_flags_enum_tag>("MethodFlags")
+			.enum_type<puerts_generated::GlobalScopeVariant>("Variant")
 			.register_type();
 }
 

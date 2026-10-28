@@ -10,10 +10,6 @@
 #include <godot_cpp/variant/string_name.hpp>
 #include <godot_cpp/variant/variant.hpp>
 
-namespace puerts {
-struct TypeDefinition;
-}
-
 class PuertsTypeRegistry {
 public:
 	struct TypeRecord;
@@ -22,7 +18,7 @@ public:
 
 	[[nodiscard]] pesapi_registry get_registry() const;
 
-	void register_static_type(const puerts::TypeDefinition &p_definition);
+	void register_static_type(TypeRecord &&p_record);
 	[[nodiscard]] const void *find_or_add_object_type(const godot::StringName &p_name);
 	[[nodiscard]] const void *get_builtin_type_id(godot::Variant::Type p_type) const;
 	[[nodiscard]] bool has_type(const void *p_type_id) const;
@@ -55,6 +51,8 @@ private:
 	PuertsTypeRegistry();
 	~PuertsTypeRegistry();
 
+	static void *bound_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
+	static void bound_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void *object_default_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void *no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void object_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info);

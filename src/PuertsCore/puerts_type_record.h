@@ -9,6 +9,10 @@
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
 
+namespace puerts::internal {
+class CallbackContext;
+}
+
 struct PuertsTypeRegistry::TypeRecord {
 	enum class Kind {
 		ReflectedObject,
@@ -21,14 +25,27 @@ struct PuertsTypeRegistry::TypeRecord {
 		Registered,
 	};
 
+	struct MethodOverload {
+		int min_arity = 0;
+		int max_arity = 0;
+		bool (*invoke)(pesapi_ffi *apis, pesapi_callback_info info, puerts::internal::CallbackContext &frame) = nullptr;
+	};
+
+	struct ConstructorOverload {
+		int arity = 0;
+		bool (*invoke)(pesapi_ffi *apis, puerts::internal::CallbackContext &frame, void *&r_instance) = nullptr;
+	};
+
 	struct Method {
 		const TypeRecord *owner_type = nullptr;
 		godot::StringName name;
 		bool has_arguments = false;
 		bool use_no_args_ptrcall = false;
 		GDExtensionMethodBindPtr method_bind = nullptr;
+		GDExtensionPtrUtilityFunction utility_function = nullptr;
+		int64_t utility_hash = -1;
 		pesapi_callback callback = nullptr;
-		void *userdata = nullptr;
+		puerts_eastl::vector<MethodOverload> overloads;
 	};
 
 	struct Property {
@@ -40,7 +57,6 @@ struct PuertsTypeRegistry::TypeRecord {
 		pesapi_callback getter = nullptr;
 		pesapi_callback setter = nullptr;
 		void *getter_userdata = nullptr;
-		void *setter_userdata = nullptr;
 	};
 
 	const void *type_id = nullptr;
@@ -52,7 +68,7 @@ struct PuertsTypeRegistry::TypeRecord {
 	godot::StringName base_name;
 	bool constructible = false;
 	RegistrationState registration_state = RegistrationState::Unregistered;
-	pesapi_constructor constructor = nullptr;
+	puerts_eastl::vector<ConstructorOverload> constructor_overloads;
 	pesapi_finalize finalize = nullptr;
 	godot::Variant (*to_variant)(void *ptr) = nullptr;
 	puerts_eastl::vector<Method> static_methods;
@@ -64,7 +80,6 @@ struct PuertsTypeRegistry::TypeRecord {
 class PuertsTypeRegistry::TypeRecordBuilder {
 public:
 	static TypeRecordOwner build_object_type(PuertsTypeRegistry &p_registry, const godot::StringName &p_name);
-	static TypeRecordOwner build_static_type(const puerts::TypeDefinition &p_definition);
 
 private:
 	static void append_reflected_methods(TypeRecord *p_type, const godot::TypedArray<godot::Dictionary> &p_method_list);

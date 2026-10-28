@@ -190,11 +190,22 @@ bool PuertsTypeRegistry::has_type(const void *p_type_id) const {
 	return find_record(p_type_id) != nullptr;
 }
 
-void PuertsTypeRegistry::register_static_type(const puerts::TypeDefinition &p_definition) {
-	TypeRecordOwner owner = TypeRecordBuilder::build_static_type(p_definition);
+void PuertsTypeRegistry::register_static_type(TypeRecord &&p_record) {
+	TypeRecordOwner owner(memnew(TypeRecord(puerts_eastl::move(p_record))));
 	TypeRecord *type = owner.get();
 	if (type->base_id != nullptr) {
 		type->base = find_record(type->base_id);
+	}
+	for (auto *methods : { &type->instance_methods, &type->static_methods }) {
+		for (TypeRecord::Method &method : *methods) {
+			method.owner_type = type;
+			method.callback = &PuertsTypeRegistry::bound_method_callback;
+			if (method.utility_hash >= 0) {
+				method.utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(
+						method.name._native_ptr(),
+						static_cast<uint32_t>(method.utility_hash));
+			}
+		}
 	}
 	store_type(puerts_eastl::move(owner));
 }
@@ -326,9 +337,11 @@ bool PuertsTypeRegistry::resolve_base_type(TypeRecord *p_type) {
 }
 
 void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
-	pesapi_constructor constructor = p_type->constructor;
-	if (constructor == nullptr) {
-		constructor = p_type->kind == TypeRecord::Kind::ReflectedObject && p_type->constructible ? &PuertsTypeRegistry::object_default_constructor_callback : &PuertsTypeRegistry::no_constructor_callback;
+	pesapi_constructor constructor = &PuertsTypeRegistry::no_constructor_callback;
+	if (p_type->kind == TypeRecord::Kind::StaticBinding && !p_type->constructor_overloads.empty()) {
+		constructor = &PuertsTypeRegistry::bound_constructor_callback;
+	} else if (p_type->kind == TypeRecord::Kind::ReflectedObject && p_type->constructible) {
+		constructor = &PuertsTypeRegistry::object_default_constructor_callback;
 	}
 
 	CharString class_name = String(p_type->name).utf8();
@@ -356,7 +369,7 @@ void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
 			CharString method_name = String(method->name).utf8();
 			reg_api_.set_method_info(
 					registry_, p_type->type_id, i, method_name.get_data(), p_is_static,
-					method->callback, method->userdata != nullptr ? method->userdata : method, true);
+					method->callback, method, true);
 		}
 	};
 	auto bind_properties = [this, p_type](auto &p_properties, bool p_is_static) {
@@ -368,7 +381,7 @@ void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
 					property->getter,
 					property->setter != nullptr ? property->setter : &PuertsTypeRegistry::read_only_property_setter_callback,
 					property->getter_userdata != nullptr ? property->getter_userdata : property,
-					property->setter != nullptr && property->setter_userdata != nullptr ? property->setter_userdata : property,
+					property,
 					true);
 		}
 	};
@@ -389,6 +402,71 @@ void PuertsTypeRegistry::on_native_binding_exit(void *ptr, void *class_data, voi
 	}
 	Ref<PuertsEnvironment> keep_alive(environment_context->environment);
 	environment_context->bridge.release_handle(ptr);
+}
+
+void *PuertsTypeRegistry::bound_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+	const auto *type = static_cast<const TypeRecord *>(apis->get_userdata(info));
+	puerts::internal::CallbackContext frame(apis, info);
+	if (!frame.require()) {
+		return nullptr;
+	}
+
+	void *instance = nullptr;
+	if (type->constructor_overloads.size() == 1) {
+		const TypeRecord::ConstructorOverload &overload = type->constructor_overloads[0];
+		if (!frame.require_argument_count(overload.arity)) {
+			return nullptr;
+		}
+		(void)overload.invoke(apis, frame, instance);
+		return instance;
+	}
+
+	frame.set_report_errors(false);
+	for (const TypeRecord::ConstructorOverload &overload : type->constructor_overloads) {
+		if (frame.argument_count() == overload.arity && overload.invoke(apis, frame, instance)) {
+			return instance;
+		}
+	}
+	apis->throw_by_string(info, "No constructor overload matches the provided arguments.");
+	return nullptr;
+}
+
+void PuertsTypeRegistry::bound_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
+	puerts::internal::CallbackContext frame(apis, info);
+	if (!frame.require()) {
+		return;
+	}
+
+	if (method->overloads.size() == 1) {
+		const TypeRecord::MethodOverload &overload = method->overloads[0];
+		const bool valid_arity = overload.max_arity < 0
+				? frame.require_minimum_argument_count(overload.min_arity)
+				: frame.require_argument_count(overload.min_arity);
+		if (valid_arity) {
+			(void)overload.invoke(apis, info, frame);
+		}
+		return;
+	}
+
+	frame.set_report_errors(false);
+	bool matched_arity = false;
+	for (const TypeRecord::MethodOverload &overload : method->overloads) {
+		if (frame.argument_count() < overload.min_arity ||
+				(overload.max_arity >= 0 && frame.argument_count() > overload.max_arity)) {
+			continue;
+		}
+		matched_arity = true;
+		if (overload.invoke(apis, info, frame)) {
+			return;
+		}
+	}
+	if (!matched_arity) {
+		apis->throw_by_string(info, "Argument count does not match the bound signature.");
+		return;
+	}
+	const char *reason = frame.last_rejection();
+	apis->throw_by_string(info, reason != nullptr ? reason : "No overload matches the provided arguments.");
 }
 
 void *PuertsTypeRegistry::no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {

@@ -21,16 +21,15 @@ PUERTS_SCRIPT_TYPE(ExampleCounter, "ExampleCounter")
 
 void register_example_bindings() {
 	puerts::define_type<ExampleCounter>()
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<ExampleCounter>(),
-					puerts::make_constructor_overload<ExampleCounter, double>()))
-			.method("add", puerts::make_method<&ExampleCounter::add>())
-			.property("value", puerts::make_property<&ExampleCounter::value>())
+			.constructor<>()
+			.constructor<double>()
+			.method<&ExampleCounter::add>("add")
+			.property<&ExampleCounter::value>("value")
 			.register_type();
 }
 ```
 
-Register once during scene initialization, before scripts call `load_type`:
+Call `constructor<Args...>()` repeatedly to register constructor overloads. Register once during scene initialization, before scripts call `load_type`:
 
 ```javascript
 const Counter = load_type("ExampleCounter");
@@ -41,16 +40,20 @@ counter.value = 5.0;
 
 ## Supported builders
 
-| Member              | Builder                                                              |
-|---------------------|----------------------------------------------------------------------|
-| Constructor         | `constructor<Args...>()`                                             |
-| Constructor overloads | `combine_constructors(make_constructor_overload<T, Args...>(), ...)` |
-| Instance method     | `method("name", make_method<&T::method>())`                          |
-| Static function     | `static_method("name", make_function<&function>())`                  |
-| Property            | `property("name", make_property<&T::member>())`                      |
-| Finalizer           | `finalizer(&fn)` / `no_finalize()`                                   |
+| Member | Builder |
+|--------|---------|
+| Constructor | `constructor<Args...>()` |
+| Instance method | `method<&T::method>("name")` |
+| Method overloads | `method<&overload1, &overload2>("name")` |
+| Static function | `static_method<&function>("name")` |
+| Member property | `property<&T::member>("name")` |
+| Accessor property | `property<&getter, &setter>("name")` |
+| Constant | `constant<VALUE>("name")` or `constant<&getter>("name")` |
+| Enum group | `enum_type<EnumTag>("name")` |
+| Signal | `signal<SignalName>("name")` |
+| Finalizer | `finalizer(&fn)` / `no_finalize()` |
 
-Use an explicit member-pointer cast for overloaded methods. `combine_overloads()` combines method signatures.
+Use explicit member-pointer casts for overloaded methods. Instance methods can also be free functions whose first parameter is `T &` or `const T &`; this is useful for default-argument adapters and custom property accessors.
 
 ## Inheritance and lifetime
 

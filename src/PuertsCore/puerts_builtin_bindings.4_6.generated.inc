@@ -98,840 +98,242 @@ PUERTS_SCRIPT_TYPE(puerts_generated::vector4_axis_enum_tag, "Vector4.Axis")
 PUERTS_SCRIPT_TYPE(puerts_generated::vector4i_axis_enum_tag, "Vector4i.Axis")
 
 namespace puerts_generated {
-inline void aabb_end_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector3>(apis, context, instance.get()->get_end());
+inline godot::Vector3 aabb_end_getter(const godot::AABB &p_self) {
+	return p_self.get_end();
 }
 
-inline void aabb_end_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::AABB> instance = puerts::internal::resolve_receiver<godot::AABB>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector3>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_end(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void aabb_end_setter(godot::AABB &p_self, godot::Vector3 p_value) {
+	p_self.set_end(eastl::move(p_value));
 }
 
-inline void basis_x_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector3>(apis, context, instance.get()->get_column(0));
+inline godot::Vector3 basis_x_getter(const godot::Basis &p_self) {
+	return p_self.get_column(0);
 }
 
-inline void basis_x_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector3>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_column(0, eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void basis_x_setter(godot::Basis &p_self, godot::Vector3 p_value) {
+	p_self.set_column(0, eastl::move(p_value));
 }
 
-inline void basis_y_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector3>(apis, context, instance.get()->get_column(1));
+inline godot::Vector3 basis_y_getter(const godot::Basis &p_self) {
+	return p_self.get_column(1);
 }
 
-inline void basis_y_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector3>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_column(1, eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void basis_y_setter(godot::Basis &p_self, godot::Vector3 p_value) {
+	p_self.set_column(1, eastl::move(p_value));
 }
 
-inline void basis_z_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector3>(apis, context, instance.get()->get_column(2));
+inline godot::Vector3 basis_z_getter(const godot::Basis &p_self) {
+	return p_self.get_column(2);
 }
 
-inline void basis_z_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Basis> instance = puerts::internal::resolve_receiver<godot::Basis>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector3>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_column(2, eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void basis_z_setter(godot::Basis &p_self, godot::Vector3 p_value) {
+	p_self.set_column(2, eastl::move(p_value));
 }
 
-inline void color_r8_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<int64_t>(apis, context, instance.get()->get_r8());
+inline int64_t color_r8_getter(const godot::Color &p_self) {
+	return p_self.get_r8();
 }
 
-inline void color_r8_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<int64_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_r8(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void color_r8_setter(godot::Color &p_self, int64_t p_value) {
+	p_self.set_r8(eastl::move(p_value));
 }
 
-inline void color_g8_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<int64_t>(apis, context, instance.get()->get_g8());
+inline int64_t color_g8_getter(const godot::Color &p_self) {
+	return p_self.get_g8();
 }
 
-inline void color_g8_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<int64_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_g8(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void color_g8_setter(godot::Color &p_self, int64_t p_value) {
+	p_self.set_g8(eastl::move(p_value));
 }
 
-inline void color_b8_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<int64_t>(apis, context, instance.get()->get_b8());
+inline int64_t color_b8_getter(const godot::Color &p_self) {
+	return p_self.get_b8();
 }
 
-inline void color_b8_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<int64_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_b8(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void color_b8_setter(godot::Color &p_self, int64_t p_value) {
+	p_self.set_b8(eastl::move(p_value));
 }
 
-inline void color_a8_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<int64_t>(apis, context, instance.get()->get_a8());
+inline int64_t color_a8_getter(const godot::Color &p_self) {
+	return p_self.get_a8();
 }
 
-inline void color_a8_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<int64_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_a8(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void color_a8_setter(godot::Color &p_self, int64_t p_value) {
+	p_self.set_a8(eastl::move(p_value));
 }
 
-inline void color_h_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::real_t>(apis, context, instance.get()->get_h());
+inline godot::real_t color_h_getter(const godot::Color &p_self) {
+	return p_self.get_h();
 }
 
-inline void color_h_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::real_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_h(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void color_h_setter(godot::Color &p_self, godot::real_t p_value) {
+	p_self.set_h(eastl::move(p_value));
 }
 
-inline void color_s_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::real_t>(apis, context, instance.get()->get_s());
+inline godot::real_t color_s_getter(const godot::Color &p_self) {
+	return p_self.get_s();
 }
 
-inline void color_s_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::real_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_s(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void color_s_setter(godot::Color &p_self, godot::real_t p_value) {
+	p_self.set_s(eastl::move(p_value));
 }
 
-inline void color_v_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::real_t>(apis, context, instance.get()->get_v());
+inline godot::real_t color_v_getter(const godot::Color &p_self) {
+	return p_self.get_v();
 }
 
-inline void color_v_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Color> instance = puerts::internal::resolve_receiver<godot::Color>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::real_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_v(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void color_v_setter(godot::Color &p_self, godot::real_t p_value) {
+	p_self.set_v(eastl::move(p_value));
 }
 
-inline void plane_x_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::real_t>(apis, context, instance.get()->normal.x);
+inline godot::real_t plane_x_getter(const godot::Plane &p_self) {
+	return p_self.normal.x;
 }
 
-inline void plane_x_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::real_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->normal.x = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void plane_x_setter(godot::Plane &p_self, godot::real_t p_value) {
+	p_self.normal.x = eastl::move(p_value);
 }
 
-inline void plane_y_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::real_t>(apis, context, instance.get()->normal.y);
+inline godot::real_t plane_y_getter(const godot::Plane &p_self) {
+	return p_self.normal.y;
 }
 
-inline void plane_y_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::real_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->normal.y = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void plane_y_setter(godot::Plane &p_self, godot::real_t p_value) {
+	p_self.normal.y = eastl::move(p_value);
 }
 
-inline void plane_z_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::real_t>(apis, context, instance.get()->normal.z);
+inline godot::real_t plane_z_getter(const godot::Plane &p_self) {
+	return p_self.normal.z;
 }
 
-inline void plane_z_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Plane> instance = puerts::internal::resolve_receiver<godot::Plane>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::real_t>(apis, context, 0, [&](auto &&value) {
-			instance.get()->normal.z = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void plane_z_setter(godot::Plane &p_self, godot::real_t p_value) {
+	p_self.normal.z = eastl::move(p_value);
 }
 
-inline void projection_x_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector4>(apis, context, instance.get()->columns[0]);
+inline godot::Vector4 projection_x_getter(const godot::Projection &p_self) {
+	return p_self.columns[0];
 }
 
-inline void projection_x_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector4>(apis, context, 0, [&](auto &&value) {
-			instance.get()->columns[0] = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void projection_x_setter(godot::Projection &p_self, godot::Vector4 p_value) {
+	p_self.columns[0] = eastl::move(p_value);
 }
 
-inline void projection_y_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector4>(apis, context, instance.get()->columns[1]);
+inline godot::Vector4 projection_y_getter(const godot::Projection &p_self) {
+	return p_self.columns[1];
 }
 
-inline void projection_y_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector4>(apis, context, 0, [&](auto &&value) {
-			instance.get()->columns[1] = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void projection_y_setter(godot::Projection &p_self, godot::Vector4 p_value) {
+	p_self.columns[1] = eastl::move(p_value);
 }
 
-inline void projection_z_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector4>(apis, context, instance.get()->columns[2]);
+inline godot::Vector4 projection_z_getter(const godot::Projection &p_self) {
+	return p_self.columns[2];
 }
 
-inline void projection_z_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector4>(apis, context, 0, [&](auto &&value) {
-			instance.get()->columns[2] = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void projection_z_setter(godot::Projection &p_self, godot::Vector4 p_value) {
+	p_self.columns[2] = eastl::move(p_value);
 }
 
-inline void projection_w_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector4>(apis, context, instance.get()->columns[3]);
+inline godot::Vector4 projection_w_getter(const godot::Projection &p_self) {
+	return p_self.columns[3];
 }
 
-inline void projection_w_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Projection> instance = puerts::internal::resolve_receiver<godot::Projection>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector4>(apis, context, 0, [&](auto &&value) {
-			instance.get()->columns[3] = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void projection_w_setter(godot::Projection &p_self, godot::Vector4 p_value) {
+	p_self.columns[3] = eastl::move(p_value);
 }
 
-inline void rect2_end_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector2>(apis, context, instance.get()->get_end());
+inline godot::Vector2 rect2_end_getter(const godot::Rect2 &p_self) {
+	return p_self.get_end();
 }
 
-inline void rect2_end_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Rect2> instance = puerts::internal::resolve_receiver<godot::Rect2>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector2>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_end(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void rect2_end_setter(godot::Rect2 &p_self, godot::Vector2 p_value) {
+	p_self.set_end(eastl::move(p_value));
 }
 
-inline void rect2i_end_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector2i>(apis, context, instance.get()->get_end());
+inline godot::Vector2i rect2i_end_getter(const godot::Rect2i &p_self) {
+	return p_self.get_end();
 }
 
-inline void rect2i_end_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Rect2i> instance = puerts::internal::resolve_receiver<godot::Rect2i>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector2i>(apis, context, 0, [&](auto &&value) {
-			instance.get()->set_end(eastl::move(value));
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void rect2i_end_setter(godot::Rect2i &p_self, godot::Vector2i p_value) {
+	p_self.set_end(eastl::move(p_value));
 }
 
-inline void transform2d_x_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector2>(apis, context, instance.get()->columns[0]);
+inline godot::Vector2 transform2d_x_getter(const godot::Transform2D &p_self) {
+	return p_self.columns[0];
 }
 
-inline void transform2d_x_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector2>(apis, context, 0, [&](auto &&value) {
-			instance.get()->columns[0] = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void transform2d_x_setter(godot::Transform2D &p_self, godot::Vector2 p_value) {
+	p_self.columns[0] = eastl::move(p_value);
 }
 
-inline void transform2d_y_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector2>(apis, context, instance.get()->columns[1]);
+inline godot::Vector2 transform2d_y_getter(const godot::Transform2D &p_self) {
+	return p_self.columns[1];
 }
 
-inline void transform2d_y_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector2>(apis, context, 0, [&](auto &&value) {
-			instance.get()->columns[1] = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void transform2d_y_setter(godot::Transform2D &p_self, godot::Vector2 p_value) {
+	p_self.columns[1] = eastl::move(p_value);
 }
 
-inline void transform2d_origin_getter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require()) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	puerts::internal::write_return_value<godot::Vector2>(apis, context, instance.get()->columns[2]);
+inline godot::Vector2 transform2d_origin_getter(const godot::Transform2D &p_self) {
+	return p_self.columns[2];
 }
 
-inline void transform2d_origin_setter(pesapi_ffi *apis, pesapi_callback_info info) {
-	puerts::internal::CallbackContext context(apis, info);
-	if (!context.require() || !context.require_argument_count(1)) {
-		return;
-	}
-
-	puerts::internal::BoundReceiver<godot::Transform2D> instance = puerts::internal::resolve_receiver<godot::Transform2D>(apis, info, context);
-	if (!instance.is_valid()) {
-		return;
-	}
-
-	if (!puerts::internal::convert_script_argument<godot::Vector2>(apis, context, 0, [&](auto &&value) {
-			instance.get()->columns[2] = eastl::move(value);
-		})) {
-		return;
-	}
-
-	instance.write_back();
+inline void transform2d_origin_setter(godot::Transform2D &p_self, godot::Vector2 p_value) {
+	p_self.columns[2] = eastl::move(p_value);
 }
 
 } // namespace puerts_generated
 
 inline void register_enum_projection_planes() {
 	puerts::define_type<puerts_generated::projection_planes_enum_tag>()
-			.static_property("PLANE_NEAR", puerts::make_constant<0>())
-			.static_property("PLANE_FAR", puerts::make_constant<1>())
-			.static_property("PLANE_LEFT", puerts::make_constant<2>())
-			.static_property("PLANE_TOP", puerts::make_constant<3>())
-			.static_property("PLANE_RIGHT", puerts::make_constant<4>())
-			.static_property("PLANE_BOTTOM", puerts::make_constant<5>())
+			.constant<0>("PLANE_NEAR")
+			.constant<1>("PLANE_FAR")
+			.constant<2>("PLANE_LEFT")
+			.constant<3>("PLANE_TOP")
+			.constant<4>("PLANE_RIGHT")
+			.constant<5>("PLANE_BOTTOM")
 			.register_type();
 }
 inline void register_enum_vector2_axis() {
 	puerts::define_type<puerts_generated::vector2_axis_enum_tag>()
-			.static_property("AXIS_X", puerts::make_constant<0>())
-			.static_property("AXIS_Y", puerts::make_constant<1>())
+			.constant<0>("AXIS_X")
+			.constant<1>("AXIS_Y")
 			.register_type();
 }
 inline void register_enum_vector2i_axis() {
 	puerts::define_type<puerts_generated::vector2i_axis_enum_tag>()
-			.static_property("AXIS_X", puerts::make_constant<0>())
-			.static_property("AXIS_Y", puerts::make_constant<1>())
+			.constant<0>("AXIS_X")
+			.constant<1>("AXIS_Y")
 			.register_type();
 }
 inline void register_enum_vector3_axis() {
 	puerts::define_type<puerts_generated::vector3_axis_enum_tag>()
-			.static_property("AXIS_X", puerts::make_constant<0>())
-			.static_property("AXIS_Y", puerts::make_constant<1>())
-			.static_property("AXIS_Z", puerts::make_constant<2>())
+			.constant<0>("AXIS_X")
+			.constant<1>("AXIS_Y")
+			.constant<2>("AXIS_Z")
 			.register_type();
 }
 inline void register_enum_vector3i_axis() {
 	puerts::define_type<puerts_generated::vector3i_axis_enum_tag>()
-			.static_property("AXIS_X", puerts::make_constant<0>())
-			.static_property("AXIS_Y", puerts::make_constant<1>())
-			.static_property("AXIS_Z", puerts::make_constant<2>())
+			.constant<0>("AXIS_X")
+			.constant<1>("AXIS_Y")
+			.constant<2>("AXIS_Z")
 			.register_type();
 }
 inline void register_enum_vector4_axis() {
 	puerts::define_type<puerts_generated::vector4_axis_enum_tag>()
-			.static_property("AXIS_X", puerts::make_constant<0>())
-			.static_property("AXIS_Y", puerts::make_constant<1>())
-			.static_property("AXIS_Z", puerts::make_constant<2>())
-			.static_property("AXIS_W", puerts::make_constant<3>())
+			.constant<0>("AXIS_X")
+			.constant<1>("AXIS_Y")
+			.constant<2>("AXIS_Z")
+			.constant<3>("AXIS_W")
 			.register_type();
 }
 inline void register_enum_vector4i_axis() {
 	puerts::define_type<puerts_generated::vector4i_axis_enum_tag>()
-			.static_property("AXIS_X", puerts::make_constant<0>())
-			.static_property("AXIS_Y", puerts::make_constant<1>())
-			.static_property("AXIS_Z", puerts::make_constant<2>())
-			.static_property("AXIS_W", puerts::make_constant<3>())
+			.constant<0>("AXIS_X")
+			.constant<1>("AXIS_Y")
+			.constant<2>("AXIS_Z")
+			.constant<3>("AXIS_W")
 			.register_type();
 }
 
@@ -964,43 +366,42 @@ inline bool aabb_op_in_7(const godot::AABB &left, const godot::Array &right) {
 
 inline void register_type_aabb() {
 	puerts::define_type<godot::AABB>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::aabb_op_equality_0>(), puerts::make_overload<&puerts_generated::aabb_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::aabb_op_inequality_1>(), puerts::make_overload<&puerts_generated::aabb_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::aabb_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::make_function<&puerts_generated::aabb_op_multiply_5>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::aabb_op_in_6>(), puerts::make_overload<&puerts_generated::aabb_op_in_7>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::AABB>(),
-					puerts::make_constructor_overload<godot::AABB, const godot::AABB &>(),
-					puerts::make_constructor_overload<godot::AABB, const godot::Vector3 &, const godot::Vector3 &>()))
-			.method("abs", puerts::make_method<&godot::AABB::abs>())
-			.method("get_center", puerts::make_method<&godot::AABB::get_center>())
-			.method("get_volume", puerts::make_method<&godot::AABB::get_volume>())
-			.method("has_volume", puerts::make_method<&godot::AABB::has_volume>())
-			.method("has_surface", puerts::make_method<&godot::AABB::has_surface>())
-			.method("has_point", puerts::make_method<&godot::AABB::has_point>())
-			.method("is_equal_approx", puerts::make_method<&godot::AABB::is_equal_approx>())
-			.method("is_finite", puerts::make_method<&godot::AABB::is_finite>())
-			.method("intersects", puerts::make_method<&godot::AABB::intersects>())
-			.method("encloses", puerts::make_method<&godot::AABB::encloses>())
-			.method("intersects_plane", puerts::make_method<&godot::AABB::intersects_plane>())
-			.method("intersection", puerts::make_method<&godot::AABB::intersection>())
-			.method("merge", puerts::make_method<&godot::AABB::merge>())
-			.method("expand", puerts::make_method<&godot::AABB::expand>())
-			.method("grow", puerts::make_method<&godot::AABB::grow>())
-			.method("get_support", puerts::make_method<&godot::AABB::get_support>())
-			.method("get_longest_axis", puerts::make_method<&godot::AABB::get_longest_axis>())
-			.method("get_longest_axis_index", puerts::make_method<&godot::AABB::get_longest_axis_index>())
-			.method("get_longest_axis_size", puerts::make_method<&godot::AABB::get_longest_axis_size>())
-			.method("get_shortest_axis", puerts::make_method<&godot::AABB::get_shortest_axis>())
-			.method("get_shortest_axis_index", puerts::make_method<&godot::AABB::get_shortest_axis_index>())
-			.method("get_shortest_axis_size", puerts::make_method<&godot::AABB::get_shortest_axis_size>())
-			.method("get_endpoint", puerts::make_method<&godot::AABB::get_endpoint>())
-			.method("intersects_segment", puerts::make_method<&godot::AABB::intersects_segment>())
-			.method("intersects_ray", puerts::make_method<&godot::AABB::intersects_ray>())
-			.property("end", &puerts_generated::aabb_end_getter, &puerts_generated::aabb_end_setter)
-			.property("position", puerts::make_property<&godot::AABB::position>())
-			.property("size", puerts::make_property<&godot::AABB::size>())
+			.static_method<&puerts_generated::aabb_op_equality_0, &puerts_generated::aabb_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::aabb_op_inequality_1, &puerts_generated::aabb_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::aabb_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::aabb_op_multiply_5>("op_Multiply")
+			.static_method<&puerts_generated::aabb_op_in_6, &puerts_generated::aabb_op_in_7>("op_In")
+			.constructor<>()
+			.constructor<const godot::AABB &>()
+			.constructor<const godot::Vector3 &, const godot::Vector3 &>()
+			.method<&godot::AABB::abs>("abs")
+			.method<&godot::AABB::get_center>("get_center")
+			.method<&godot::AABB::get_volume>("get_volume")
+			.method<&godot::AABB::has_volume>("has_volume")
+			.method<&godot::AABB::has_surface>("has_surface")
+			.method<&godot::AABB::has_point>("has_point")
+			.method<&godot::AABB::is_equal_approx>("is_equal_approx")
+			.method<&godot::AABB::is_finite>("is_finite")
+			.method<&godot::AABB::intersects>("intersects")
+			.method<&godot::AABB::encloses>("encloses")
+			.method<&godot::AABB::intersects_plane>("intersects_plane")
+			.method<&godot::AABB::intersection>("intersection")
+			.method<&godot::AABB::merge>("merge")
+			.method<&godot::AABB::expand>("expand")
+			.method<&godot::AABB::grow>("grow")
+			.method<&godot::AABB::get_support>("get_support")
+			.method<&godot::AABB::get_longest_axis>("get_longest_axis")
+			.method<&godot::AABB::get_longest_axis_index>("get_longest_axis_index")
+			.method<&godot::AABB::get_longest_axis_size>("get_longest_axis_size")
+			.method<&godot::AABB::get_shortest_axis>("get_shortest_axis")
+			.method<&godot::AABB::get_shortest_axis_index>("get_shortest_axis_index")
+			.method<&godot::AABB::get_shortest_axis_size>("get_shortest_axis_size")
+			.method<&godot::AABB::get_endpoint>("get_endpoint")
+			.method<&godot::AABB::intersects_segment>("intersects_segment")
+			.method<&godot::AABB::intersects_ray>("intersects_ray")
+			.property<&puerts_generated::aabb_end_getter, &puerts_generated::aabb_end_setter>("end")
+			.property<&godot::AABB::position>("position")
+			.property<&godot::AABB::size>("size")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1080,80 +481,79 @@ inline decltype(auto) array_reduce_default1(const godot::Array &p_self, const go
 
 inline void register_type_array() {
 	puerts::define_type<godot::Array>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::array_op_equality_0>(), puerts::make_overload<&puerts_generated::array_op_equality_4>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::array_op_inequality_1>(), puerts::make_overload<&puerts_generated::array_op_inequality_5>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::array_op_in_3>(), puerts::make_overload<&puerts_generated::array_op_in_11>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::array_op_less_than_6>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::array_op_less_than_or_equal_7>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::array_op_greater_than_8>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::array_op_greater_than_or_equal_9>())
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::array_op_addition_10>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Array>(),
-					puerts::make_constructor_overload<godot::Array, const godot::Array &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::Array &, int64_t, const godot::StringName &, const godot::Variant &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedByteArray &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedInt32Array &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedInt64Array &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedFloat32Array &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedFloat64Array &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedStringArray &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedVector2Array &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedVector3Array &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedColorArray &>(),
-					puerts::make_constructor_overload<godot::Array, const godot::PackedVector4Array &>()))
-			.method("size", puerts::make_method<&godot::Array::size>())
-			.method("is_empty", puerts::make_method<&godot::Array::is_empty>())
-			.method("clear", puerts::make_method<&godot::Array::clear>())
-			.method("hash", puerts::make_method<&godot::Array::hash>())
-			.method("assign", puerts::make_method<&godot::Array::assign>())
-			.method("get", puerts::make_method<&godot::Array::get>())
-			.method("set", puerts::make_method<&godot::Array::set>())
-			.method("push_back", puerts::make_method<&godot::Array::push_back>())
-			.method("push_front", puerts::make_method<&godot::Array::push_front>())
-			.method("append", puerts::make_method<&godot::Array::append>())
-			.method("append_array", puerts::make_method<&godot::Array::append_array>())
-			.method("resize", puerts::make_method<&godot::Array::resize>())
-			.method("insert", puerts::make_method<&godot::Array::insert>())
-			.method("remove_at", puerts::make_method<&godot::Array::remove_at>())
-			.method("fill", puerts::make_method<&godot::Array::fill>())
-			.method("erase", puerts::make_method<&godot::Array::erase>())
-			.method("front", puerts::make_method<&godot::Array::front>())
-			.method("back", puerts::make_method<&godot::Array::back>())
-			.method("pick_random", puerts::make_method<&godot::Array::pick_random>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_find_default1>(), puerts::make_overload<&godot::Array::find>()))
-			.method("find_custom", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_find_custom_default1>(), puerts::make_overload<&godot::Array::find_custom>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_rfind_default1>(), puerts::make_overload<&godot::Array::rfind>()))
-			.method("rfind_custom", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_rfind_custom_default1>(), puerts::make_overload<&godot::Array::rfind_custom>()))
-			.method("count", puerts::make_method<&godot::Array::count>())
-			.method("has", puerts::make_method<&godot::Array::has>())
-			.method("pop_back", puerts::make_method<&godot::Array::pop_back>())
-			.method("pop_front", puerts::make_method<&godot::Array::pop_front>())
-			.method("pop_at", puerts::make_method<&godot::Array::pop_at>())
-			.method("sort", puerts::make_method<&godot::Array::sort>())
-			.method("sort_custom", puerts::make_method<&godot::Array::sort_custom>())
-			.method("shuffle", puerts::make_method<&godot::Array::shuffle>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_bsearch_default1>(), puerts::make_overload<&godot::Array::bsearch>()))
-			.method("bsearch_custom", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_bsearch_custom_default2>(), puerts::make_overload<&godot::Array::bsearch_custom>()))
-			.method("reverse", puerts::make_method<&godot::Array::reverse>())
-			.method("duplicate", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_duplicate_default0>(), puerts::make_overload<&godot::Array::duplicate>()))
-			.method("duplicate_deep", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_duplicate_deep_default0>(), puerts::make_overload<&godot::Array::duplicate_deep>()))
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_slice_default1>(), puerts::make_extension_overload<&puerts_generated::array_slice_default2>(), puerts::make_extension_overload<&puerts_generated::array_slice_default3>(), puerts::make_overload<&godot::Array::slice>()))
-			.method("filter", puerts::make_method<&godot::Array::filter>())
-			.method("map", puerts::make_method<&godot::Array::map>())
-			.method("reduce", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::array_reduce_default1>(), puerts::make_overload<&godot::Array::reduce>()))
-			.method("any", puerts::make_method<&godot::Array::any>())
-			.method("all", puerts::make_method<&godot::Array::all>())
-			.method("max", puerts::make_method<&godot::Array::max>())
-			.method("min", puerts::make_method<&godot::Array::min>())
-			.method("is_typed", puerts::make_method<&godot::Array::is_typed>())
-			.method("is_same_typed", puerts::make_method<&godot::Array::is_same_typed>())
-			.method("get_typed_builtin", puerts::make_method<&godot::Array::get_typed_builtin>())
-			.method("get_typed_class_name", puerts::make_method<&godot::Array::get_typed_class_name>())
-			.method("get_typed_script", puerts::make_method<&godot::Array::get_typed_script>())
-			.method("make_read_only", puerts::make_method<&godot::Array::make_read_only>())
-			.method("is_read_only", puerts::make_method<&godot::Array::is_read_only>())
+			.static_method<&puerts_generated::array_op_equality_0, &puerts_generated::array_op_equality_4>("op_Equality")
+			.static_method<&puerts_generated::array_op_inequality_1, &puerts_generated::array_op_inequality_5>("op_Inequality")
+			.static_method<&puerts_generated::array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::array_op_in_3, &puerts_generated::array_op_in_11>("op_In")
+			.static_method<&puerts_generated::array_op_less_than_6>("op_LessThan")
+			.static_method<&puerts_generated::array_op_less_than_or_equal_7>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::array_op_greater_than_8>("op_GreaterThan")
+			.static_method<&puerts_generated::array_op_greater_than_or_equal_9>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::array_op_addition_10>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::Array &>()
+			.constructor<const godot::Array &, int64_t, const godot::StringName &, const godot::Variant &>()
+			.constructor<const godot::PackedByteArray &>()
+			.constructor<const godot::PackedInt32Array &>()
+			.constructor<const godot::PackedInt64Array &>()
+			.constructor<const godot::PackedFloat32Array &>()
+			.constructor<const godot::PackedFloat64Array &>()
+			.constructor<const godot::PackedStringArray &>()
+			.constructor<const godot::PackedVector2Array &>()
+			.constructor<const godot::PackedVector3Array &>()
+			.constructor<const godot::PackedColorArray &>()
+			.constructor<const godot::PackedVector4Array &>()
+			.method<&godot::Array::size>("size")
+			.method<&godot::Array::is_empty>("is_empty")
+			.method<&godot::Array::clear>("clear")
+			.method<&godot::Array::hash>("hash")
+			.method<&godot::Array::assign>("assign")
+			.method<&godot::Array::get>("get")
+			.method<&godot::Array::set>("set")
+			.method<&godot::Array::push_back>("push_back")
+			.method<&godot::Array::push_front>("push_front")
+			.method<&godot::Array::append>("append")
+			.method<&godot::Array::append_array>("append_array")
+			.method<&godot::Array::resize>("resize")
+			.method<&godot::Array::insert>("insert")
+			.method<&godot::Array::remove_at>("remove_at")
+			.method<&godot::Array::fill>("fill")
+			.method<&godot::Array::erase>("erase")
+			.method<&godot::Array::front>("front")
+			.method<&godot::Array::back>("back")
+			.method<&godot::Array::pick_random>("pick_random")
+			.method<&puerts_generated::array_find_default1, &godot::Array::find>("find")
+			.method<&puerts_generated::array_find_custom_default1, &godot::Array::find_custom>("find_custom")
+			.method<&puerts_generated::array_rfind_default1, &godot::Array::rfind>("rfind")
+			.method<&puerts_generated::array_rfind_custom_default1, &godot::Array::rfind_custom>("rfind_custom")
+			.method<&godot::Array::count>("count")
+			.method<&godot::Array::has>("has")
+			.method<&godot::Array::pop_back>("pop_back")
+			.method<&godot::Array::pop_front>("pop_front")
+			.method<&godot::Array::pop_at>("pop_at")
+			.method<&godot::Array::sort>("sort")
+			.method<&godot::Array::sort_custom>("sort_custom")
+			.method<&godot::Array::shuffle>("shuffle")
+			.method<&puerts_generated::array_bsearch_default1, &godot::Array::bsearch>("bsearch")
+			.method<&puerts_generated::array_bsearch_custom_default2, &godot::Array::bsearch_custom>("bsearch_custom")
+			.method<&godot::Array::reverse>("reverse")
+			.method<&puerts_generated::array_duplicate_default0, &godot::Array::duplicate>("duplicate")
+			.method<&puerts_generated::array_duplicate_deep_default0, &godot::Array::duplicate_deep>("duplicate_deep")
+			.method<&puerts_generated::array_slice_default1, &puerts_generated::array_slice_default2, &puerts_generated::array_slice_default3, &godot::Array::slice>("slice")
+			.method<&godot::Array::filter>("filter")
+			.method<&godot::Array::map>("map")
+			.method<&puerts_generated::array_reduce_default1, &godot::Array::reduce>("reduce")
+			.method<&godot::Array::any>("any")
+			.method<&godot::Array::all>("all")
+			.method<&godot::Array::max>("max")
+			.method<&godot::Array::min>("min")
+			.method<&godot::Array::is_typed>("is_typed")
+			.method<&godot::Array::is_same_typed>("is_same_typed")
+			.method<&godot::Array::get_typed_builtin>("get_typed_builtin")
+			.method<&godot::Array::get_typed_class_name>("get_typed_class_name")
+			.method<&godot::Array::get_typed_script>("get_typed_script")
+			.method<&godot::Array::make_read_only>("make_read_only")
+			.method<&godot::Array::is_read_only>("is_read_only")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1224,53 +624,47 @@ inline decltype(auto) basis_from_euler_default1(const godot::Vector3 &p_arg_0) {
 
 inline void register_type_basis() {
 	puerts::define_type<godot::Basis>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::basis_op_equality_0>(), puerts::make_overload<&puerts_generated::basis_op_equality_8>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::basis_op_inequality_1>(), puerts::make_overload<&puerts_generated::basis_op_inequality_9>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::basis_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::basis_op_multiply_3>(), puerts::make_overload<&puerts_generated::basis_op_multiply_5>(), puerts::make_overload<&puerts_generated::basis_op_multiply_7>(), puerts::make_overload<&puerts_generated::basis_op_multiply_10>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::basis_op_division_4>(), puerts::make_overload<&puerts_generated::basis_op_division_6>()))
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::basis_op_in_11>(), puerts::make_overload<&puerts_generated::basis_op_in_12>()))
-			.static_property("IDENTITY", puerts::make_constant_getter<&puerts_generated::basis_identity>())
-			.static_property("FLIP_X", puerts::make_constant_getter<&puerts_generated::basis_flip_x>())
-			.static_property("FLIP_Y", puerts::make_constant_getter<&puerts_generated::basis_flip_y>())
-			.static_property("FLIP_Z", puerts::make_constant_getter<&puerts_generated::basis_flip_z>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Basis>(),
-					puerts::make_constructor_overload<godot::Basis, const godot::Basis &>(),
-					puerts::make_constructor_overload<godot::Basis, const godot::Quaternion &>(),
-					puerts::make_constructor_overload<godot::Basis, const godot::Vector3 &, godot::real_t>(),
-					puerts::make_constructor_overload<godot::Basis, const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>()))
-			.method("inverse", puerts::make_method<&godot::Basis::inverse>())
-			.method("transposed", puerts::make_method<&godot::Basis::transposed>())
-			.method("orthonormalized", puerts::make_method<&godot::Basis::orthonormalized>())
-			.method("determinant", puerts::make_method<&godot::Basis::determinant>())
-			.method("rotated", puerts::make_method<static_cast<godot::Basis (godot::Basis::*)(const godot::Vector3 &, godot::real_t) const>(&godot::Basis::rotated)>())
-			.method("scaled", puerts::make_method<&godot::Basis::scaled>())
-			.method("scaled_local", puerts::make_method<&godot::Basis::scaled_local>())
-			.method("get_scale", puerts::make_method<&godot::Basis::get_scale>())
-			.method("get_euler", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::basis_get_euler_default0>(), puerts::make_overload<&godot::Basis::get_euler>()))
-			.method("tdotx", puerts::make_method<&godot::Basis::tdotx>())
-			.method("tdoty", puerts::make_method<&godot::Basis::tdoty>())
-			.method("tdotz", puerts::make_method<&godot::Basis::tdotz>())
-			.method("slerp", puerts::make_method<&godot::Basis::slerp>())
-			.method("is_conformal", puerts::make_method<&godot::Basis::is_conformal>())
-			.method("is_equal_approx", puerts::make_method<&godot::Basis::is_equal_approx>())
-			.method("is_finite", puerts::make_method<&godot::Basis::is_finite>())
-			.method("get_rotation_quaternion", puerts::make_method<&godot::Basis::get_rotation_quaternion>())
-			.static_method("looking_at", puerts::combine_overloads(puerts::make_overload<&puerts_generated::basis_looking_at_default1>(), puerts::make_overload<&puerts_generated::basis_looking_at_default2>(), puerts::make_overload<&godot::Basis::looking_at>()))
-			.static_method("from_scale", puerts::make_function<&godot::Basis::from_scale>())
-			.static_method("from_euler", puerts::combine_overloads(puerts::make_overload<&puerts_generated::basis_from_euler_default1>(), puerts::make_overload<&godot::Basis::from_euler>()))
-			.property("x", &puerts_generated::basis_x_getter, &puerts_generated::basis_x_setter)
-			.property("y", &puerts_generated::basis_y_getter, &puerts_generated::basis_y_setter)
-			.property("z", &puerts_generated::basis_z_getter, &puerts_generated::basis_z_setter)
+			.static_method<&puerts_generated::basis_op_equality_0, &puerts_generated::basis_op_equality_8>("op_Equality")
+			.static_method<&puerts_generated::basis_op_inequality_1, &puerts_generated::basis_op_inequality_9>("op_Inequality")
+			.static_method<&puerts_generated::basis_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::basis_op_multiply_3, &puerts_generated::basis_op_multiply_5, &puerts_generated::basis_op_multiply_7, &puerts_generated::basis_op_multiply_10>("op_Multiply")
+			.static_method<&puerts_generated::basis_op_division_4, &puerts_generated::basis_op_division_6>("op_Division")
+			.static_method<&puerts_generated::basis_op_in_11, &puerts_generated::basis_op_in_12>("op_In")
+			.constant<&puerts_generated::basis_identity>("IDENTITY")
+			.constant<&puerts_generated::basis_flip_x>("FLIP_X")
+			.constant<&puerts_generated::basis_flip_y>("FLIP_Y")
+			.constant<&puerts_generated::basis_flip_z>("FLIP_Z")
+			.constructor<>()
+			.constructor<const godot::Basis &>()
+			.constructor<const godot::Quaternion &>()
+			.constructor<const godot::Vector3 &, godot::real_t>()
+			.constructor<const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>()
+			.method<&godot::Basis::inverse>("inverse")
+			.method<&godot::Basis::transposed>("transposed")
+			.method<&godot::Basis::orthonormalized>("orthonormalized")
+			.method<&godot::Basis::determinant>("determinant")
+			.method<static_cast<godot::Basis (godot::Basis::*)(const godot::Vector3 &, godot::real_t) const>(&godot::Basis::rotated)>("rotated")
+			.method<&godot::Basis::scaled>("scaled")
+			.method<&godot::Basis::scaled_local>("scaled_local")
+			.method<&godot::Basis::get_scale>("get_scale")
+			.method<&puerts_generated::basis_get_euler_default0, &godot::Basis::get_euler>("get_euler")
+			.method<&godot::Basis::tdotx>("tdotx")
+			.method<&godot::Basis::tdoty>("tdoty")
+			.method<&godot::Basis::tdotz>("tdotz")
+			.method<&godot::Basis::slerp>("slerp")
+			.method<&godot::Basis::is_conformal>("is_conformal")
+			.method<&godot::Basis::is_equal_approx>("is_equal_approx")
+			.method<&godot::Basis::is_finite>("is_finite")
+			.method<&godot::Basis::get_rotation_quaternion>("get_rotation_quaternion")
+			.static_method<&puerts_generated::basis_looking_at_default1, &puerts_generated::basis_looking_at_default2, &godot::Basis::looking_at>("looking_at")
+			.static_method<&godot::Basis::from_scale>("from_scale")
+			.static_method<&puerts_generated::basis_from_euler_default1, &godot::Basis::from_euler>("from_euler")
+			.property<&puerts_generated::basis_x_getter, &puerts_generated::basis_x_setter>("x")
+			.property<&puerts_generated::basis_y_getter, &puerts_generated::basis_y_setter>("y")
+			.property<&puerts_generated::basis_z_getter, &puerts_generated::basis_z_setter>("z")
 			.register_type();
 }
 namespace puerts_generated {
-inline constexpr char callable_call_vararg_name[] = "call";
-inline constexpr char callable_call_deferred_vararg_name[] = "call_deferred";
-inline constexpr char callable_rpc_vararg_name[] = "rpc";
-inline constexpr char callable_rpc_id_vararg_name[] = "rpc_id";
-inline constexpr char callable_bind_vararg_name[] = "bind";
 inline bool callable_op_equality_0(const godot::Callable &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
@@ -1296,35 +690,34 @@ inline bool callable_op_in_6(const godot::Callable &left, const godot::Array &ri
 
 inline void register_type_callable() {
 	puerts::define_type<godot::Callable>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::callable_op_equality_0>(), puerts::make_overload<&puerts_generated::callable_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::callable_op_inequality_1>(), puerts::make_overload<&puerts_generated::callable_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::callable_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::callable_op_in_5>(), puerts::make_overload<&puerts_generated::callable_op_in_6>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Callable>(),
-					puerts::make_constructor_overload<godot::Callable, const godot::Callable &>(),
-					puerts::make_constructor_overload<godot::Callable, godot::Object *, const godot::StringName &>()))
-			.static_method("create", puerts::make_function<&godot::Callable::create>())
-			.method("callv", puerts::make_method<&godot::Callable::callv>())
-			.method("is_null", puerts::make_method<&godot::Callable::is_null>())
-			.method("is_custom", puerts::make_method<&godot::Callable::is_custom>())
-			.method("is_standard", puerts::make_method<&godot::Callable::is_standard>())
-			.method("is_valid", puerts::make_method<&godot::Callable::is_valid>())
-			.method("get_object", puerts::make_method<&godot::Callable::get_object>())
-			.method("get_object_id", puerts::make_method<&godot::Callable::get_object_id>())
-			.method("get_method", puerts::make_method<&godot::Callable::get_method>())
-			.method("get_argument_count", puerts::make_method<&godot::Callable::get_argument_count>())
-			.method("get_bound_arguments_count", puerts::make_method<&godot::Callable::get_bound_arguments_count>())
-			.method("get_bound_arguments", puerts::make_method<&godot::Callable::get_bound_arguments>())
-			.method("get_unbound_arguments_count", puerts::make_method<&godot::Callable::get_unbound_arguments_count>())
-			.method("hash", puerts::make_method<&godot::Callable::hash>())
-			.method("bindv", puerts::make_method<&godot::Callable::bindv>())
-			.method("unbind", puerts::make_method<&godot::Callable::unbind>())
-			.method("call", puerts::make_vararg_method<godot::Callable, godot::Variant, puerts_generated::callable_call_vararg_name, 0, false>())
-			.method("call_deferred", puerts::make_vararg_method<godot::Callable, void, puerts_generated::callable_call_deferred_vararg_name, 0, false>())
-			.method("rpc", puerts::make_vararg_method<godot::Callable, void, puerts_generated::callable_rpc_vararg_name, 0, false>())
-			.method("rpc_id", puerts::make_vararg_method<godot::Callable, void, puerts_generated::callable_rpc_id_vararg_name, 1, false>())
-			.method("bind", puerts::make_vararg_method<godot::Callable, godot::Callable, puerts_generated::callable_bind_vararg_name, 0, false>())
+			.static_method<&puerts_generated::callable_op_equality_0, &puerts_generated::callable_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::callable_op_inequality_1, &puerts_generated::callable_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::callable_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::callable_op_in_5, &puerts_generated::callable_op_in_6>("op_In")
+			.constructor<>()
+			.constructor<const godot::Callable &>()
+			.constructor<godot::Object *, const godot::StringName &>()
+			.static_method<&godot::Callable::create>("create")
+			.method<&godot::Callable::callv>("callv")
+			.method<&godot::Callable::is_null>("is_null")
+			.method<&godot::Callable::is_custom>("is_custom")
+			.method<&godot::Callable::is_standard>("is_standard")
+			.method<&godot::Callable::is_valid>("is_valid")
+			.method<&godot::Callable::get_object>("get_object")
+			.method<&godot::Callable::get_object_id>("get_object_id")
+			.method<&godot::Callable::get_method>("get_method")
+			.method<&godot::Callable::get_argument_count>("get_argument_count")
+			.method<&godot::Callable::get_bound_arguments_count>("get_bound_arguments_count")
+			.method<&godot::Callable::get_bound_arguments>("get_bound_arguments")
+			.method<&godot::Callable::get_unbound_arguments_count>("get_unbound_arguments_count")
+			.method<&godot::Callable::hash>("hash")
+			.method<&godot::Callable::bindv>("bindv")
+			.method<&godot::Callable::unbind>("unbind")
+			.vararg_method<godot::Variant, false>("call", 0)
+			.vararg_method<void, false>("call_deferred", 0)
+			.vararg_method<void, false>("rpc", 0)
+			.vararg_method<void, false>("rpc_id", 1)
+			.vararg_method<godot::Callable, false>("bind", 0)
 			.register_type();
 }
 namespace puerts_generated {
@@ -1839,206 +1232,205 @@ inline decltype(auto) color_from_rgba8_default3(int64_t p_arg_0, int64_t p_arg_1
 
 inline void register_type_color() {
 	puerts::define_type<godot::Color>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::color_op_equality_0>(), puerts::make_overload<&puerts_generated::color_op_equality_9>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::color_op_inequality_1>(), puerts::make_overload<&puerts_generated::color_op_inequality_10>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::color_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::color_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::color_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::color_op_multiply_5>(), puerts::make_overload<&puerts_generated::color_op_multiply_7>(), puerts::make_overload<&puerts_generated::color_op_multiply_13>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::color_op_division_6>(), puerts::make_overload<&puerts_generated::color_op_division_8>(), puerts::make_overload<&puerts_generated::color_op_division_14>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::color_op_addition_11>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::color_op_subtraction_12>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::color_op_in_15>(), puerts::make_overload<&puerts_generated::color_op_in_16>(), puerts::make_overload<&puerts_generated::color_op_in_17>()))
-			.static_property("ALICE_BLUE", puerts::make_constant_getter<&puerts_generated::color_alice_blue>())
-			.static_property("ANTIQUE_WHITE", puerts::make_constant_getter<&puerts_generated::color_antique_white>())
-			.static_property("AQUA", puerts::make_constant_getter<&puerts_generated::color_aqua>())
-			.static_property("AQUAMARINE", puerts::make_constant_getter<&puerts_generated::color_aquamarine>())
-			.static_property("AZURE", puerts::make_constant_getter<&puerts_generated::color_azure>())
-			.static_property("BEIGE", puerts::make_constant_getter<&puerts_generated::color_beige>())
-			.static_property("BISQUE", puerts::make_constant_getter<&puerts_generated::color_bisque>())
-			.static_property("BLACK", puerts::make_constant_getter<&puerts_generated::color_black>())
-			.static_property("BLANCHED_ALMOND", puerts::make_constant_getter<&puerts_generated::color_blanched_almond>())
-			.static_property("BLUE", puerts::make_constant_getter<&puerts_generated::color_blue>())
-			.static_property("BLUE_VIOLET", puerts::make_constant_getter<&puerts_generated::color_blue_violet>())
-			.static_property("BROWN", puerts::make_constant_getter<&puerts_generated::color_brown>())
-			.static_property("BURLYWOOD", puerts::make_constant_getter<&puerts_generated::color_burlywood>())
-			.static_property("CADET_BLUE", puerts::make_constant_getter<&puerts_generated::color_cadet_blue>())
-			.static_property("CHARTREUSE", puerts::make_constant_getter<&puerts_generated::color_chartreuse>())
-			.static_property("CHOCOLATE", puerts::make_constant_getter<&puerts_generated::color_chocolate>())
-			.static_property("CORAL", puerts::make_constant_getter<&puerts_generated::color_coral>())
-			.static_property("CORNFLOWER_BLUE", puerts::make_constant_getter<&puerts_generated::color_cornflower_blue>())
-			.static_property("CORNSILK", puerts::make_constant_getter<&puerts_generated::color_cornsilk>())
-			.static_property("CRIMSON", puerts::make_constant_getter<&puerts_generated::color_crimson>())
-			.static_property("CYAN", puerts::make_constant_getter<&puerts_generated::color_cyan>())
-			.static_property("DARK_BLUE", puerts::make_constant_getter<&puerts_generated::color_dark_blue>())
-			.static_property("DARK_CYAN", puerts::make_constant_getter<&puerts_generated::color_dark_cyan>())
-			.static_property("DARK_GOLDENROD", puerts::make_constant_getter<&puerts_generated::color_dark_goldenrod>())
-			.static_property("DARK_GRAY", puerts::make_constant_getter<&puerts_generated::color_dark_gray>())
-			.static_property("DARK_GREEN", puerts::make_constant_getter<&puerts_generated::color_dark_green>())
-			.static_property("DARK_KHAKI", puerts::make_constant_getter<&puerts_generated::color_dark_khaki>())
-			.static_property("DARK_MAGENTA", puerts::make_constant_getter<&puerts_generated::color_dark_magenta>())
-			.static_property("DARK_OLIVE_GREEN", puerts::make_constant_getter<&puerts_generated::color_dark_olive_green>())
-			.static_property("DARK_ORANGE", puerts::make_constant_getter<&puerts_generated::color_dark_orange>())
-			.static_property("DARK_ORCHID", puerts::make_constant_getter<&puerts_generated::color_dark_orchid>())
-			.static_property("DARK_RED", puerts::make_constant_getter<&puerts_generated::color_dark_red>())
-			.static_property("DARK_SALMON", puerts::make_constant_getter<&puerts_generated::color_dark_salmon>())
-			.static_property("DARK_SEA_GREEN", puerts::make_constant_getter<&puerts_generated::color_dark_sea_green>())
-			.static_property("DARK_SLATE_BLUE", puerts::make_constant_getter<&puerts_generated::color_dark_slate_blue>())
-			.static_property("DARK_SLATE_GRAY", puerts::make_constant_getter<&puerts_generated::color_dark_slate_gray>())
-			.static_property("DARK_TURQUOISE", puerts::make_constant_getter<&puerts_generated::color_dark_turquoise>())
-			.static_property("DARK_VIOLET", puerts::make_constant_getter<&puerts_generated::color_dark_violet>())
-			.static_property("DEEP_PINK", puerts::make_constant_getter<&puerts_generated::color_deep_pink>())
-			.static_property("DEEP_SKY_BLUE", puerts::make_constant_getter<&puerts_generated::color_deep_sky_blue>())
-			.static_property("DIM_GRAY", puerts::make_constant_getter<&puerts_generated::color_dim_gray>())
-			.static_property("DODGER_BLUE", puerts::make_constant_getter<&puerts_generated::color_dodger_blue>())
-			.static_property("FIREBRICK", puerts::make_constant_getter<&puerts_generated::color_firebrick>())
-			.static_property("FLORAL_WHITE", puerts::make_constant_getter<&puerts_generated::color_floral_white>())
-			.static_property("FOREST_GREEN", puerts::make_constant_getter<&puerts_generated::color_forest_green>())
-			.static_property("FUCHSIA", puerts::make_constant_getter<&puerts_generated::color_fuchsia>())
-			.static_property("GAINSBORO", puerts::make_constant_getter<&puerts_generated::color_gainsboro>())
-			.static_property("GHOST_WHITE", puerts::make_constant_getter<&puerts_generated::color_ghost_white>())
-			.static_property("GOLD", puerts::make_constant_getter<&puerts_generated::color_gold>())
-			.static_property("GOLDENROD", puerts::make_constant_getter<&puerts_generated::color_goldenrod>())
-			.static_property("GRAY", puerts::make_constant_getter<&puerts_generated::color_gray>())
-			.static_property("GREEN", puerts::make_constant_getter<&puerts_generated::color_green>())
-			.static_property("GREEN_YELLOW", puerts::make_constant_getter<&puerts_generated::color_green_yellow>())
-			.static_property("HONEYDEW", puerts::make_constant_getter<&puerts_generated::color_honeydew>())
-			.static_property("HOT_PINK", puerts::make_constant_getter<&puerts_generated::color_hot_pink>())
-			.static_property("INDIAN_RED", puerts::make_constant_getter<&puerts_generated::color_indian_red>())
-			.static_property("INDIGO", puerts::make_constant_getter<&puerts_generated::color_indigo>())
-			.static_property("IVORY", puerts::make_constant_getter<&puerts_generated::color_ivory>())
-			.static_property("KHAKI", puerts::make_constant_getter<&puerts_generated::color_khaki>())
-			.static_property("LAVENDER", puerts::make_constant_getter<&puerts_generated::color_lavender>())
-			.static_property("LAVENDER_BLUSH", puerts::make_constant_getter<&puerts_generated::color_lavender_blush>())
-			.static_property("LAWN_GREEN", puerts::make_constant_getter<&puerts_generated::color_lawn_green>())
-			.static_property("LEMON_CHIFFON", puerts::make_constant_getter<&puerts_generated::color_lemon_chiffon>())
-			.static_property("LIGHT_BLUE", puerts::make_constant_getter<&puerts_generated::color_light_blue>())
-			.static_property("LIGHT_CORAL", puerts::make_constant_getter<&puerts_generated::color_light_coral>())
-			.static_property("LIGHT_CYAN", puerts::make_constant_getter<&puerts_generated::color_light_cyan>())
-			.static_property("LIGHT_GOLDENROD", puerts::make_constant_getter<&puerts_generated::color_light_goldenrod>())
-			.static_property("LIGHT_GRAY", puerts::make_constant_getter<&puerts_generated::color_light_gray>())
-			.static_property("LIGHT_GREEN", puerts::make_constant_getter<&puerts_generated::color_light_green>())
-			.static_property("LIGHT_PINK", puerts::make_constant_getter<&puerts_generated::color_light_pink>())
-			.static_property("LIGHT_SALMON", puerts::make_constant_getter<&puerts_generated::color_light_salmon>())
-			.static_property("LIGHT_SEA_GREEN", puerts::make_constant_getter<&puerts_generated::color_light_sea_green>())
-			.static_property("LIGHT_SKY_BLUE", puerts::make_constant_getter<&puerts_generated::color_light_sky_blue>())
-			.static_property("LIGHT_SLATE_GRAY", puerts::make_constant_getter<&puerts_generated::color_light_slate_gray>())
-			.static_property("LIGHT_STEEL_BLUE", puerts::make_constant_getter<&puerts_generated::color_light_steel_blue>())
-			.static_property("LIGHT_YELLOW", puerts::make_constant_getter<&puerts_generated::color_light_yellow>())
-			.static_property("LIME", puerts::make_constant_getter<&puerts_generated::color_lime>())
-			.static_property("LIME_GREEN", puerts::make_constant_getter<&puerts_generated::color_lime_green>())
-			.static_property("LINEN", puerts::make_constant_getter<&puerts_generated::color_linen>())
-			.static_property("MAGENTA", puerts::make_constant_getter<&puerts_generated::color_magenta>())
-			.static_property("MAROON", puerts::make_constant_getter<&puerts_generated::color_maroon>())
-			.static_property("MEDIUM_AQUAMARINE", puerts::make_constant_getter<&puerts_generated::color_medium_aquamarine>())
-			.static_property("MEDIUM_BLUE", puerts::make_constant_getter<&puerts_generated::color_medium_blue>())
-			.static_property("MEDIUM_ORCHID", puerts::make_constant_getter<&puerts_generated::color_medium_orchid>())
-			.static_property("MEDIUM_PURPLE", puerts::make_constant_getter<&puerts_generated::color_medium_purple>())
-			.static_property("MEDIUM_SEA_GREEN", puerts::make_constant_getter<&puerts_generated::color_medium_sea_green>())
-			.static_property("MEDIUM_SLATE_BLUE", puerts::make_constant_getter<&puerts_generated::color_medium_slate_blue>())
-			.static_property("MEDIUM_SPRING_GREEN", puerts::make_constant_getter<&puerts_generated::color_medium_spring_green>())
-			.static_property("MEDIUM_TURQUOISE", puerts::make_constant_getter<&puerts_generated::color_medium_turquoise>())
-			.static_property("MEDIUM_VIOLET_RED", puerts::make_constant_getter<&puerts_generated::color_medium_violet_red>())
-			.static_property("MIDNIGHT_BLUE", puerts::make_constant_getter<&puerts_generated::color_midnight_blue>())
-			.static_property("MINT_CREAM", puerts::make_constant_getter<&puerts_generated::color_mint_cream>())
-			.static_property("MISTY_ROSE", puerts::make_constant_getter<&puerts_generated::color_misty_rose>())
-			.static_property("MOCCASIN", puerts::make_constant_getter<&puerts_generated::color_moccasin>())
-			.static_property("NAVAJO_WHITE", puerts::make_constant_getter<&puerts_generated::color_navajo_white>())
-			.static_property("NAVY_BLUE", puerts::make_constant_getter<&puerts_generated::color_navy_blue>())
-			.static_property("OLD_LACE", puerts::make_constant_getter<&puerts_generated::color_old_lace>())
-			.static_property("OLIVE", puerts::make_constant_getter<&puerts_generated::color_olive>())
-			.static_property("OLIVE_DRAB", puerts::make_constant_getter<&puerts_generated::color_olive_drab>())
-			.static_property("ORANGE", puerts::make_constant_getter<&puerts_generated::color_orange>())
-			.static_property("ORANGE_RED", puerts::make_constant_getter<&puerts_generated::color_orange_red>())
-			.static_property("ORCHID", puerts::make_constant_getter<&puerts_generated::color_orchid>())
-			.static_property("PALE_GOLDENROD", puerts::make_constant_getter<&puerts_generated::color_pale_goldenrod>())
-			.static_property("PALE_GREEN", puerts::make_constant_getter<&puerts_generated::color_pale_green>())
-			.static_property("PALE_TURQUOISE", puerts::make_constant_getter<&puerts_generated::color_pale_turquoise>())
-			.static_property("PALE_VIOLET_RED", puerts::make_constant_getter<&puerts_generated::color_pale_violet_red>())
-			.static_property("PAPAYA_WHIP", puerts::make_constant_getter<&puerts_generated::color_papaya_whip>())
-			.static_property("PEACH_PUFF", puerts::make_constant_getter<&puerts_generated::color_peach_puff>())
-			.static_property("PERU", puerts::make_constant_getter<&puerts_generated::color_peru>())
-			.static_property("PINK", puerts::make_constant_getter<&puerts_generated::color_pink>())
-			.static_property("PLUM", puerts::make_constant_getter<&puerts_generated::color_plum>())
-			.static_property("POWDER_BLUE", puerts::make_constant_getter<&puerts_generated::color_powder_blue>())
-			.static_property("PURPLE", puerts::make_constant_getter<&puerts_generated::color_purple>())
-			.static_property("REBECCA_PURPLE", puerts::make_constant_getter<&puerts_generated::color_rebecca_purple>())
-			.static_property("RED", puerts::make_constant_getter<&puerts_generated::color_red>())
-			.static_property("ROSY_BROWN", puerts::make_constant_getter<&puerts_generated::color_rosy_brown>())
-			.static_property("ROYAL_BLUE", puerts::make_constant_getter<&puerts_generated::color_royal_blue>())
-			.static_property("SADDLE_BROWN", puerts::make_constant_getter<&puerts_generated::color_saddle_brown>())
-			.static_property("SALMON", puerts::make_constant_getter<&puerts_generated::color_salmon>())
-			.static_property("SANDY_BROWN", puerts::make_constant_getter<&puerts_generated::color_sandy_brown>())
-			.static_property("SEA_GREEN", puerts::make_constant_getter<&puerts_generated::color_sea_green>())
-			.static_property("SEASHELL", puerts::make_constant_getter<&puerts_generated::color_seashell>())
-			.static_property("SIENNA", puerts::make_constant_getter<&puerts_generated::color_sienna>())
-			.static_property("SILVER", puerts::make_constant_getter<&puerts_generated::color_silver>())
-			.static_property("SKY_BLUE", puerts::make_constant_getter<&puerts_generated::color_sky_blue>())
-			.static_property("SLATE_BLUE", puerts::make_constant_getter<&puerts_generated::color_slate_blue>())
-			.static_property("SLATE_GRAY", puerts::make_constant_getter<&puerts_generated::color_slate_gray>())
-			.static_property("SNOW", puerts::make_constant_getter<&puerts_generated::color_snow>())
-			.static_property("SPRING_GREEN", puerts::make_constant_getter<&puerts_generated::color_spring_green>())
-			.static_property("STEEL_BLUE", puerts::make_constant_getter<&puerts_generated::color_steel_blue>())
-			.static_property("TAN", puerts::make_constant_getter<&puerts_generated::color_tan>())
-			.static_property("TEAL", puerts::make_constant_getter<&puerts_generated::color_teal>())
-			.static_property("THISTLE", puerts::make_constant_getter<&puerts_generated::color_thistle>())
-			.static_property("TOMATO", puerts::make_constant_getter<&puerts_generated::color_tomato>())
-			.static_property("TRANSPARENT", puerts::make_constant_getter<&puerts_generated::color_transparent>())
-			.static_property("TURQUOISE", puerts::make_constant_getter<&puerts_generated::color_turquoise>())
-			.static_property("VIOLET", puerts::make_constant_getter<&puerts_generated::color_violet>())
-			.static_property("WEB_GRAY", puerts::make_constant_getter<&puerts_generated::color_web_gray>())
-			.static_property("WEB_GREEN", puerts::make_constant_getter<&puerts_generated::color_web_green>())
-			.static_property("WEB_MAROON", puerts::make_constant_getter<&puerts_generated::color_web_maroon>())
-			.static_property("WEB_PURPLE", puerts::make_constant_getter<&puerts_generated::color_web_purple>())
-			.static_property("WHEAT", puerts::make_constant_getter<&puerts_generated::color_wheat>())
-			.static_property("WHITE", puerts::make_constant_getter<&puerts_generated::color_white>())
-			.static_property("WHITE_SMOKE", puerts::make_constant_getter<&puerts_generated::color_white_smoke>())
-			.static_property("YELLOW", puerts::make_constant_getter<&puerts_generated::color_yellow>())
-			.static_property("YELLOW_GREEN", puerts::make_constant_getter<&puerts_generated::color_yellow_green>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Color>(),
-					puerts::make_constructor_overload<godot::Color, const godot::Color &>(),
-					puerts::make_constructor_overload<godot::Color, const godot::Color &, godot::real_t>(),
-					puerts::make_constructor_overload<godot::Color, godot::real_t, godot::real_t, godot::real_t>(),
-					puerts::make_constructor_overload<godot::Color, godot::real_t, godot::real_t, godot::real_t, godot::real_t>(),
-					puerts::make_constructor_overload<godot::Color, const godot::String &>(),
-					puerts::make_constructor_overload<godot::Color, const godot::String &, godot::real_t>()))
-			.method("to_argb32", puerts::make_method<&godot::Color::to_argb32>())
-			.method("to_abgr32", puerts::make_method<&godot::Color::to_abgr32>())
-			.method("to_rgba32", puerts::make_method<&godot::Color::to_rgba32>())
-			.method("to_argb64", puerts::make_method<&godot::Color::to_argb64>())
-			.method("to_abgr64", puerts::make_method<&godot::Color::to_abgr64>())
-			.method("to_rgba64", puerts::make_method<&godot::Color::to_rgba64>())
-			.method("to_html", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::color_to_html_default0>(), puerts::make_overload<&godot::Color::to_html>()))
-			.method("clamp", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::color_clamp_default0>(), puerts::make_extension_overload<&puerts_generated::color_clamp_default1>(), puerts::make_overload<&godot::Color::clamp>()))
-			.method("inverted", puerts::make_method<&godot::Color::inverted>())
-			.method("lerp", puerts::make_method<&godot::Color::lerp>())
-			.method("lightened", puerts::make_method<&godot::Color::lightened>())
-			.method("darkened", puerts::make_method<&godot::Color::darkened>())
-			.method("blend", puerts::make_method<&godot::Color::blend>())
-			.method("get_luminance", puerts::make_method<&godot::Color::get_luminance>())
-			.method("srgb_to_linear", puerts::make_method<&godot::Color::srgb_to_linear>())
-			.method("linear_to_srgb", puerts::make_method<&godot::Color::linear_to_srgb>())
-			.method("is_equal_approx", puerts::make_method<&godot::Color::is_equal_approx>())
-			.static_method("hex", puerts::make_function<&godot::Color::hex>())
-			.static_method("hex64", puerts::make_function<&godot::Color::hex64>())
-			.static_method("html", puerts::make_function<&godot::Color::html>())
-			.static_method("html_is_valid", puerts::make_function<&godot::Color::html_is_valid>())
-			.static_method("from_string", puerts::make_function<&godot::Color::from_string>())
-			.static_method("from_hsv", puerts::combine_overloads(puerts::make_overload<&puerts_generated::color_from_hsv_default3>(), puerts::make_overload<&godot::Color::from_hsv>()))
-			.static_method("from_rgbe9995", puerts::make_function<&godot::Color::from_rgbe9995>())
-			.static_method("from_rgba8", puerts::combine_overloads(puerts::make_overload<&puerts_generated::color_from_rgba8_default3>(), puerts::make_overload<&godot::Color::from_rgba8>()))
-			.property("r8", &puerts_generated::color_r8_getter, &puerts_generated::color_r8_setter)
-			.property("g8", &puerts_generated::color_g8_getter, &puerts_generated::color_g8_setter)
-			.property("b8", &puerts_generated::color_b8_getter, &puerts_generated::color_b8_setter)
-			.property("a8", &puerts_generated::color_a8_getter, &puerts_generated::color_a8_setter)
-			.property("h", &puerts_generated::color_h_getter, &puerts_generated::color_h_setter)
-			.property("s", &puerts_generated::color_s_getter, &puerts_generated::color_s_setter)
-			.property("v", &puerts_generated::color_v_getter, &puerts_generated::color_v_setter)
-			.property("r", puerts::make_property<&godot::Color::r>())
-			.property("g", puerts::make_property<&godot::Color::g>())
-			.property("b", puerts::make_property<&godot::Color::b>())
-			.property("a", puerts::make_property<&godot::Color::a>())
+			.static_method<&puerts_generated::color_op_equality_0, &puerts_generated::color_op_equality_9>("op_Equality")
+			.static_method<&puerts_generated::color_op_inequality_1, &puerts_generated::color_op_inequality_10>("op_Inequality")
+			.static_method<&puerts_generated::color_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::color_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::color_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::color_op_multiply_5, &puerts_generated::color_op_multiply_7, &puerts_generated::color_op_multiply_13>("op_Multiply")
+			.static_method<&puerts_generated::color_op_division_6, &puerts_generated::color_op_division_8, &puerts_generated::color_op_division_14>("op_Division")
+			.static_method<&puerts_generated::color_op_addition_11>("op_Addition")
+			.static_method<&puerts_generated::color_op_subtraction_12>("op_Subtraction")
+			.static_method<&puerts_generated::color_op_in_15, &puerts_generated::color_op_in_16, &puerts_generated::color_op_in_17>("op_In")
+			.constant<&puerts_generated::color_alice_blue>("ALICE_BLUE")
+			.constant<&puerts_generated::color_antique_white>("ANTIQUE_WHITE")
+			.constant<&puerts_generated::color_aqua>("AQUA")
+			.constant<&puerts_generated::color_aquamarine>("AQUAMARINE")
+			.constant<&puerts_generated::color_azure>("AZURE")
+			.constant<&puerts_generated::color_beige>("BEIGE")
+			.constant<&puerts_generated::color_bisque>("BISQUE")
+			.constant<&puerts_generated::color_black>("BLACK")
+			.constant<&puerts_generated::color_blanched_almond>("BLANCHED_ALMOND")
+			.constant<&puerts_generated::color_blue>("BLUE")
+			.constant<&puerts_generated::color_blue_violet>("BLUE_VIOLET")
+			.constant<&puerts_generated::color_brown>("BROWN")
+			.constant<&puerts_generated::color_burlywood>("BURLYWOOD")
+			.constant<&puerts_generated::color_cadet_blue>("CADET_BLUE")
+			.constant<&puerts_generated::color_chartreuse>("CHARTREUSE")
+			.constant<&puerts_generated::color_chocolate>("CHOCOLATE")
+			.constant<&puerts_generated::color_coral>("CORAL")
+			.constant<&puerts_generated::color_cornflower_blue>("CORNFLOWER_BLUE")
+			.constant<&puerts_generated::color_cornsilk>("CORNSILK")
+			.constant<&puerts_generated::color_crimson>("CRIMSON")
+			.constant<&puerts_generated::color_cyan>("CYAN")
+			.constant<&puerts_generated::color_dark_blue>("DARK_BLUE")
+			.constant<&puerts_generated::color_dark_cyan>("DARK_CYAN")
+			.constant<&puerts_generated::color_dark_goldenrod>("DARK_GOLDENROD")
+			.constant<&puerts_generated::color_dark_gray>("DARK_GRAY")
+			.constant<&puerts_generated::color_dark_green>("DARK_GREEN")
+			.constant<&puerts_generated::color_dark_khaki>("DARK_KHAKI")
+			.constant<&puerts_generated::color_dark_magenta>("DARK_MAGENTA")
+			.constant<&puerts_generated::color_dark_olive_green>("DARK_OLIVE_GREEN")
+			.constant<&puerts_generated::color_dark_orange>("DARK_ORANGE")
+			.constant<&puerts_generated::color_dark_orchid>("DARK_ORCHID")
+			.constant<&puerts_generated::color_dark_red>("DARK_RED")
+			.constant<&puerts_generated::color_dark_salmon>("DARK_SALMON")
+			.constant<&puerts_generated::color_dark_sea_green>("DARK_SEA_GREEN")
+			.constant<&puerts_generated::color_dark_slate_blue>("DARK_SLATE_BLUE")
+			.constant<&puerts_generated::color_dark_slate_gray>("DARK_SLATE_GRAY")
+			.constant<&puerts_generated::color_dark_turquoise>("DARK_TURQUOISE")
+			.constant<&puerts_generated::color_dark_violet>("DARK_VIOLET")
+			.constant<&puerts_generated::color_deep_pink>("DEEP_PINK")
+			.constant<&puerts_generated::color_deep_sky_blue>("DEEP_SKY_BLUE")
+			.constant<&puerts_generated::color_dim_gray>("DIM_GRAY")
+			.constant<&puerts_generated::color_dodger_blue>("DODGER_BLUE")
+			.constant<&puerts_generated::color_firebrick>("FIREBRICK")
+			.constant<&puerts_generated::color_floral_white>("FLORAL_WHITE")
+			.constant<&puerts_generated::color_forest_green>("FOREST_GREEN")
+			.constant<&puerts_generated::color_fuchsia>("FUCHSIA")
+			.constant<&puerts_generated::color_gainsboro>("GAINSBORO")
+			.constant<&puerts_generated::color_ghost_white>("GHOST_WHITE")
+			.constant<&puerts_generated::color_gold>("GOLD")
+			.constant<&puerts_generated::color_goldenrod>("GOLDENROD")
+			.constant<&puerts_generated::color_gray>("GRAY")
+			.constant<&puerts_generated::color_green>("GREEN")
+			.constant<&puerts_generated::color_green_yellow>("GREEN_YELLOW")
+			.constant<&puerts_generated::color_honeydew>("HONEYDEW")
+			.constant<&puerts_generated::color_hot_pink>("HOT_PINK")
+			.constant<&puerts_generated::color_indian_red>("INDIAN_RED")
+			.constant<&puerts_generated::color_indigo>("INDIGO")
+			.constant<&puerts_generated::color_ivory>("IVORY")
+			.constant<&puerts_generated::color_khaki>("KHAKI")
+			.constant<&puerts_generated::color_lavender>("LAVENDER")
+			.constant<&puerts_generated::color_lavender_blush>("LAVENDER_BLUSH")
+			.constant<&puerts_generated::color_lawn_green>("LAWN_GREEN")
+			.constant<&puerts_generated::color_lemon_chiffon>("LEMON_CHIFFON")
+			.constant<&puerts_generated::color_light_blue>("LIGHT_BLUE")
+			.constant<&puerts_generated::color_light_coral>("LIGHT_CORAL")
+			.constant<&puerts_generated::color_light_cyan>("LIGHT_CYAN")
+			.constant<&puerts_generated::color_light_goldenrod>("LIGHT_GOLDENROD")
+			.constant<&puerts_generated::color_light_gray>("LIGHT_GRAY")
+			.constant<&puerts_generated::color_light_green>("LIGHT_GREEN")
+			.constant<&puerts_generated::color_light_pink>("LIGHT_PINK")
+			.constant<&puerts_generated::color_light_salmon>("LIGHT_SALMON")
+			.constant<&puerts_generated::color_light_sea_green>("LIGHT_SEA_GREEN")
+			.constant<&puerts_generated::color_light_sky_blue>("LIGHT_SKY_BLUE")
+			.constant<&puerts_generated::color_light_slate_gray>("LIGHT_SLATE_GRAY")
+			.constant<&puerts_generated::color_light_steel_blue>("LIGHT_STEEL_BLUE")
+			.constant<&puerts_generated::color_light_yellow>("LIGHT_YELLOW")
+			.constant<&puerts_generated::color_lime>("LIME")
+			.constant<&puerts_generated::color_lime_green>("LIME_GREEN")
+			.constant<&puerts_generated::color_linen>("LINEN")
+			.constant<&puerts_generated::color_magenta>("MAGENTA")
+			.constant<&puerts_generated::color_maroon>("MAROON")
+			.constant<&puerts_generated::color_medium_aquamarine>("MEDIUM_AQUAMARINE")
+			.constant<&puerts_generated::color_medium_blue>("MEDIUM_BLUE")
+			.constant<&puerts_generated::color_medium_orchid>("MEDIUM_ORCHID")
+			.constant<&puerts_generated::color_medium_purple>("MEDIUM_PURPLE")
+			.constant<&puerts_generated::color_medium_sea_green>("MEDIUM_SEA_GREEN")
+			.constant<&puerts_generated::color_medium_slate_blue>("MEDIUM_SLATE_BLUE")
+			.constant<&puerts_generated::color_medium_spring_green>("MEDIUM_SPRING_GREEN")
+			.constant<&puerts_generated::color_medium_turquoise>("MEDIUM_TURQUOISE")
+			.constant<&puerts_generated::color_medium_violet_red>("MEDIUM_VIOLET_RED")
+			.constant<&puerts_generated::color_midnight_blue>("MIDNIGHT_BLUE")
+			.constant<&puerts_generated::color_mint_cream>("MINT_CREAM")
+			.constant<&puerts_generated::color_misty_rose>("MISTY_ROSE")
+			.constant<&puerts_generated::color_moccasin>("MOCCASIN")
+			.constant<&puerts_generated::color_navajo_white>("NAVAJO_WHITE")
+			.constant<&puerts_generated::color_navy_blue>("NAVY_BLUE")
+			.constant<&puerts_generated::color_old_lace>("OLD_LACE")
+			.constant<&puerts_generated::color_olive>("OLIVE")
+			.constant<&puerts_generated::color_olive_drab>("OLIVE_DRAB")
+			.constant<&puerts_generated::color_orange>("ORANGE")
+			.constant<&puerts_generated::color_orange_red>("ORANGE_RED")
+			.constant<&puerts_generated::color_orchid>("ORCHID")
+			.constant<&puerts_generated::color_pale_goldenrod>("PALE_GOLDENROD")
+			.constant<&puerts_generated::color_pale_green>("PALE_GREEN")
+			.constant<&puerts_generated::color_pale_turquoise>("PALE_TURQUOISE")
+			.constant<&puerts_generated::color_pale_violet_red>("PALE_VIOLET_RED")
+			.constant<&puerts_generated::color_papaya_whip>("PAPAYA_WHIP")
+			.constant<&puerts_generated::color_peach_puff>("PEACH_PUFF")
+			.constant<&puerts_generated::color_peru>("PERU")
+			.constant<&puerts_generated::color_pink>("PINK")
+			.constant<&puerts_generated::color_plum>("PLUM")
+			.constant<&puerts_generated::color_powder_blue>("POWDER_BLUE")
+			.constant<&puerts_generated::color_purple>("PURPLE")
+			.constant<&puerts_generated::color_rebecca_purple>("REBECCA_PURPLE")
+			.constant<&puerts_generated::color_red>("RED")
+			.constant<&puerts_generated::color_rosy_brown>("ROSY_BROWN")
+			.constant<&puerts_generated::color_royal_blue>("ROYAL_BLUE")
+			.constant<&puerts_generated::color_saddle_brown>("SADDLE_BROWN")
+			.constant<&puerts_generated::color_salmon>("SALMON")
+			.constant<&puerts_generated::color_sandy_brown>("SANDY_BROWN")
+			.constant<&puerts_generated::color_sea_green>("SEA_GREEN")
+			.constant<&puerts_generated::color_seashell>("SEASHELL")
+			.constant<&puerts_generated::color_sienna>("SIENNA")
+			.constant<&puerts_generated::color_silver>("SILVER")
+			.constant<&puerts_generated::color_sky_blue>("SKY_BLUE")
+			.constant<&puerts_generated::color_slate_blue>("SLATE_BLUE")
+			.constant<&puerts_generated::color_slate_gray>("SLATE_GRAY")
+			.constant<&puerts_generated::color_snow>("SNOW")
+			.constant<&puerts_generated::color_spring_green>("SPRING_GREEN")
+			.constant<&puerts_generated::color_steel_blue>("STEEL_BLUE")
+			.constant<&puerts_generated::color_tan>("TAN")
+			.constant<&puerts_generated::color_teal>("TEAL")
+			.constant<&puerts_generated::color_thistle>("THISTLE")
+			.constant<&puerts_generated::color_tomato>("TOMATO")
+			.constant<&puerts_generated::color_transparent>("TRANSPARENT")
+			.constant<&puerts_generated::color_turquoise>("TURQUOISE")
+			.constant<&puerts_generated::color_violet>("VIOLET")
+			.constant<&puerts_generated::color_web_gray>("WEB_GRAY")
+			.constant<&puerts_generated::color_web_green>("WEB_GREEN")
+			.constant<&puerts_generated::color_web_maroon>("WEB_MAROON")
+			.constant<&puerts_generated::color_web_purple>("WEB_PURPLE")
+			.constant<&puerts_generated::color_wheat>("WHEAT")
+			.constant<&puerts_generated::color_white>("WHITE")
+			.constant<&puerts_generated::color_white_smoke>("WHITE_SMOKE")
+			.constant<&puerts_generated::color_yellow>("YELLOW")
+			.constant<&puerts_generated::color_yellow_green>("YELLOW_GREEN")
+			.constructor<>()
+			.constructor<const godot::Color &>()
+			.constructor<const godot::Color &, godot::real_t>()
+			.constructor<godot::real_t, godot::real_t, godot::real_t>()
+			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
+			.constructor<const godot::String &>()
+			.constructor<const godot::String &, godot::real_t>()
+			.method<&godot::Color::to_argb32>("to_argb32")
+			.method<&godot::Color::to_abgr32>("to_abgr32")
+			.method<&godot::Color::to_rgba32>("to_rgba32")
+			.method<&godot::Color::to_argb64>("to_argb64")
+			.method<&godot::Color::to_abgr64>("to_abgr64")
+			.method<&godot::Color::to_rgba64>("to_rgba64")
+			.method<&puerts_generated::color_to_html_default0, &godot::Color::to_html>("to_html")
+			.method<&puerts_generated::color_clamp_default0, &puerts_generated::color_clamp_default1, &godot::Color::clamp>("clamp")
+			.method<&godot::Color::inverted>("inverted")
+			.method<&godot::Color::lerp>("lerp")
+			.method<&godot::Color::lightened>("lightened")
+			.method<&godot::Color::darkened>("darkened")
+			.method<&godot::Color::blend>("blend")
+			.method<&godot::Color::get_luminance>("get_luminance")
+			.method<&godot::Color::srgb_to_linear>("srgb_to_linear")
+			.method<&godot::Color::linear_to_srgb>("linear_to_srgb")
+			.method<&godot::Color::is_equal_approx>("is_equal_approx")
+			.static_method<&godot::Color::hex>("hex")
+			.static_method<&godot::Color::hex64>("hex64")
+			.static_method<&godot::Color::html>("html")
+			.static_method<&godot::Color::html_is_valid>("html_is_valid")
+			.static_method<&godot::Color::from_string>("from_string")
+			.static_method<&puerts_generated::color_from_hsv_default3, &godot::Color::from_hsv>("from_hsv")
+			.static_method<&godot::Color::from_rgbe9995>("from_rgbe9995")
+			.static_method<&puerts_generated::color_from_rgba8_default3, &godot::Color::from_rgba8>("from_rgba8")
+			.property<&puerts_generated::color_r8_getter, &puerts_generated::color_r8_setter>("r8")
+			.property<&puerts_generated::color_g8_getter, &puerts_generated::color_g8_setter>("g8")
+			.property<&puerts_generated::color_b8_getter, &puerts_generated::color_b8_setter>("b8")
+			.property<&puerts_generated::color_a8_getter, &puerts_generated::color_a8_setter>("a8")
+			.property<&puerts_generated::color_h_getter, &puerts_generated::color_h_setter>("h")
+			.property<&puerts_generated::color_s_getter, &puerts_generated::color_s_setter>("s")
+			.property<&puerts_generated::color_v_getter, &puerts_generated::color_v_setter>("v")
+			.property<&godot::Color::r>("r")
+			.property<&godot::Color::g>("g")
+			.property<&godot::Color::b>("b")
+			.property<&godot::Color::a>("a")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2085,48 +1477,47 @@ inline decltype(auto) dictionary_get_or_add_default1(godot::Dictionary &p_self, 
 
 inline void register_type_dictionary() {
 	puerts::define_type<godot::Dictionary>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::dictionary_op_equality_0>(), puerts::make_overload<&puerts_generated::dictionary_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::dictionary_op_inequality_1>(), puerts::make_overload<&puerts_generated::dictionary_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::dictionary_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::dictionary_op_in_5>(), puerts::make_overload<&puerts_generated::dictionary_op_in_6>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Dictionary>(),
-					puerts::make_constructor_overload<godot::Dictionary, const godot::Dictionary &>(),
-					puerts::make_constructor_overload<godot::Dictionary, const godot::Dictionary &, int64_t, const godot::StringName &, const godot::Variant &, int64_t, const godot::StringName &, const godot::Variant &>()))
-			.method("size", puerts::make_method<&godot::Dictionary::size>())
-			.method("is_empty", puerts::make_method<&godot::Dictionary::is_empty>())
-			.method("clear", puerts::make_method<&godot::Dictionary::clear>())
-			.method("assign", puerts::make_method<&godot::Dictionary::assign>())
-			.method("sort", puerts::make_method<&godot::Dictionary::sort>())
-			.method("merge", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::dictionary_merge_default1>(), puerts::make_overload<&godot::Dictionary::merge>()))
-			.method("merged", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::dictionary_merged_default1>(), puerts::make_overload<&godot::Dictionary::merged>()))
-			.method("has", puerts::make_method<&godot::Dictionary::has>())
-			.method("has_all", puerts::make_method<&godot::Dictionary::has_all>())
-			.method("find_key", puerts::make_method<&godot::Dictionary::find_key>())
-			.method("erase", puerts::make_method<&godot::Dictionary::erase>())
-			.method("hash", puerts::make_method<&godot::Dictionary::hash>())
-			.method("keys", puerts::make_method<&godot::Dictionary::keys>())
-			.method("values", puerts::make_method<&godot::Dictionary::values>())
-			.method("duplicate", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::dictionary_duplicate_default0>(), puerts::make_overload<&godot::Dictionary::duplicate>()))
-			.method("duplicate_deep", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::dictionary_duplicate_deep_default0>(), puerts::make_overload<&godot::Dictionary::duplicate_deep>()))
-			.method("get", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::dictionary_get_default1>(), puerts::make_overload<&godot::Dictionary::get>()))
-			.method("get_or_add", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::dictionary_get_or_add_default1>(), puerts::make_overload<&godot::Dictionary::get_or_add>()))
-			.method("set", puerts::make_method<&godot::Dictionary::set>())
-			.method("is_typed", puerts::make_method<&godot::Dictionary::is_typed>())
-			.method("is_typed_key", puerts::make_method<&godot::Dictionary::is_typed_key>())
-			.method("is_typed_value", puerts::make_method<&godot::Dictionary::is_typed_value>())
-			.method("is_same_typed", puerts::make_method<&godot::Dictionary::is_same_typed>())
-			.method("is_same_typed_key", puerts::make_method<&godot::Dictionary::is_same_typed_key>())
-			.method("is_same_typed_value", puerts::make_method<&godot::Dictionary::is_same_typed_value>())
-			.method("get_typed_key_builtin", puerts::make_method<&godot::Dictionary::get_typed_key_builtin>())
-			.method("get_typed_value_builtin", puerts::make_method<&godot::Dictionary::get_typed_value_builtin>())
-			.method("get_typed_key_class_name", puerts::make_method<&godot::Dictionary::get_typed_key_class_name>())
-			.method("get_typed_value_class_name", puerts::make_method<&godot::Dictionary::get_typed_value_class_name>())
-			.method("get_typed_key_script", puerts::make_method<&godot::Dictionary::get_typed_key_script>())
-			.method("get_typed_value_script", puerts::make_method<&godot::Dictionary::get_typed_value_script>())
-			.method("make_read_only", puerts::make_method<&godot::Dictionary::make_read_only>())
-			.method("is_read_only", puerts::make_method<&godot::Dictionary::is_read_only>())
-			.method("recursive_equal", puerts::make_method<&godot::Dictionary::recursive_equal>())
+			.static_method<&puerts_generated::dictionary_op_equality_0, &puerts_generated::dictionary_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::dictionary_op_inequality_1, &puerts_generated::dictionary_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::dictionary_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::dictionary_op_in_5, &puerts_generated::dictionary_op_in_6>("op_In")
+			.constructor<>()
+			.constructor<const godot::Dictionary &>()
+			.constructor<const godot::Dictionary &, int64_t, const godot::StringName &, const godot::Variant &, int64_t, const godot::StringName &, const godot::Variant &>()
+			.method<&godot::Dictionary::size>("size")
+			.method<&godot::Dictionary::is_empty>("is_empty")
+			.method<&godot::Dictionary::clear>("clear")
+			.method<&godot::Dictionary::assign>("assign")
+			.method<&godot::Dictionary::sort>("sort")
+			.method<&puerts_generated::dictionary_merge_default1, &godot::Dictionary::merge>("merge")
+			.method<&puerts_generated::dictionary_merged_default1, &godot::Dictionary::merged>("merged")
+			.method<&godot::Dictionary::has>("has")
+			.method<&godot::Dictionary::has_all>("has_all")
+			.method<&godot::Dictionary::find_key>("find_key")
+			.method<&godot::Dictionary::erase>("erase")
+			.method<&godot::Dictionary::hash>("hash")
+			.method<&godot::Dictionary::keys>("keys")
+			.method<&godot::Dictionary::values>("values")
+			.method<&puerts_generated::dictionary_duplicate_default0, &godot::Dictionary::duplicate>("duplicate")
+			.method<&puerts_generated::dictionary_duplicate_deep_default0, &godot::Dictionary::duplicate_deep>("duplicate_deep")
+			.method<&puerts_generated::dictionary_get_default1, &godot::Dictionary::get>("get")
+			.method<&puerts_generated::dictionary_get_or_add_default1, &godot::Dictionary::get_or_add>("get_or_add")
+			.method<&godot::Dictionary::set>("set")
+			.method<&godot::Dictionary::is_typed>("is_typed")
+			.method<&godot::Dictionary::is_typed_key>("is_typed_key")
+			.method<&godot::Dictionary::is_typed_value>("is_typed_value")
+			.method<&godot::Dictionary::is_same_typed>("is_same_typed")
+			.method<&godot::Dictionary::is_same_typed_key>("is_same_typed_key")
+			.method<&godot::Dictionary::is_same_typed_value>("is_same_typed_value")
+			.method<&godot::Dictionary::get_typed_key_builtin>("get_typed_key_builtin")
+			.method<&godot::Dictionary::get_typed_value_builtin>("get_typed_value_builtin")
+			.method<&godot::Dictionary::get_typed_key_class_name>("get_typed_key_class_name")
+			.method<&godot::Dictionary::get_typed_value_class_name>("get_typed_value_class_name")
+			.method<&godot::Dictionary::get_typed_key_script>("get_typed_key_script")
+			.method<&godot::Dictionary::get_typed_value_script>("get_typed_value_script")
+			.method<&godot::Dictionary::make_read_only>("make_read_only")
+			.method<&godot::Dictionary::is_read_only>("is_read_only")
+			.method<&godot::Dictionary::recursive_equal>("recursive_equal")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2158,25 +1549,24 @@ inline decltype(auto) node_path_slice_default1(const godot::NodePath &p_self, in
 
 inline void register_type_node_path() {
 	puerts::define_type<godot::NodePath>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::node_path_op_equality_0>(), puerts::make_overload<&puerts_generated::node_path_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::node_path_op_inequality_1>(), puerts::make_overload<&puerts_generated::node_path_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::node_path_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::node_path_op_in_5>(), puerts::make_overload<&puerts_generated::node_path_op_in_6>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::NodePath>(),
-					puerts::make_constructor_overload<godot::NodePath, const godot::NodePath &>(),
-					puerts::make_constructor_overload<godot::NodePath, const godot::String &>()))
-			.method("is_absolute", puerts::make_method<&godot::NodePath::is_absolute>())
-			.method("get_name_count", puerts::make_method<&godot::NodePath::get_name_count>())
-			.method("get_name", puerts::make_method<&godot::NodePath::get_name>())
-			.method("get_subname_count", puerts::make_method<&godot::NodePath::get_subname_count>())
-			.method("hash", puerts::make_method<&godot::NodePath::hash>())
-			.method("get_subname", puerts::make_method<&godot::NodePath::get_subname>())
-			.method("get_concatenated_names", puerts::make_method<&godot::NodePath::get_concatenated_names>())
-			.method("get_concatenated_subnames", puerts::make_method<&godot::NodePath::get_concatenated_subnames>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::node_path_slice_default1>(), puerts::make_overload<&godot::NodePath::slice>()))
-			.method("get_as_property_path", puerts::make_method<&godot::NodePath::get_as_property_path>())
-			.method("is_empty", puerts::make_method<&godot::NodePath::is_empty>())
+			.static_method<&puerts_generated::node_path_op_equality_0, &puerts_generated::node_path_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::node_path_op_inequality_1, &puerts_generated::node_path_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::node_path_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::node_path_op_in_5, &puerts_generated::node_path_op_in_6>("op_In")
+			.constructor<>()
+			.constructor<const godot::NodePath &>()
+			.constructor<const godot::String &>()
+			.method<&godot::NodePath::is_absolute>("is_absolute")
+			.method<&godot::NodePath::get_name_count>("get_name_count")
+			.method<&godot::NodePath::get_name>("get_name")
+			.method<&godot::NodePath::get_subname_count>("get_subname_count")
+			.method<&godot::NodePath::hash>("hash")
+			.method<&godot::NodePath::get_subname>("get_subname")
+			.method<&godot::NodePath::get_concatenated_names>("get_concatenated_names")
+			.method<&godot::NodePath::get_concatenated_subnames>("get_concatenated_subnames")
+			.method<&puerts_generated::node_path_slice_default1, &godot::NodePath::slice>("slice")
+			.method<&godot::NodePath::get_as_property_path>("get_as_property_path")
+			.method<&godot::NodePath::is_empty>("is_empty")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2262,84 +1652,83 @@ inline decltype(auto) packed_byte_array_encode_var_default2(godot::PackedByteArr
 
 inline void register_type_packed_byte_array() {
 	puerts::define_type<godot::PackedByteArray>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_byte_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_byte_array_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_byte_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_byte_array_op_inequality_6>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_byte_array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_byte_array_op_in_3>(), puerts::make_overload<&puerts_generated::packed_byte_array_op_in_4>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_byte_array_op_addition_7>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedByteArray>(),
-					puerts::make_constructor_overload<godot::PackedByteArray, const godot::PackedByteArray &>(),
-					puerts::make_constructor_overload<godot::PackedByteArray, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedByteArray::get>())
-			.method("set", puerts::make_method<&godot::PackedByteArray::set>())
-			.method("size", puerts::make_method<&godot::PackedByteArray::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedByteArray::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedByteArray::push_back>())
-			.method("append", puerts::make_method<&godot::PackedByteArray::append>())
-			.method("append_array", puerts::make_method<&godot::PackedByteArray::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedByteArray::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedByteArray::insert>())
-			.method("fill", puerts::make_method<&godot::PackedByteArray::fill>())
-			.method("resize", puerts::make_method<&godot::PackedByteArray::resize>())
-			.method("clear", puerts::make_method<&godot::PackedByteArray::clear>())
-			.method("has", puerts::make_method<&godot::PackedByteArray::has>())
-			.method("reverse", puerts::make_method<&godot::PackedByteArray::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_slice_default1>(), puerts::make_overload<&godot::PackedByteArray::slice>()))
-			.method("sort", puerts::make_method<&godot::PackedByteArray::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_bsearch_default1>(), puerts::make_overload<&godot::PackedByteArray::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedByteArray::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_find_default1>(), puerts::make_overload<&godot::PackedByteArray::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_rfind_default1>(), puerts::make_overload<&godot::PackedByteArray::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedByteArray::count>())
-			.method("erase", puerts::make_method<&godot::PackedByteArray::erase>())
-			.method("get_string_from_ascii", puerts::make_method<&godot::PackedByteArray::get_string_from_ascii>())
-			.method("get_string_from_utf8", puerts::make_method<&godot::PackedByteArray::get_string_from_utf8>())
-			.method("get_string_from_utf16", puerts::make_method<&godot::PackedByteArray::get_string_from_utf16>())
-			.method("get_string_from_utf32", puerts::make_method<&godot::PackedByteArray::get_string_from_utf32>())
-			.method("get_string_from_wchar", puerts::make_method<&godot::PackedByteArray::get_string_from_wchar>())
-			.method("get_string_from_multibyte_char", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_get_string_from_multibyte_char_default0>(), puerts::make_overload<&godot::PackedByteArray::get_string_from_multibyte_char>()))
-			.method("hex_encode", puerts::make_method<&godot::PackedByteArray::hex_encode>())
-			.method("compress", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_compress_default0>(), puerts::make_overload<&godot::PackedByteArray::compress>()))
-			.method("decompress", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_decompress_default1>(), puerts::make_overload<&godot::PackedByteArray::decompress>()))
-			.method("decompress_dynamic", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_decompress_dynamic_default1>(), puerts::make_overload<&godot::PackedByteArray::decompress_dynamic>()))
-			.method("decode_u8", puerts::make_method<&godot::PackedByteArray::decode_u8>())
-			.method("decode_s8", puerts::make_method<&godot::PackedByteArray::decode_s8>())
-			.method("decode_u16", puerts::make_method<&godot::PackedByteArray::decode_u16>())
-			.method("decode_s16", puerts::make_method<&godot::PackedByteArray::decode_s16>())
-			.method("decode_u32", puerts::make_method<&godot::PackedByteArray::decode_u32>())
-			.method("decode_s32", puerts::make_method<&godot::PackedByteArray::decode_s32>())
-			.method("decode_u64", puerts::make_method<&godot::PackedByteArray::decode_u64>())
-			.method("decode_s64", puerts::make_method<&godot::PackedByteArray::decode_s64>())
-			.method("decode_half", puerts::make_method<&godot::PackedByteArray::decode_half>())
-			.method("decode_float", puerts::make_method<&godot::PackedByteArray::decode_float>())
-			.method("decode_double", puerts::make_method<&godot::PackedByteArray::decode_double>())
-			.method("has_encoded_var", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_has_encoded_var_default1>(), puerts::make_overload<&godot::PackedByteArray::has_encoded_var>()))
-			.method("decode_var", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_decode_var_default1>(), puerts::make_overload<&godot::PackedByteArray::decode_var>()))
-			.method("decode_var_size", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_decode_var_size_default1>(), puerts::make_overload<&godot::PackedByteArray::decode_var_size>()))
-			.method("to_int32_array", puerts::make_method<&godot::PackedByteArray::to_int32_array>())
-			.method("to_int64_array", puerts::make_method<&godot::PackedByteArray::to_int64_array>())
-			.method("to_float32_array", puerts::make_method<&godot::PackedByteArray::to_float32_array>())
-			.method("to_float64_array", puerts::make_method<&godot::PackedByteArray::to_float64_array>())
-			.method("to_vector2_array", puerts::make_method<&godot::PackedByteArray::to_vector2_array>())
-			.method("to_vector3_array", puerts::make_method<&godot::PackedByteArray::to_vector3_array>())
-			.method("to_vector4_array", puerts::make_method<&godot::PackedByteArray::to_vector4_array>())
-			.method("to_color_array", puerts::make_method<&godot::PackedByteArray::to_color_array>())
-			.method("bswap16", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_bswap16_default0>(), puerts::make_extension_overload<&puerts_generated::packed_byte_array_bswap16_default1>(), puerts::make_overload<&godot::PackedByteArray::bswap16>()))
-			.method("bswap32", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_bswap32_default0>(), puerts::make_extension_overload<&puerts_generated::packed_byte_array_bswap32_default1>(), puerts::make_overload<&godot::PackedByteArray::bswap32>()))
-			.method("bswap64", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_bswap64_default0>(), puerts::make_extension_overload<&puerts_generated::packed_byte_array_bswap64_default1>(), puerts::make_overload<&godot::PackedByteArray::bswap64>()))
-			.method("encode_u8", puerts::make_method<&godot::PackedByteArray::encode_u8>())
-			.method("encode_s8", puerts::make_method<&godot::PackedByteArray::encode_s8>())
-			.method("encode_u16", puerts::make_method<&godot::PackedByteArray::encode_u16>())
-			.method("encode_s16", puerts::make_method<&godot::PackedByteArray::encode_s16>())
-			.method("encode_u32", puerts::make_method<&godot::PackedByteArray::encode_u32>())
-			.method("encode_s32", puerts::make_method<&godot::PackedByteArray::encode_s32>())
-			.method("encode_u64", puerts::make_method<&godot::PackedByteArray::encode_u64>())
-			.method("encode_s64", puerts::make_method<&godot::PackedByteArray::encode_s64>())
-			.method("encode_half", puerts::make_method<&godot::PackedByteArray::encode_half>())
-			.method("encode_float", puerts::make_method<&godot::PackedByteArray::encode_float>())
-			.method("encode_double", puerts::make_method<&godot::PackedByteArray::encode_double>())
-			.method("encode_var", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_byte_array_encode_var_default2>(), puerts::make_overload<&godot::PackedByteArray::encode_var>()))
+			.static_method<&puerts_generated::packed_byte_array_op_equality_0, &puerts_generated::packed_byte_array_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::packed_byte_array_op_inequality_1, &puerts_generated::packed_byte_array_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::packed_byte_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_byte_array_op_in_3, &puerts_generated::packed_byte_array_op_in_4>("op_In")
+			.static_method<&puerts_generated::packed_byte_array_op_addition_7>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedByteArray &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedByteArray::get>("get")
+			.method<&godot::PackedByteArray::set>("set")
+			.method<&godot::PackedByteArray::size>("size")
+			.method<&godot::PackedByteArray::is_empty>("is_empty")
+			.method<&godot::PackedByteArray::push_back>("push_back")
+			.method<&godot::PackedByteArray::append>("append")
+			.method<&godot::PackedByteArray::append_array>("append_array")
+			.method<&godot::PackedByteArray::remove_at>("remove_at")
+			.method<&godot::PackedByteArray::insert>("insert")
+			.method<&godot::PackedByteArray::fill>("fill")
+			.method<&godot::PackedByteArray::resize>("resize")
+			.method<&godot::PackedByteArray::clear>("clear")
+			.method<&godot::PackedByteArray::has>("has")
+			.method<&godot::PackedByteArray::reverse>("reverse")
+			.method<&puerts_generated::packed_byte_array_slice_default1, &godot::PackedByteArray::slice>("slice")
+			.method<&godot::PackedByteArray::sort>("sort")
+			.method<&puerts_generated::packed_byte_array_bsearch_default1, &godot::PackedByteArray::bsearch>("bsearch")
+			.method<&godot::PackedByteArray::duplicate>("duplicate")
+			.method<&puerts_generated::packed_byte_array_find_default1, &godot::PackedByteArray::find>("find")
+			.method<&puerts_generated::packed_byte_array_rfind_default1, &godot::PackedByteArray::rfind>("rfind")
+			.method<&godot::PackedByteArray::count>("count")
+			.method<&godot::PackedByteArray::erase>("erase")
+			.method<&godot::PackedByteArray::get_string_from_ascii>("get_string_from_ascii")
+			.method<&godot::PackedByteArray::get_string_from_utf8>("get_string_from_utf8")
+			.method<&godot::PackedByteArray::get_string_from_utf16>("get_string_from_utf16")
+			.method<&godot::PackedByteArray::get_string_from_utf32>("get_string_from_utf32")
+			.method<&godot::PackedByteArray::get_string_from_wchar>("get_string_from_wchar")
+			.method<&puerts_generated::packed_byte_array_get_string_from_multibyte_char_default0, &godot::PackedByteArray::get_string_from_multibyte_char>("get_string_from_multibyte_char")
+			.method<&godot::PackedByteArray::hex_encode>("hex_encode")
+			.method<&puerts_generated::packed_byte_array_compress_default0, &godot::PackedByteArray::compress>("compress")
+			.method<&puerts_generated::packed_byte_array_decompress_default1, &godot::PackedByteArray::decompress>("decompress")
+			.method<&puerts_generated::packed_byte_array_decompress_dynamic_default1, &godot::PackedByteArray::decompress_dynamic>("decompress_dynamic")
+			.method<&godot::PackedByteArray::decode_u8>("decode_u8")
+			.method<&godot::PackedByteArray::decode_s8>("decode_s8")
+			.method<&godot::PackedByteArray::decode_u16>("decode_u16")
+			.method<&godot::PackedByteArray::decode_s16>("decode_s16")
+			.method<&godot::PackedByteArray::decode_u32>("decode_u32")
+			.method<&godot::PackedByteArray::decode_s32>("decode_s32")
+			.method<&godot::PackedByteArray::decode_u64>("decode_u64")
+			.method<&godot::PackedByteArray::decode_s64>("decode_s64")
+			.method<&godot::PackedByteArray::decode_half>("decode_half")
+			.method<&godot::PackedByteArray::decode_float>("decode_float")
+			.method<&godot::PackedByteArray::decode_double>("decode_double")
+			.method<&puerts_generated::packed_byte_array_has_encoded_var_default1, &godot::PackedByteArray::has_encoded_var>("has_encoded_var")
+			.method<&puerts_generated::packed_byte_array_decode_var_default1, &godot::PackedByteArray::decode_var>("decode_var")
+			.method<&puerts_generated::packed_byte_array_decode_var_size_default1, &godot::PackedByteArray::decode_var_size>("decode_var_size")
+			.method<&godot::PackedByteArray::to_int32_array>("to_int32_array")
+			.method<&godot::PackedByteArray::to_int64_array>("to_int64_array")
+			.method<&godot::PackedByteArray::to_float32_array>("to_float32_array")
+			.method<&godot::PackedByteArray::to_float64_array>("to_float64_array")
+			.method<&godot::PackedByteArray::to_vector2_array>("to_vector2_array")
+			.method<&godot::PackedByteArray::to_vector3_array>("to_vector3_array")
+			.method<&godot::PackedByteArray::to_vector4_array>("to_vector4_array")
+			.method<&godot::PackedByteArray::to_color_array>("to_color_array")
+			.method<&puerts_generated::packed_byte_array_bswap16_default0, &puerts_generated::packed_byte_array_bswap16_default1, &godot::PackedByteArray::bswap16>("bswap16")
+			.method<&puerts_generated::packed_byte_array_bswap32_default0, &puerts_generated::packed_byte_array_bswap32_default1, &godot::PackedByteArray::bswap32>("bswap32")
+			.method<&puerts_generated::packed_byte_array_bswap64_default0, &puerts_generated::packed_byte_array_bswap64_default1, &godot::PackedByteArray::bswap64>("bswap64")
+			.method<&godot::PackedByteArray::encode_u8>("encode_u8")
+			.method<&godot::PackedByteArray::encode_s8>("encode_s8")
+			.method<&godot::PackedByteArray::encode_u16>("encode_u16")
+			.method<&godot::PackedByteArray::encode_s16>("encode_s16")
+			.method<&godot::PackedByteArray::encode_u32>("encode_u32")
+			.method<&godot::PackedByteArray::encode_s32>("encode_s32")
+			.method<&godot::PackedByteArray::encode_u64>("encode_u64")
+			.method<&godot::PackedByteArray::encode_s64>("encode_s64")
+			.method<&godot::PackedByteArray::encode_half>("encode_half")
+			.method<&godot::PackedByteArray::encode_float>("encode_float")
+			.method<&godot::PackedByteArray::encode_double>("encode_double")
+			.method<&puerts_generated::packed_byte_array_encode_var_default2, &godot::PackedByteArray::encode_var>("encode_var")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2383,38 +1772,37 @@ inline decltype(auto) packed_color_array_rfind_default1(const godot::PackedColor
 
 inline void register_type_packed_color_array() {
 	puerts::define_type<godot::PackedColorArray>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_color_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_color_array_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_color_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_color_array_op_inequality_6>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_color_array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_color_array_op_in_3>(), puerts::make_overload<&puerts_generated::packed_color_array_op_in_4>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_color_array_op_addition_7>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedColorArray>(),
-					puerts::make_constructor_overload<godot::PackedColorArray, const godot::PackedColorArray &>(),
-					puerts::make_constructor_overload<godot::PackedColorArray, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedColorArray::get>())
-			.method("set", puerts::make_method<&godot::PackedColorArray::set>())
-			.method("size", puerts::make_method<&godot::PackedColorArray::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedColorArray::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedColorArray::push_back>())
-			.method("append", puerts::make_method<&godot::PackedColorArray::append>())
-			.method("append_array", puerts::make_method<&godot::PackedColorArray::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedColorArray::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedColorArray::insert>())
-			.method("fill", puerts::make_method<&godot::PackedColorArray::fill>())
-			.method("resize", puerts::make_method<&godot::PackedColorArray::resize>())
-			.method("clear", puerts::make_method<&godot::PackedColorArray::clear>())
-			.method("has", puerts::make_method<&godot::PackedColorArray::has>())
-			.method("reverse", puerts::make_method<&godot::PackedColorArray::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_color_array_slice_default1>(), puerts::make_overload<&godot::PackedColorArray::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedColorArray::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedColorArray::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_color_array_bsearch_default1>(), puerts::make_overload<&godot::PackedColorArray::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedColorArray::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_color_array_find_default1>(), puerts::make_overload<&godot::PackedColorArray::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_color_array_rfind_default1>(), puerts::make_overload<&godot::PackedColorArray::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedColorArray::count>())
-			.method("erase", puerts::make_method<&godot::PackedColorArray::erase>())
+			.static_method<&puerts_generated::packed_color_array_op_equality_0, &puerts_generated::packed_color_array_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::packed_color_array_op_inequality_1, &puerts_generated::packed_color_array_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::packed_color_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_color_array_op_in_3, &puerts_generated::packed_color_array_op_in_4>("op_In")
+			.static_method<&puerts_generated::packed_color_array_op_addition_7>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedColorArray &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedColorArray::get>("get")
+			.method<&godot::PackedColorArray::set>("set")
+			.method<&godot::PackedColorArray::size>("size")
+			.method<&godot::PackedColorArray::is_empty>("is_empty")
+			.method<&godot::PackedColorArray::push_back>("push_back")
+			.method<&godot::PackedColorArray::append>("append")
+			.method<&godot::PackedColorArray::append_array>("append_array")
+			.method<&godot::PackedColorArray::remove_at>("remove_at")
+			.method<&godot::PackedColorArray::insert>("insert")
+			.method<&godot::PackedColorArray::fill>("fill")
+			.method<&godot::PackedColorArray::resize>("resize")
+			.method<&godot::PackedColorArray::clear>("clear")
+			.method<&godot::PackedColorArray::has>("has")
+			.method<&godot::PackedColorArray::reverse>("reverse")
+			.method<&puerts_generated::packed_color_array_slice_default1, &godot::PackedColorArray::slice>("slice")
+			.method<&godot::PackedColorArray::to_byte_array>("to_byte_array")
+			.method<&godot::PackedColorArray::sort>("sort")
+			.method<&puerts_generated::packed_color_array_bsearch_default1, &godot::PackedColorArray::bsearch>("bsearch")
+			.method<&godot::PackedColorArray::duplicate>("duplicate")
+			.method<&puerts_generated::packed_color_array_find_default1, &godot::PackedColorArray::find>("find")
+			.method<&puerts_generated::packed_color_array_rfind_default1, &godot::PackedColorArray::rfind>("rfind")
+			.method<&godot::PackedColorArray::count>("count")
+			.method<&godot::PackedColorArray::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2458,38 +1846,37 @@ inline decltype(auto) packed_float32_array_rfind_default1(const godot::PackedFlo
 
 inline void register_type_packed_float32_array() {
 	puerts::define_type<godot::PackedFloat32Array>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_float32_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_float32_array_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_float32_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_float32_array_op_inequality_6>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_float32_array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_float32_array_op_in_3>(), puerts::make_overload<&puerts_generated::packed_float32_array_op_in_4>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_float32_array_op_addition_7>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedFloat32Array>(),
-					puerts::make_constructor_overload<godot::PackedFloat32Array, const godot::PackedFloat32Array &>(),
-					puerts::make_constructor_overload<godot::PackedFloat32Array, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedFloat32Array::get>())
-			.method("set", puerts::make_method<&godot::PackedFloat32Array::set>())
-			.method("size", puerts::make_method<&godot::PackedFloat32Array::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedFloat32Array::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedFloat32Array::push_back>())
-			.method("append", puerts::make_method<&godot::PackedFloat32Array::append>())
-			.method("append_array", puerts::make_method<&godot::PackedFloat32Array::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedFloat32Array::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedFloat32Array::insert>())
-			.method("fill", puerts::make_method<&godot::PackedFloat32Array::fill>())
-			.method("resize", puerts::make_method<&godot::PackedFloat32Array::resize>())
-			.method("clear", puerts::make_method<&godot::PackedFloat32Array::clear>())
-			.method("has", puerts::make_method<&godot::PackedFloat32Array::has>())
-			.method("reverse", puerts::make_method<&godot::PackedFloat32Array::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float32_array_slice_default1>(), puerts::make_overload<&godot::PackedFloat32Array::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedFloat32Array::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedFloat32Array::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float32_array_bsearch_default1>(), puerts::make_overload<&godot::PackedFloat32Array::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedFloat32Array::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float32_array_find_default1>(), puerts::make_overload<&godot::PackedFloat32Array::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float32_array_rfind_default1>(), puerts::make_overload<&godot::PackedFloat32Array::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedFloat32Array::count>())
-			.method("erase", puerts::make_method<&godot::PackedFloat32Array::erase>())
+			.static_method<&puerts_generated::packed_float32_array_op_equality_0, &puerts_generated::packed_float32_array_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::packed_float32_array_op_inequality_1, &puerts_generated::packed_float32_array_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::packed_float32_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_float32_array_op_in_3, &puerts_generated::packed_float32_array_op_in_4>("op_In")
+			.static_method<&puerts_generated::packed_float32_array_op_addition_7>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedFloat32Array &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedFloat32Array::get>("get")
+			.method<&godot::PackedFloat32Array::set>("set")
+			.method<&godot::PackedFloat32Array::size>("size")
+			.method<&godot::PackedFloat32Array::is_empty>("is_empty")
+			.method<&godot::PackedFloat32Array::push_back>("push_back")
+			.method<&godot::PackedFloat32Array::append>("append")
+			.method<&godot::PackedFloat32Array::append_array>("append_array")
+			.method<&godot::PackedFloat32Array::remove_at>("remove_at")
+			.method<&godot::PackedFloat32Array::insert>("insert")
+			.method<&godot::PackedFloat32Array::fill>("fill")
+			.method<&godot::PackedFloat32Array::resize>("resize")
+			.method<&godot::PackedFloat32Array::clear>("clear")
+			.method<&godot::PackedFloat32Array::has>("has")
+			.method<&godot::PackedFloat32Array::reverse>("reverse")
+			.method<&puerts_generated::packed_float32_array_slice_default1, &godot::PackedFloat32Array::slice>("slice")
+			.method<&godot::PackedFloat32Array::to_byte_array>("to_byte_array")
+			.method<&godot::PackedFloat32Array::sort>("sort")
+			.method<&puerts_generated::packed_float32_array_bsearch_default1, &godot::PackedFloat32Array::bsearch>("bsearch")
+			.method<&godot::PackedFloat32Array::duplicate>("duplicate")
+			.method<&puerts_generated::packed_float32_array_find_default1, &godot::PackedFloat32Array::find>("find")
+			.method<&puerts_generated::packed_float32_array_rfind_default1, &godot::PackedFloat32Array::rfind>("rfind")
+			.method<&godot::PackedFloat32Array::count>("count")
+			.method<&godot::PackedFloat32Array::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2533,38 +1920,37 @@ inline decltype(auto) packed_float64_array_rfind_default1(const godot::PackedFlo
 
 inline void register_type_packed_float64_array() {
 	puerts::define_type<godot::PackedFloat64Array>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_float64_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_float64_array_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_float64_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_float64_array_op_inequality_6>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_float64_array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_float64_array_op_in_3>(), puerts::make_overload<&puerts_generated::packed_float64_array_op_in_4>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_float64_array_op_addition_7>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedFloat64Array>(),
-					puerts::make_constructor_overload<godot::PackedFloat64Array, const godot::PackedFloat64Array &>(),
-					puerts::make_constructor_overload<godot::PackedFloat64Array, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedFloat64Array::get>())
-			.method("set", puerts::make_method<&godot::PackedFloat64Array::set>())
-			.method("size", puerts::make_method<&godot::PackedFloat64Array::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedFloat64Array::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedFloat64Array::push_back>())
-			.method("append", puerts::make_method<&godot::PackedFloat64Array::append>())
-			.method("append_array", puerts::make_method<&godot::PackedFloat64Array::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedFloat64Array::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedFloat64Array::insert>())
-			.method("fill", puerts::make_method<&godot::PackedFloat64Array::fill>())
-			.method("resize", puerts::make_method<&godot::PackedFloat64Array::resize>())
-			.method("clear", puerts::make_method<&godot::PackedFloat64Array::clear>())
-			.method("has", puerts::make_method<&godot::PackedFloat64Array::has>())
-			.method("reverse", puerts::make_method<&godot::PackedFloat64Array::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float64_array_slice_default1>(), puerts::make_overload<&godot::PackedFloat64Array::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedFloat64Array::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedFloat64Array::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float64_array_bsearch_default1>(), puerts::make_overload<&godot::PackedFloat64Array::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedFloat64Array::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float64_array_find_default1>(), puerts::make_overload<&godot::PackedFloat64Array::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_float64_array_rfind_default1>(), puerts::make_overload<&godot::PackedFloat64Array::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedFloat64Array::count>())
-			.method("erase", puerts::make_method<&godot::PackedFloat64Array::erase>())
+			.static_method<&puerts_generated::packed_float64_array_op_equality_0, &puerts_generated::packed_float64_array_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::packed_float64_array_op_inequality_1, &puerts_generated::packed_float64_array_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::packed_float64_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_float64_array_op_in_3, &puerts_generated::packed_float64_array_op_in_4>("op_In")
+			.static_method<&puerts_generated::packed_float64_array_op_addition_7>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedFloat64Array &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedFloat64Array::get>("get")
+			.method<&godot::PackedFloat64Array::set>("set")
+			.method<&godot::PackedFloat64Array::size>("size")
+			.method<&godot::PackedFloat64Array::is_empty>("is_empty")
+			.method<&godot::PackedFloat64Array::push_back>("push_back")
+			.method<&godot::PackedFloat64Array::append>("append")
+			.method<&godot::PackedFloat64Array::append_array>("append_array")
+			.method<&godot::PackedFloat64Array::remove_at>("remove_at")
+			.method<&godot::PackedFloat64Array::insert>("insert")
+			.method<&godot::PackedFloat64Array::fill>("fill")
+			.method<&godot::PackedFloat64Array::resize>("resize")
+			.method<&godot::PackedFloat64Array::clear>("clear")
+			.method<&godot::PackedFloat64Array::has>("has")
+			.method<&godot::PackedFloat64Array::reverse>("reverse")
+			.method<&puerts_generated::packed_float64_array_slice_default1, &godot::PackedFloat64Array::slice>("slice")
+			.method<&godot::PackedFloat64Array::to_byte_array>("to_byte_array")
+			.method<&godot::PackedFloat64Array::sort>("sort")
+			.method<&puerts_generated::packed_float64_array_bsearch_default1, &godot::PackedFloat64Array::bsearch>("bsearch")
+			.method<&godot::PackedFloat64Array::duplicate>("duplicate")
+			.method<&puerts_generated::packed_float64_array_find_default1, &godot::PackedFloat64Array::find>("find")
+			.method<&puerts_generated::packed_float64_array_rfind_default1, &godot::PackedFloat64Array::rfind>("rfind")
+			.method<&godot::PackedFloat64Array::count>("count")
+			.method<&godot::PackedFloat64Array::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2608,38 +1994,37 @@ inline decltype(auto) packed_int32_array_rfind_default1(const godot::PackedInt32
 
 inline void register_type_packed_int32_array() {
 	puerts::define_type<godot::PackedInt32Array>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_int32_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_int32_array_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_int32_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_int32_array_op_inequality_6>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_int32_array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_int32_array_op_in_3>(), puerts::make_overload<&puerts_generated::packed_int32_array_op_in_4>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_int32_array_op_addition_7>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedInt32Array>(),
-					puerts::make_constructor_overload<godot::PackedInt32Array, const godot::PackedInt32Array &>(),
-					puerts::make_constructor_overload<godot::PackedInt32Array, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedInt32Array::get>())
-			.method("set", puerts::make_method<&godot::PackedInt32Array::set>())
-			.method("size", puerts::make_method<&godot::PackedInt32Array::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedInt32Array::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedInt32Array::push_back>())
-			.method("append", puerts::make_method<&godot::PackedInt32Array::append>())
-			.method("append_array", puerts::make_method<&godot::PackedInt32Array::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedInt32Array::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedInt32Array::insert>())
-			.method("fill", puerts::make_method<&godot::PackedInt32Array::fill>())
-			.method("resize", puerts::make_method<&godot::PackedInt32Array::resize>())
-			.method("clear", puerts::make_method<&godot::PackedInt32Array::clear>())
-			.method("has", puerts::make_method<&godot::PackedInt32Array::has>())
-			.method("reverse", puerts::make_method<&godot::PackedInt32Array::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int32_array_slice_default1>(), puerts::make_overload<&godot::PackedInt32Array::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedInt32Array::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedInt32Array::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int32_array_bsearch_default1>(), puerts::make_overload<&godot::PackedInt32Array::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedInt32Array::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int32_array_find_default1>(), puerts::make_overload<&godot::PackedInt32Array::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int32_array_rfind_default1>(), puerts::make_overload<&godot::PackedInt32Array::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedInt32Array::count>())
-			.method("erase", puerts::make_method<&godot::PackedInt32Array::erase>())
+			.static_method<&puerts_generated::packed_int32_array_op_equality_0, &puerts_generated::packed_int32_array_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::packed_int32_array_op_inequality_1, &puerts_generated::packed_int32_array_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::packed_int32_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_int32_array_op_in_3, &puerts_generated::packed_int32_array_op_in_4>("op_In")
+			.static_method<&puerts_generated::packed_int32_array_op_addition_7>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedInt32Array &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedInt32Array::get>("get")
+			.method<&godot::PackedInt32Array::set>("set")
+			.method<&godot::PackedInt32Array::size>("size")
+			.method<&godot::PackedInt32Array::is_empty>("is_empty")
+			.method<&godot::PackedInt32Array::push_back>("push_back")
+			.method<&godot::PackedInt32Array::append>("append")
+			.method<&godot::PackedInt32Array::append_array>("append_array")
+			.method<&godot::PackedInt32Array::remove_at>("remove_at")
+			.method<&godot::PackedInt32Array::insert>("insert")
+			.method<&godot::PackedInt32Array::fill>("fill")
+			.method<&godot::PackedInt32Array::resize>("resize")
+			.method<&godot::PackedInt32Array::clear>("clear")
+			.method<&godot::PackedInt32Array::has>("has")
+			.method<&godot::PackedInt32Array::reverse>("reverse")
+			.method<&puerts_generated::packed_int32_array_slice_default1, &godot::PackedInt32Array::slice>("slice")
+			.method<&godot::PackedInt32Array::to_byte_array>("to_byte_array")
+			.method<&godot::PackedInt32Array::sort>("sort")
+			.method<&puerts_generated::packed_int32_array_bsearch_default1, &godot::PackedInt32Array::bsearch>("bsearch")
+			.method<&godot::PackedInt32Array::duplicate>("duplicate")
+			.method<&puerts_generated::packed_int32_array_find_default1, &godot::PackedInt32Array::find>("find")
+			.method<&puerts_generated::packed_int32_array_rfind_default1, &godot::PackedInt32Array::rfind>("rfind")
+			.method<&godot::PackedInt32Array::count>("count")
+			.method<&godot::PackedInt32Array::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2683,38 +2068,37 @@ inline decltype(auto) packed_int64_array_rfind_default1(const godot::PackedInt64
 
 inline void register_type_packed_int64_array() {
 	puerts::define_type<godot::PackedInt64Array>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_int64_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_int64_array_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_int64_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_int64_array_op_inequality_6>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_int64_array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_int64_array_op_in_3>(), puerts::make_overload<&puerts_generated::packed_int64_array_op_in_4>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_int64_array_op_addition_7>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedInt64Array>(),
-					puerts::make_constructor_overload<godot::PackedInt64Array, const godot::PackedInt64Array &>(),
-					puerts::make_constructor_overload<godot::PackedInt64Array, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedInt64Array::get>())
-			.method("set", puerts::make_method<&godot::PackedInt64Array::set>())
-			.method("size", puerts::make_method<&godot::PackedInt64Array::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedInt64Array::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedInt64Array::push_back>())
-			.method("append", puerts::make_method<&godot::PackedInt64Array::append>())
-			.method("append_array", puerts::make_method<&godot::PackedInt64Array::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedInt64Array::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedInt64Array::insert>())
-			.method("fill", puerts::make_method<&godot::PackedInt64Array::fill>())
-			.method("resize", puerts::make_method<&godot::PackedInt64Array::resize>())
-			.method("clear", puerts::make_method<&godot::PackedInt64Array::clear>())
-			.method("has", puerts::make_method<&godot::PackedInt64Array::has>())
-			.method("reverse", puerts::make_method<&godot::PackedInt64Array::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int64_array_slice_default1>(), puerts::make_overload<&godot::PackedInt64Array::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedInt64Array::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedInt64Array::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int64_array_bsearch_default1>(), puerts::make_overload<&godot::PackedInt64Array::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedInt64Array::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int64_array_find_default1>(), puerts::make_overload<&godot::PackedInt64Array::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_int64_array_rfind_default1>(), puerts::make_overload<&godot::PackedInt64Array::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedInt64Array::count>())
-			.method("erase", puerts::make_method<&godot::PackedInt64Array::erase>())
+			.static_method<&puerts_generated::packed_int64_array_op_equality_0, &puerts_generated::packed_int64_array_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::packed_int64_array_op_inequality_1, &puerts_generated::packed_int64_array_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::packed_int64_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_int64_array_op_in_3, &puerts_generated::packed_int64_array_op_in_4>("op_In")
+			.static_method<&puerts_generated::packed_int64_array_op_addition_7>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedInt64Array &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedInt64Array::get>("get")
+			.method<&godot::PackedInt64Array::set>("set")
+			.method<&godot::PackedInt64Array::size>("size")
+			.method<&godot::PackedInt64Array::is_empty>("is_empty")
+			.method<&godot::PackedInt64Array::push_back>("push_back")
+			.method<&godot::PackedInt64Array::append>("append")
+			.method<&godot::PackedInt64Array::append_array>("append_array")
+			.method<&godot::PackedInt64Array::remove_at>("remove_at")
+			.method<&godot::PackedInt64Array::insert>("insert")
+			.method<&godot::PackedInt64Array::fill>("fill")
+			.method<&godot::PackedInt64Array::resize>("resize")
+			.method<&godot::PackedInt64Array::clear>("clear")
+			.method<&godot::PackedInt64Array::has>("has")
+			.method<&godot::PackedInt64Array::reverse>("reverse")
+			.method<&puerts_generated::packed_int64_array_slice_default1, &godot::PackedInt64Array::slice>("slice")
+			.method<&godot::PackedInt64Array::to_byte_array>("to_byte_array")
+			.method<&godot::PackedInt64Array::sort>("sort")
+			.method<&puerts_generated::packed_int64_array_bsearch_default1, &godot::PackedInt64Array::bsearch>("bsearch")
+			.method<&godot::PackedInt64Array::duplicate>("duplicate")
+			.method<&puerts_generated::packed_int64_array_find_default1, &godot::PackedInt64Array::find>("find")
+			.method<&puerts_generated::packed_int64_array_rfind_default1, &godot::PackedInt64Array::rfind>("rfind")
+			.method<&godot::PackedInt64Array::count>("count")
+			.method<&godot::PackedInt64Array::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2758,38 +2142,37 @@ inline decltype(auto) packed_string_array_rfind_default1(const godot::PackedStri
 
 inline void register_type_packed_string_array() {
 	puerts::define_type<godot::PackedStringArray>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_string_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_string_array_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_string_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_string_array_op_inequality_6>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_string_array_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_string_array_op_in_3>(), puerts::make_overload<&puerts_generated::packed_string_array_op_in_4>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_string_array_op_addition_7>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedStringArray>(),
-					puerts::make_constructor_overload<godot::PackedStringArray, const godot::PackedStringArray &>(),
-					puerts::make_constructor_overload<godot::PackedStringArray, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedStringArray::get>())
-			.method("set", puerts::make_method<&godot::PackedStringArray::set>())
-			.method("size", puerts::make_method<&godot::PackedStringArray::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedStringArray::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedStringArray::push_back>())
-			.method("append", puerts::make_method<&godot::PackedStringArray::append>())
-			.method("append_array", puerts::make_method<&godot::PackedStringArray::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedStringArray::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedStringArray::insert>())
-			.method("fill", puerts::make_method<&godot::PackedStringArray::fill>())
-			.method("resize", puerts::make_method<&godot::PackedStringArray::resize>())
-			.method("clear", puerts::make_method<&godot::PackedStringArray::clear>())
-			.method("has", puerts::make_method<&godot::PackedStringArray::has>())
-			.method("reverse", puerts::make_method<&godot::PackedStringArray::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_string_array_slice_default1>(), puerts::make_overload<&godot::PackedStringArray::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedStringArray::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedStringArray::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_string_array_bsearch_default1>(), puerts::make_overload<&godot::PackedStringArray::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedStringArray::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_string_array_find_default1>(), puerts::make_overload<&godot::PackedStringArray::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_string_array_rfind_default1>(), puerts::make_overload<&godot::PackedStringArray::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedStringArray::count>())
-			.method("erase", puerts::make_method<&godot::PackedStringArray::erase>())
+			.static_method<&puerts_generated::packed_string_array_op_equality_0, &puerts_generated::packed_string_array_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::packed_string_array_op_inequality_1, &puerts_generated::packed_string_array_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::packed_string_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_string_array_op_in_3, &puerts_generated::packed_string_array_op_in_4>("op_In")
+			.static_method<&puerts_generated::packed_string_array_op_addition_7>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedStringArray &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedStringArray::get>("get")
+			.method<&godot::PackedStringArray::set>("set")
+			.method<&godot::PackedStringArray::size>("size")
+			.method<&godot::PackedStringArray::is_empty>("is_empty")
+			.method<&godot::PackedStringArray::push_back>("push_back")
+			.method<&godot::PackedStringArray::append>("append")
+			.method<&godot::PackedStringArray::append_array>("append_array")
+			.method<&godot::PackedStringArray::remove_at>("remove_at")
+			.method<&godot::PackedStringArray::insert>("insert")
+			.method<&godot::PackedStringArray::fill>("fill")
+			.method<&godot::PackedStringArray::resize>("resize")
+			.method<&godot::PackedStringArray::clear>("clear")
+			.method<&godot::PackedStringArray::has>("has")
+			.method<&godot::PackedStringArray::reverse>("reverse")
+			.method<&puerts_generated::packed_string_array_slice_default1, &godot::PackedStringArray::slice>("slice")
+			.method<&godot::PackedStringArray::to_byte_array>("to_byte_array")
+			.method<&godot::PackedStringArray::sort>("sort")
+			.method<&puerts_generated::packed_string_array_bsearch_default1, &godot::PackedStringArray::bsearch>("bsearch")
+			.method<&godot::PackedStringArray::duplicate>("duplicate")
+			.method<&puerts_generated::packed_string_array_find_default1, &godot::PackedStringArray::find>("find")
+			.method<&puerts_generated::packed_string_array_rfind_default1, &godot::PackedStringArray::rfind>("rfind")
+			.method<&godot::PackedStringArray::count>("count")
+			.method<&godot::PackedStringArray::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2836,39 +2219,38 @@ inline decltype(auto) packed_vector2_array_rfind_default1(const godot::PackedVec
 
 inline void register_type_packed_vector2_array() {
 	puerts::define_type<godot::PackedVector2Array>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_vector2_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_vector2_array_op_equality_6>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_vector2_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_vector2_array_op_inequality_7>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_vector2_array_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::make_function<&puerts_generated::packed_vector2_array_op_multiply_3>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_vector2_array_op_in_4>(), puerts::make_overload<&puerts_generated::packed_vector2_array_op_in_5>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_vector2_array_op_addition_8>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedVector2Array>(),
-					puerts::make_constructor_overload<godot::PackedVector2Array, const godot::PackedVector2Array &>(),
-					puerts::make_constructor_overload<godot::PackedVector2Array, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedVector2Array::get>())
-			.method("set", puerts::make_method<&godot::PackedVector2Array::set>())
-			.method("size", puerts::make_method<&godot::PackedVector2Array::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedVector2Array::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedVector2Array::push_back>())
-			.method("append", puerts::make_method<&godot::PackedVector2Array::append>())
-			.method("append_array", puerts::make_method<&godot::PackedVector2Array::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedVector2Array::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedVector2Array::insert>())
-			.method("fill", puerts::make_method<&godot::PackedVector2Array::fill>())
-			.method("resize", puerts::make_method<&godot::PackedVector2Array::resize>())
-			.method("clear", puerts::make_method<&godot::PackedVector2Array::clear>())
-			.method("has", puerts::make_method<&godot::PackedVector2Array::has>())
-			.method("reverse", puerts::make_method<&godot::PackedVector2Array::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector2_array_slice_default1>(), puerts::make_overload<&godot::PackedVector2Array::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedVector2Array::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedVector2Array::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector2_array_bsearch_default1>(), puerts::make_overload<&godot::PackedVector2Array::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedVector2Array::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector2_array_find_default1>(), puerts::make_overload<&godot::PackedVector2Array::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector2_array_rfind_default1>(), puerts::make_overload<&godot::PackedVector2Array::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedVector2Array::count>())
-			.method("erase", puerts::make_method<&godot::PackedVector2Array::erase>())
+			.static_method<&puerts_generated::packed_vector2_array_op_equality_0, &puerts_generated::packed_vector2_array_op_equality_6>("op_Equality")
+			.static_method<&puerts_generated::packed_vector2_array_op_inequality_1, &puerts_generated::packed_vector2_array_op_inequality_7>("op_Inequality")
+			.static_method<&puerts_generated::packed_vector2_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_vector2_array_op_multiply_3>("op_Multiply")
+			.static_method<&puerts_generated::packed_vector2_array_op_in_4, &puerts_generated::packed_vector2_array_op_in_5>("op_In")
+			.static_method<&puerts_generated::packed_vector2_array_op_addition_8>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedVector2Array &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedVector2Array::get>("get")
+			.method<&godot::PackedVector2Array::set>("set")
+			.method<&godot::PackedVector2Array::size>("size")
+			.method<&godot::PackedVector2Array::is_empty>("is_empty")
+			.method<&godot::PackedVector2Array::push_back>("push_back")
+			.method<&godot::PackedVector2Array::append>("append")
+			.method<&godot::PackedVector2Array::append_array>("append_array")
+			.method<&godot::PackedVector2Array::remove_at>("remove_at")
+			.method<&godot::PackedVector2Array::insert>("insert")
+			.method<&godot::PackedVector2Array::fill>("fill")
+			.method<&godot::PackedVector2Array::resize>("resize")
+			.method<&godot::PackedVector2Array::clear>("clear")
+			.method<&godot::PackedVector2Array::has>("has")
+			.method<&godot::PackedVector2Array::reverse>("reverse")
+			.method<&puerts_generated::packed_vector2_array_slice_default1, &godot::PackedVector2Array::slice>("slice")
+			.method<&godot::PackedVector2Array::to_byte_array>("to_byte_array")
+			.method<&godot::PackedVector2Array::sort>("sort")
+			.method<&puerts_generated::packed_vector2_array_bsearch_default1, &godot::PackedVector2Array::bsearch>("bsearch")
+			.method<&godot::PackedVector2Array::duplicate>("duplicate")
+			.method<&puerts_generated::packed_vector2_array_find_default1, &godot::PackedVector2Array::find>("find")
+			.method<&puerts_generated::packed_vector2_array_rfind_default1, &godot::PackedVector2Array::rfind>("rfind")
+			.method<&godot::PackedVector2Array::count>("count")
+			.method<&godot::PackedVector2Array::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2915,39 +2297,38 @@ inline decltype(auto) packed_vector3_array_rfind_default1(const godot::PackedVec
 
 inline void register_type_packed_vector3_array() {
 	puerts::define_type<godot::PackedVector3Array>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_vector3_array_op_equality_0>(), puerts::make_overload<&puerts_generated::packed_vector3_array_op_equality_6>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_vector3_array_op_inequality_1>(), puerts::make_overload<&puerts_generated::packed_vector3_array_op_inequality_7>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::packed_vector3_array_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::make_function<&puerts_generated::packed_vector3_array_op_multiply_3>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::packed_vector3_array_op_in_4>(), puerts::make_overload<&puerts_generated::packed_vector3_array_op_in_5>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::packed_vector3_array_op_addition_8>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::PackedVector3Array>(),
-					puerts::make_constructor_overload<godot::PackedVector3Array, const godot::PackedVector3Array &>(),
-					puerts::make_constructor_overload<godot::PackedVector3Array, const godot::Array &>()))
-			.method("get", puerts::make_method<&godot::PackedVector3Array::get>())
-			.method("set", puerts::make_method<&godot::PackedVector3Array::set>())
-			.method("size", puerts::make_method<&godot::PackedVector3Array::size>())
-			.method("is_empty", puerts::make_method<&godot::PackedVector3Array::is_empty>())
-			.method("push_back", puerts::make_method<&godot::PackedVector3Array::push_back>())
-			.method("append", puerts::make_method<&godot::PackedVector3Array::append>())
-			.method("append_array", puerts::make_method<&godot::PackedVector3Array::append_array>())
-			.method("remove_at", puerts::make_method<&godot::PackedVector3Array::remove_at>())
-			.method("insert", puerts::make_method<&godot::PackedVector3Array::insert>())
-			.method("fill", puerts::make_method<&godot::PackedVector3Array::fill>())
-			.method("resize", puerts::make_method<&godot::PackedVector3Array::resize>())
-			.method("clear", puerts::make_method<&godot::PackedVector3Array::clear>())
-			.method("has", puerts::make_method<&godot::PackedVector3Array::has>())
-			.method("reverse", puerts::make_method<&godot::PackedVector3Array::reverse>())
-			.method("slice", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector3_array_slice_default1>(), puerts::make_overload<&godot::PackedVector3Array::slice>()))
-			.method("to_byte_array", puerts::make_method<&godot::PackedVector3Array::to_byte_array>())
-			.method("sort", puerts::make_method<&godot::PackedVector3Array::sort>())
-			.method("bsearch", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector3_array_bsearch_default1>(), puerts::make_overload<&godot::PackedVector3Array::bsearch>()))
-			.method("duplicate", puerts::make_method<&godot::PackedVector3Array::duplicate>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector3_array_find_default1>(), puerts::make_overload<&godot::PackedVector3Array::find>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::packed_vector3_array_rfind_default1>(), puerts::make_overload<&godot::PackedVector3Array::rfind>()))
-			.method("count", puerts::make_method<&godot::PackedVector3Array::count>())
-			.method("erase", puerts::make_method<&godot::PackedVector3Array::erase>())
+			.static_method<&puerts_generated::packed_vector3_array_op_equality_0, &puerts_generated::packed_vector3_array_op_equality_6>("op_Equality")
+			.static_method<&puerts_generated::packed_vector3_array_op_inequality_1, &puerts_generated::packed_vector3_array_op_inequality_7>("op_Inequality")
+			.static_method<&puerts_generated::packed_vector3_array_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::packed_vector3_array_op_multiply_3>("op_Multiply")
+			.static_method<&puerts_generated::packed_vector3_array_op_in_4, &puerts_generated::packed_vector3_array_op_in_5>("op_In")
+			.static_method<&puerts_generated::packed_vector3_array_op_addition_8>("op_Addition")
+			.constructor<>()
+			.constructor<const godot::PackedVector3Array &>()
+			.constructor<const godot::Array &>()
+			.method<&godot::PackedVector3Array::get>("get")
+			.method<&godot::PackedVector3Array::set>("set")
+			.method<&godot::PackedVector3Array::size>("size")
+			.method<&godot::PackedVector3Array::is_empty>("is_empty")
+			.method<&godot::PackedVector3Array::push_back>("push_back")
+			.method<&godot::PackedVector3Array::append>("append")
+			.method<&godot::PackedVector3Array::append_array>("append_array")
+			.method<&godot::PackedVector3Array::remove_at>("remove_at")
+			.method<&godot::PackedVector3Array::insert>("insert")
+			.method<&godot::PackedVector3Array::fill>("fill")
+			.method<&godot::PackedVector3Array::resize>("resize")
+			.method<&godot::PackedVector3Array::clear>("clear")
+			.method<&godot::PackedVector3Array::has>("has")
+			.method<&godot::PackedVector3Array::reverse>("reverse")
+			.method<&puerts_generated::packed_vector3_array_slice_default1, &godot::PackedVector3Array::slice>("slice")
+			.method<&godot::PackedVector3Array::to_byte_array>("to_byte_array")
+			.method<&godot::PackedVector3Array::sort>("sort")
+			.method<&puerts_generated::packed_vector3_array_bsearch_default1, &godot::PackedVector3Array::bsearch>("bsearch")
+			.method<&godot::PackedVector3Array::duplicate>("duplicate")
+			.method<&puerts_generated::packed_vector3_array_find_default1, &godot::PackedVector3Array::find>("find")
+			.method<&puerts_generated::packed_vector3_array_rfind_default1, &godot::PackedVector3Array::rfind>("rfind")
+			.method<&godot::PackedVector3Array::count>("count")
+			.method<&godot::PackedVector3Array::erase>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2997,40 +2378,39 @@ inline decltype(auto) plane_has_point_default1(const godot::Plane &p_self, const
 
 inline void register_type_plane() {
 	puerts::define_type<godot::Plane>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::plane_op_equality_0>(), puerts::make_overload<&puerts_generated::plane_op_equality_5>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::plane_op_inequality_1>(), puerts::make_overload<&puerts_generated::plane_op_inequality_6>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::plane_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::plane_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::plane_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::make_function<&puerts_generated::plane_op_multiply_7>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::plane_op_in_8>(), puerts::make_overload<&puerts_generated::plane_op_in_9>()))
-			.static_property("PLANE_YZ", puerts::make_constant_getter<&puerts_generated::plane_plane_yz>())
-			.static_property("PLANE_XZ", puerts::make_constant_getter<&puerts_generated::plane_plane_xz>())
-			.static_property("PLANE_XY", puerts::make_constant_getter<&puerts_generated::plane_plane_xy>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Plane>(),
-					puerts::make_constructor_overload<godot::Plane, const godot::Plane &>(),
-					puerts::make_constructor_overload<godot::Plane, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Plane, const godot::Vector3 &, godot::real_t>(),
-					puerts::make_constructor_overload<godot::Plane, const godot::Vector3 &, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Plane, const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Plane, godot::real_t, godot::real_t, godot::real_t, godot::real_t>()))
-			.method("normalized", puerts::make_method<&godot::Plane::normalized>())
-			.method("get_center", puerts::make_method<&godot::Plane::get_center>())
-			.method("is_equal_approx", puerts::make_method<&godot::Plane::is_equal_approx>())
-			.method("is_finite", puerts::make_method<&godot::Plane::is_finite>())
-			.method("is_point_over", puerts::make_method<&godot::Plane::is_point_over>())
-			.method("distance_to", puerts::make_method<&godot::Plane::distance_to>())
-			.method("has_point", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::plane_has_point_default1>(), puerts::make_overload<&godot::Plane::has_point>()))
-			.method("project", puerts::make_method<&godot::Plane::project>())
-			.method("intersect_3", puerts::make_method<&godot::Plane::intersect_3>())
-			.method("intersects_ray", puerts::make_method<&godot::Plane::intersects_ray>())
-			.method("intersects_segment", puerts::make_method<&godot::Plane::intersects_segment>())
-			.property("x", &puerts_generated::plane_x_getter, &puerts_generated::plane_x_setter)
-			.property("y", &puerts_generated::plane_y_getter, &puerts_generated::plane_y_setter)
-			.property("z", &puerts_generated::plane_z_getter, &puerts_generated::plane_z_setter)
-			.property("d", puerts::make_property<&godot::Plane::d>())
-			.property("normal", puerts::make_property<&godot::Plane::normal>())
+			.static_method<&puerts_generated::plane_op_equality_0, &puerts_generated::plane_op_equality_5>("op_Equality")
+			.static_method<&puerts_generated::plane_op_inequality_1, &puerts_generated::plane_op_inequality_6>("op_Inequality")
+			.static_method<&puerts_generated::plane_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::plane_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::plane_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::plane_op_multiply_7>("op_Multiply")
+			.static_method<&puerts_generated::plane_op_in_8, &puerts_generated::plane_op_in_9>("op_In")
+			.constant<&puerts_generated::plane_plane_yz>("PLANE_YZ")
+			.constant<&puerts_generated::plane_plane_xz>("PLANE_XZ")
+			.constant<&puerts_generated::plane_plane_xy>("PLANE_XY")
+			.constructor<>()
+			.constructor<const godot::Plane &>()
+			.constructor<const godot::Vector3 &>()
+			.constructor<const godot::Vector3 &, godot::real_t>()
+			.constructor<const godot::Vector3 &, const godot::Vector3 &>()
+			.constructor<const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>()
+			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
+			.method<&godot::Plane::normalized>("normalized")
+			.method<&godot::Plane::get_center>("get_center")
+			.method<&godot::Plane::is_equal_approx>("is_equal_approx")
+			.method<&godot::Plane::is_finite>("is_finite")
+			.method<&godot::Plane::is_point_over>("is_point_over")
+			.method<&godot::Plane::distance_to>("distance_to")
+			.method<&puerts_generated::plane_has_point_default1, &godot::Plane::has_point>("has_point")
+			.method<&godot::Plane::project>("project")
+			.method<&godot::Plane::intersect_3>("intersect_3")
+			.method<&godot::Plane::intersects_ray>("intersects_ray")
+			.method<&godot::Plane::intersects_segment>("intersects_segment")
+			.property<&puerts_generated::plane_x_getter, &puerts_generated::plane_x_setter>("x")
+			.property<&puerts_generated::plane_y_getter, &puerts_generated::plane_y_setter>("y")
+			.property<&puerts_generated::plane_z_getter, &puerts_generated::plane_z_setter>("z")
+			.property<&godot::Plane::d>("d")
+			.property<&godot::Plane::normal>("normal")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3080,49 +2460,48 @@ inline decltype(auto) projection_create_frustum_aspect_default5(godot::real_t p_
 
 inline void register_type_projection() {
 	puerts::define_type<godot::Projection>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::projection_op_equality_0>(), puerts::make_overload<&puerts_generated::projection_op_equality_4>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::projection_op_inequality_1>(), puerts::make_overload<&puerts_generated::projection_op_inequality_5>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::projection_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::projection_op_multiply_3>(), puerts::make_overload<&puerts_generated::projection_op_multiply_6>()))
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::projection_op_in_7>(), puerts::make_overload<&puerts_generated::projection_op_in_8>()))
-			.static_property("IDENTITY", puerts::make_constant_getter<&puerts_generated::projection_identity>())
-			.static_property("ZERO", puerts::make_constant_getter<&puerts_generated::projection_zero>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Projection>(),
-					puerts::make_constructor_overload<godot::Projection, const godot::Projection &>(),
-					puerts::make_constructor_overload<godot::Projection, const godot::Transform3D &>(),
-					puerts::make_constructor_overload<godot::Projection, const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &>()))
-			.static_method("create_depth_correction", puerts::make_function<&godot::Projection::create_depth_correction>())
-			.static_method("create_light_atlas_rect", puerts::make_function<&godot::Projection::create_light_atlas_rect>())
-			.static_method("create_perspective", puerts::combine_overloads(puerts::make_overload<&puerts_generated::projection_create_perspective_default4>(), puerts::make_overload<&godot::Projection::create_perspective>()))
-			.static_method("create_perspective_hmd", puerts::make_function<&godot::Projection::create_perspective_hmd>())
-			.static_method("create_for_hmd", puerts::make_function<&godot::Projection::create_for_hmd>())
-			.static_method("create_orthogonal", puerts::make_function<&godot::Projection::create_orthogonal>())
-			.static_method("create_orthogonal_aspect", puerts::combine_overloads(puerts::make_overload<&puerts_generated::projection_create_orthogonal_aspect_default4>(), puerts::make_overload<&godot::Projection::create_orthogonal_aspect>()))
-			.static_method("create_frustum", puerts::make_function<&godot::Projection::create_frustum>())
-			.static_method("create_frustum_aspect", puerts::combine_overloads(puerts::make_overload<&puerts_generated::projection_create_frustum_aspect_default5>(), puerts::make_overload<&godot::Projection::create_frustum_aspect>()))
-			.static_method("create_fit_aabb", puerts::make_function<&godot::Projection::create_fit_aabb>())
-			.method("determinant", puerts::make_method<&godot::Projection::determinant>())
-			.method("perspective_znear_adjusted", puerts::make_method<&godot::Projection::perspective_znear_adjusted>())
-			.method("get_projection_plane", puerts::make_method<&godot::Projection::get_projection_plane>())
-			.method("flipped_y", puerts::make_method<&godot::Projection::flipped_y>())
-			.method("jitter_offseted", puerts::make_method<&godot::Projection::jitter_offseted>())
-			.static_method("get_fovy", puerts::make_function<&godot::Projection::get_fovy>())
-			.method("get_z_far", puerts::make_method<&godot::Projection::get_z_far>())
-			.method("get_z_near", puerts::make_method<&godot::Projection::get_z_near>())
-			.method("get_aspect", puerts::make_method<&godot::Projection::get_aspect>())
-			.method("get_fov", puerts::make_method<&godot::Projection::get_fov>())
-			.method("is_orthogonal", puerts::make_method<&godot::Projection::is_orthogonal>())
-			.method("get_viewport_half_extents", puerts::make_method<&godot::Projection::get_viewport_half_extents>())
-			.method("get_far_plane_half_extents", puerts::make_method<&godot::Projection::get_far_plane_half_extents>())
-			.method("inverse", puerts::make_method<&godot::Projection::inverse>())
-			.method("get_pixels_per_meter", puerts::make_method<&godot::Projection::get_pixels_per_meter>())
-			.method("get_lod_multiplier", puerts::make_method<&godot::Projection::get_lod_multiplier>())
-			.property("x", &puerts_generated::projection_x_getter, &puerts_generated::projection_x_setter)
-			.property("y", &puerts_generated::projection_y_getter, &puerts_generated::projection_y_setter)
-			.property("z", &puerts_generated::projection_z_getter, &puerts_generated::projection_z_setter)
-			.property("w", &puerts_generated::projection_w_getter, &puerts_generated::projection_w_setter)
-			.static_property("Planes", puerts::make_enum_type<puerts_generated::projection_planes_enum_tag>())
+			.static_method<&puerts_generated::projection_op_equality_0, &puerts_generated::projection_op_equality_4>("op_Equality")
+			.static_method<&puerts_generated::projection_op_inequality_1, &puerts_generated::projection_op_inequality_5>("op_Inequality")
+			.static_method<&puerts_generated::projection_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::projection_op_multiply_3, &puerts_generated::projection_op_multiply_6>("op_Multiply")
+			.static_method<&puerts_generated::projection_op_in_7, &puerts_generated::projection_op_in_8>("op_In")
+			.constant<&puerts_generated::projection_identity>("IDENTITY")
+			.constant<&puerts_generated::projection_zero>("ZERO")
+			.constructor<>()
+			.constructor<const godot::Projection &>()
+			.constructor<const godot::Transform3D &>()
+			.constructor<const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &>()
+			.static_method<&godot::Projection::create_depth_correction>("create_depth_correction")
+			.static_method<&godot::Projection::create_light_atlas_rect>("create_light_atlas_rect")
+			.static_method<&puerts_generated::projection_create_perspective_default4, &godot::Projection::create_perspective>("create_perspective")
+			.static_method<&godot::Projection::create_perspective_hmd>("create_perspective_hmd")
+			.static_method<&godot::Projection::create_for_hmd>("create_for_hmd")
+			.static_method<&godot::Projection::create_orthogonal>("create_orthogonal")
+			.static_method<&puerts_generated::projection_create_orthogonal_aspect_default4, &godot::Projection::create_orthogonal_aspect>("create_orthogonal_aspect")
+			.static_method<&godot::Projection::create_frustum>("create_frustum")
+			.static_method<&puerts_generated::projection_create_frustum_aspect_default5, &godot::Projection::create_frustum_aspect>("create_frustum_aspect")
+			.static_method<&godot::Projection::create_fit_aabb>("create_fit_aabb")
+			.method<&godot::Projection::determinant>("determinant")
+			.method<&godot::Projection::perspective_znear_adjusted>("perspective_znear_adjusted")
+			.method<&godot::Projection::get_projection_plane>("get_projection_plane")
+			.method<&godot::Projection::flipped_y>("flipped_y")
+			.method<&godot::Projection::jitter_offseted>("jitter_offseted")
+			.static_method<&godot::Projection::get_fovy>("get_fovy")
+			.method<&godot::Projection::get_z_far>("get_z_far")
+			.method<&godot::Projection::get_z_near>("get_z_near")
+			.method<&godot::Projection::get_aspect>("get_aspect")
+			.method<&godot::Projection::get_fov>("get_fov")
+			.method<&godot::Projection::is_orthogonal>("is_orthogonal")
+			.method<&godot::Projection::get_viewport_half_extents>("get_viewport_half_extents")
+			.method<&godot::Projection::get_far_plane_half_extents>("get_far_plane_half_extents")
+			.method<&godot::Projection::inverse>("inverse")
+			.method<&godot::Projection::get_pixels_per_meter>("get_pixels_per_meter")
+			.method<&godot::Projection::get_lod_multiplier>("get_lod_multiplier")
+			.property<&puerts_generated::projection_x_getter, &puerts_generated::projection_x_setter>("x")
+			.property<&puerts_generated::projection_y_getter, &puerts_generated::projection_y_setter>("y")
+			.property<&puerts_generated::projection_z_getter, &puerts_generated::projection_z_setter>("z")
+			.property<&puerts_generated::projection_w_getter, &puerts_generated::projection_w_setter>("w")
+			.enum_type<puerts_generated::projection_planes_enum_tag>("Planes")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3187,47 +2566,46 @@ inline decltype(auto) quaternion_get_euler_default0(const godot::Quaternion &p_s
 
 inline void register_type_quaternion() {
 	puerts::define_type<godot::Quaternion>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::quaternion_op_equality_0>(), puerts::make_overload<&puerts_generated::quaternion_op_equality_10>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::quaternion_op_inequality_1>(), puerts::make_overload<&puerts_generated::quaternion_op_inequality_11>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::quaternion_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::quaternion_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::quaternion_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::quaternion_op_multiply_5>(), puerts::make_overload<&puerts_generated::quaternion_op_multiply_7>(), puerts::make_overload<&puerts_generated::quaternion_op_multiply_9>(), puerts::make_overload<&puerts_generated::quaternion_op_multiply_14>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::quaternion_op_division_6>(), puerts::make_overload<&puerts_generated::quaternion_op_division_8>()))
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::quaternion_op_addition_12>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::quaternion_op_subtraction_13>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::quaternion_op_in_15>(), puerts::make_overload<&puerts_generated::quaternion_op_in_16>()))
-			.static_property("IDENTITY", puerts::make_constant_getter<&puerts_generated::quaternion_identity>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Quaternion>(),
-					puerts::make_constructor_overload<godot::Quaternion, const godot::Quaternion &>(),
-					puerts::make_constructor_overload<godot::Quaternion, const godot::Basis &>(),
-					puerts::make_constructor_overload<godot::Quaternion, const godot::Vector3 &, godot::real_t>(),
-					puerts::make_constructor_overload<godot::Quaternion, const godot::Vector3 &, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Quaternion, godot::real_t, godot::real_t, godot::real_t, godot::real_t>()))
-			.method("length", puerts::make_method<&godot::Quaternion::length>())
-			.method("length_squared", puerts::make_method<&godot::Quaternion::length_squared>())
-			.method("normalized", puerts::make_method<&godot::Quaternion::normalized>())
-			.method("is_normalized", puerts::make_method<&godot::Quaternion::is_normalized>())
-			.method("is_equal_approx", puerts::make_method<&godot::Quaternion::is_equal_approx>())
-			.method("is_finite", puerts::make_method<&godot::Quaternion::is_finite>())
-			.method("inverse", puerts::make_method<&godot::Quaternion::inverse>())
-			.method("log", puerts::make_method<&godot::Quaternion::log>())
-			.method("exp", puerts::make_method<&godot::Quaternion::exp>())
-			.method("angle_to", puerts::make_method<&godot::Quaternion::angle_to>())
-			.method("dot", puerts::make_method<&godot::Quaternion::dot>())
-			.method("slerp", puerts::make_method<&godot::Quaternion::slerp>())
-			.method("slerpni", puerts::make_method<&godot::Quaternion::slerpni>())
-			.method("spherical_cubic_interpolate", puerts::make_method<&godot::Quaternion::spherical_cubic_interpolate>())
-			.method("spherical_cubic_interpolate_in_time", puerts::make_method<&godot::Quaternion::spherical_cubic_interpolate_in_time>())
-			.method("get_euler", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::quaternion_get_euler_default0>(), puerts::make_overload<&godot::Quaternion::get_euler>()))
-			.static_method("from_euler", puerts::make_function<&godot::Quaternion::from_euler>())
-			.method("get_axis", puerts::make_method<&godot::Quaternion::get_axis>())
-			.method("get_angle", puerts::make_method<&godot::Quaternion::get_angle>())
-			.property("x", puerts::make_property<&godot::Quaternion::x>())
-			.property("y", puerts::make_property<&godot::Quaternion::y>())
-			.property("z", puerts::make_property<&godot::Quaternion::z>())
-			.property("w", puerts::make_property<&godot::Quaternion::w>())
+			.static_method<&puerts_generated::quaternion_op_equality_0, &puerts_generated::quaternion_op_equality_10>("op_Equality")
+			.static_method<&puerts_generated::quaternion_op_inequality_1, &puerts_generated::quaternion_op_inequality_11>("op_Inequality")
+			.static_method<&puerts_generated::quaternion_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::quaternion_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::quaternion_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::quaternion_op_multiply_5, &puerts_generated::quaternion_op_multiply_7, &puerts_generated::quaternion_op_multiply_9, &puerts_generated::quaternion_op_multiply_14>("op_Multiply")
+			.static_method<&puerts_generated::quaternion_op_division_6, &puerts_generated::quaternion_op_division_8>("op_Division")
+			.static_method<&puerts_generated::quaternion_op_addition_12>("op_Addition")
+			.static_method<&puerts_generated::quaternion_op_subtraction_13>("op_Subtraction")
+			.static_method<&puerts_generated::quaternion_op_in_15, &puerts_generated::quaternion_op_in_16>("op_In")
+			.constant<&puerts_generated::quaternion_identity>("IDENTITY")
+			.constructor<>()
+			.constructor<const godot::Quaternion &>()
+			.constructor<const godot::Basis &>()
+			.constructor<const godot::Vector3 &, godot::real_t>()
+			.constructor<const godot::Vector3 &, const godot::Vector3 &>()
+			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
+			.method<&godot::Quaternion::length>("length")
+			.method<&godot::Quaternion::length_squared>("length_squared")
+			.method<&godot::Quaternion::normalized>("normalized")
+			.method<&godot::Quaternion::is_normalized>("is_normalized")
+			.method<&godot::Quaternion::is_equal_approx>("is_equal_approx")
+			.method<&godot::Quaternion::is_finite>("is_finite")
+			.method<&godot::Quaternion::inverse>("inverse")
+			.method<&godot::Quaternion::log>("log")
+			.method<&godot::Quaternion::exp>("exp")
+			.method<&godot::Quaternion::angle_to>("angle_to")
+			.method<&godot::Quaternion::dot>("dot")
+			.method<&godot::Quaternion::slerp>("slerp")
+			.method<&godot::Quaternion::slerpni>("slerpni")
+			.method<&godot::Quaternion::spherical_cubic_interpolate>("spherical_cubic_interpolate")
+			.method<&godot::Quaternion::spherical_cubic_interpolate_in_time>("spherical_cubic_interpolate_in_time")
+			.method<&puerts_generated::quaternion_get_euler_default0, &godot::Quaternion::get_euler>("get_euler")
+			.static_method<&godot::Quaternion::from_euler>("from_euler")
+			.method<&godot::Quaternion::get_axis>("get_axis")
+			.method<&godot::Quaternion::get_angle>("get_angle")
+			.property<&godot::Quaternion::x>("x")
+			.property<&godot::Quaternion::y>("y")
+			.property<&godot::Quaternion::z>("z")
+			.property<&godot::Quaternion::w>("w")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3262,36 +2640,35 @@ inline decltype(auto) rect2_intersects_default1(const godot::Rect2 &p_self, cons
 
 inline void register_type_rect2() {
 	puerts::define_type<godot::Rect2>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rect2_op_equality_0>(), puerts::make_overload<&puerts_generated::rect2_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rect2_op_inequality_1>(), puerts::make_overload<&puerts_generated::rect2_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::rect2_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::make_function<&puerts_generated::rect2_op_multiply_5>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rect2_op_in_6>(), puerts::make_overload<&puerts_generated::rect2_op_in_7>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Rect2>(),
-					puerts::make_constructor_overload<godot::Rect2, const godot::Rect2 &>(),
-					puerts::make_constructor_overload<godot::Rect2, const godot::Rect2i &>(),
-					puerts::make_constructor_overload<godot::Rect2, const godot::Vector2 &, const godot::Vector2 &>(),
-					puerts::make_constructor_overload<godot::Rect2, godot::real_t, godot::real_t, godot::real_t, godot::real_t>()))
-			.method("get_center", puerts::make_method<&godot::Rect2::get_center>())
-			.method("get_area", puerts::make_method<&godot::Rect2::get_area>())
-			.method("has_area", puerts::make_method<&godot::Rect2::has_area>())
-			.method("has_point", puerts::make_method<&godot::Rect2::has_point>())
-			.method("is_equal_approx", puerts::make_method<&godot::Rect2::is_equal_approx>())
-			.method("is_finite", puerts::make_method<&godot::Rect2::is_finite>())
-			.method("intersects", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::rect2_intersects_default1>(), puerts::make_overload<&godot::Rect2::intersects>()))
-			.method("encloses", puerts::make_method<&godot::Rect2::encloses>())
-			.method("intersection", puerts::make_method<&godot::Rect2::intersection>())
-			.method("merge", puerts::make_method<&godot::Rect2::merge>())
-			.method("expand", puerts::make_method<&godot::Rect2::expand>())
-			.method("get_support", puerts::make_method<&godot::Rect2::get_support>())
-			.method("grow", puerts::make_method<&godot::Rect2::grow>())
-			.method("grow_side", puerts::make_method<&godot::Rect2::grow_side>())
-			.method("grow_individual", puerts::make_method<&godot::Rect2::grow_individual>())
-			.method("abs", puerts::make_method<&godot::Rect2::abs>())
-			.property("end", &puerts_generated::rect2_end_getter, &puerts_generated::rect2_end_setter)
-			.property("position", puerts::make_property<&godot::Rect2::position>())
-			.property("size", puerts::make_property<&godot::Rect2::size>())
+			.static_method<&puerts_generated::rect2_op_equality_0, &puerts_generated::rect2_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::rect2_op_inequality_1, &puerts_generated::rect2_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::rect2_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::rect2_op_multiply_5>("op_Multiply")
+			.static_method<&puerts_generated::rect2_op_in_6, &puerts_generated::rect2_op_in_7>("op_In")
+			.constructor<>()
+			.constructor<const godot::Rect2 &>()
+			.constructor<const godot::Rect2i &>()
+			.constructor<const godot::Vector2 &, const godot::Vector2 &>()
+			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
+			.method<&godot::Rect2::get_center>("get_center")
+			.method<&godot::Rect2::get_area>("get_area")
+			.method<&godot::Rect2::has_area>("has_area")
+			.method<&godot::Rect2::has_point>("has_point")
+			.method<&godot::Rect2::is_equal_approx>("is_equal_approx")
+			.method<&godot::Rect2::is_finite>("is_finite")
+			.method<&puerts_generated::rect2_intersects_default1, &godot::Rect2::intersects>("intersects")
+			.method<&godot::Rect2::encloses>("encloses")
+			.method<&godot::Rect2::intersection>("intersection")
+			.method<&godot::Rect2::merge>("merge")
+			.method<&godot::Rect2::expand>("expand")
+			.method<&godot::Rect2::get_support>("get_support")
+			.method<&godot::Rect2::grow>("grow")
+			.method<&godot::Rect2::grow_side>("grow_side")
+			.method<&godot::Rect2::grow_individual>("grow_individual")
+			.method<&godot::Rect2::abs>("abs")
+			.property<&puerts_generated::rect2_end_getter, &puerts_generated::rect2_end_setter>("end")
+			.property<&godot::Rect2::position>("position")
+			.property<&godot::Rect2::size>("size")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3320,32 +2697,31 @@ inline bool rect2i_op_in_6(const godot::Rect2i &left, const godot::Array &right)
 
 inline void register_type_rect2i() {
 	puerts::define_type<godot::Rect2i>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rect2i_op_equality_0>(), puerts::make_overload<&puerts_generated::rect2i_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rect2i_op_inequality_1>(), puerts::make_overload<&puerts_generated::rect2i_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::rect2i_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rect2i_op_in_5>(), puerts::make_overload<&puerts_generated::rect2i_op_in_6>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Rect2i>(),
-					puerts::make_constructor_overload<godot::Rect2i, const godot::Rect2i &>(),
-					puerts::make_constructor_overload<godot::Rect2i, const godot::Rect2 &>(),
-					puerts::make_constructor_overload<godot::Rect2i, const godot::Vector2i &, const godot::Vector2i &>(),
-					puerts::make_constructor_overload<godot::Rect2i, int64_t, int64_t, int64_t, int64_t>()))
-			.method("get_center", puerts::make_method<&godot::Rect2i::get_center>())
-			.method("get_area", puerts::make_method<&godot::Rect2i::get_area>())
-			.method("has_area", puerts::make_method<&godot::Rect2i::has_area>())
-			.method("has_point", puerts::make_method<&godot::Rect2i::has_point>())
-			.method("intersects", puerts::make_method<&godot::Rect2i::intersects>())
-			.method("encloses", puerts::make_method<&godot::Rect2i::encloses>())
-			.method("intersection", puerts::make_method<&godot::Rect2i::intersection>())
-			.method("merge", puerts::make_method<&godot::Rect2i::merge>())
-			.method("expand", puerts::make_method<&godot::Rect2i::expand>())
-			.method("grow", puerts::make_method<&godot::Rect2i::grow>())
-			.method("grow_side", puerts::make_method<&godot::Rect2i::grow_side>())
-			.method("grow_individual", puerts::make_method<&godot::Rect2i::grow_individual>())
-			.method("abs", puerts::make_method<&godot::Rect2i::abs>())
-			.property("end", &puerts_generated::rect2i_end_getter, &puerts_generated::rect2i_end_setter)
-			.property("position", puerts::make_property<&godot::Rect2i::position>())
-			.property("size", puerts::make_property<&godot::Rect2i::size>())
+			.static_method<&puerts_generated::rect2i_op_equality_0, &puerts_generated::rect2i_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::rect2i_op_inequality_1, &puerts_generated::rect2i_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::rect2i_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::rect2i_op_in_5, &puerts_generated::rect2i_op_in_6>("op_In")
+			.constructor<>()
+			.constructor<const godot::Rect2i &>()
+			.constructor<const godot::Rect2 &>()
+			.constructor<const godot::Vector2i &, const godot::Vector2i &>()
+			.constructor<int64_t, int64_t, int64_t, int64_t>()
+			.method<&godot::Rect2i::get_center>("get_center")
+			.method<&godot::Rect2i::get_area>("get_area")
+			.method<&godot::Rect2i::has_area>("has_area")
+			.method<&godot::Rect2i::has_point>("has_point")
+			.method<&godot::Rect2i::intersects>("intersects")
+			.method<&godot::Rect2i::encloses>("encloses")
+			.method<&godot::Rect2i::intersection>("intersection")
+			.method<&godot::Rect2i::merge>("merge")
+			.method<&godot::Rect2i::expand>("expand")
+			.method<&godot::Rect2i::grow>("grow")
+			.method<&godot::Rect2i::grow_side>("grow_side")
+			.method<&godot::Rect2i::grow_individual>("grow_individual")
+			.method<&godot::Rect2i::abs>("abs")
+			.property<&puerts_generated::rect2i_end_getter, &puerts_generated::rect2i_end_setter>("end")
+			.property<&godot::Rect2i::position>("position")
+			.property<&godot::Rect2i::size>("size")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3386,23 +2762,21 @@ inline bool rid_op_in_10(const godot::RID &left, const godot::Array &right) {
 
 inline void register_type_rid() {
 	puerts::define_type<godot::RID>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rid_op_equality_0>(), puerts::make_overload<&puerts_generated::rid_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rid_op_inequality_1>(), puerts::make_overload<&puerts_generated::rid_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::rid_op_logical_not_2>())
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::rid_op_less_than_5>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::rid_op_less_than_or_equal_6>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::rid_op_greater_than_7>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::rid_op_greater_than_or_equal_8>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::rid_op_in_9>(), puerts::make_overload<&puerts_generated::rid_op_in_10>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::RID>(),
-					puerts::make_constructor_overload<godot::RID, const godot::RID &>()))
-			.method("is_valid", puerts::make_method<&godot::RID::is_valid>())
-			.method("get_id", puerts::make_method<&godot::RID::get_id>())
+			.static_method<&puerts_generated::rid_op_equality_0, &puerts_generated::rid_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::rid_op_inequality_1, &puerts_generated::rid_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::rid_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::rid_op_less_than_5>("op_LessThan")
+			.static_method<&puerts_generated::rid_op_less_than_or_equal_6>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::rid_op_greater_than_7>("op_GreaterThan")
+			.static_method<&puerts_generated::rid_op_greater_than_or_equal_8>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::rid_op_in_9, &puerts_generated::rid_op_in_10>("op_In")
+			.constructor<>()
+			.constructor<const godot::RID &>()
+			.method<&godot::RID::is_valid>("is_valid")
+			.method<&godot::RID::get_id>("get_id")
 			.register_type();
 }
 namespace puerts_generated {
-inline constexpr char signal_emit_vararg_name[] = "emit";
 inline bool signal_op_equality_0(const godot::Signal &left, const godot::Variant &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_EQUAL, bool>(left, right);
 }
@@ -3431,24 +2805,23 @@ inline decltype(auto) signal_connect_default1(godot::Signal &p_self, const godot
 
 inline void register_type_signal() {
 	puerts::define_type<godot::Signal>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::signal_op_equality_0>(), puerts::make_overload<&puerts_generated::signal_op_equality_3>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::signal_op_inequality_1>(), puerts::make_overload<&puerts_generated::signal_op_inequality_4>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::signal_op_logical_not_2>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::signal_op_in_5>(), puerts::make_overload<&puerts_generated::signal_op_in_6>()))
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Signal>(),
-					puerts::make_constructor_overload<godot::Signal, const godot::Signal &>(),
-					puerts::make_constructor_overload<godot::Signal, godot::Object *, const godot::StringName &>()))
-			.method("is_null", puerts::make_method<&godot::Signal::is_null>())
-			.method("get_object", puerts::make_method<&godot::Signal::get_object>())
-			.method("get_object_id", puerts::make_method<&godot::Signal::get_object_id>())
-			.method("get_name", puerts::make_method<&godot::Signal::get_name>())
-			.method("connect", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::signal_connect_default1>(), puerts::make_overload<&godot::Signal::connect>()))
-			.method("disconnect", puerts::make_method<&godot::Signal::disconnect>())
-			.method("is_connected", puerts::make_method<&godot::Signal::is_connected>())
-			.method("get_connections", puerts::make_method<&godot::Signal::get_connections>())
-			.method("has_connections", puerts::make_method<&godot::Signal::has_connections>())
-			.method("emit", puerts::make_vararg_method<godot::Signal, void, puerts_generated::signal_emit_vararg_name, 0, false>())
+			.static_method<&puerts_generated::signal_op_equality_0, &puerts_generated::signal_op_equality_3>("op_Equality")
+			.static_method<&puerts_generated::signal_op_inequality_1, &puerts_generated::signal_op_inequality_4>("op_Inequality")
+			.static_method<&puerts_generated::signal_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::signal_op_in_5, &puerts_generated::signal_op_in_6>("op_In")
+			.constructor<>()
+			.constructor<const godot::Signal &>()
+			.constructor<godot::Object *, const godot::StringName &>()
+			.method<&godot::Signal::is_null>("is_null")
+			.method<&godot::Signal::get_object>("get_object")
+			.method<&godot::Signal::get_object_id>("get_object_id")
+			.method<&godot::Signal::get_name>("get_name")
+			.method<&puerts_generated::signal_connect_default1, &godot::Signal::connect>("connect")
+			.method<&godot::Signal::disconnect>("disconnect")
+			.method<&godot::Signal::is_connected>("is_connected")
+			.method<&godot::Signal::get_connections>("get_connections")
+			.method<&godot::Signal::has_connections>("has_connections")
+			.vararg_method<void, false>("emit", 0)
 			.register_type();
 }
 namespace puerts_generated {
@@ -3705,130 +3078,129 @@ inline decltype(auto) string_name_to_multibyte_char_buffer_default0(const godot:
 
 inline void register_type_string_name() {
 	puerts::define_type<godot::StringName>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::string_name_op_equality_0>(), puerts::make_overload<&puerts_generated::string_name_op_equality_7>(), puerts::make_overload<&puerts_generated::string_name_op_equality_28>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::string_name_op_inequality_1>(), puerts::make_overload<&puerts_generated::string_name_op_inequality_8>(), puerts::make_overload<&puerts_generated::string_name_op_inequality_29>()))
-			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&puerts_generated::string_name_op_modulus_2>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_4>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_5>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_6>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_10>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_12>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_13>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_14>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_15>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_16>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_17>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_18>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_19>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_20>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_21>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_22>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_23>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_24>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_25>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_26>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_27>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_35>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_37>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_38>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_39>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_41>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_42>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_43>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_45>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_47>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_48>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_49>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_50>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_51>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_52>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_54>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_55>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_56>(), puerts::make_overload<&puerts_generated::string_name_op_modulus_57>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::string_name_op_logical_not_3>())
-			.static_method("op_Addition", puerts::combine_overloads(puerts::make_overload<&puerts_generated::string_name_op_addition_9>(), puerts::make_overload<&puerts_generated::string_name_op_addition_34>()))
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::string_name_op_in_11>(), puerts::make_overload<&puerts_generated::string_name_op_in_36>(), puerts::make_overload<&puerts_generated::string_name_op_in_40>(), puerts::make_overload<&puerts_generated::string_name_op_in_44>(), puerts::make_overload<&puerts_generated::string_name_op_in_46>(), puerts::make_overload<&puerts_generated::string_name_op_in_53>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::string_name_op_less_than_30>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::string_name_op_less_than_or_equal_31>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::string_name_op_greater_than_32>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::string_name_op_greater_than_or_equal_33>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::StringName>(),
-					puerts::make_constructor_overload<godot::StringName, const godot::StringName &>(),
-					puerts::make_constructor_overload<godot::StringName, const godot::String &>()))
-			.method("casecmp_to", puerts::make_method<&godot::StringName::casecmp_to>())
-			.method("nocasecmp_to", puerts::make_method<&godot::StringName::nocasecmp_to>())
-			.method("naturalcasecmp_to", puerts::make_method<&godot::StringName::naturalcasecmp_to>())
-			.method("naturalnocasecmp_to", puerts::make_method<&godot::StringName::naturalnocasecmp_to>())
-			.method("filecasecmp_to", puerts::make_method<&godot::StringName::filecasecmp_to>())
-			.method("filenocasecmp_to", puerts::make_method<&godot::StringName::filenocasecmp_to>())
-			.method("length", puerts::make_method<&godot::StringName::length>())
-			.method("substr", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_substr_default1>(), puerts::make_overload<&godot::StringName::substr>()))
-			.method("get_slice", puerts::make_method<&godot::StringName::get_slice>())
-			.method("get_slicec", puerts::make_method<&godot::StringName::get_slicec>())
-			.method("get_slice_count", puerts::make_method<&godot::StringName::get_slice_count>())
-			.method("find", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_find_default1>(), puerts::make_overload<&godot::StringName::find>()))
-			.method("findn", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_findn_default1>(), puerts::make_overload<&godot::StringName::findn>()))
-			.method("count", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_count_default1>(), puerts::make_extension_overload<&puerts_generated::string_name_count_default2>(), puerts::make_overload<&godot::StringName::count>()))
-			.method("countn", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_countn_default1>(), puerts::make_extension_overload<&puerts_generated::string_name_countn_default2>(), puerts::make_overload<&godot::StringName::countn>()))
-			.method("rfind", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_rfind_default1>(), puerts::make_overload<&godot::StringName::rfind>()))
-			.method("rfindn", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_rfindn_default1>(), puerts::make_overload<&godot::StringName::rfindn>()))
-			.method("match", puerts::make_method<&godot::StringName::match>())
-			.method("matchn", puerts::make_method<&godot::StringName::matchn>())
-			.method("begins_with", puerts::make_method<&godot::StringName::begins_with>())
-			.method("ends_with", puerts::make_method<&godot::StringName::ends_with>())
-			.method("is_subsequence_of", puerts::make_method<&godot::StringName::is_subsequence_of>())
-			.method("is_subsequence_ofn", puerts::make_method<&godot::StringName::is_subsequence_ofn>())
-			.method("bigrams", puerts::make_method<&godot::StringName::bigrams>())
-			.method("similarity", puerts::make_method<&godot::StringName::similarity>())
-			.method("format", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_format_default1>(), puerts::make_overload<&godot::StringName::format>()))
-			.method("replace", puerts::make_method<&godot::StringName::replace>())
-			.method("replacen", puerts::make_method<&godot::StringName::replacen>())
-			.method("replace_char", puerts::make_method<&godot::StringName::replace_char>())
-			.method("replace_chars", puerts::make_method<&godot::StringName::replace_chars>())
-			.method("remove_char", puerts::make_method<&godot::StringName::remove_char>())
-			.method("remove_chars", puerts::make_method<&godot::StringName::remove_chars>())
-			.method("repeat", puerts::make_method<&godot::StringName::repeat>())
-			.method("reverse", puerts::make_method<&godot::StringName::reverse>())
-			.method("insert", puerts::make_method<&godot::StringName::insert>())
-			.method("erase", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_erase_default1>(), puerts::make_overload<&godot::StringName::erase>()))
-			.method("capitalize", puerts::make_method<&godot::StringName::capitalize>())
-			.method("to_camel_case", puerts::make_method<&godot::StringName::to_camel_case>())
-			.method("to_pascal_case", puerts::make_method<&godot::StringName::to_pascal_case>())
-			.method("to_snake_case", puerts::make_method<&godot::StringName::to_snake_case>())
-			.method("to_kebab_case", puerts::make_method<&godot::StringName::to_kebab_case>())
-			.method("split", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_split_default0>(), puerts::make_extension_overload<&puerts_generated::string_name_split_default1>(), puerts::make_extension_overload<&puerts_generated::string_name_split_default2>(), puerts::make_overload<&godot::StringName::split>()))
-			.method("rsplit", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_rsplit_default0>(), puerts::make_extension_overload<&puerts_generated::string_name_rsplit_default1>(), puerts::make_extension_overload<&puerts_generated::string_name_rsplit_default2>(), puerts::make_overload<&godot::StringName::rsplit>()))
-			.method("split_floats", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_split_floats_default1>(), puerts::make_overload<&godot::StringName::split_floats>()))
-			.method("join", puerts::make_method<&godot::StringName::join>())
-			.method("to_upper", puerts::make_method<&godot::StringName::to_upper>())
-			.method("to_lower", puerts::make_method<&godot::StringName::to_lower>())
-			.method("left", puerts::make_method<&godot::StringName::left>())
-			.method("right", puerts::make_method<&godot::StringName::right>())
-			.method("strip_edges", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_strip_edges_default0>(), puerts::make_extension_overload<&puerts_generated::string_name_strip_edges_default1>(), puerts::make_overload<&godot::StringName::strip_edges>()))
-			.method("strip_escapes", puerts::make_method<&godot::StringName::strip_escapes>())
-			.method("lstrip", puerts::make_method<&godot::StringName::lstrip>())
-			.method("rstrip", puerts::make_method<&godot::StringName::rstrip>())
-			.method("get_extension", puerts::make_method<&godot::StringName::get_extension>())
-			.method("get_basename", puerts::make_method<&godot::StringName::get_basename>())
-			.method("path_join", puerts::make_method<&godot::StringName::path_join>())
-			.method("unicode_at", puerts::make_method<&godot::StringName::unicode_at>())
-			.method("indent", puerts::make_method<&godot::StringName::indent>())
-			.method("dedent", puerts::make_method<&godot::StringName::dedent>())
-			.method("md5_text", puerts::make_method<&godot::StringName::md5_text>())
-			.method("sha1_text", puerts::make_method<&godot::StringName::sha1_text>())
-			.method("sha256_text", puerts::make_method<&godot::StringName::sha256_text>())
-			.method("md5_buffer", puerts::make_method<&godot::StringName::md5_buffer>())
-			.method("sha1_buffer", puerts::make_method<&godot::StringName::sha1_buffer>())
-			.method("sha256_buffer", puerts::make_method<&godot::StringName::sha256_buffer>())
-			.method("is_empty", puerts::make_method<&godot::StringName::is_empty>())
-			.method("contains", puerts::make_method<&godot::StringName::contains>())
-			.method("containsn", puerts::make_method<&godot::StringName::containsn>())
-			.method("is_absolute_path", puerts::make_method<&godot::StringName::is_absolute_path>())
-			.method("is_relative_path", puerts::make_method<&godot::StringName::is_relative_path>())
-			.method("simplify_path", puerts::make_method<&godot::StringName::simplify_path>())
-			.method("get_base_dir", puerts::make_method<&godot::StringName::get_base_dir>())
-			.method("get_file", puerts::make_method<&godot::StringName::get_file>())
-			.method("xml_escape", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_xml_escape_default0>(), puerts::make_overload<&godot::StringName::xml_escape>()))
-			.method("xml_unescape", puerts::make_method<&godot::StringName::xml_unescape>())
-			.method("uri_encode", puerts::make_method<&godot::StringName::uri_encode>())
-			.method("uri_decode", puerts::make_method<&godot::StringName::uri_decode>())
-			.method("uri_file_decode", puerts::make_method<&godot::StringName::uri_file_decode>())
-			.method("c_escape", puerts::make_method<&godot::StringName::c_escape>())
-			.method("c_unescape", puerts::make_method<&godot::StringName::c_unescape>())
-			.method("json_escape", puerts::make_method<&godot::StringName::json_escape>())
-			.method("validate_node_name", puerts::make_method<&godot::StringName::validate_node_name>())
-			.method("validate_filename", puerts::make_method<&godot::StringName::validate_filename>())
-			.method("is_valid_ascii_identifier", puerts::make_method<&godot::StringName::is_valid_ascii_identifier>())
-			.method("is_valid_unicode_identifier", puerts::make_method<&godot::StringName::is_valid_unicode_identifier>())
-			.method("is_valid_identifier", puerts::make_method<&godot::StringName::is_valid_identifier>())
-			.method("is_valid_int", puerts::make_method<&godot::StringName::is_valid_int>())
-			.method("is_valid_float", puerts::make_method<&godot::StringName::is_valid_float>())
-			.method("is_valid_hex_number", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_is_valid_hex_number_default0>(), puerts::make_overload<&godot::StringName::is_valid_hex_number>()))
-			.method("is_valid_html_color", puerts::make_method<&godot::StringName::is_valid_html_color>())
-			.method("is_valid_ip_address", puerts::make_method<&godot::StringName::is_valid_ip_address>())
-			.method("is_valid_filename", puerts::make_method<&godot::StringName::is_valid_filename>())
-			.method("to_int", puerts::make_method<&godot::StringName::to_int>())
-			.method("to_float", puerts::make_method<&godot::StringName::to_float>())
-			.method("hex_to_int", puerts::make_method<&godot::StringName::hex_to_int>())
-			.method("bin_to_int", puerts::make_method<&godot::StringName::bin_to_int>())
-			.method("lpad", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_lpad_default1>(), puerts::make_overload<&godot::StringName::lpad>()))
-			.method("rpad", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_rpad_default1>(), puerts::make_overload<&godot::StringName::rpad>()))
-			.method("pad_decimals", puerts::make_method<&godot::StringName::pad_decimals>())
-			.method("pad_zeros", puerts::make_method<&godot::StringName::pad_zeros>())
-			.method("trim_prefix", puerts::make_method<&godot::StringName::trim_prefix>())
-			.method("trim_suffix", puerts::make_method<&godot::StringName::trim_suffix>())
-			.method("to_ascii_buffer", puerts::make_method<&godot::StringName::to_ascii_buffer>())
-			.method("to_utf8_buffer", puerts::make_method<&godot::StringName::to_utf8_buffer>())
-			.method("to_utf16_buffer", puerts::make_method<&godot::StringName::to_utf16_buffer>())
-			.method("to_utf32_buffer", puerts::make_method<&godot::StringName::to_utf32_buffer>())
-			.method("to_wchar_buffer", puerts::make_method<&godot::StringName::to_wchar_buffer>())
-			.method("to_multibyte_char_buffer", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::string_name_to_multibyte_char_buffer_default0>(), puerts::make_overload<&godot::StringName::to_multibyte_char_buffer>()))
-			.method("hex_decode", puerts::make_method<&godot::StringName::hex_decode>())
-			.method("hash", puerts::make_method<&godot::StringName::hash>())
+			.static_method<&puerts_generated::string_name_op_equality_0, &puerts_generated::string_name_op_equality_7, &puerts_generated::string_name_op_equality_28>("op_Equality")
+			.static_method<&puerts_generated::string_name_op_inequality_1, &puerts_generated::string_name_op_inequality_8, &puerts_generated::string_name_op_inequality_29>("op_Inequality")
+			.static_method<&puerts_generated::string_name_op_modulus_2, &puerts_generated::string_name_op_modulus_4, &puerts_generated::string_name_op_modulus_5, &puerts_generated::string_name_op_modulus_6, &puerts_generated::string_name_op_modulus_10, &puerts_generated::string_name_op_modulus_12, &puerts_generated::string_name_op_modulus_13, &puerts_generated::string_name_op_modulus_14, &puerts_generated::string_name_op_modulus_15, &puerts_generated::string_name_op_modulus_16, &puerts_generated::string_name_op_modulus_17, &puerts_generated::string_name_op_modulus_18, &puerts_generated::string_name_op_modulus_19, &puerts_generated::string_name_op_modulus_20, &puerts_generated::string_name_op_modulus_21, &puerts_generated::string_name_op_modulus_22, &puerts_generated::string_name_op_modulus_23, &puerts_generated::string_name_op_modulus_24, &puerts_generated::string_name_op_modulus_25, &puerts_generated::string_name_op_modulus_26, &puerts_generated::string_name_op_modulus_27, &puerts_generated::string_name_op_modulus_35, &puerts_generated::string_name_op_modulus_37, &puerts_generated::string_name_op_modulus_38, &puerts_generated::string_name_op_modulus_39, &puerts_generated::string_name_op_modulus_41, &puerts_generated::string_name_op_modulus_42, &puerts_generated::string_name_op_modulus_43, &puerts_generated::string_name_op_modulus_45, &puerts_generated::string_name_op_modulus_47, &puerts_generated::string_name_op_modulus_48, &puerts_generated::string_name_op_modulus_49, &puerts_generated::string_name_op_modulus_50, &puerts_generated::string_name_op_modulus_51, &puerts_generated::string_name_op_modulus_52, &puerts_generated::string_name_op_modulus_54, &puerts_generated::string_name_op_modulus_55, &puerts_generated::string_name_op_modulus_56, &puerts_generated::string_name_op_modulus_57>("op_Modulus")
+			.static_method<&puerts_generated::string_name_op_logical_not_3>("op_LogicalNot")
+			.static_method<&puerts_generated::string_name_op_addition_9, &puerts_generated::string_name_op_addition_34>("op_Addition")
+			.static_method<&puerts_generated::string_name_op_in_11, &puerts_generated::string_name_op_in_36, &puerts_generated::string_name_op_in_40, &puerts_generated::string_name_op_in_44, &puerts_generated::string_name_op_in_46, &puerts_generated::string_name_op_in_53>("op_In")
+			.static_method<&puerts_generated::string_name_op_less_than_30>("op_LessThan")
+			.static_method<&puerts_generated::string_name_op_less_than_or_equal_31>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::string_name_op_greater_than_32>("op_GreaterThan")
+			.static_method<&puerts_generated::string_name_op_greater_than_or_equal_33>("op_GreaterThanOrEqual")
+			.constructor<>()
+			.constructor<const godot::StringName &>()
+			.constructor<const godot::String &>()
+			.method<&godot::StringName::casecmp_to>("casecmp_to")
+			.method<&godot::StringName::nocasecmp_to>("nocasecmp_to")
+			.method<&godot::StringName::naturalcasecmp_to>("naturalcasecmp_to")
+			.method<&godot::StringName::naturalnocasecmp_to>("naturalnocasecmp_to")
+			.method<&godot::StringName::filecasecmp_to>("filecasecmp_to")
+			.method<&godot::StringName::filenocasecmp_to>("filenocasecmp_to")
+			.method<&godot::StringName::length>("length")
+			.method<&puerts_generated::string_name_substr_default1, &godot::StringName::substr>("substr")
+			.method<&godot::StringName::get_slice>("get_slice")
+			.method<&godot::StringName::get_slicec>("get_slicec")
+			.method<&godot::StringName::get_slice_count>("get_slice_count")
+			.method<&puerts_generated::string_name_find_default1, &godot::StringName::find>("find")
+			.method<&puerts_generated::string_name_findn_default1, &godot::StringName::findn>("findn")
+			.method<&puerts_generated::string_name_count_default1, &puerts_generated::string_name_count_default2, &godot::StringName::count>("count")
+			.method<&puerts_generated::string_name_countn_default1, &puerts_generated::string_name_countn_default2, &godot::StringName::countn>("countn")
+			.method<&puerts_generated::string_name_rfind_default1, &godot::StringName::rfind>("rfind")
+			.method<&puerts_generated::string_name_rfindn_default1, &godot::StringName::rfindn>("rfindn")
+			.method<&godot::StringName::match>("match")
+			.method<&godot::StringName::matchn>("matchn")
+			.method<&godot::StringName::begins_with>("begins_with")
+			.method<&godot::StringName::ends_with>("ends_with")
+			.method<&godot::StringName::is_subsequence_of>("is_subsequence_of")
+			.method<&godot::StringName::is_subsequence_ofn>("is_subsequence_ofn")
+			.method<&godot::StringName::bigrams>("bigrams")
+			.method<&godot::StringName::similarity>("similarity")
+			.method<&puerts_generated::string_name_format_default1, &godot::StringName::format>("format")
+			.method<&godot::StringName::replace>("replace")
+			.method<&godot::StringName::replacen>("replacen")
+			.method<&godot::StringName::replace_char>("replace_char")
+			.method<&godot::StringName::replace_chars>("replace_chars")
+			.method<&godot::StringName::remove_char>("remove_char")
+			.method<&godot::StringName::remove_chars>("remove_chars")
+			.method<&godot::StringName::repeat>("repeat")
+			.method<&godot::StringName::reverse>("reverse")
+			.method<&godot::StringName::insert>("insert")
+			.method<&puerts_generated::string_name_erase_default1, &godot::StringName::erase>("erase")
+			.method<&godot::StringName::capitalize>("capitalize")
+			.method<&godot::StringName::to_camel_case>("to_camel_case")
+			.method<&godot::StringName::to_pascal_case>("to_pascal_case")
+			.method<&godot::StringName::to_snake_case>("to_snake_case")
+			.method<&godot::StringName::to_kebab_case>("to_kebab_case")
+			.method<&puerts_generated::string_name_split_default0, &puerts_generated::string_name_split_default1, &puerts_generated::string_name_split_default2, &godot::StringName::split>("split")
+			.method<&puerts_generated::string_name_rsplit_default0, &puerts_generated::string_name_rsplit_default1, &puerts_generated::string_name_rsplit_default2, &godot::StringName::rsplit>("rsplit")
+			.method<&puerts_generated::string_name_split_floats_default1, &godot::StringName::split_floats>("split_floats")
+			.method<&godot::StringName::join>("join")
+			.method<&godot::StringName::to_upper>("to_upper")
+			.method<&godot::StringName::to_lower>("to_lower")
+			.method<&godot::StringName::left>("left")
+			.method<&godot::StringName::right>("right")
+			.method<&puerts_generated::string_name_strip_edges_default0, &puerts_generated::string_name_strip_edges_default1, &godot::StringName::strip_edges>("strip_edges")
+			.method<&godot::StringName::strip_escapes>("strip_escapes")
+			.method<&godot::StringName::lstrip>("lstrip")
+			.method<&godot::StringName::rstrip>("rstrip")
+			.method<&godot::StringName::get_extension>("get_extension")
+			.method<&godot::StringName::get_basename>("get_basename")
+			.method<&godot::StringName::path_join>("path_join")
+			.method<&godot::StringName::unicode_at>("unicode_at")
+			.method<&godot::StringName::indent>("indent")
+			.method<&godot::StringName::dedent>("dedent")
+			.method<&godot::StringName::md5_text>("md5_text")
+			.method<&godot::StringName::sha1_text>("sha1_text")
+			.method<&godot::StringName::sha256_text>("sha256_text")
+			.method<&godot::StringName::md5_buffer>("md5_buffer")
+			.method<&godot::StringName::sha1_buffer>("sha1_buffer")
+			.method<&godot::StringName::sha256_buffer>("sha256_buffer")
+			.method<&godot::StringName::is_empty>("is_empty")
+			.method<&godot::StringName::contains>("contains")
+			.method<&godot::StringName::containsn>("containsn")
+			.method<&godot::StringName::is_absolute_path>("is_absolute_path")
+			.method<&godot::StringName::is_relative_path>("is_relative_path")
+			.method<&godot::StringName::simplify_path>("simplify_path")
+			.method<&godot::StringName::get_base_dir>("get_base_dir")
+			.method<&godot::StringName::get_file>("get_file")
+			.method<&puerts_generated::string_name_xml_escape_default0, &godot::StringName::xml_escape>("xml_escape")
+			.method<&godot::StringName::xml_unescape>("xml_unescape")
+			.method<&godot::StringName::uri_encode>("uri_encode")
+			.method<&godot::StringName::uri_decode>("uri_decode")
+			.method<&godot::StringName::uri_file_decode>("uri_file_decode")
+			.method<&godot::StringName::c_escape>("c_escape")
+			.method<&godot::StringName::c_unescape>("c_unescape")
+			.method<&godot::StringName::json_escape>("json_escape")
+			.method<&godot::StringName::validate_node_name>("validate_node_name")
+			.method<&godot::StringName::validate_filename>("validate_filename")
+			.method<&godot::StringName::is_valid_ascii_identifier>("is_valid_ascii_identifier")
+			.method<&godot::StringName::is_valid_unicode_identifier>("is_valid_unicode_identifier")
+			.method<&godot::StringName::is_valid_identifier>("is_valid_identifier")
+			.method<&godot::StringName::is_valid_int>("is_valid_int")
+			.method<&godot::StringName::is_valid_float>("is_valid_float")
+			.method<&puerts_generated::string_name_is_valid_hex_number_default0, &godot::StringName::is_valid_hex_number>("is_valid_hex_number")
+			.method<&godot::StringName::is_valid_html_color>("is_valid_html_color")
+			.method<&godot::StringName::is_valid_ip_address>("is_valid_ip_address")
+			.method<&godot::StringName::is_valid_filename>("is_valid_filename")
+			.method<&godot::StringName::to_int>("to_int")
+			.method<&godot::StringName::to_float>("to_float")
+			.method<&godot::StringName::hex_to_int>("hex_to_int")
+			.method<&godot::StringName::bin_to_int>("bin_to_int")
+			.method<&puerts_generated::string_name_lpad_default1, &godot::StringName::lpad>("lpad")
+			.method<&puerts_generated::string_name_rpad_default1, &godot::StringName::rpad>("rpad")
+			.method<&godot::StringName::pad_decimals>("pad_decimals")
+			.method<&godot::StringName::pad_zeros>("pad_zeros")
+			.method<&godot::StringName::trim_prefix>("trim_prefix")
+			.method<&godot::StringName::trim_suffix>("trim_suffix")
+			.method<&godot::StringName::to_ascii_buffer>("to_ascii_buffer")
+			.method<&godot::StringName::to_utf8_buffer>("to_utf8_buffer")
+			.method<&godot::StringName::to_utf16_buffer>("to_utf16_buffer")
+			.method<&godot::StringName::to_utf32_buffer>("to_utf32_buffer")
+			.method<&godot::StringName::to_wchar_buffer>("to_wchar_buffer")
+			.method<&puerts_generated::string_name_to_multibyte_char_buffer_default0, &godot::StringName::to_multibyte_char_buffer>("to_multibyte_char_buffer")
+			.method<&godot::StringName::hex_decode>("hex_decode")
+			.method<&godot::StringName::hash>("hash")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3893,45 +3265,44 @@ inline decltype(auto) transform2d_looking_at_default0(const godot::Transform2D &
 
 inline void register_type_transform2d() {
 	puerts::define_type<godot::Transform2D>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform2d_op_equality_0>(), puerts::make_overload<&puerts_generated::transform2d_op_equality_9>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform2d_op_inequality_1>(), puerts::make_overload<&puerts_generated::transform2d_op_inequality_10>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::transform2d_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform2d_op_multiply_3>(), puerts::make_overload<&puerts_generated::transform2d_op_multiply_5>(), puerts::make_overload<&puerts_generated::transform2d_op_multiply_7>(), puerts::make_overload<&puerts_generated::transform2d_op_multiply_8>(), puerts::make_overload<&puerts_generated::transform2d_op_multiply_11>(), puerts::make_overload<&puerts_generated::transform2d_op_multiply_14>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform2d_op_division_4>(), puerts::make_overload<&puerts_generated::transform2d_op_division_6>()))
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform2d_op_in_12>(), puerts::make_overload<&puerts_generated::transform2d_op_in_13>()))
-			.static_property("IDENTITY", puerts::make_constant_getter<&puerts_generated::transform2d_identity>())
-			.static_property("FLIP_X", puerts::make_constant_getter<&puerts_generated::transform2d_flip_x>())
-			.static_property("FLIP_Y", puerts::make_constant_getter<&puerts_generated::transform2d_flip_y>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Transform2D>(),
-					puerts::make_constructor_overload<godot::Transform2D, const godot::Transform2D &>(),
-					puerts::make_constructor_overload<godot::Transform2D, godot::real_t, const godot::Vector2 &>(),
-					puerts::make_constructor_overload<godot::Transform2D, godot::real_t, const godot::Vector2 &, godot::real_t, const godot::Vector2 &>(),
-					puerts::make_constructor_overload<godot::Transform2D, const godot::Vector2 &, const godot::Vector2 &, const godot::Vector2 &>()))
-			.method("inverse", puerts::make_method<&godot::Transform2D::inverse>())
-			.method("affine_inverse", puerts::make_method<&godot::Transform2D::affine_inverse>())
-			.method("get_rotation", puerts::make_method<&godot::Transform2D::get_rotation>())
-			.method("get_origin", puerts::make_method<&godot::Transform2D::get_origin>())
-			.method("get_scale", puerts::make_method<&godot::Transform2D::get_scale>())
-			.method("get_skew", puerts::make_method<&godot::Transform2D::get_skew>())
-			.method("orthonormalized", puerts::make_method<&godot::Transform2D::orthonormalized>())
-			.method("rotated", puerts::make_method<&godot::Transform2D::rotated>())
-			.method("rotated_local", puerts::make_method<&godot::Transform2D::rotated_local>())
-			.method("scaled", puerts::make_method<&godot::Transform2D::scaled>())
-			.method("scaled_local", puerts::make_method<&godot::Transform2D::scaled_local>())
-			.method("translated", puerts::make_method<&godot::Transform2D::translated>())
-			.method("translated_local", puerts::make_method<&godot::Transform2D::translated_local>())
-			.method("determinant", puerts::make_method<&godot::Transform2D::determinant>())
-			.method("basis_xform", puerts::make_method<&godot::Transform2D::basis_xform>())
-			.method("basis_xform_inv", puerts::make_method<&godot::Transform2D::basis_xform_inv>())
-			.method("interpolate_with", puerts::make_method<&godot::Transform2D::interpolate_with>())
-			.method("is_conformal", puerts::make_method<&godot::Transform2D::is_conformal>())
-			.method("is_equal_approx", puerts::make_method<&godot::Transform2D::is_equal_approx>())
-			.method("is_finite", puerts::make_method<&godot::Transform2D::is_finite>())
-			.method("looking_at", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::transform2d_looking_at_default0>(), puerts::make_overload<&godot::Transform2D::looking_at>()))
-			.property("x", &puerts_generated::transform2d_x_getter, &puerts_generated::transform2d_x_setter)
-			.property("y", &puerts_generated::transform2d_y_getter, &puerts_generated::transform2d_y_setter)
-			.property("origin", &puerts_generated::transform2d_origin_getter, &puerts_generated::transform2d_origin_setter)
+			.static_method<&puerts_generated::transform2d_op_equality_0, &puerts_generated::transform2d_op_equality_9>("op_Equality")
+			.static_method<&puerts_generated::transform2d_op_inequality_1, &puerts_generated::transform2d_op_inequality_10>("op_Inequality")
+			.static_method<&puerts_generated::transform2d_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::transform2d_op_multiply_3, &puerts_generated::transform2d_op_multiply_5, &puerts_generated::transform2d_op_multiply_7, &puerts_generated::transform2d_op_multiply_8, &puerts_generated::transform2d_op_multiply_11, &puerts_generated::transform2d_op_multiply_14>("op_Multiply")
+			.static_method<&puerts_generated::transform2d_op_division_4, &puerts_generated::transform2d_op_division_6>("op_Division")
+			.static_method<&puerts_generated::transform2d_op_in_12, &puerts_generated::transform2d_op_in_13>("op_In")
+			.constant<&puerts_generated::transform2d_identity>("IDENTITY")
+			.constant<&puerts_generated::transform2d_flip_x>("FLIP_X")
+			.constant<&puerts_generated::transform2d_flip_y>("FLIP_Y")
+			.constructor<>()
+			.constructor<const godot::Transform2D &>()
+			.constructor<godot::real_t, const godot::Vector2 &>()
+			.constructor<godot::real_t, const godot::Vector2 &, godot::real_t, const godot::Vector2 &>()
+			.constructor<const godot::Vector2 &, const godot::Vector2 &, const godot::Vector2 &>()
+			.method<&godot::Transform2D::inverse>("inverse")
+			.method<&godot::Transform2D::affine_inverse>("affine_inverse")
+			.method<&godot::Transform2D::get_rotation>("get_rotation")
+			.method<&godot::Transform2D::get_origin>("get_origin")
+			.method<&godot::Transform2D::get_scale>("get_scale")
+			.method<&godot::Transform2D::get_skew>("get_skew")
+			.method<&godot::Transform2D::orthonormalized>("orthonormalized")
+			.method<&godot::Transform2D::rotated>("rotated")
+			.method<&godot::Transform2D::rotated_local>("rotated_local")
+			.method<&godot::Transform2D::scaled>("scaled")
+			.method<&godot::Transform2D::scaled_local>("scaled_local")
+			.method<&godot::Transform2D::translated>("translated")
+			.method<&godot::Transform2D::translated_local>("translated_local")
+			.method<&godot::Transform2D::determinant>("determinant")
+			.method<&godot::Transform2D::basis_xform>("basis_xform")
+			.method<&godot::Transform2D::basis_xform_inv>("basis_xform_inv")
+			.method<&godot::Transform2D::interpolate_with>("interpolate_with")
+			.method<&godot::Transform2D::is_conformal>("is_conformal")
+			.method<&godot::Transform2D::is_equal_approx>("is_equal_approx")
+			.method<&godot::Transform2D::is_finite>("is_finite")
+			.method<&puerts_generated::transform2d_looking_at_default0, &godot::Transform2D::looking_at>("looking_at")
+			.property<&puerts_generated::transform2d_x_getter, &puerts_generated::transform2d_x_setter>("x")
+			.property<&puerts_generated::transform2d_y_getter, &puerts_generated::transform2d_y_setter>("y")
+			.property<&puerts_generated::transform2d_origin_getter, &puerts_generated::transform2d_origin_setter>("origin")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4005,37 +3376,36 @@ inline decltype(auto) transform3d_looking_at_default2(const godot::Transform3D &
 
 inline void register_type_transform3d() {
 	puerts::define_type<godot::Transform3D>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform3d_op_equality_0>(), puerts::make_overload<&puerts_generated::transform3d_op_equality_10>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform3d_op_inequality_1>(), puerts::make_overload<&puerts_generated::transform3d_op_inequality_11>()))
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::transform3d_op_logical_not_2>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform3d_op_multiply_3>(), puerts::make_overload<&puerts_generated::transform3d_op_multiply_5>(), puerts::make_overload<&puerts_generated::transform3d_op_multiply_7>(), puerts::make_overload<&puerts_generated::transform3d_op_multiply_8>(), puerts::make_overload<&puerts_generated::transform3d_op_multiply_9>(), puerts::make_overload<&puerts_generated::transform3d_op_multiply_12>(), puerts::make_overload<&puerts_generated::transform3d_op_multiply_15>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform3d_op_division_4>(), puerts::make_overload<&puerts_generated::transform3d_op_division_6>()))
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::transform3d_op_in_13>(), puerts::make_overload<&puerts_generated::transform3d_op_in_14>()))
-			.static_property("IDENTITY", puerts::make_constant_getter<&puerts_generated::transform3d_identity>())
-			.static_property("FLIP_X", puerts::make_constant_getter<&puerts_generated::transform3d_flip_x>())
-			.static_property("FLIP_Y", puerts::make_constant_getter<&puerts_generated::transform3d_flip_y>())
-			.static_property("FLIP_Z", puerts::make_constant_getter<&puerts_generated::transform3d_flip_z>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Transform3D>(),
-					puerts::make_constructor_overload<godot::Transform3D, const godot::Transform3D &>(),
-					puerts::make_constructor_overload<godot::Transform3D, const godot::Basis &, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Transform3D, const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Transform3D, const godot::Projection &>()))
-			.method("inverse", puerts::make_method<&godot::Transform3D::inverse>())
-			.method("affine_inverse", puerts::make_method<&godot::Transform3D::affine_inverse>())
-			.method("orthonormalized", puerts::make_method<&godot::Transform3D::orthonormalized>())
-			.method("rotated", puerts::make_method<&godot::Transform3D::rotated>())
-			.method("rotated_local", puerts::make_method<&godot::Transform3D::rotated_local>())
-			.method("scaled", puerts::make_method<&godot::Transform3D::scaled>())
-			.method("scaled_local", puerts::make_method<&godot::Transform3D::scaled_local>())
-			.method("translated", puerts::make_method<&godot::Transform3D::translated>())
-			.method("translated_local", puerts::make_method<&godot::Transform3D::translated_local>())
-			.method("looking_at", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::transform3d_looking_at_default1>(), puerts::make_extension_overload<&puerts_generated::transform3d_looking_at_default2>(), puerts::make_overload<&godot::Transform3D::looking_at>()))
-			.method("interpolate_with", puerts::make_method<&godot::Transform3D::interpolate_with>())
-			.method("is_equal_approx", puerts::make_method<&godot::Transform3D::is_equal_approx>())
-			.method("is_finite", puerts::make_method<&godot::Transform3D::is_finite>())
-			.property("basis", puerts::make_property<&godot::Transform3D::basis>())
-			.property("origin", puerts::make_property<&godot::Transform3D::origin>())
+			.static_method<&puerts_generated::transform3d_op_equality_0, &puerts_generated::transform3d_op_equality_10>("op_Equality")
+			.static_method<&puerts_generated::transform3d_op_inequality_1, &puerts_generated::transform3d_op_inequality_11>("op_Inequality")
+			.static_method<&puerts_generated::transform3d_op_logical_not_2>("op_LogicalNot")
+			.static_method<&puerts_generated::transform3d_op_multiply_3, &puerts_generated::transform3d_op_multiply_5, &puerts_generated::transform3d_op_multiply_7, &puerts_generated::transform3d_op_multiply_8, &puerts_generated::transform3d_op_multiply_9, &puerts_generated::transform3d_op_multiply_12, &puerts_generated::transform3d_op_multiply_15>("op_Multiply")
+			.static_method<&puerts_generated::transform3d_op_division_4, &puerts_generated::transform3d_op_division_6>("op_Division")
+			.static_method<&puerts_generated::transform3d_op_in_13, &puerts_generated::transform3d_op_in_14>("op_In")
+			.constant<&puerts_generated::transform3d_identity>("IDENTITY")
+			.constant<&puerts_generated::transform3d_flip_x>("FLIP_X")
+			.constant<&puerts_generated::transform3d_flip_y>("FLIP_Y")
+			.constant<&puerts_generated::transform3d_flip_z>("FLIP_Z")
+			.constructor<>()
+			.constructor<const godot::Transform3D &>()
+			.constructor<const godot::Basis &, const godot::Vector3 &>()
+			.constructor<const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>()
+			.constructor<const godot::Projection &>()
+			.method<&godot::Transform3D::inverse>("inverse")
+			.method<&godot::Transform3D::affine_inverse>("affine_inverse")
+			.method<&godot::Transform3D::orthonormalized>("orthonormalized")
+			.method<&godot::Transform3D::rotated>("rotated")
+			.method<&godot::Transform3D::rotated_local>("rotated_local")
+			.method<&godot::Transform3D::scaled>("scaled")
+			.method<&godot::Transform3D::scaled_local>("scaled_local")
+			.method<&godot::Transform3D::translated>("translated")
+			.method<&godot::Transform3D::translated_local>("translated_local")
+			.method<&puerts_generated::transform3d_looking_at_default1, &puerts_generated::transform3d_looking_at_default2, &godot::Transform3D::looking_at>("looking_at")
+			.method<&godot::Transform3D::interpolate_with>("interpolate_with")
+			.method<&godot::Transform3D::is_equal_approx>("is_equal_approx")
+			.method<&godot::Transform3D::is_finite>("is_finite")
+			.property<&godot::Transform3D::basis>("basis")
+			.property<&godot::Transform3D::origin>("origin")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4136,83 +3506,82 @@ inline decltype(auto) vector2_limit_length_default0(const godot::Vector2 &p_self
 
 inline void register_type_vector2() {
 	puerts::define_type<godot::Vector2>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2_op_equality_0>(), puerts::make_overload<&puerts_generated::vector2_op_equality_9>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2_op_inequality_1>(), puerts::make_overload<&puerts_generated::vector2_op_inequality_10>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::vector2_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::vector2_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::vector2_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2_op_multiply_5>(), puerts::make_overload<&puerts_generated::vector2_op_multiply_7>(), puerts::make_overload<&puerts_generated::vector2_op_multiply_17>(), puerts::make_overload<&puerts_generated::vector2_op_multiply_19>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2_op_division_6>(), puerts::make_overload<&puerts_generated::vector2_op_division_8>(), puerts::make_overload<&puerts_generated::vector2_op_division_18>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::vector2_op_less_than_11>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::vector2_op_less_than_or_equal_12>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::vector2_op_greater_than_13>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::vector2_op_greater_than_or_equal_14>())
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::vector2_op_addition_15>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::vector2_op_subtraction_16>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2_op_in_20>(), puerts::make_overload<&puerts_generated::vector2_op_in_21>(), puerts::make_overload<&puerts_generated::vector2_op_in_22>()))
-			.static_property("ZERO", puerts::make_constant_getter<&puerts_generated::vector2_zero>())
-			.static_property("ONE", puerts::make_constant_getter<&puerts_generated::vector2_one>())
-			.static_property("INF", puerts::make_constant_getter<&puerts_generated::vector2_inf>())
-			.static_property("LEFT", puerts::make_constant_getter<&puerts_generated::vector2_left>())
-			.static_property("RIGHT", puerts::make_constant_getter<&puerts_generated::vector2_right>())
-			.static_property("UP", puerts::make_constant_getter<&puerts_generated::vector2_up>())
-			.static_property("DOWN", puerts::make_constant_getter<&puerts_generated::vector2_down>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Vector2>(),
-					puerts::make_constructor_overload<godot::Vector2, const godot::Vector2 &>(),
-					puerts::make_constructor_overload<godot::Vector2, const godot::Vector2i &>(),
-					puerts::make_constructor_overload<godot::Vector2, godot::real_t, godot::real_t>()))
-			.method("angle", puerts::make_method<&godot::Vector2::angle>())
-			.method("angle_to", puerts::make_method<&godot::Vector2::angle_to>())
-			.method("angle_to_point", puerts::make_method<&godot::Vector2::angle_to_point>())
-			.method("direction_to", puerts::make_method<&godot::Vector2::direction_to>())
-			.method("distance_to", puerts::make_method<&godot::Vector2::distance_to>())
-			.method("distance_squared_to", puerts::make_method<&godot::Vector2::distance_squared_to>())
-			.method("length", puerts::make_method<&godot::Vector2::length>())
-			.method("length_squared", puerts::make_method<&godot::Vector2::length_squared>())
-			.method("limit_length", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::vector2_limit_length_default0>(), puerts::make_overload<&godot::Vector2::limit_length>()))
-			.method("normalized", puerts::make_method<&godot::Vector2::normalized>())
-			.method("is_normalized", puerts::make_method<&godot::Vector2::is_normalized>())
-			.method("is_equal_approx", puerts::make_method<&godot::Vector2::is_equal_approx>())
-			.method("is_zero_approx", puerts::make_method<&godot::Vector2::is_zero_approx>())
-			.method("is_finite", puerts::make_method<&godot::Vector2::is_finite>())
-			.method("posmod", puerts::make_method<&godot::Vector2::posmod>())
-			.method("posmodv", puerts::make_method<&godot::Vector2::posmodv>())
-			.method("project", puerts::make_method<&godot::Vector2::project>())
-			.method("lerp", puerts::make_method<&godot::Vector2::lerp>())
-			.method("slerp", puerts::make_method<&godot::Vector2::slerp>())
-			.method("cubic_interpolate", puerts::make_method<&godot::Vector2::cubic_interpolate>())
-			.method("cubic_interpolate_in_time", puerts::make_method<&godot::Vector2::cubic_interpolate_in_time>())
-			.method("bezier_interpolate", puerts::make_method<&godot::Vector2::bezier_interpolate>())
-			.method("bezier_derivative", puerts::make_method<&godot::Vector2::bezier_derivative>())
-			.method("max_axis_index", puerts::make_method<&godot::Vector2::max_axis_index>())
-			.method("min_axis_index", puerts::make_method<&godot::Vector2::min_axis_index>())
-			.method("move_toward", puerts::make_method<&godot::Vector2::move_toward>())
-			.method("rotated", puerts::make_method<&godot::Vector2::rotated>())
-			.method("orthogonal", puerts::make_method<&godot::Vector2::orthogonal>())
-			.method("floor", puerts::make_method<&godot::Vector2::floor>())
-			.method("ceil", puerts::make_method<&godot::Vector2::ceil>())
-			.method("round", puerts::make_method<&godot::Vector2::round>())
-			.method("aspect", puerts::make_method<&godot::Vector2::aspect>())
-			.method("dot", puerts::make_method<&godot::Vector2::dot>())
-			.method("slide", puerts::make_method<&godot::Vector2::slide>())
-			.method("bounce", puerts::make_method<&godot::Vector2::bounce>())
-			.method("reflect", puerts::make_method<&godot::Vector2::reflect>())
-			.method("cross", puerts::make_method<&godot::Vector2::cross>())
-			.method("abs", puerts::make_method<&godot::Vector2::abs>())
-			.method("sign", puerts::make_method<&godot::Vector2::sign>())
-			.method("clamp", puerts::make_method<&godot::Vector2::clamp>())
-			.method("clampf", puerts::make_method<&godot::Vector2::clampf>())
-			.method("snapped", puerts::make_method<&godot::Vector2::snapped>())
-			.method("snappedf", puerts::make_method<&godot::Vector2::snappedf>())
-			.method("min", puerts::make_method<&godot::Vector2::min>())
-			.method("minf", puerts::make_method<&godot::Vector2::minf>())
-			.method("max", puerts::make_method<&godot::Vector2::max>())
-			.method("maxf", puerts::make_method<&godot::Vector2::maxf>())
-			.static_method("from_angle", puerts::make_function<&godot::Vector2::from_angle>())
-			.property("x", puerts::make_property<&godot::Vector2::x>())
-			.property("y", puerts::make_property<&godot::Vector2::y>())
-			.static_property("Axis", puerts::make_enum_type<puerts_generated::vector2_axis_enum_tag>())
+			.static_method<&puerts_generated::vector2_op_equality_0, &puerts_generated::vector2_op_equality_9>("op_Equality")
+			.static_method<&puerts_generated::vector2_op_inequality_1, &puerts_generated::vector2_op_inequality_10>("op_Inequality")
+			.static_method<&puerts_generated::vector2_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::vector2_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::vector2_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::vector2_op_multiply_5, &puerts_generated::vector2_op_multiply_7, &puerts_generated::vector2_op_multiply_17, &puerts_generated::vector2_op_multiply_19>("op_Multiply")
+			.static_method<&puerts_generated::vector2_op_division_6, &puerts_generated::vector2_op_division_8, &puerts_generated::vector2_op_division_18>("op_Division")
+			.static_method<&puerts_generated::vector2_op_less_than_11>("op_LessThan")
+			.static_method<&puerts_generated::vector2_op_less_than_or_equal_12>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::vector2_op_greater_than_13>("op_GreaterThan")
+			.static_method<&puerts_generated::vector2_op_greater_than_or_equal_14>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::vector2_op_addition_15>("op_Addition")
+			.static_method<&puerts_generated::vector2_op_subtraction_16>("op_Subtraction")
+			.static_method<&puerts_generated::vector2_op_in_20, &puerts_generated::vector2_op_in_21, &puerts_generated::vector2_op_in_22>("op_In")
+			.constant<&puerts_generated::vector2_zero>("ZERO")
+			.constant<&puerts_generated::vector2_one>("ONE")
+			.constant<&puerts_generated::vector2_inf>("INF")
+			.constant<&puerts_generated::vector2_left>("LEFT")
+			.constant<&puerts_generated::vector2_right>("RIGHT")
+			.constant<&puerts_generated::vector2_up>("UP")
+			.constant<&puerts_generated::vector2_down>("DOWN")
+			.constructor<>()
+			.constructor<const godot::Vector2 &>()
+			.constructor<const godot::Vector2i &>()
+			.constructor<godot::real_t, godot::real_t>()
+			.method<&godot::Vector2::angle>("angle")
+			.method<&godot::Vector2::angle_to>("angle_to")
+			.method<&godot::Vector2::angle_to_point>("angle_to_point")
+			.method<&godot::Vector2::direction_to>("direction_to")
+			.method<&godot::Vector2::distance_to>("distance_to")
+			.method<&godot::Vector2::distance_squared_to>("distance_squared_to")
+			.method<&godot::Vector2::length>("length")
+			.method<&godot::Vector2::length_squared>("length_squared")
+			.method<&puerts_generated::vector2_limit_length_default0, &godot::Vector2::limit_length>("limit_length")
+			.method<&godot::Vector2::normalized>("normalized")
+			.method<&godot::Vector2::is_normalized>("is_normalized")
+			.method<&godot::Vector2::is_equal_approx>("is_equal_approx")
+			.method<&godot::Vector2::is_zero_approx>("is_zero_approx")
+			.method<&godot::Vector2::is_finite>("is_finite")
+			.method<&godot::Vector2::posmod>("posmod")
+			.method<&godot::Vector2::posmodv>("posmodv")
+			.method<&godot::Vector2::project>("project")
+			.method<&godot::Vector2::lerp>("lerp")
+			.method<&godot::Vector2::slerp>("slerp")
+			.method<&godot::Vector2::cubic_interpolate>("cubic_interpolate")
+			.method<&godot::Vector2::cubic_interpolate_in_time>("cubic_interpolate_in_time")
+			.method<&godot::Vector2::bezier_interpolate>("bezier_interpolate")
+			.method<&godot::Vector2::bezier_derivative>("bezier_derivative")
+			.method<&godot::Vector2::max_axis_index>("max_axis_index")
+			.method<&godot::Vector2::min_axis_index>("min_axis_index")
+			.method<&godot::Vector2::move_toward>("move_toward")
+			.method<&godot::Vector2::rotated>("rotated")
+			.method<&godot::Vector2::orthogonal>("orthogonal")
+			.method<&godot::Vector2::floor>("floor")
+			.method<&godot::Vector2::ceil>("ceil")
+			.method<&godot::Vector2::round>("round")
+			.method<&godot::Vector2::aspect>("aspect")
+			.method<&godot::Vector2::dot>("dot")
+			.method<&godot::Vector2::slide>("slide")
+			.method<&godot::Vector2::bounce>("bounce")
+			.method<&godot::Vector2::reflect>("reflect")
+			.method<&godot::Vector2::cross>("cross")
+			.method<&godot::Vector2::abs>("abs")
+			.method<&godot::Vector2::sign>("sign")
+			.method<&godot::Vector2::clamp>("clamp")
+			.method<&godot::Vector2::clampf>("clampf")
+			.method<&godot::Vector2::snapped>("snapped")
+			.method<&godot::Vector2::snappedf>("snappedf")
+			.method<&godot::Vector2::min>("min")
+			.method<&godot::Vector2::minf>("minf")
+			.method<&godot::Vector2::max>("max")
+			.method<&godot::Vector2::maxf>("maxf")
+			.static_method<&godot::Vector2::from_angle>("from_angle")
+			.property<&godot::Vector2::x>("x")
+			.property<&godot::Vector2::y>("y")
+			.enum_type<puerts_generated::vector2_axis_enum_tag>("Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4313,54 +3682,53 @@ inline godot::Vector2i vector2i_down() {
 
 inline void register_type_vector2i() {
 	puerts::define_type<godot::Vector2i>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2i_op_equality_0>(), puerts::make_overload<&puerts_generated::vector2i_op_equality_10>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2i_op_inequality_1>(), puerts::make_overload<&puerts_generated::vector2i_op_inequality_11>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::vector2i_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::vector2i_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::vector2i_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2i_op_multiply_5>(), puerts::make_overload<&puerts_generated::vector2i_op_multiply_8>(), puerts::make_overload<&puerts_generated::vector2i_op_multiply_18>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2i_op_division_6>(), puerts::make_overload<&puerts_generated::vector2i_op_division_9>(), puerts::make_overload<&puerts_generated::vector2i_op_division_19>()))
-			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2i_op_modulus_7>(), puerts::make_overload<&puerts_generated::vector2i_op_modulus_20>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::vector2i_op_less_than_12>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::vector2i_op_less_than_or_equal_13>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::vector2i_op_greater_than_14>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::vector2i_op_greater_than_or_equal_15>())
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::vector2i_op_addition_16>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::vector2i_op_subtraction_17>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector2i_op_in_21>(), puerts::make_overload<&puerts_generated::vector2i_op_in_22>()))
-			.static_property("ZERO", puerts::make_constant_getter<&puerts_generated::vector2i_zero>())
-			.static_property("ONE", puerts::make_constant_getter<&puerts_generated::vector2i_one>())
-			.static_property("MIN", puerts::make_constant_getter<&puerts_generated::vector2i_min>())
-			.static_property("MAX", puerts::make_constant_getter<&puerts_generated::vector2i_max>())
-			.static_property("LEFT", puerts::make_constant_getter<&puerts_generated::vector2i_left>())
-			.static_property("RIGHT", puerts::make_constant_getter<&puerts_generated::vector2i_right>())
-			.static_property("UP", puerts::make_constant_getter<&puerts_generated::vector2i_up>())
-			.static_property("DOWN", puerts::make_constant_getter<&puerts_generated::vector2i_down>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Vector2i>(),
-					puerts::make_constructor_overload<godot::Vector2i, const godot::Vector2i &>(),
-					puerts::make_constructor_overload<godot::Vector2i, const godot::Vector2 &>(),
-					puerts::make_constructor_overload<godot::Vector2i, int64_t, int64_t>()))
-			.method("aspect", puerts::make_method<&godot::Vector2i::aspect>())
-			.method("max_axis_index", puerts::make_method<&godot::Vector2i::max_axis_index>())
-			.method("min_axis_index", puerts::make_method<&godot::Vector2i::min_axis_index>())
-			.method("distance_to", puerts::make_method<&godot::Vector2i::distance_to>())
-			.method("distance_squared_to", puerts::make_method<&godot::Vector2i::distance_squared_to>())
-			.method("length", puerts::make_method<&godot::Vector2i::length>())
-			.method("length_squared", puerts::make_method<&godot::Vector2i::length_squared>())
-			.method("sign", puerts::make_method<&godot::Vector2i::sign>())
-			.method("abs", puerts::make_method<&godot::Vector2i::abs>())
-			.method("clamp", puerts::make_method<&godot::Vector2i::clamp>())
-			.method("clampi", puerts::make_method<&godot::Vector2i::clampi>())
-			.method("snapped", puerts::make_method<&godot::Vector2i::snapped>())
-			.method("snappedi", puerts::make_method<&godot::Vector2i::snappedi>())
-			.method("min", puerts::make_method<&godot::Vector2i::min>())
-			.method("mini", puerts::make_method<&godot::Vector2i::mini>())
-			.method("max", puerts::make_method<&godot::Vector2i::max>())
-			.method("maxi", puerts::make_method<&godot::Vector2i::maxi>())
-			.property("x", puerts::make_property<&godot::Vector2i::x>())
-			.property("y", puerts::make_property<&godot::Vector2i::y>())
-			.static_property("Axis", puerts::make_enum_type<puerts_generated::vector2i_axis_enum_tag>())
+			.static_method<&puerts_generated::vector2i_op_equality_0, &puerts_generated::vector2i_op_equality_10>("op_Equality")
+			.static_method<&puerts_generated::vector2i_op_inequality_1, &puerts_generated::vector2i_op_inequality_11>("op_Inequality")
+			.static_method<&puerts_generated::vector2i_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::vector2i_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::vector2i_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::vector2i_op_multiply_5, &puerts_generated::vector2i_op_multiply_8, &puerts_generated::vector2i_op_multiply_18>("op_Multiply")
+			.static_method<&puerts_generated::vector2i_op_division_6, &puerts_generated::vector2i_op_division_9, &puerts_generated::vector2i_op_division_19>("op_Division")
+			.static_method<&puerts_generated::vector2i_op_modulus_7, &puerts_generated::vector2i_op_modulus_20>("op_Modulus")
+			.static_method<&puerts_generated::vector2i_op_less_than_12>("op_LessThan")
+			.static_method<&puerts_generated::vector2i_op_less_than_or_equal_13>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::vector2i_op_greater_than_14>("op_GreaterThan")
+			.static_method<&puerts_generated::vector2i_op_greater_than_or_equal_15>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::vector2i_op_addition_16>("op_Addition")
+			.static_method<&puerts_generated::vector2i_op_subtraction_17>("op_Subtraction")
+			.static_method<&puerts_generated::vector2i_op_in_21, &puerts_generated::vector2i_op_in_22>("op_In")
+			.constant<&puerts_generated::vector2i_zero>("ZERO")
+			.constant<&puerts_generated::vector2i_one>("ONE")
+			.constant<&puerts_generated::vector2i_min>("MIN")
+			.constant<&puerts_generated::vector2i_max>("MAX")
+			.constant<&puerts_generated::vector2i_left>("LEFT")
+			.constant<&puerts_generated::vector2i_right>("RIGHT")
+			.constant<&puerts_generated::vector2i_up>("UP")
+			.constant<&puerts_generated::vector2i_down>("DOWN")
+			.constructor<>()
+			.constructor<const godot::Vector2i &>()
+			.constructor<const godot::Vector2 &>()
+			.constructor<int64_t, int64_t>()
+			.method<&godot::Vector2i::aspect>("aspect")
+			.method<&godot::Vector2i::max_axis_index>("max_axis_index")
+			.method<&godot::Vector2i::min_axis_index>("min_axis_index")
+			.method<&godot::Vector2i::distance_to>("distance_to")
+			.method<&godot::Vector2i::distance_squared_to>("distance_squared_to")
+			.method<&godot::Vector2i::length>("length")
+			.method<&godot::Vector2i::length_squared>("length_squared")
+			.method<&godot::Vector2i::sign>("sign")
+			.method<&godot::Vector2i::abs>("abs")
+			.method<&godot::Vector2i::clamp>("clamp")
+			.method<&godot::Vector2i::clampi>("clampi")
+			.method<&godot::Vector2i::snapped>("snapped")
+			.method<&godot::Vector2i::snappedi>("snappedi")
+			.method<&godot::Vector2i::min>("min")
+			.method<&godot::Vector2i::mini>("mini")
+			.method<&godot::Vector2i::max>("max")
+			.method<&godot::Vector2i::maxi>("maxi")
+			.property<&godot::Vector2i::x>("x")
+			.property<&godot::Vector2i::y>("y")
+			.enum_type<puerts_generated::vector2i_axis_enum_tag>("Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4491,92 +3859,91 @@ inline decltype(auto) vector3_limit_length_default0(const godot::Vector3 &p_self
 
 inline void register_type_vector3() {
 	puerts::define_type<godot::Vector3>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3_op_equality_0>(), puerts::make_overload<&puerts_generated::vector3_op_equality_9>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3_op_inequality_1>(), puerts::make_overload<&puerts_generated::vector3_op_inequality_10>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::vector3_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::vector3_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::vector3_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3_op_multiply_5>(), puerts::make_overload<&puerts_generated::vector3_op_multiply_7>(), puerts::make_overload<&puerts_generated::vector3_op_multiply_17>(), puerts::make_overload<&puerts_generated::vector3_op_multiply_19>(), puerts::make_overload<&puerts_generated::vector3_op_multiply_20>(), puerts::make_overload<&puerts_generated::vector3_op_multiply_21>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3_op_division_6>(), puerts::make_overload<&puerts_generated::vector3_op_division_8>(), puerts::make_overload<&puerts_generated::vector3_op_division_18>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::vector3_op_less_than_11>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::vector3_op_less_than_or_equal_12>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::vector3_op_greater_than_13>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::vector3_op_greater_than_or_equal_14>())
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::vector3_op_addition_15>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::vector3_op_subtraction_16>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3_op_in_22>(), puerts::make_overload<&puerts_generated::vector3_op_in_23>(), puerts::make_overload<&puerts_generated::vector3_op_in_24>()))
-			.static_property("ZERO", puerts::make_constant_getter<&puerts_generated::vector3_zero>())
-			.static_property("ONE", puerts::make_constant_getter<&puerts_generated::vector3_one>())
-			.static_property("INF", puerts::make_constant_getter<&puerts_generated::vector3_inf>())
-			.static_property("LEFT", puerts::make_constant_getter<&puerts_generated::vector3_left>())
-			.static_property("RIGHT", puerts::make_constant_getter<&puerts_generated::vector3_right>())
-			.static_property("UP", puerts::make_constant_getter<&puerts_generated::vector3_up>())
-			.static_property("DOWN", puerts::make_constant_getter<&puerts_generated::vector3_down>())
-			.static_property("FORWARD", puerts::make_constant_getter<&puerts_generated::vector3_forward>())
-			.static_property("BACK", puerts::make_constant_getter<&puerts_generated::vector3_back>())
-			.static_property("MODEL_LEFT", puerts::make_constant_getter<&puerts_generated::vector3_model_left>())
-			.static_property("MODEL_RIGHT", puerts::make_constant_getter<&puerts_generated::vector3_model_right>())
-			.static_property("MODEL_TOP", puerts::make_constant_getter<&puerts_generated::vector3_model_top>())
-			.static_property("MODEL_BOTTOM", puerts::make_constant_getter<&puerts_generated::vector3_model_bottom>())
-			.static_property("MODEL_FRONT", puerts::make_constant_getter<&puerts_generated::vector3_model_front>())
-			.static_property("MODEL_REAR", puerts::make_constant_getter<&puerts_generated::vector3_model_rear>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Vector3>(),
-					puerts::make_constructor_overload<godot::Vector3, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Vector3, const godot::Vector3i &>(),
-					puerts::make_constructor_overload<godot::Vector3, godot::real_t, godot::real_t, godot::real_t>()))
-			.method("min_axis_index", puerts::make_method<&godot::Vector3::min_axis_index>())
-			.method("max_axis_index", puerts::make_method<&godot::Vector3::max_axis_index>())
-			.method("angle_to", puerts::make_method<&godot::Vector3::angle_to>())
-			.method("signed_angle_to", puerts::make_method<&godot::Vector3::signed_angle_to>())
-			.method("direction_to", puerts::make_method<&godot::Vector3::direction_to>())
-			.method("distance_to", puerts::make_method<&godot::Vector3::distance_to>())
-			.method("distance_squared_to", puerts::make_method<&godot::Vector3::distance_squared_to>())
-			.method("length", puerts::make_method<&godot::Vector3::length>())
-			.method("length_squared", puerts::make_method<&godot::Vector3::length_squared>())
-			.method("limit_length", puerts::combine_overloads(puerts::make_extension_overload<&puerts_generated::vector3_limit_length_default0>(), puerts::make_overload<&godot::Vector3::limit_length>()))
-			.method("normalized", puerts::make_method<&godot::Vector3::normalized>())
-			.method("is_normalized", puerts::make_method<&godot::Vector3::is_normalized>())
-			.method("is_equal_approx", puerts::make_method<&godot::Vector3::is_equal_approx>())
-			.method("is_zero_approx", puerts::make_method<&godot::Vector3::is_zero_approx>())
-			.method("is_finite", puerts::make_method<&godot::Vector3::is_finite>())
-			.method("inverse", puerts::make_method<&godot::Vector3::inverse>())
-			.method("clamp", puerts::make_method<&godot::Vector3::clamp>())
-			.method("clampf", puerts::make_method<&godot::Vector3::clampf>())
-			.method("snapped", puerts::make_method<&godot::Vector3::snapped>())
-			.method("snappedf", puerts::make_method<&godot::Vector3::snappedf>())
-			.method("rotated", puerts::make_method<&godot::Vector3::rotated>())
-			.method("lerp", puerts::make_method<&godot::Vector3::lerp>())
-			.method("slerp", puerts::make_method<&godot::Vector3::slerp>())
-			.method("cubic_interpolate", puerts::make_method<&godot::Vector3::cubic_interpolate>())
-			.method("cubic_interpolate_in_time", puerts::make_method<&godot::Vector3::cubic_interpolate_in_time>())
-			.method("bezier_interpolate", puerts::make_method<&godot::Vector3::bezier_interpolate>())
-			.method("bezier_derivative", puerts::make_method<&godot::Vector3::bezier_derivative>())
-			.method("move_toward", puerts::make_method<&godot::Vector3::move_toward>())
-			.method("dot", puerts::make_method<&godot::Vector3::dot>())
-			.method("cross", puerts::make_method<&godot::Vector3::cross>())
-			.method("outer", puerts::make_method<&godot::Vector3::outer>())
-			.method("abs", puerts::make_method<&godot::Vector3::abs>())
-			.method("floor", puerts::make_method<&godot::Vector3::floor>())
-			.method("ceil", puerts::make_method<&godot::Vector3::ceil>())
-			.method("round", puerts::make_method<&godot::Vector3::round>())
-			.method("posmod", puerts::make_method<&godot::Vector3::posmod>())
-			.method("posmodv", puerts::make_method<&godot::Vector3::posmodv>())
-			.method("project", puerts::make_method<&godot::Vector3::project>())
-			.method("slide", puerts::make_method<&godot::Vector3::slide>())
-			.method("bounce", puerts::make_method<&godot::Vector3::bounce>())
-			.method("reflect", puerts::make_method<&godot::Vector3::reflect>())
-			.method("sign", puerts::make_method<&godot::Vector3::sign>())
-			.method("octahedron_encode", puerts::make_method<&godot::Vector3::octahedron_encode>())
-			.method("min", puerts::make_method<&godot::Vector3::min>())
-			.method("minf", puerts::make_method<&godot::Vector3::minf>())
-			.method("max", puerts::make_method<&godot::Vector3::max>())
-			.method("maxf", puerts::make_method<&godot::Vector3::maxf>())
-			.static_method("octahedron_decode", puerts::make_function<&godot::Vector3::octahedron_decode>())
-			.property("x", puerts::make_property<&godot::Vector3::x>())
-			.property("y", puerts::make_property<&godot::Vector3::y>())
-			.property("z", puerts::make_property<&godot::Vector3::z>())
-			.static_property("Axis", puerts::make_enum_type<puerts_generated::vector3_axis_enum_tag>())
+			.static_method<&puerts_generated::vector3_op_equality_0, &puerts_generated::vector3_op_equality_9>("op_Equality")
+			.static_method<&puerts_generated::vector3_op_inequality_1, &puerts_generated::vector3_op_inequality_10>("op_Inequality")
+			.static_method<&puerts_generated::vector3_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::vector3_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::vector3_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::vector3_op_multiply_5, &puerts_generated::vector3_op_multiply_7, &puerts_generated::vector3_op_multiply_17, &puerts_generated::vector3_op_multiply_19, &puerts_generated::vector3_op_multiply_20, &puerts_generated::vector3_op_multiply_21>("op_Multiply")
+			.static_method<&puerts_generated::vector3_op_division_6, &puerts_generated::vector3_op_division_8, &puerts_generated::vector3_op_division_18>("op_Division")
+			.static_method<&puerts_generated::vector3_op_less_than_11>("op_LessThan")
+			.static_method<&puerts_generated::vector3_op_less_than_or_equal_12>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::vector3_op_greater_than_13>("op_GreaterThan")
+			.static_method<&puerts_generated::vector3_op_greater_than_or_equal_14>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::vector3_op_addition_15>("op_Addition")
+			.static_method<&puerts_generated::vector3_op_subtraction_16>("op_Subtraction")
+			.static_method<&puerts_generated::vector3_op_in_22, &puerts_generated::vector3_op_in_23, &puerts_generated::vector3_op_in_24>("op_In")
+			.constant<&puerts_generated::vector3_zero>("ZERO")
+			.constant<&puerts_generated::vector3_one>("ONE")
+			.constant<&puerts_generated::vector3_inf>("INF")
+			.constant<&puerts_generated::vector3_left>("LEFT")
+			.constant<&puerts_generated::vector3_right>("RIGHT")
+			.constant<&puerts_generated::vector3_up>("UP")
+			.constant<&puerts_generated::vector3_down>("DOWN")
+			.constant<&puerts_generated::vector3_forward>("FORWARD")
+			.constant<&puerts_generated::vector3_back>("BACK")
+			.constant<&puerts_generated::vector3_model_left>("MODEL_LEFT")
+			.constant<&puerts_generated::vector3_model_right>("MODEL_RIGHT")
+			.constant<&puerts_generated::vector3_model_top>("MODEL_TOP")
+			.constant<&puerts_generated::vector3_model_bottom>("MODEL_BOTTOM")
+			.constant<&puerts_generated::vector3_model_front>("MODEL_FRONT")
+			.constant<&puerts_generated::vector3_model_rear>("MODEL_REAR")
+			.constructor<>()
+			.constructor<const godot::Vector3 &>()
+			.constructor<const godot::Vector3i &>()
+			.constructor<godot::real_t, godot::real_t, godot::real_t>()
+			.method<&godot::Vector3::min_axis_index>("min_axis_index")
+			.method<&godot::Vector3::max_axis_index>("max_axis_index")
+			.method<&godot::Vector3::angle_to>("angle_to")
+			.method<&godot::Vector3::signed_angle_to>("signed_angle_to")
+			.method<&godot::Vector3::direction_to>("direction_to")
+			.method<&godot::Vector3::distance_to>("distance_to")
+			.method<&godot::Vector3::distance_squared_to>("distance_squared_to")
+			.method<&godot::Vector3::length>("length")
+			.method<&godot::Vector3::length_squared>("length_squared")
+			.method<&puerts_generated::vector3_limit_length_default0, &godot::Vector3::limit_length>("limit_length")
+			.method<&godot::Vector3::normalized>("normalized")
+			.method<&godot::Vector3::is_normalized>("is_normalized")
+			.method<&godot::Vector3::is_equal_approx>("is_equal_approx")
+			.method<&godot::Vector3::is_zero_approx>("is_zero_approx")
+			.method<&godot::Vector3::is_finite>("is_finite")
+			.method<&godot::Vector3::inverse>("inverse")
+			.method<&godot::Vector3::clamp>("clamp")
+			.method<&godot::Vector3::clampf>("clampf")
+			.method<&godot::Vector3::snapped>("snapped")
+			.method<&godot::Vector3::snappedf>("snappedf")
+			.method<&godot::Vector3::rotated>("rotated")
+			.method<&godot::Vector3::lerp>("lerp")
+			.method<&godot::Vector3::slerp>("slerp")
+			.method<&godot::Vector3::cubic_interpolate>("cubic_interpolate")
+			.method<&godot::Vector3::cubic_interpolate_in_time>("cubic_interpolate_in_time")
+			.method<&godot::Vector3::bezier_interpolate>("bezier_interpolate")
+			.method<&godot::Vector3::bezier_derivative>("bezier_derivative")
+			.method<&godot::Vector3::move_toward>("move_toward")
+			.method<&godot::Vector3::dot>("dot")
+			.method<&godot::Vector3::cross>("cross")
+			.method<&godot::Vector3::outer>("outer")
+			.method<&godot::Vector3::abs>("abs")
+			.method<&godot::Vector3::floor>("floor")
+			.method<&godot::Vector3::ceil>("ceil")
+			.method<&godot::Vector3::round>("round")
+			.method<&godot::Vector3::posmod>("posmod")
+			.method<&godot::Vector3::posmodv>("posmodv")
+			.method<&godot::Vector3::project>("project")
+			.method<&godot::Vector3::slide>("slide")
+			.method<&godot::Vector3::bounce>("bounce")
+			.method<&godot::Vector3::reflect>("reflect")
+			.method<&godot::Vector3::sign>("sign")
+			.method<&godot::Vector3::octahedron_encode>("octahedron_encode")
+			.method<&godot::Vector3::min>("min")
+			.method<&godot::Vector3::minf>("minf")
+			.method<&godot::Vector3::max>("max")
+			.method<&godot::Vector3::maxf>("maxf")
+			.static_method<&godot::Vector3::octahedron_decode>("octahedron_decode")
+			.property<&godot::Vector3::x>("x")
+			.property<&godot::Vector3::y>("y")
+			.property<&godot::Vector3::z>("z")
+			.enum_type<puerts_generated::vector3_axis_enum_tag>("Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4683,56 +4050,55 @@ inline godot::Vector3i vector3i_back() {
 
 inline void register_type_vector3i() {
 	puerts::define_type<godot::Vector3i>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3i_op_equality_0>(), puerts::make_overload<&puerts_generated::vector3i_op_equality_10>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3i_op_inequality_1>(), puerts::make_overload<&puerts_generated::vector3i_op_inequality_11>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::vector3i_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::vector3i_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::vector3i_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3i_op_multiply_5>(), puerts::make_overload<&puerts_generated::vector3i_op_multiply_8>(), puerts::make_overload<&puerts_generated::vector3i_op_multiply_18>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3i_op_division_6>(), puerts::make_overload<&puerts_generated::vector3i_op_division_9>(), puerts::make_overload<&puerts_generated::vector3i_op_division_19>()))
-			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3i_op_modulus_7>(), puerts::make_overload<&puerts_generated::vector3i_op_modulus_20>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::vector3i_op_less_than_12>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::vector3i_op_less_than_or_equal_13>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::vector3i_op_greater_than_14>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::vector3i_op_greater_than_or_equal_15>())
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::vector3i_op_addition_16>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::vector3i_op_subtraction_17>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector3i_op_in_21>(), puerts::make_overload<&puerts_generated::vector3i_op_in_22>()))
-			.static_property("ZERO", puerts::make_constant_getter<&puerts_generated::vector3i_zero>())
-			.static_property("ONE", puerts::make_constant_getter<&puerts_generated::vector3i_one>())
-			.static_property("MIN", puerts::make_constant_getter<&puerts_generated::vector3i_min>())
-			.static_property("MAX", puerts::make_constant_getter<&puerts_generated::vector3i_max>())
-			.static_property("LEFT", puerts::make_constant_getter<&puerts_generated::vector3i_left>())
-			.static_property("RIGHT", puerts::make_constant_getter<&puerts_generated::vector3i_right>())
-			.static_property("UP", puerts::make_constant_getter<&puerts_generated::vector3i_up>())
-			.static_property("DOWN", puerts::make_constant_getter<&puerts_generated::vector3i_down>())
-			.static_property("FORWARD", puerts::make_constant_getter<&puerts_generated::vector3i_forward>())
-			.static_property("BACK", puerts::make_constant_getter<&puerts_generated::vector3i_back>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Vector3i>(),
-					puerts::make_constructor_overload<godot::Vector3i, const godot::Vector3i &>(),
-					puerts::make_constructor_overload<godot::Vector3i, const godot::Vector3 &>(),
-					puerts::make_constructor_overload<godot::Vector3i, int64_t, int64_t, int64_t>()))
-			.method("min_axis_index", puerts::make_method<&godot::Vector3i::min_axis_index>())
-			.method("max_axis_index", puerts::make_method<&godot::Vector3i::max_axis_index>())
-			.method("distance_to", puerts::make_method<&godot::Vector3i::distance_to>())
-			.method("distance_squared_to", puerts::make_method<&godot::Vector3i::distance_squared_to>())
-			.method("length", puerts::make_method<&godot::Vector3i::length>())
-			.method("length_squared", puerts::make_method<&godot::Vector3i::length_squared>())
-			.method("sign", puerts::make_method<&godot::Vector3i::sign>())
-			.method("abs", puerts::make_method<&godot::Vector3i::abs>())
-			.method("clamp", puerts::make_method<&godot::Vector3i::clamp>())
-			.method("clampi", puerts::make_method<&godot::Vector3i::clampi>())
-			.method("snapped", puerts::make_method<&godot::Vector3i::snapped>())
-			.method("snappedi", puerts::make_method<&godot::Vector3i::snappedi>())
-			.method("min", puerts::make_method<&godot::Vector3i::min>())
-			.method("mini", puerts::make_method<&godot::Vector3i::mini>())
-			.method("max", puerts::make_method<&godot::Vector3i::max>())
-			.method("maxi", puerts::make_method<&godot::Vector3i::maxi>())
-			.property("x", puerts::make_property<&godot::Vector3i::x>())
-			.property("y", puerts::make_property<&godot::Vector3i::y>())
-			.property("z", puerts::make_property<&godot::Vector3i::z>())
-			.static_property("Axis", puerts::make_enum_type<puerts_generated::vector3i_axis_enum_tag>())
+			.static_method<&puerts_generated::vector3i_op_equality_0, &puerts_generated::vector3i_op_equality_10>("op_Equality")
+			.static_method<&puerts_generated::vector3i_op_inequality_1, &puerts_generated::vector3i_op_inequality_11>("op_Inequality")
+			.static_method<&puerts_generated::vector3i_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::vector3i_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::vector3i_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::vector3i_op_multiply_5, &puerts_generated::vector3i_op_multiply_8, &puerts_generated::vector3i_op_multiply_18>("op_Multiply")
+			.static_method<&puerts_generated::vector3i_op_division_6, &puerts_generated::vector3i_op_division_9, &puerts_generated::vector3i_op_division_19>("op_Division")
+			.static_method<&puerts_generated::vector3i_op_modulus_7, &puerts_generated::vector3i_op_modulus_20>("op_Modulus")
+			.static_method<&puerts_generated::vector3i_op_less_than_12>("op_LessThan")
+			.static_method<&puerts_generated::vector3i_op_less_than_or_equal_13>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::vector3i_op_greater_than_14>("op_GreaterThan")
+			.static_method<&puerts_generated::vector3i_op_greater_than_or_equal_15>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::vector3i_op_addition_16>("op_Addition")
+			.static_method<&puerts_generated::vector3i_op_subtraction_17>("op_Subtraction")
+			.static_method<&puerts_generated::vector3i_op_in_21, &puerts_generated::vector3i_op_in_22>("op_In")
+			.constant<&puerts_generated::vector3i_zero>("ZERO")
+			.constant<&puerts_generated::vector3i_one>("ONE")
+			.constant<&puerts_generated::vector3i_min>("MIN")
+			.constant<&puerts_generated::vector3i_max>("MAX")
+			.constant<&puerts_generated::vector3i_left>("LEFT")
+			.constant<&puerts_generated::vector3i_right>("RIGHT")
+			.constant<&puerts_generated::vector3i_up>("UP")
+			.constant<&puerts_generated::vector3i_down>("DOWN")
+			.constant<&puerts_generated::vector3i_forward>("FORWARD")
+			.constant<&puerts_generated::vector3i_back>("BACK")
+			.constructor<>()
+			.constructor<const godot::Vector3i &>()
+			.constructor<const godot::Vector3 &>()
+			.constructor<int64_t, int64_t, int64_t>()
+			.method<&godot::Vector3i::min_axis_index>("min_axis_index")
+			.method<&godot::Vector3i::max_axis_index>("max_axis_index")
+			.method<&godot::Vector3i::distance_to>("distance_to")
+			.method<&godot::Vector3i::distance_squared_to>("distance_squared_to")
+			.method<&godot::Vector3i::length>("length")
+			.method<&godot::Vector3i::length_squared>("length_squared")
+			.method<&godot::Vector3i::sign>("sign")
+			.method<&godot::Vector3i::abs>("abs")
+			.method<&godot::Vector3i::clamp>("clamp")
+			.method<&godot::Vector3i::clampi>("clampi")
+			.method<&godot::Vector3i::snapped>("snapped")
+			.method<&godot::Vector3i::snappedi>("snappedi")
+			.method<&godot::Vector3i::min>("min")
+			.method<&godot::Vector3i::mini>("mini")
+			.method<&godot::Vector3i::max>("max")
+			.method<&godot::Vector3i::maxi>("maxi")
+			.property<&godot::Vector3i::x>("x")
+			.property<&godot::Vector3i::y>("y")
+			.property<&godot::Vector3i::z>("z")
+			.enum_type<puerts_generated::vector3i_axis_enum_tag>("Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4818,65 +4184,64 @@ inline godot::Vector4 vector4_inf() {
 
 inline void register_type_vector4() {
 	puerts::define_type<godot::Vector4>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4_op_equality_0>(), puerts::make_overload<&puerts_generated::vector4_op_equality_9>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4_op_inequality_1>(), puerts::make_overload<&puerts_generated::vector4_op_inequality_10>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::vector4_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::vector4_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::vector4_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4_op_multiply_5>(), puerts::make_overload<&puerts_generated::vector4_op_multiply_7>(), puerts::make_overload<&puerts_generated::vector4_op_multiply_17>(), puerts::make_overload<&puerts_generated::vector4_op_multiply_19>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4_op_division_6>(), puerts::make_overload<&puerts_generated::vector4_op_division_8>(), puerts::make_overload<&puerts_generated::vector4_op_division_18>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::vector4_op_less_than_11>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::vector4_op_less_than_or_equal_12>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::vector4_op_greater_than_13>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::vector4_op_greater_than_or_equal_14>())
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::vector4_op_addition_15>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::vector4_op_subtraction_16>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4_op_in_20>(), puerts::make_overload<&puerts_generated::vector4_op_in_21>(), puerts::make_overload<&puerts_generated::vector4_op_in_22>()))
-			.static_property("ZERO", puerts::make_constant_getter<&puerts_generated::vector4_zero>())
-			.static_property("ONE", puerts::make_constant_getter<&puerts_generated::vector4_one>())
-			.static_property("INF", puerts::make_constant_getter<&puerts_generated::vector4_inf>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Vector4>(),
-					puerts::make_constructor_overload<godot::Vector4, const godot::Vector4 &>(),
-					puerts::make_constructor_overload<godot::Vector4, const godot::Vector4i &>(),
-					puerts::make_constructor_overload<godot::Vector4, godot::real_t, godot::real_t, godot::real_t, godot::real_t>()))
-			.method("min_axis_index", puerts::make_method<&godot::Vector4::min_axis_index>())
-			.method("max_axis_index", puerts::make_method<&godot::Vector4::max_axis_index>())
-			.method("length", puerts::make_method<&godot::Vector4::length>())
-			.method("length_squared", puerts::make_method<&godot::Vector4::length_squared>())
-			.method("abs", puerts::make_method<&godot::Vector4::abs>())
-			.method("sign", puerts::make_method<&godot::Vector4::sign>())
-			.method("floor", puerts::make_method<&godot::Vector4::floor>())
-			.method("ceil", puerts::make_method<&godot::Vector4::ceil>())
-			.method("round", puerts::make_method<&godot::Vector4::round>())
-			.method("lerp", puerts::make_method<&godot::Vector4::lerp>())
-			.method("cubic_interpolate", puerts::make_method<&godot::Vector4::cubic_interpolate>())
-			.method("cubic_interpolate_in_time", puerts::make_method<&godot::Vector4::cubic_interpolate_in_time>())
-			.method("posmod", puerts::make_method<&godot::Vector4::posmod>())
-			.method("posmodv", puerts::make_method<&godot::Vector4::posmodv>())
-			.method("snapped", puerts::make_method<&godot::Vector4::snapped>())
-			.method("snappedf", puerts::make_method<&godot::Vector4::snappedf>())
-			.method("clamp", puerts::make_method<&godot::Vector4::clamp>())
-			.method("clampf", puerts::make_method<&godot::Vector4::clampf>())
-			.method("normalized", puerts::make_method<&godot::Vector4::normalized>())
-			.method("is_normalized", puerts::make_method<&godot::Vector4::is_normalized>())
-			.method("direction_to", puerts::make_method<&godot::Vector4::direction_to>())
-			.method("distance_to", puerts::make_method<&godot::Vector4::distance_to>())
-			.method("distance_squared_to", puerts::make_method<&godot::Vector4::distance_squared_to>())
-			.method("dot", puerts::make_method<&godot::Vector4::dot>())
-			.method("inverse", puerts::make_method<&godot::Vector4::inverse>())
-			.method("is_equal_approx", puerts::make_method<&godot::Vector4::is_equal_approx>())
-			.method("is_zero_approx", puerts::make_method<&godot::Vector4::is_zero_approx>())
-			.method("is_finite", puerts::make_method<&godot::Vector4::is_finite>())
-			.method("min", puerts::make_method<&godot::Vector4::min>())
-			.method("minf", puerts::make_method<&godot::Vector4::minf>())
-			.method("max", puerts::make_method<&godot::Vector4::max>())
-			.method("maxf", puerts::make_method<&godot::Vector4::maxf>())
-			.property("x", puerts::make_property<&godot::Vector4::x>())
-			.property("y", puerts::make_property<&godot::Vector4::y>())
-			.property("z", puerts::make_property<&godot::Vector4::z>())
-			.property("w", puerts::make_property<&godot::Vector4::w>())
-			.static_property("Axis", puerts::make_enum_type<puerts_generated::vector4_axis_enum_tag>())
+			.static_method<&puerts_generated::vector4_op_equality_0, &puerts_generated::vector4_op_equality_9>("op_Equality")
+			.static_method<&puerts_generated::vector4_op_inequality_1, &puerts_generated::vector4_op_inequality_10>("op_Inequality")
+			.static_method<&puerts_generated::vector4_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::vector4_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::vector4_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::vector4_op_multiply_5, &puerts_generated::vector4_op_multiply_7, &puerts_generated::vector4_op_multiply_17, &puerts_generated::vector4_op_multiply_19>("op_Multiply")
+			.static_method<&puerts_generated::vector4_op_division_6, &puerts_generated::vector4_op_division_8, &puerts_generated::vector4_op_division_18>("op_Division")
+			.static_method<&puerts_generated::vector4_op_less_than_11>("op_LessThan")
+			.static_method<&puerts_generated::vector4_op_less_than_or_equal_12>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::vector4_op_greater_than_13>("op_GreaterThan")
+			.static_method<&puerts_generated::vector4_op_greater_than_or_equal_14>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::vector4_op_addition_15>("op_Addition")
+			.static_method<&puerts_generated::vector4_op_subtraction_16>("op_Subtraction")
+			.static_method<&puerts_generated::vector4_op_in_20, &puerts_generated::vector4_op_in_21, &puerts_generated::vector4_op_in_22>("op_In")
+			.constant<&puerts_generated::vector4_zero>("ZERO")
+			.constant<&puerts_generated::vector4_one>("ONE")
+			.constant<&puerts_generated::vector4_inf>("INF")
+			.constructor<>()
+			.constructor<const godot::Vector4 &>()
+			.constructor<const godot::Vector4i &>()
+			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
+			.method<&godot::Vector4::min_axis_index>("min_axis_index")
+			.method<&godot::Vector4::max_axis_index>("max_axis_index")
+			.method<&godot::Vector4::length>("length")
+			.method<&godot::Vector4::length_squared>("length_squared")
+			.method<&godot::Vector4::abs>("abs")
+			.method<&godot::Vector4::sign>("sign")
+			.method<&godot::Vector4::floor>("floor")
+			.method<&godot::Vector4::ceil>("ceil")
+			.method<&godot::Vector4::round>("round")
+			.method<&godot::Vector4::lerp>("lerp")
+			.method<&godot::Vector4::cubic_interpolate>("cubic_interpolate")
+			.method<&godot::Vector4::cubic_interpolate_in_time>("cubic_interpolate_in_time")
+			.method<&godot::Vector4::posmod>("posmod")
+			.method<&godot::Vector4::posmodv>("posmodv")
+			.method<&godot::Vector4::snapped>("snapped")
+			.method<&godot::Vector4::snappedf>("snappedf")
+			.method<&godot::Vector4::clamp>("clamp")
+			.method<&godot::Vector4::clampf>("clampf")
+			.method<&godot::Vector4::normalized>("normalized")
+			.method<&godot::Vector4::is_normalized>("is_normalized")
+			.method<&godot::Vector4::direction_to>("direction_to")
+			.method<&godot::Vector4::distance_to>("distance_to")
+			.method<&godot::Vector4::distance_squared_to>("distance_squared_to")
+			.method<&godot::Vector4::dot>("dot")
+			.method<&godot::Vector4::inverse>("inverse")
+			.method<&godot::Vector4::is_equal_approx>("is_equal_approx")
+			.method<&godot::Vector4::is_zero_approx>("is_zero_approx")
+			.method<&godot::Vector4::is_finite>("is_finite")
+			.method<&godot::Vector4::min>("min")
+			.method<&godot::Vector4::minf>("minf")
+			.method<&godot::Vector4::max>("max")
+			.method<&godot::Vector4::maxf>("maxf")
+			.property<&godot::Vector4::x>("x")
+			.property<&godot::Vector4::y>("y")
+			.property<&godot::Vector4::z>("z")
+			.property<&godot::Vector4::w>("w")
+			.enum_type<puerts_generated::vector4_axis_enum_tag>("Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4965,51 +4330,50 @@ inline godot::Vector4i vector4i_max() {
 
 inline void register_type_vector4i() {
 	puerts::define_type<godot::Vector4i>()
-			.static_method("op_Equality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4i_op_equality_0>(), puerts::make_overload<&puerts_generated::vector4i_op_equality_10>()))
-			.static_method("op_Inequality", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4i_op_inequality_1>(), puerts::make_overload<&puerts_generated::vector4i_op_inequality_11>()))
-			.static_method("op_UnaryNegation", puerts::make_function<&puerts_generated::vector4i_op_unary_negation_2>())
-			.static_method("op_UnaryPlus", puerts::make_function<&puerts_generated::vector4i_op_unary_plus_3>())
-			.static_method("op_LogicalNot", puerts::make_function<&puerts_generated::vector4i_op_logical_not_4>())
-			.static_method("op_Multiply", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4i_op_multiply_5>(), puerts::make_overload<&puerts_generated::vector4i_op_multiply_8>(), puerts::make_overload<&puerts_generated::vector4i_op_multiply_18>()))
-			.static_method("op_Division", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4i_op_division_6>(), puerts::make_overload<&puerts_generated::vector4i_op_division_9>(), puerts::make_overload<&puerts_generated::vector4i_op_division_19>()))
-			.static_method("op_Modulus", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4i_op_modulus_7>(), puerts::make_overload<&puerts_generated::vector4i_op_modulus_20>()))
-			.static_method("op_LessThan", puerts::make_function<&puerts_generated::vector4i_op_less_than_12>())
-			.static_method("op_LessThanOrEqual", puerts::make_function<&puerts_generated::vector4i_op_less_than_or_equal_13>())
-			.static_method("op_GreaterThan", puerts::make_function<&puerts_generated::vector4i_op_greater_than_14>())
-			.static_method("op_GreaterThanOrEqual", puerts::make_function<&puerts_generated::vector4i_op_greater_than_or_equal_15>())
-			.static_method("op_Addition", puerts::make_function<&puerts_generated::vector4i_op_addition_16>())
-			.static_method("op_Subtraction", puerts::make_function<&puerts_generated::vector4i_op_subtraction_17>())
-			.static_method("op_In", puerts::combine_overloads(puerts::make_overload<&puerts_generated::vector4i_op_in_21>(), puerts::make_overload<&puerts_generated::vector4i_op_in_22>()))
-			.static_property("ZERO", puerts::make_constant_getter<&puerts_generated::vector4i_zero>())
-			.static_property("ONE", puerts::make_constant_getter<&puerts_generated::vector4i_one>())
-			.static_property("MIN", puerts::make_constant_getter<&puerts_generated::vector4i_min>())
-			.static_property("MAX", puerts::make_constant_getter<&puerts_generated::vector4i_max>())
-			.constructor(puerts::combine_constructors(
-					puerts::make_constructor_overload<godot::Vector4i>(),
-					puerts::make_constructor_overload<godot::Vector4i, const godot::Vector4i &>(),
-					puerts::make_constructor_overload<godot::Vector4i, const godot::Vector4 &>(),
-					puerts::make_constructor_overload<godot::Vector4i, int64_t, int64_t, int64_t, int64_t>()))
-			.method("min_axis_index", puerts::make_method<&godot::Vector4i::min_axis_index>())
-			.method("max_axis_index", puerts::make_method<&godot::Vector4i::max_axis_index>())
-			.method("length", puerts::make_method<&godot::Vector4i::length>())
-			.method("length_squared", puerts::make_method<&godot::Vector4i::length_squared>())
-			.method("sign", puerts::make_method<&godot::Vector4i::sign>())
-			.method("abs", puerts::make_method<&godot::Vector4i::abs>())
-			.method("clamp", puerts::make_method<&godot::Vector4i::clamp>())
-			.method("clampi", puerts::make_method<&godot::Vector4i::clampi>())
-			.method("snapped", puerts::make_method<&godot::Vector4i::snapped>())
-			.method("snappedi", puerts::make_method<&godot::Vector4i::snappedi>())
-			.method("min", puerts::make_method<&godot::Vector4i::min>())
-			.method("mini", puerts::make_method<&godot::Vector4i::mini>())
-			.method("max", puerts::make_method<&godot::Vector4i::max>())
-			.method("maxi", puerts::make_method<&godot::Vector4i::maxi>())
-			.method("distance_to", puerts::make_method<&godot::Vector4i::distance_to>())
-			.method("distance_squared_to", puerts::make_method<&godot::Vector4i::distance_squared_to>())
-			.property("x", puerts::make_property<&godot::Vector4i::x>())
-			.property("y", puerts::make_property<&godot::Vector4i::y>())
-			.property("z", puerts::make_property<&godot::Vector4i::z>())
-			.property("w", puerts::make_property<&godot::Vector4i::w>())
-			.static_property("Axis", puerts::make_enum_type<puerts_generated::vector4i_axis_enum_tag>())
+			.static_method<&puerts_generated::vector4i_op_equality_0, &puerts_generated::vector4i_op_equality_10>("op_Equality")
+			.static_method<&puerts_generated::vector4i_op_inequality_1, &puerts_generated::vector4i_op_inequality_11>("op_Inequality")
+			.static_method<&puerts_generated::vector4i_op_unary_negation_2>("op_UnaryNegation")
+			.static_method<&puerts_generated::vector4i_op_unary_plus_3>("op_UnaryPlus")
+			.static_method<&puerts_generated::vector4i_op_logical_not_4>("op_LogicalNot")
+			.static_method<&puerts_generated::vector4i_op_multiply_5, &puerts_generated::vector4i_op_multiply_8, &puerts_generated::vector4i_op_multiply_18>("op_Multiply")
+			.static_method<&puerts_generated::vector4i_op_division_6, &puerts_generated::vector4i_op_division_9, &puerts_generated::vector4i_op_division_19>("op_Division")
+			.static_method<&puerts_generated::vector4i_op_modulus_7, &puerts_generated::vector4i_op_modulus_20>("op_Modulus")
+			.static_method<&puerts_generated::vector4i_op_less_than_12>("op_LessThan")
+			.static_method<&puerts_generated::vector4i_op_less_than_or_equal_13>("op_LessThanOrEqual")
+			.static_method<&puerts_generated::vector4i_op_greater_than_14>("op_GreaterThan")
+			.static_method<&puerts_generated::vector4i_op_greater_than_or_equal_15>("op_GreaterThanOrEqual")
+			.static_method<&puerts_generated::vector4i_op_addition_16>("op_Addition")
+			.static_method<&puerts_generated::vector4i_op_subtraction_17>("op_Subtraction")
+			.static_method<&puerts_generated::vector4i_op_in_21, &puerts_generated::vector4i_op_in_22>("op_In")
+			.constant<&puerts_generated::vector4i_zero>("ZERO")
+			.constant<&puerts_generated::vector4i_one>("ONE")
+			.constant<&puerts_generated::vector4i_min>("MIN")
+			.constant<&puerts_generated::vector4i_max>("MAX")
+			.constructor<>()
+			.constructor<const godot::Vector4i &>()
+			.constructor<const godot::Vector4 &>()
+			.constructor<int64_t, int64_t, int64_t, int64_t>()
+			.method<&godot::Vector4i::min_axis_index>("min_axis_index")
+			.method<&godot::Vector4i::max_axis_index>("max_axis_index")
+			.method<&godot::Vector4i::length>("length")
+			.method<&godot::Vector4i::length_squared>("length_squared")
+			.method<&godot::Vector4i::sign>("sign")
+			.method<&godot::Vector4i::abs>("abs")
+			.method<&godot::Vector4i::clamp>("clamp")
+			.method<&godot::Vector4i::clampi>("clampi")
+			.method<&godot::Vector4i::snapped>("snapped")
+			.method<&godot::Vector4i::snappedi>("snappedi")
+			.method<&godot::Vector4i::min>("min")
+			.method<&godot::Vector4i::mini>("mini")
+			.method<&godot::Vector4i::max>("max")
+			.method<&godot::Vector4i::maxi>("maxi")
+			.method<&godot::Vector4i::distance_to>("distance_to")
+			.method<&godot::Vector4i::distance_squared_to>("distance_squared_to")
+			.property<&godot::Vector4i::x>("x")
+			.property<&godot::Vector4i::y>("y")
+			.property<&godot::Vector4i::z>("z")
+			.property<&godot::Vector4i::w>("w")
+			.enum_type<puerts_generated::vector4i_axis_enum_tag>("Axis")
 			.register_type();
 }
 

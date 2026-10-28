@@ -4,11 +4,11 @@
 #ifndef PUERTS_GODOT_PUERTS_BINDING_CONVERSION_H
 #define PUERTS_GODOT_PUERTS_BINDING_CONVERSION_H
 
-#include "puerts_binding_types.h"
 #include "puerts_bridge_registry.h"
 #include "puerts_environment.h"
 #include "puerts_runtime.h"
 #include "puerts_type_registry.h"
+#include "puerts_type_traits.h"
 
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/core/binder_common.hpp>

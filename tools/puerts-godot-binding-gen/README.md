@@ -72,7 +72,4 @@ If `--classes-json` is an object config, you can set:
 - `source`: `"builtin"` or `"classes"`
 - `register_function`: custom generated register entry function name
 
-Constructor generation rule:
-- when `constructors` is empty and `is_instantiable != false`, emit `.constructor<>()`
-
-You can copy the generated class registration functions and this entry function into `src/PuertsCore/puerts_builtin_binding.cpp` for replacement.
+Generated registrations use the fluent API from `puerts_static_binding.h`; they do not call internal callback or conversion APIs. Each constructor overload emits a separate `.constructor<Args...>()` call. When `constructors` is empty and `is_instantiable != false`, the generator emits `.constructor<>()`.

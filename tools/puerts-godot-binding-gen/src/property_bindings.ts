@@ -16,24 +16,24 @@ function makePropertyHelperBaseName(className: string, propertyName: string): st
 	return `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(propertyName)}`;
 }
 
-function buildPropertyGetterExpr(rule: PropertyRule): string {
+function buildPropertyGetterExpression(rule: PropertyRule): string {
 	if (rule.kind === "method") {
-		return `instance.get()->${rule.getter!}()`;
+		return `p_self.${rule.getter!}()`;
 	}
 	if (rule.kind === "indexed_method") {
-		return `instance.get()->${rule.getter!}(${rule.index!})`;
+		return `p_self.${rule.getter!}(${rule.index!})`;
 	}
-	return `instance.get()->${rule.member_expr!}`;
+	return `p_self.${rule.member_expr!}`;
 }
 
 function buildPropertySetterStatement(rule: PropertyRule): string {
 	if (rule.kind === "method") {
-		return `instance.get()->${rule.setter!}(eastl::move(value));`;
+		return `p_self.${rule.setter!}(eastl::move(p_value));`;
 	}
 	if (rule.kind === "indexed_method") {
-		return `instance.get()->${rule.setter!}(${rule.index!}, eastl::move(value));`;
+		return `p_self.${rule.setter!}(${rule.index!}, eastl::move(p_value));`;
 	}
-	return `instance.get()->${rule.member_expr!} = eastl::move(value);`;
+	return `p_self.${rule.member_expr!} = eastl::move(p_value);`;
 }
 
 function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; setterName: string; code: string } {
@@ -41,42 +41,16 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 	const base = makePropertyHelperBaseName(rule.class, rule.name);
 	const getterName = `${base}_getter`;
 	const setterName = `${base}_setter`;
-	const getterExpr = buildPropertyGetterExpr(rule);
-	const setterStmt = buildPropertySetterStatement(rule);
+	const getterExpression = buildPropertyGetterExpression(rule);
+	const setterStatement = buildPropertySetterStatement(rule);
 
 	const code = [
-		`inline void ${getterName}(pesapi_ffi *apis, pesapi_callback_info info) {`,
-		"\tpuerts::internal::CallbackContext context(apis, info);",
-		"\tif (!context.require()) {",
-		"\t\treturn;",
-		"\t}",
-		"",
-		`\tpuerts::internal::BoundReceiver<godot::${rule.class}> instance = puerts::internal::resolve_receiver<godot::${rule.class}>(apis, info, context);`,
-		"\tif (!instance.is_valid()) {",
-		"\t\treturn;",
-		"\t}",
-		"",
-		`\tpuerts::internal::write_return_value<${typeName}>(apis, context, ${getterExpr});`,
+		`inline ${typeName} ${getterName}(const godot::${rule.class} &p_self) {`,
+		`\treturn ${getterExpression};`,
 		"}",
 		"",
-		`inline void ${setterName}(pesapi_ffi *apis, pesapi_callback_info info) {`,
-		"\tpuerts::internal::CallbackContext context(apis, info);",
-		`\tif (!context.require() || !context.require_argument_count(1)) {`,
-		"\t\treturn;",
-		"\t}",
-		"",
-		`\tpuerts::internal::BoundReceiver<godot::${rule.class}> instance = puerts::internal::resolve_receiver<godot::${rule.class}>(apis, info, context);`,
-		"\tif (!instance.is_valid()) {",
-		"\t\treturn;",
-		"\t}",
-		"",
-		`\tif (!puerts::internal::convert_script_argument<${typeName}>(apis, context, 0, [&](auto &&value) {`,
-		`\t\t\t${setterStmt}`,
-		"\t\t})) {",
-		"\t\treturn;",
-		"\t}",
-		"",
-		"\tinstance.write_back();",
+		`inline void ${setterName}(godot::${rule.class} &p_self, ${typeName} p_value) {`,
+		`\t${setterStatement}`,
 		"}",
 	].join("\n");
 
@@ -151,7 +125,7 @@ export function collectPropertyBindings(
 		const helper = generatePropertyHelperCode(rule);
 		bindings.push({
 			name: rule.name,
-			bindingLine: `\t\t\t.property("${rule.name}", &${helperNamespace}::${helper.getterName}, &${helperNamespace}::${helper.setterName})`,
+			bindingLine: `\t\t\t.property<&${helperNamespace}::${helper.getterName}, &${helperNamespace}::${helper.setterName}>("${rule.name}")`,
 			helperCode: helper.code,
 		});
 		usedCustomNames.add(rule.name);
@@ -166,7 +140,7 @@ export function collectPropertyBindings(
 		}
 		bindings.push({
 			name: member.name,
-			bindingLine: `\t\t\t.property("${member.name}", puerts::make_property<&godot::${cls.name}::${member.name}>())`,
+			bindingLine: `\t\t\t.property<&godot::${cls.name}::${member.name}>("${member.name}")`,
 		});
 	}
 

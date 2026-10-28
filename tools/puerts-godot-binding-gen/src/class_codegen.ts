@@ -88,7 +88,7 @@ function pushConstantBindings(
 
 		const literal = constantLiteral(constant);
 		if (literal !== null) {
-			bindingLines.push(`\t\t\t.static_property("${constant.name}", puerts::make_constant<${literal}>())`);
+			bindingLines.push(`\t\t\t.constant<${literal}>("${constant.name}")`);
 			continue;
 		}
 
@@ -100,7 +100,7 @@ function pushConstantBindings(
 			`\treturn ${constantExpression(constant, classSource)};\n` +
 			`}`,
 		);
-		bindingLines.push(`\t\t\t.static_property("${constant.name}", puerts::make_constant_getter<&puerts_generated::${getterName}>())`);
+		bindingLines.push(`\t\t\t.constant<&puerts_generated::${getterName}>("${constant.name}")`);
 	}
 
 	return helpers;
@@ -157,10 +157,10 @@ function buildDefaultMethodHelpers(
 	classSource: ClassSource,
 	method: ApiMethod,
 	firstDefault: number,
-): { helpers: string[]; overloads: string[] } {
+): { helpers: string[]; callables: string[] } {
 	const args = method.arguments ?? [];
 	const helpers: string[] = [];
-	const overloads: string[] = [];
+	const callables: string[] = [];
 	const explicitDefault = explicitBuiltinDefaultArgument(className, classSource, method);
 
 	for (let arity = firstDefault; arity < args.length; arity++) {
@@ -176,13 +176,12 @@ function buildDefaultMethodHelpers(
 		let invocation: string;
 		if (method.is_static) {
 			invocation = `godot::${className}::${method.name}(${invocationArgs.join(", ")})`;
-			overloads.push(`puerts::make_overload<&puerts_generated::${helperName}>()`);
 		} else {
 			const receiverType = `${method.is_const ? "const " : ""}godot::${className} &`;
 			declarations.unshift(parameterDeclaration(receiverType, "p_self"));
 			invocation = `p_self.${method.name}(${invocationArgs.join(", ")})`;
-			overloads.push(`puerts::make_extension_overload<&puerts_generated::${helperName}>()`);
 		}
+		callables.push(`&puerts_generated::${helperName}`);
 
 		helpers.push(
 			`inline decltype(auto) ${helperName}(${declarations.join(", ")}) {\n` +
@@ -191,7 +190,7 @@ function buildDefaultMethodHelpers(
 		);
 	}
 
-	return { helpers, overloads };
+	return { helpers, callables };
 }
 
 function pushOperatorBindings(
@@ -226,12 +225,8 @@ function pushOperatorBindings(
 	});
 
 	for (const [scriptName, overloads] of byScriptName) {
-		if (overloads.length === 1) {
-			bindingLines.push(`\t\t\t.static_method("${scriptName}", puerts::make_function<&puerts_generated::${overloads[0]}>())`);
-			continue;
-		}
-		const exprs = overloads.map((name) => `puerts::make_overload<&puerts_generated::${name}>()`);
-		bindingLines.push(`\t\t\t.static_method("${scriptName}", puerts::combine_overloads(${exprs.join(", ")}))`);
+		const callables = overloads.map((name) => `&puerts_generated::${name}`).join(", ");
+		bindingLines.push(`\t\t\t.static_method<${callables}>("${scriptName}")`);
 	}
 
 	return helpers;
@@ -262,13 +257,13 @@ export function generateEnumBindings(cls: ApiClassLike): GeneratedEnumBinding[] 
 		const tagStruct = enumTagStructName(cls.name, enumName);
 		const tagType = `puerts_generated::${tagStruct}`;
 		const functionName = enumRegisterFunctionName(cls.name, enumName);
-		const staticPropertyLines = enumValues
-			.map((v) => `\t\t\t.static_property("${v.name}", puerts::make_constant<${Math.trunc(v.value)}>())`)
+		const constantLines = enumValues
+			.map((v) => `\t\t\t.constant<${Math.trunc(v.value)}>("${v.name}")`)
 			.join("\n");
 		const code =
 			`inline void ${functionName}() {\n` +
 			`\tpuerts::define_type<${tagType}>()\n` +
-			`${staticPropertyLines}\n` +
+			`${constantLines}\n` +
 			`\t\t\t.register_type();\n` +
 			`}\n`;
 
@@ -307,71 +302,44 @@ function pushMethodBindings(
 
 	for (const name of orderedNames) {
 		const methodGroup = byName.get(name) ?? [];
-		if (methodGroup.length === 0)
+		if (methodGroup.length === 0) {
 			continue;
+		}
 
 		if (methodGroup.length === 1) {
 			const method = methodGroup[0];
-			const methodRefCount = headerAnalysis.methodNameCounts.get(name) ?? 0;
-			const needsDisambiguation = methodRefCount > 1;
+			const needsDisambiguation = (headerAnalysis.methodNameCounts.get(name) ?? 0) > 1;
+			const callable = needsDisambiguation
+				? methodPointerExprFromApi(className, method)
+				: `&godot::${className}::${name}`;
 			const firstDefault = firstDefaultArgumentIndex(className, method);
-
 			if (firstDefault !== null) {
 				if (needsDisambiguation) {
 					throw new Error(`Default arguments on overloaded methods are unsupported for ${className}.${name}.`);
 				}
 				const generated = buildDefaultMethodHelpers(className, classSource, method, firstDefault);
 				helpers.push(...generated.helpers);
-				const fullOverload = `puerts::make_overload<&godot::${className}::${name}>()`;
-				const overloads = [...generated.overloads, fullOverload];
+				const callables = [...generated.callables, callable].join(", ");
 				const bindingKind = method.is_static ? "static_method" : "method";
-				bindingLines.push(
-					`\t\t\t.${bindingKind}("${name}", puerts::combine_overloads(${overloads.join(", ")}))`,
-				);
-				continue;
-			}
-
-			if (method.is_static) {
-				if (needsDisambiguation) {
-					const ptr = methodPointerExprFromApi(className, method);
-					bindingLines.push(`\t\t\t.static_method("${name}", puerts::make_function<${ptr}>())`);
-				} else {
-					bindingLines.push(`\t\t\t.static_method("${name}", puerts::make_function<&godot::${className}::${name}>())`);
-				}
-			} else if (needsDisambiguation) {
-				const ptr = methodPointerExprFromApi(className, method);
-				bindingLines.push(`\t\t\t.method("${name}", puerts::make_method<${ptr}>())`);
+				bindingLines.push(`\t\t\t.${bindingKind}<${callables}>("${name}")`);
 			} else {
-				bindingLines.push(`\t\t\t.method("${name}", puerts::make_method<&godot::${className}::${name}>())`);
+				const bindingKind = method.is_static ? "static_method" : "method";
+				bindingLines.push(`\t\t\t.${bindingKind}<${callable}>("${name}")`);
 			}
 			continue;
 		}
 
 		const staticMethods = methodGroup.filter((m) => !!m.is_static);
 		const instanceMethods = methodGroup.filter((m) => !m.is_static);
-
+		let selectedMethods = staticMethods.length > 0 ? staticMethods : instanceMethods;
 		if (staticMethods.length > 0 && instanceMethods.length > 0) {
-			const chosen = staticMethods.length >= instanceMethods.length ? staticMethods : instanceMethods;
 			const chosenKind = staticMethods.length >= instanceMethods.length ? "static" : "instance";
+			selectedMethods = chosenKind === "static" ? staticMethods : instanceMethods;
 			console.warn(`Warning: mixed static/instance overloads for ${className}.${name}, chose ${chosenKind} overloads.`);
-			if (chosenKind === "static") {
-				const exprs = chosen.map((m) => `puerts::make_overload<${methodPointerExprFromApi(className, m)}>()`);
-				bindingLines.push(`\t\t\t.static_method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
-			} else {
-				const exprs = chosen.map((m) => `puerts::make_overload<${methodPointerExprFromApi(className, m)}>()`);
-				bindingLines.push(`\t\t\t.method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
-			}
-			continue;
 		}
-
-		if (staticMethods.length > 0) {
-			const exprs = staticMethods.map((m) => `puerts::make_overload<${methodPointerExprFromApi(className, m)}>()`);
-			bindingLines.push(`\t\t\t.static_method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
-			continue;
-		}
-
-		const exprs = instanceMethods.map((m) => `puerts::make_overload<${methodPointerExprFromApi(className, m)}>()`);
-		bindingLines.push(`\t\t\t.method("${name}", puerts::combine_overloads(${exprs.join(", ")}))`);
+		const callables = selectedMethods.map((m) => methodPointerExprFromApi(className, m)).join(", ");
+		const bindingKind = selectedMethods[0].is_static ? "static_method" : "method";
+		bindingLines.push(`\t\t\t.${bindingKind}<${callables}>("${name}")`);
 	}
 
 	return helpers;
@@ -388,7 +356,7 @@ export function generateClassBinding(
 ): GeneratedClassBinding {
 	const className = cls.name;
 	const bindingLines: string[] = [];
-	const varargNameDefs: string[] = [];
+	const signalNameDefinitions: string[] = [];
 	const operatorHelpers = pushOperatorBindings(cls, bindingLines);
 	const constantHelpers = pushConstantBindings(cls, classSource, bindingLines);
 	const baseClassName = cls.inherits?.trim();
@@ -398,21 +366,12 @@ export function generateClassBinding(
 	}
 
 	const ctors = cls.constructors ?? [];
-	const shouldEmitImplicitDefaultCtor = ctors.length === 0 && cls.is_instantiable !== false;
-	if (shouldEmitImplicitDefaultCtor) {
+	if (ctors.length === 0 && cls.is_instantiable !== false) {
 		bindingLines.push(`\t\t\t.constructor<>()`);
-	} else if (ctors.length > 0) {
-		const ctorSpecs = ctors
-			.map((ctor) => {
-				const args = ctor.arguments ?? [];
-				if (args.length === 0) {
-					return `puerts::make_constructor_overload<godot::${className}>()`;
-				}
-				const mapped = args.map((a) => mapCtorType(a.type));
-				return `puerts::make_constructor_overload<godot::${className}, ${mapped.join(", ")}>()`;
-			})
-			.join(",\n\t\t\t\t\t");
-		bindingLines.push(`\t\t\t.constructor(puerts::combine_constructors(\n\t\t\t\t\t${ctorSpecs}))`);
+	}
+	for (const ctor of ctors) {
+		const args = (ctor.arguments ?? []).map((arg) => mapCtorType(arg.type)).join(", ");
+		bindingLines.push(`\t\t\t.constructor<${args}>()`);
 	}
 
 	const methodHelpers = pushMethodBindings(className, classSource, methods, headerAnalysis, bindingLines);
@@ -434,17 +393,9 @@ export function generateClassBinding(
 			continue;
 		}
 
-		const symbol = `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(toSnakeCase(method.name))}_vararg_name`;
-		varargNameDefs.push(`inline constexpr char ${symbol}[] = "${method.name}";`);
-		let callOptions = method.is_const ? ", false" : "";
-		if (classSource === "classes") {
-			if (!Number.isInteger(method.hash) || method.hash! < 0 || method.hash! > 0xFFFFFFFF) {
-				throw new Error(`Missing or invalid method hash for ${className}.${method.name}.`);
-			}
-			callOptions = `, ${!method.is_const}`;
-		}
+		const writeBack = method.is_const ? ", false" : "";
 		bindingLines.push(
-			`\t\t\t.method("${method.name}", puerts::make_vararg_method<godot::${className}, ${mapApiMethodReturnType(method)}, puerts_generated::${symbol}, ${(method.arguments ?? []).length}${callOptions}>())`,
+			`\t\t\t.vararg_method<${mapApiMethodReturnType(method)}${writeBack}>("${method.name}", ${(method.arguments ?? []).length})`,
 		);
 		emittedMethodNames.add(method.name);
 	}
@@ -459,7 +410,7 @@ export function generateClassBinding(
 			console.warn(`Warning: skipped enum group property due to name collision for ${className}.${enumBinding.enumName}.`);
 			continue;
 		}
-		bindingLines.push(`\t\t\t.static_property("${enumBinding.enumName}", puerts::make_enum_type<${enumBinding.tagType}>())`);
+		bindingLines.push(`\t\t\t.enum_type<${enumBinding.tagType}>("${enumBinding.enumName}")`);
 		boundPropertyNames.add(enumBinding.enumName);
 	}
 
@@ -478,15 +429,15 @@ export function generateClassBinding(
 			continue;
 		}
 		const signalSymbol = signalNameSymbol(className, signalName);
-		varargNameDefs.push(`inline constexpr char ${signalSymbol}[] = "${signalName}";`);
-		bindingLines.push(`\t\t\t.property("${signalName}", puerts::make_signal_property<godot::${className}, puerts_generated::${signalSymbol}>())`);
+		signalNameDefinitions.push(`inline constexpr char ${signalSymbol}[] = "${signalName}";`);
+		bindingLines.push(`\t\t\t.signal<puerts_generated::${signalSymbol}>("${signalName}")`);
 		boundPropertyNames.add(signalName);
 	}
 
 	bindingLines.push("\t\t\t.register_type();");
 
 	const fnName = `register_type_${sanitizeIdentifier(toSnakeCase(className))}`;
-	const prefixLines = [...varargNameDefs, ...operatorHelpers, ...constantHelpers, ...methodHelpers];
+	const prefixLines = [...signalNameDefinitions, ...operatorHelpers, ...constantHelpers, ...methodHelpers];
 	const prefix = prefixLines.length > 0
 		? `namespace puerts_generated {\n${prefixLines.join("\n")}\n} // namespace puerts_generated\n\n`
 		: "";

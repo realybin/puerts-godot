@@ -25,22 +25,14 @@ function utilityCppMethodName(name: string): string {
 	return name === "typeof" ? "type_of" : name;
 }
 
-function utilityCallbackName(name: string): string {
-	return `global_scope_utility_${sanitizeIdentifier(toSnakeCase(name))}`;
-}
-
-function singletonSymbolName(name: string): string {
-	return `global_scope_singleton_${sanitizeIdentifier(toSnakeCase(name))}`;
-}
-
 function buildGlobalEnumBinding(enumDef: ApiEnum): GlobalEnumBinding {
 	const nameKey = sanitizeIdentifier(toSnakeCase(enumDef.name.replaceAll(".", "_")));
 	const propertyName = enumDef.name.includes(".") ? enumDef.name.split(".").at(-1)! : enumDef.name;
 	const tagStructName = `global_scope_${nameKey}_enum_tag`;
 	const tagType = `puerts_generated::${tagStructName}`;
 	const registerFunctionName = `register_enum_global_scope_${nameKey}`;
-	const staticPropertyLines = (enumDef.values ?? [])
-		.map((value) => `\t\t\t.static_property("${value.name}", puerts::make_constant<${Math.trunc(value.value)}>())`)
+	const constantLines = (enumDef.values ?? [])
+		.map((value) => `\t\t\t.constant<${Math.trunc(value.value)}>("${value.name}")`)
 		.join("\n");
 
 	return {
@@ -53,98 +45,20 @@ function buildGlobalEnumBinding(enumDef: ApiEnum): GlobalEnumBinding {
 		code:
 			`inline void ${registerFunctionName}() {\n` +
 			`\tpuerts::define_type<${tagType}>()\n` +
-			`${staticPropertyLines}\n` +
+			`${constantLines}\n` +
 			`\t\t\t.register_type();\n` +
 			`}\n`,
 	};
 }
 
-function utilityLookupLine(fn: ApiMethod): string {
-	return `\tstatic GDExtensionPtrUtilityFunction utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(godot::StringName("${fn.name}")._native_ptr(), ${fn.hash ?? 0});`;
-}
-
-function pushCallbackContext(lines: string[]): void {
-	lines.push("\tpuerts::internal::CallbackContext context(apis, info);");
-	lines.push("\tif (!context.require()) {");
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-}
-
-function pushVariantArgs(lines: string[], argCountExpr: string): void {
-	lines.push("\tpuerts::internal::CallArguments arguments;");
-	lines.push(`\targuments.resize(${argCountExpr});`);
-	lines.push(`\tfor (int i = 0; i < ${argCountExpr}; ++i) {`);
-	lines.push("\t\tconst size_t index = static_cast<size_t>(i);");
-	lines.push("\t\targuments.values[index] = puerts::script_value_to_variant(context.puerts_environment(), context.script_env(), context.argument_value(i));");
-	lines.push("\t}");
-}
-
-function pushUtilityLookup(lines: string[], fn: ApiMethod): void {
-	lines.push(utilityLookupLine(fn));
-	lines.push("\tif (utility_function == nullptr) {");
-	lines.push(`\t\tapis->throw_by_string(info, "Failed to bind utility function: ${fn.name}");`);
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-}
-
-function buildVarargUtilityHelper(fn: ApiMethod): string {
-	const callbackName = utilityCallbackName(fn.name);
-	const returnType = fn.return_type ?? "void";
-	const lines: string[] = [];
-
-	lines.push(`inline void ${callbackName}(pesapi_ffi *apis, pesapi_callback_info info) {`);
-	pushCallbackContext(lines);
-	pushUtilityLookup(lines, fn);
-	pushVariantArgs(lines, "context.argument_count()");
-
-	if (returnType === "String") {
-		lines.push("\tgodot::String result;");
-		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());");
-		lines.push("\tpuerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), godot::Variant(result));");
-	} else if (returnType === "Variant") {
-		lines.push("\tgodot::Variant result;");
-		lines.push("\tutility_function(&result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());");
-		lines.push("\tpuerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), result);");
-	} else {
-		lines.push("\tgodot::Variant ignored_result;");
-		lines.push("\tutility_function(&ignored_result, reinterpret_cast<GDExtensionConstVariantPtr *>(arguments.pointers.data()), context.argument_count());");
-	}
-
-	lines.push("}");
-	return lines.join("\n");
-}
-
-function buildSpecialUtilityHelper(fn: ApiMethod): string {
-	const callbackName = utilityCallbackName(fn.name);
-	const expectedArgs = fn.arguments?.length ?? 0;
-	const lines: string[] = [];
-
-	lines.push(`inline void ${callbackName}(pesapi_ffi *apis, pesapi_callback_info info) {`);
-	pushCallbackContext(lines);
-	lines.push(`\tif (context.argument_count() != ${expectedArgs}) {`);
-	lines.push(`\t\tapis->throw_by_string(info, "${fn.name} expects exactly ${expectedArgs} argument(s).");`);
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-	pushUtilityLookup(lines, fn);
-	pushVariantArgs(lines, `${expectedArgs}`);
-	lines.push("\tbool result = false;");
-	lines.push(`\tutility_function(&result, reinterpret_cast<GDExtensionConstTypePtr *>(arguments.pointers.data()), ${expectedArgs});`);
-	lines.push("\tapis->add_return(info, apis->create_boolean(context.script_env(), result));");
-	lines.push("}");
-	return lines.join("\n");
-}
-
-function buildUtilityBinding(fn: ApiMethod): { bindingLine: string; helperCode?: string } {
+function buildUtilityBinding(fn: ApiMethod): string {
 	if (!fn.is_vararg && fn.name !== "is_instance_valid") {
-		return {
-			bindingLine: `\t\t\t.static_method("${fn.name}", puerts::make_function<&godot::UtilityFunctions::${utilityCppMethodName(fn.name)}>())`,
-		};
+		return `\t\t\t.static_method<&godot::UtilityFunctions::${utilityCppMethodName(fn.name)}>("${fn.name}")`;
 	}
 
-	return {
-		bindingLine: `\t\t\t.static_method("${fn.name}", &puerts_generated::${utilityCallbackName(fn.name)})`,
-		helperCode: fn.name === "is_instance_valid" ? buildSpecialUtilityHelper(fn) : buildVarargUtilityHelper(fn),
-	};
+	const returnType = fn.return_type === "Variant" || fn.return_type === "String" ? `godot::${fn.return_type}` : fn.return_type ?? "void";
+	const arity = fn.is_vararg ? "" : `, ${fn.arguments?.length ?? 0}`;
+	return `\t\t\t.utility_function<${fn.hash ?? 0}, ${returnType}>("${fn.name}"${arity})`;
 }
 
 function splitGlobalEnumBindings(globalEnums: GlobalEnumBinding[]): {
@@ -199,9 +113,6 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	lines.push(`#ifndef ${includeGuard}`);
 	lines.push(`#define ${includeGuard}`);
 	lines.push("");
-	lines.push("#include <godot_cpp/classes/engine.hpp>");
-	lines.push("#include <godot_cpp/godot.hpp>");
-	lines.push("#include <godot_cpp/variant/string_name.hpp>");
 	lines.push("#include <godot_cpp/variant/utility_functions.hpp>");
 	lines.push("");
 	lines.push("namespace puerts_generated {");
@@ -212,55 +123,11 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	}
 	lines.push("} // namespace puerts_generated");
 	lines.push("");
-	if (singletonNames.length > 0) {
-		lines.push("namespace puerts_generated {");
-		for (const singleton of singletonNames) {
-			lines.push(`inline constexpr char ${singletonSymbolName(singleton.name)}[] = "${singleton.name}";`);
-		}
-		lines.push("} // namespace puerts_generated");
-		lines.push("");
-	}
 	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScope, "GlobalScope")');
 	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScopeVariant, "GlobalScope.Variant")');
 	for (const binding of globalEnums) {
 		lines.push(binding.scriptTypeLine);
 	}
-	lines.push("");
-	lines.push("namespace puerts_generated {");
-	lines.push("inline void global_scope_singleton_getter(pesapi_ffi *apis, pesapi_callback_info info) {");
-	lines.push("\tconst char *singleton_name = static_cast<const char *>(apis->get_userdata(info));");
-	lines.push("\tif (singleton_name == nullptr) {");
-	lines.push('\t\tapis->throw_by_string(info, "Singleton metadata is missing.");');
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-	lines.push("\tpuerts::internal::CallbackContext context(apis, info);");
-	lines.push("\tif (!context.require()) {");
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-	lines.push("\tgodot::Engine *engine = godot::Engine::get_singleton();");
-	lines.push("\tif (engine == nullptr) {");
-	lines.push('\t\tapis->throw_by_string(info, "Godot Engine singleton is unavailable.");');
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-	lines.push("\tconst godot::StringName singleton_key(singleton_name);");
-	lines.push("\tif (!engine->has_singleton(singleton_key)) {");
-	lines.push('\t\tapis->throw_by_string(info, "Requested singleton is unavailable.");');
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-	lines.push("\tgodot::Object *singleton = engine->get_singleton(singleton_key);");
-	lines.push("\tif (singleton == nullptr) {");
-	lines.push("\t\tapis->add_return(info, apis->create_null(context.script_env()));");
-	lines.push("\t\treturn;");
-	lines.push("\t}");
-	lines.push("\tpuerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), godot::Variant(singleton));");
-	lines.push("}");
-	for (const binding of utilityBindings) {
-		if (binding.helperCode) {
-			lines.push("");
-			lines.push(binding.helperCode);
-		}
-	}
-	lines.push("} // namespace puerts_generated");
 	lines.push("");
 	for (const binding of globalEnums) {
 		lines.push(binding.code.trimEnd());
@@ -268,8 +135,8 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	}
 	lines.push("inline void register_type_global_scope_variant() {");
 	lines.push("\tpuerts::define_type<puerts_generated::GlobalScopeVariant>()");
-	lines.push(`\t\t\t.static_property("Type", puerts::make_enum_type<${variantType.tagType}>())`);
-	lines.push(`\t\t\t.static_property("Operator", puerts::make_enum_type<${variantOperator.tagType}>())`);
+	lines.push(`\t\t\t.enum_type<${variantType.tagType}>("Type")`);
+	lines.push(`\t\t\t.enum_type<${variantOperator.tagType}>("Operator")`);
 	lines.push("\t\t\t.register_type();");
 	lines.push("}");
 	lines.push("");
@@ -279,18 +146,14 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	}
 	lines.push("\tregister_type_global_scope_variant();");
 	lines.push("\tpuerts::define_type<puerts_generated::GlobalScope>()");
-	for (const binding of utilityBindings) {
-		lines.push(binding.bindingLine);
-	}
+	lines.push(...utilityBindings);
 	for (const singleton of singletonNames) {
-		lines.push(
-			`\t\t\t.static_property("${singleton.name}", &puerts_generated::global_scope_singleton_getter, nullptr, (void *)puerts_generated::${singletonSymbolName(singleton.name)})`,
-		);
+		lines.push(`\t\t\t.singleton("${singleton.name}")`);
 	}
 	for (const binding of topLevelEnumBindings) {
-		lines.push(`\t\t\t.static_property("${binding.propertyName}", puerts::make_enum_type<${binding.tagType}>())`);
+		lines.push(`\t\t\t.enum_type<${binding.tagType}>("${binding.propertyName}")`);
 	}
-	lines.push('\t\t\t.static_property("Variant", puerts::make_enum_type<puerts_generated::GlobalScopeVariant>())');
+	lines.push('\t\t\t.enum_type<puerts_generated::GlobalScopeVariant>("Variant")');
 	lines.push("\t\t\t.register_type();");
 	lines.push("}");
 	lines.push("");
