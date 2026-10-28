@@ -148,8 +148,11 @@ class Manifest:
 
 
 def load_manifest() -> Manifest:
-    with (Path(__file__).resolve().parents[2] / "manifest.toml").open("rb") as source:
+    repo_root = Path(__file__).resolve().parents[2]
+    with (repo_root / "manifest.toml").open("rb") as source:
         data = tomllib.load(source)
+    with (repo_root / "thirdparty" / "patches.toml").open("rb") as source:
+        patch_data = tomllib.load(source)
 
     platforms = {
         name: Platform(name, entry["puerts"], entry["default_arch"], entry["arch"])
@@ -177,7 +180,7 @@ def load_manifest() -> Manifest:
     }
     patches = tuple(
         Patch(entry["file"], entry.get("platform", ""), frozenset(entry["backends"]))
-        for entry in data.get("patches", ())
+        for entry in patch_data.get("patches", ())
     )
     runtime = data["tests"]["runtime"]
     manifest = Manifest(

@@ -1,0 +1,21 @@
+[[patches]]
+file = "puerts-web-cmake-build"
+platform = "web"
+backends = ["core", "quickjs", "lua"]
+
+[[patches]]
+file = "papi-lua-object-new-nullptr"
+backends = ["lua"]
+
+[[patches]]
+file = "papi-lua-value-ref-release"
+backends = ["lua"]
+
+[[patches]]
+file = "papi-quickjs-string-buffer"
+backends = ["quickjs"]
+
+[[patches]]
+file = "papi-v8-nodejs-linux-origin-rpath"
+platform = "linux"
+backends = ["v8", "nodejs"]
