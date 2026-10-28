@@ -143,3 +143,8 @@ By default, we support versions labeled **Partial support**. Versions marked **N
 
 - [Tencent/puerts](https://github.com/Tencent/puerts) Most of the core logic and API design is based on Tencent's puerts project.
 - [Godot Engine](https://godotengine.org/) Godot is an open-source game engine that provides a powerful and flexible platform for game development.
+
+## You May Also Like...
+
+- [godotjs/GodotJS](https://github.com/godotjs/GodotJS) Add TypeScript/JavaScript Support for Godot 4.x with v8/QuickJS/JavaScriptCore/Browser
+- [godothub/gode](https://github.com/godothub/gode) Godot with JavaScript / TypeScript & NodeJS🌟

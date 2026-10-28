@@ -141,3 +141,8 @@ prek install
 
 - [Tencent/puerts](https://github.com/Tencent/puerts)：核心逻辑与 API 设计大多源自腾讯 puerts 项目。
 - [Godot Engine](https://godotengine.org/)：Godot 是开源游戏引擎，为游戏开发提供强大而灵活的平台。
+
+## 也可以看看
+
+- [godotjs/GodotJS](https://github.com/godotjs/GodotJS) Add TypeScript/JavaScript Support for Godot 4.x with v8/QuickJS/JavaScriptCore/Browser
+- [godothub/gode](https://github.com/godothub/gode) Godot with JavaScript / TypeScript & NodeJS🌟
