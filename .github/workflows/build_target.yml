@@ -108,7 +108,7 @@ jobs:
           if [ "${{ inputs.platform }}" = "web" ]; then
             extra_args+=(--threads "$WEB_THREADS")
           fi
-          python3 scripts/make_puerts.py \
+          python3 misc/scripts/make_puerts.py \
             --platform ${{ inputs.platform }} \
             --arch ${{ inputs.arch }} \
             --config ${{ inputs.target_type == 'template_release' && 'Release' || 'Debug' }} \
@@ -158,7 +158,7 @@ jobs:
         if: ${{ inputs.run_tests && inputs.platform != 'web' }}
         shell: bash
         run: |
-          python3 scripts/run_tests.py --platform "${{ inputs.platform }}" --godot godot --timeout 120
+          python3 misc/scripts/run_tests.py --platform "${{ inputs.platform }}" --godot godot --timeout 120
 
       - name: Run Web runtime tests
         if: ${{ inputs.run_tests && inputs.platform == 'web' }}

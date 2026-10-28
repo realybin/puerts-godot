@@ -17,7 +17,7 @@ try:
 except ImportError:
     from scons.puerts_matrix import BACKENDS, CONFIG, PLATFORMS, map_puerts_arch, supported_backends
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 PUERTS_REPO_DIR = REPO_ROOT / "thirdparty" / "puerts"
 UNITY_DIR = PUERTS_REPO_DIR / "unity"
 NATIVE_DIR = UNITY_DIR / "native"

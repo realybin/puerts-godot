@@ -3,7 +3,7 @@
 Run from the repository root:
 
 ```powershell
-python scripts/run_tests.py --godot C:\path\to\Godot_v4.x.x-stable_win64_console.exe --timeout=80
+python misc/scripts/run_tests.py --godot C:\path\to\Godot_v4.x.x-stable_win64_console.exe --timeout=80
 ```
 
 ## Browser JavaScript backend

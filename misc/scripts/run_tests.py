@@ -492,7 +492,7 @@ def run_project(
 
 def main() -> int:
     args = parse_args()
-    root = Path(__file__).resolve().parents[1]
+    root = Path(__file__).resolve().parents[2]
     build_bin_dir = root / "bin"
     project_dir = root / "tests"
     platform_name = args.platform or detect_platform()

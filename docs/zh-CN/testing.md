@@ -3,7 +3,7 @@
 请在仓库根目录运行：
 
 ```powershell
-python scripts/run_tests.py --godot C:\path\to\Godot_v4.x.x-stable_win64_console.exe --timeout=80
+python misc/scripts/run_tests.py --godot C:\path\to\Godot_v4.x.x-stable_win64_console.exe --timeout=80
 ```
 
 ## 浏览器 JavaScript 后端

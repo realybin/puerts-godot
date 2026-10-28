@@ -15,7 +15,7 @@ Initialize submodules:
 git submodule update --init --recursive
 ```
 
-See command options with `python scripts/make_puerts.py --help`.
+See command options with `python misc/scripts/make_puerts.py --help`.
 
 Common arguments:
 
@@ -25,7 +25,7 @@ Common arguments:
 - `--backends`: `core,v8,nodejs,quickjs,lua,web`
 - `--threads`: Web `true|false`
 
-Metadata: [`scripts/config.json`](../scripts/config.json).
+Metadata: [`misc/scripts/config.json`](../misc/scripts/config.json).
 
 ## Dependencies
 
@@ -33,9 +33,9 @@ puerts-godot depends on [puerts](https://github.com/Tencent/puerts), so puerts m
 
 ```bash
 # Windows x64 Debug
-python scripts/make_puerts.py --platform windows --arch x86_64 --config Debug
+python misc/scripts/make_puerts.py --platform windows --arch x86_64 --config Debug
 # Linux x64 Release, only core + quickjs
-python scripts/make_puerts.py --platform linux --arch x86_64 --config Release --backends core,quickjs
+python misc/scripts/make_puerts.py --platform linux --arch x86_64 --config Release --backends core,quickjs
 ```
 
 ## Build
@@ -54,7 +54,7 @@ Output goes to `bin/`.
 ## Web builds
 
 ```bash
-python scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,web --threads false
+python misc/scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,web --threads false
 scons target=template_debug platform=web arch=wasm32 precision=single api_version=4.7 backends=core,web threads=false
 ```
 

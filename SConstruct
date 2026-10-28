@@ -6,12 +6,12 @@ import sys
 from collections import namedtuple
 
 from methods import print_error
-from scripts.scons.puerts_layout import (
+from misc.scripts.scons.puerts_layout import (
     collect_ios_dependency_archives,
     load_backend_config,
     resolve_puerts_paths,
 )
-from scripts.scons.puerts_matrix import BACKENDS, map_puerts_arch, supported_backends
+from misc.scripts.scons.puerts_matrix import BACKENDS, map_puerts_arch, supported_backends
 
 # You can find documentation for SCons and SConstruct files at:
 # https://scons.org/documentation.html
@@ -106,7 +106,7 @@ def fail_missing_puerts_artifact(path):
     print_error(
         "Missing puerts artifact: "
         + path
-        + "\nRun: python scripts/make_puerts.py --platform "
+        + "\nRun: python misc/scripts/make_puerts.py --platform "
         + env["platform"]
         + " --arch "
         + env["arch"]

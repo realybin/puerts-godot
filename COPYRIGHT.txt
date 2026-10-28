@@ -17,7 +17,7 @@ Files: README.md
  SConstruct
  methods.py
  patches/*
- scripts/*
+ misc/scripts/*
  src/*
  docs/*
  tests/*.gd

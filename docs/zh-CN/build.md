@@ -15,7 +15,7 @@
 git submodule update --init --recursive
 ```
 
-用 `python scripts/make_puerts.py --help` 查看命令选项。
+用 `python misc/scripts/make_puerts.py --help` 查看命令选项。
 
 常用参数：
 
@@ -25,7 +25,7 @@ git submodule update --init --recursive
 - `--backends`：`core,v8,nodejs,quickjs,lua,web`
 - `--threads`：Web `true|false`
 
-元数据 [`scripts/config.json`](../../scripts/config.json)。
+元数据 [`misc/scripts/config.json`](../../misc/scripts/config.json)。
 
 ## 依赖
 
@@ -33,9 +33,9 @@ puerts-godot 依赖于 [puerts](https://github.com/Tencent/puerts)，所以我�
 
 ```bash
 # Windows x64 Debug
-python scripts/make_puerts.py --platform windows --arch x86_64 --config Debug
+python misc/scripts/make_puerts.py --platform windows --arch x86_64 --config Debug
 # Linux x64 Release，仅 core + quickjs
-python scripts/make_puerts.py --platform linux --arch x86_64 --config Release --backends core,quickjs
+python misc/scripts/make_puerts.py --platform linux --arch x86_64 --config Release --backends core,quickjs
 ```
 
 ## 构建
@@ -54,7 +54,7 @@ scons target=template_release platform=linux arch=x86_64 precision=single api_ve
 ## Web 构建
 
 ```bash
-python scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,web --threads false
+python misc/scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,web --threads false
 scons target=template_debug platform=web arch=wasm32 precision=single api_version=4.7 backends=core,web threads=false
 ```
 
