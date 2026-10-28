@@ -1,0 +1,142 @@
+[platforms.windows]
+puerts = "win"
+default_arch = "x86_64"
+arch = { x86_64 = "x64", x86_32 = "ia32", arm64 = "arm64" }
+
+[platforms.macos]
+puerts = "osx"
+default_arch = "arm64"
+arch = { x86_64 = "x64", arm64 = "arm64" }
+
+[platforms.linux]
+puerts = "linux"
+default_arch = "x86_64"
+arch = { x86_64 = "x64", arm64 = "arm64" }
+
+[platforms.android]
+puerts = "android"
+default_arch = "arm64"
+arch = { x86_64 = "x64", arm64 = "arm64", arm32 = "armv7" }
+
+[platforms.ios]
+puerts = "ios"
+default_arch = "arm64"
+arch = { arm64 = "arm64" }
+
+[platforms.web]
+puerts = "wasm"
+default_arch = "wasm32"
+arch = { wasm32 = "wasm32" }
+
+[targets.editor]
+feature = "editor"
+cmake = "Debug"
+
+[targets.template_debug]
+feature = "debug"
+cmake = "Debug"
+
+[targets.template_release]
+feature = "release"
+cmake = "Release"
+
+[backends.core]
+native_dir = "puerts"
+source_dir = "PuertsCore"
+library = "PuertsCore"
+extension = "puerts_core.gdextension"
+entry = "puerts_core_library_init"
+
+[backends.v8]
+native_dir = "papi-v8"
+source_dir = "PuertsV8"
+library = "PapiV8"
+extension = "puerts_v8.gdextension"
+entry = "puerts_v8_library_init"
+platforms = ["windows", "macos", "linux", "android", "ios"]
+requires = ["core"]
+
+[backends.nodejs]
+native_dir = "papi-nodejs"
+source_dir = "PuertsNodejs"
+library = "PapiNodejs"
+extension = "puerts_nodejs.gdextension"
+entry = "puerts_nodejs_library_init"
+platforms = ["windows", "macos", "linux", "android", "ios"]
+requires = ["core"]
+dependency_root = ".backends/papi-nodejs/lib"
+
+[[backends.nodejs.dependencies]]
+platform = "windows"
+patterns = ["Win64/libnode.dll"]
+
+[[backends.nodejs.dependencies]]
+platform = "linux"
+patterns = ["Linux/libnode.so.93"]
+
+[[backends.nodejs.dependencies]]
+platform = "macos"
+arch = "arm64"
+patterns = ["macOS_arm64/libnode.93.dylib"]
+
+[[backends.nodejs.dependencies]]
+platform = "macos"
+arch = "x86_64"
+patterns = ["macOS/libnode.93.dylib"]
+
+[[backends.nodejs.dependencies]]
+platform = "ios"
+patterns = ["iOS/*.a"]
+
+[backends.quickjs]
+native_dir = "papi-quickjs"
+source_dir = "PuertsQuickjs"
+library = "PapiQuickjs"
+extension = "puerts_quickjs.gdextension"
+entry = "puerts_quickjs_library_init"
+requires = ["core"]
+
+[backends.lua]
+native_dir = "papi-lua"
+source_dir = "PuertsLua"
+library = "PapiLua"
+extension = "puerts_lua.gdextension"
+entry = "puerts_lua_library_init"
+requires = ["core"]
+
+[backends.web]
+native_dir = "web"
+source_dir = "PuertsWeb"
+library = "PuertsWeb"
+extension = "puerts_web.gdextension"
+entry = "puerts_web_library_init"
+platforms = ["web"]
+requires = ["core"]
+reloadable = false
+
+[[patches]]
+file = "puerts-web-cmake-build"
+platform = "web"
+backends = ["core", "quickjs", "lua"]
+
+[[patches]]
+file = "papi-lua-object-new-nullptr"
+backends = ["lua"]
+
+[[patches]]
+file = "papi-lua-value-ref-release"
+backends = ["lua"]
+
+[[patches]]
+file = "papi-quickjs-string-buffer"
+backends = ["quickjs"]
+
+[[patches]]
+file = "papi-v8-nodejs-linux-origin-rpath"
+platform = "linux"
+backends = ["v8", "nodejs"]
+
+[tests.runtime]
+platforms = ["windows", "macos", "linux"]
+backends = ["lua", "quickjs", "v8"]
+aliases = { nodejs = "v8" }

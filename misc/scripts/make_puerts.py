@@ -13,49 +13,31 @@ import sys
 from pathlib import Path
 
 try:
-    from .scons.puerts_matrix import BACKENDS, CONFIG, PLATFORMS, map_puerts_arch, supported_backends
+    from .manifest import BACKENDS, MANIFEST, PLATFORMS, Backend, Platform
 except ImportError:
-    from scons.puerts_matrix import BACKENDS, CONFIG, PLATFORMS, map_puerts_arch, supported_backends
+    from manifest import BACKENDS, MANIFEST, PLATFORMS, Backend, Platform
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PUERTS_REPO_DIR = REPO_ROOT / "thirdparty" / "puerts"
 UNITY_DIR = PUERTS_REPO_DIR / "unity"
 NATIVE_DIR = UNITY_DIR / "native"
-NODE_LIB_DIR = NATIVE_DIR / "papi-nodejs" / ".backends" / "papi-nodejs" / "lib"
 BIN_DIR = REPO_ROOT / "bin"
 PATCHES_DIR = REPO_ROOT / "thirdparty" / "patches"
-
-BACKEND_ALIASES = {name: entry["native"] for name, entry in BACKENDS.items()}
-CANONICAL_BACKENDS = set(BACKEND_ALIASES.values())
-
 PATCH_APPLY_FLAGS = ["--ignore-whitespace", "--ignore-space-change"]
 
 
 def _same_file(source: Path, target: Path) -> bool:
-    """Compare staged artifacts without trusting filecmp's coarse cache key."""
     filecmp.clear_cache()
     return filecmp.cmp(source, target, shallow=False)
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build puerts native backends.")
-    parser.add_argument(
-        "--platform",
-        required=True,
-        choices=sorted(PLATFORMS),
-        help="Godot platform name.",
-    )
+    parser.add_argument("--platform", required=True, choices=sorted(PLATFORMS), help="Godot platform name.")
     parser.add_argument("--arch", default="", help="Godot arch (x86_64/x86_32/arm64/arm32/wasm32).")
+    parser.add_argument("--config", choices=["Release", "Debug"], default="Debug", help="Puerts CMake config.")
     parser.add_argument(
-        "--config",
-        choices=["Release", "Debug"],
-        default="Debug",
-        help="Puerts CMake config.",
-    )
-    parser.add_argument(
-        "--backends",
-        default=",".join(BACKENDS),
-        help="Comma-separated backends: " + ",".join(BACKENDS),
+        "--backends", default=",".join(BACKENDS), help="Comma-separated backends: " + ",".join(BACKENDS)
     )
     parser.add_argument(
         "--threads",
@@ -87,7 +69,6 @@ def run(command: list[str], cwd: Path, env: dict[str, str] | None = None) -> Non
 
 
 def ensure_patch(name: str) -> None:
-    """Apply a patch to the puerts submodule; skip if already applied, fail otherwise."""
     patch_file = PATCHES_DIR / f"{name}.patch"
     if not patch_file.is_file():
         raise FileNotFoundError(f"patch file not found: {patch_file}")
@@ -97,6 +78,7 @@ def ensure_patch(name: str) -> None:
             [resolve_executable("git"), "apply", "--check", *extra, *PATCH_APPLY_FLAGS, str(patch_file.resolve())],
             cwd=PUERTS_REPO_DIR,
             capture_output=True,
+            check=False,
         )
         return result.returncode == 0
 
@@ -110,30 +92,15 @@ def ensure_patch(name: str) -> None:
 
 
 def normalize_backends(raw: str) -> list[str]:
-    result: list[str] = []
-    for token in raw.split(","):
-        name = token.strip().lower()
-        if not name:
-            continue
-        canonical = BACKEND_ALIASES.get(name, name)
-        if canonical not in CANONICAL_BACKENDS:
-            raise ValueError(f"Unsupported backend token: {token}")
-        if canonical not in result:
-            result.append(canonical)
-    return result
+    names = list(dict.fromkeys(token.strip().lower() for token in raw.split(",") if token.strip()))
+    unknown = set(names) - BACKENDS.keys()
+    if unknown:
+        raise ValueError(f"Unsupported backends: {', '.join(sorted(unknown))}")
+    return names
 
 
-def required_patches(platform: str, backends: set[str]) -> list[str]:
-    return [
-        patch["file"]
-        for patch in CONFIG["patches"]
-        if ("platform" not in patch or patch["platform"] == platform)
-        and any(BACKEND_ALIASES[name] in backends for name in patch["backends"])
-    ]
-
-
-def build_backend(platform: str, puerts_arch: str, config: str, backend: str, threads: bool = True) -> None:
-    backend_dir = NATIVE_DIR / backend
+def build_backend(platform: Platform, puerts_arch: str, config: str, backend: Backend, threads: bool = True) -> None:
+    backend_dir = NATIVE_DIR / backend.native_dir
     if not backend_dir.is_dir():
         raise FileNotFoundError(f"Backend directory not found: {backend_dir}")
 
@@ -142,7 +109,7 @@ def build_backend(platform: str, puerts_arch: str, config: str, backend: str, th
         "../../cli",
         "make",
         "--platform",
-        PLATFORMS[platform]["puerts"],
+        platform.puerts,
         "--arch",
         puerts_arch,
         "--config",
@@ -150,9 +117,9 @@ def build_backend(platform: str, puerts_arch: str, config: str, backend: str, th
     ]
 
     env = os.environ.copy()
-    if platform == "android":
+    if platform.name == "android":
         env.setdefault("ANDROID_NDK", str(Path.home() / "android-ndk-r27d"))
-    elif platform == "web":
+    elif platform.name == "web":
         compiler_flags = "-pthread -fPIC" if threads else "-fPIC"
         for key, flags in (
             ("CFLAGS", compiler_flags),
@@ -160,10 +127,8 @@ def build_backend(platform: str, puerts_arch: str, config: str, backend: str, th
             ("LDFLAGS", "-pthread" if threads else ""),
         ):
             env[key] = f"{env.get(key, '')} {flags}".strip()
-        build_dir = f"build_wasm_{puerts_arch}_{backend}" + ("_debug" if config != "Release" else "")
+        build_dir = f"build_wasm_{puerts_arch}_{backend.native_dir}" + ("_debug" if config != "Release" else "")
         if (backend_dir / build_dir / "CMakeCache.txt").is_file():
-            # CMake caches these flags after the first configure. Update them
-            # explicitly when switching between threaded and non-threaded Web.
             run(
                 [
                     "cmake",
@@ -184,34 +149,33 @@ def build_backend(platform: str, puerts_arch: str, config: str, backend: str, th
     run(cmd, backend_dir, env)
 
 
-def copy_nodejs_deps(platform: str, arch: str) -> None:
-    """Stage Node.js backend runtime/static dependencies into bin/."""
-    dependency = CONFIG["node_dependencies"].get(platform)
-    if dependency is None:
+def stage_dependencies(platform: str, arch: str, backend: Backend) -> None:
+    patterns = backend.dependency_patterns(platform, arch)
+    if not patterns:
         return
-    if isinstance(dependency, dict):
-        dependency = dependency[arch]
-    sources = sorted(NODE_LIB_DIR.glob(dependency))
-    dst_dir = BIN_DIR / "ios-nodejs" if platform == "ios" else BIN_DIR
 
-    if not sources:
-        raise FileNotFoundError(f"no nodejs dependency archives found under {NODE_LIB_DIR}")
+    root = NATIVE_DIR / backend.native_dir / backend.dependency_root
+    dst_dir = BIN_DIR / f"{platform}-{backend.name}" if platform == "ios" else BIN_DIR
     dst_dir.mkdir(parents=True, exist_ok=True)
-    for src in sources:
-        if not src.is_file():
-            raise FileNotFoundError(f"nodejs dependency not found: {src}")
-        destination = dst_dir / src.name
-        source_stat = src.stat()
-        if destination.is_file():
-            destination_stat = destination.stat()
-            if (
-                source_stat.st_size == destination_stat.st_size
-                and source_stat.st_mtime_ns == destination_stat.st_mtime_ns
-                and _same_file(src, destination)
-            ):
-                continue
-        shutil.copy2(src, destination)
-        print(f"[make_puerts] copied {src} -> {destination}")
+    for pattern in patterns:
+        sources = sorted(root.glob(pattern))
+        if not sources:
+            raise FileNotFoundError(f"no {backend.name} dependencies for {platform} matching {root / pattern}")
+        for src in sources:
+            if not src.is_file():
+                raise FileNotFoundError(f"{backend.name} dependency is not a file: {src}")
+            destination = dst_dir / src.name
+            source_stat = src.stat()
+            if destination.is_file():
+                destination_stat = destination.stat()
+                if (
+                    source_stat.st_size == destination_stat.st_size
+                    and source_stat.st_mtime_ns == destination_stat.st_mtime_ns
+                    and _same_file(src, destination)
+                ):
+                    continue
+            shutil.copy2(src, destination)
+            print(f"[make_puerts] copied {src} -> {destination}")
 
 
 def main() -> int:
@@ -223,6 +187,9 @@ def main() -> int:
 
     try:
         backends = normalize_backends(args.backends)
+        platform = PLATFORMS[args.platform]
+        arch = args.arch or platform.default_arch
+        puerts_arch = platform.map_arch(arch)
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 2
@@ -230,40 +197,32 @@ def main() -> int:
         print("[make_puerts] no backend selected.", file=sys.stderr)
         return 2
 
-    arch = args.arch or PLATFORMS[args.platform]["default_arch"]
-    puerts_arch = map_puerts_arch(args.platform, arch)
-    if not puerts_arch:
-        print(f"[make_puerts] unsupported arch mapping for platform={args.platform}, arch={arch}", file=sys.stderr)
-        return 2
-
-    supported = supported_backends(args.platform)
+    supported = set(MANIFEST.supported_backends(platform.name))
     skipped = [backend for backend in backends if backend not in supported]
     for backend in skipped:
-        print(f"[make_puerts] skip unsupported backend {backend} on {args.platform}")
-    selected = [backend for backend in backends if backend in supported]
-    if "web" in selected and "puerts" not in selected:
-        selected.insert(0, "puerts")
+        print(f"[make_puerts] skip unsupported backend {backend} on {platform.name}")
+    selected = MANIFEST.resolve_backends(backend for backend in backends if backend in supported)
     build_list = [backend for backend in selected if backend != "web"]
     if not build_list:
         print("[make_puerts] no backend was selected for this platform.", file=sys.stderr)
         return 2
 
-    for name in required_patches(args.platform, set(build_list)):
+    for name in MANIFEST.patch_names(platform.name, build_list):
         ensure_patch(name)
 
     run(["npm", "ci"], UNITY_DIR)
 
-    for backend in build_list:
-        build_backend(args.platform, puerts_arch, args.config, backend, args.threads == "true")
+    for name in build_list:
+        build_backend(platform, puerts_arch, args.config, BACKENDS[name], args.threads == "true")
 
-    if "papi-nodejs" in build_list:
-        copy_nodejs_deps(args.platform, arch)
+    for name in build_list:
+        stage_dependencies(platform.name, arch, BACKENDS[name])
 
     print("[make_puerts] summary")
-    print(f"  platform: {args.platform}")
+    print(f"  platform: {platform.name}")
     print(f"  arch: {arch} -> {puerts_arch}")
     print(f"  config: {args.config}")
-    if args.platform == "web":
+    if platform.name == "web":
         print(f"  threads: {args.threads}")
     print(f"  built: {', '.join(build_list)}")
     if "web" in selected:

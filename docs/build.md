@@ -3,7 +3,7 @@
 Prerequisites
 
 * git
-* Python 3.10+
+* Python 3.11+
 * Node.js 20+
 * SCons
 * C/C++ toolchain
@@ -25,7 +25,7 @@ Common arguments:
 - `--backends`: `core,v8,nodejs,quickjs,lua,web`
 - `--threads`: Web `true|false`
 
-Metadata: [`misc/scripts/config.json`](../misc/scripts/config.json).
+Metadata: [`manifest.toml`](../manifest.toml).
 
 ## Dependencies
 

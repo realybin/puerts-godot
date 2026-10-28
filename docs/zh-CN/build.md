@@ -3,7 +3,7 @@
 前置条件
 
 * git
-* Python 3.10+
+* Python 3.11+
 * Node.js 20+
 * SCons
 * C/C++ Toolchain
@@ -25,7 +25,7 @@ git submodule update --init --recursive
 - `--backends`：`core,v8,nodejs,quickjs,lua,web`
 - `--threads`：Web `true|false`
 
-元数据 [`misc/scripts/config.json`](../../misc/scripts/config.json)。
+元数据 [`manifest.toml`](../../manifest.toml)。
 
 ## 依赖
 

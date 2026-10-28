@@ -3,15 +3,14 @@ import os
 import shutil
 import subprocess
 import sys
-from collections import namedtuple
 
 from methods import print_error
+from misc.scripts.manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS
 from misc.scripts.scons.puerts_layout import (
     collect_ios_dependency_archives,
     load_backend_config,
     resolve_puerts_paths,
 )
-from misc.scripts.scons.puerts_matrix import BACKENDS, map_puerts_arch, supported_backends
 
 # You can find documentation for SCons and SConstruct files at:
 # https://scons.org/documentation.html
@@ -41,34 +40,23 @@ if env["platform"] == "windows":
     env.Append(CCFLAGS=["/bigobj"])
 
 
-ProjectInfo = namedtuple("ProjectInfo", "project_name source_dir backend_dir lib_name")
-project_infos = [
-    ProjectInfo(entry["source"], entry["source"], entry["native"], entry["library"]) for entry in BACKENDS.values()
-]
-
-available_backends = supported_backends(env["platform"])
+available_backends = set(MANIFEST.supported_backends(env["platform"]))
 if not available_backends:
     print_error(f"No puerts backend matrix configured for platform: {env['platform']}")
     sys.exit(1)
 
 if requested_backend_argument is not None:
-    backend_names = {name: entry["native"] for name, entry in BACKENDS.items()}
-    requested_backends = set()
-    for token in requested_backend_argument.split(","):
-        name = token.strip().lower()
-        if not name:
-            continue
-        backend = backend_names.get(name, name)
-        if backend not in backend_names.values():
-            print_error(f"Unknown backend: {token}")
-            sys.exit(1)
-        requested_backends.add(backend)
+    requested_backends = {token.strip().lower() for token in requested_backend_argument.split(",") if token.strip()}
+    unknown_backends = requested_backends - BACKENDS.keys()
+    if unknown_backends:
+        print_error(f"Unknown backends: {', '.join(sorted(unknown_backends))}")
+        sys.exit(1)
     available_backends &= requested_backends
     if not available_backends:
         print_error("No requested backends are available for this platform")
         sys.exit(1)
-    # All language backends use the core extension's shared type registry.
-    available_backends.add("puerts")
+
+available_backends = set(MANIFEST.resolve_backends(available_backends))
 
 BACKEND_CONFIG_PATH = os.path.join("thirdparty", "puerts", "unity", "cli", "backends.json")
 BACKEND_CONFIG = load_backend_config(BACKEND_CONFIG_PATH)
@@ -141,26 +129,22 @@ def _ensure_loader_rpath_action(target, source=None, env=None, **_kwargs):
         check=False,
     )
     if update.returncode != 0:
-        raise RuntimeError("failed to add @loader_path rpath for {}: {}".format(target_path, update.stderr.strip()))
+        raise RuntimeError(f"failed to add @loader_path rpath for {target_path}: {update.stderr.strip()}")
 
 
-for project_info in project_infos:
-    if project_info.backend_dir not in available_backends:
-        print(f"[SConstruct] Skip backend {project_info.backend_dir} on platform {env['platform']}")
+platform = PLATFORMS[env["platform"]]
+target = TARGETS[env["target"]]
+
+for backend in BACKENDS.values():
+    if backend.name not in available_backends:
+        print(f"[SConstruct] Skip backend {backend.name} on platform {env['platform']}")
         continue
 
     project_env = env.Clone()
     runtime_binary = None
-    if project_info.backend_dir != "web":
+    if backend.name != "web":
         try:
-            lib_path, runtime_binary = resolve_puerts_paths(
-                puerts_root=puerts_path,
-                godot_platform=env["platform"],
-                godot_arch=env["arch"],
-                godot_target=env["target"],
-                backend_dir=project_info.backend_dir,
-                lib_name=project_info.lib_name,
-            )
+            lib_path, runtime_binary = resolve_puerts_paths(puerts_path, platform, env["arch"], target, backend)
         except ValueError as error:
             print_error(str(error))
             sys.exit(1)
@@ -176,26 +160,19 @@ for project_info in project_infos:
     # dependencies are not propagated when consumed outside CMake, so we must
     # explicitly pass all archives in the backend output directory to the linker.
     if env["platform"] == "ios":
-        puerts_arch = map_puerts_arch(env["platform"], env["arch"])
+        puerts_arch = platform.map_arch(env["arch"])
         ios_archives, missing_patterns = collect_ios_dependency_archives(
             backend_config=BACKEND_CONFIG,
             puerts_root=puerts_path,
-            backend_dir=project_info.backend_dir,
+            backend_dir=backend.native_dir,
             puerts_arch=puerts_arch,
         )
-        main_archive = os.path.join(lib_path, f"lib{project_info.lib_name}.a")
+        main_archive = os.path.join(lib_path, f"lib{backend.library}.a")
         if not os.path.isfile(main_archive):
             fail_missing_puerts_artifact(main_archive)
         link_archives = [main_archive]
-        if project_info.backend_dir != "puerts":
-            puerts_core_lib_path, _ = resolve_puerts_paths(
-                puerts_root=puerts_path,
-                godot_platform=env["platform"],
-                godot_arch=env["arch"],
-                godot_target=env["target"],
-                backend_dir="puerts",
-                lib_name="PuertsCore",
-            )
+        if backend.name != "core":
+            puerts_core_lib_path, _ = resolve_puerts_paths(puerts_path, platform, env["arch"], target, BACKENDS["core"])
             puerts_core_archive = os.path.join(puerts_core_lib_path, "libPuertsCore.a")
             if not os.path.isfile(puerts_core_archive):
                 fail_missing_puerts_artifact(puerts_core_archive)
@@ -203,18 +180,18 @@ for project_info in project_infos:
         if missing_patterns:
             print_error(
                 "Missing puerts iOS dependency archives for backend "
-                + project_info.backend_dir
+                + backend.name
                 + ":\n  - "
                 + "\n  - ".join(missing_patterns)
             )
             sys.exit(1)
         link_archives.extend(ios_archives)
         project_env.Append(LINKFLAGS=[f"-Wl,-force_load,{archive}" for archive in link_archives])
-    elif project_info.backend_dir != "web":
-        project_env.Append(LIBS=[project_info.lib_name])
+    elif backend.name != "web":
+        project_env.Append(LIBS=[backend.library])
 
-    sources = Glob("src/{}/*.cpp".format(project_info.source_dir))
-    if project_info.backend_dir == "web":
+    sources = Glob(f"src/{backend.source_dir}/*.cpp")
+    if backend.name == "web":
         runtime_header = project_env.Command(
             "src/gen/puerts_web_runtime.generated.h",
             "src/PuertsWeb/puerts_web_runtime.js",
@@ -223,10 +200,10 @@ for project_info in project_infos:
         project_env.Append(CPPPATH=["src/gen"])
         # Link the existing core module so the class registry is shared and
         # the Emscripten dynamic loader loads it before the browser backend.
-        project_env.Append(LINKFLAGS=[str(built_libraries["puerts"][0])])
+        project_env.Append(LINKFLAGS=[str(built_libraries["core"][0])])
         sources = project_env.SharedObject(sources)
         project_env.Depends(sources, runtime_header)
-    if project_info.backend_dir == "puerts":
+    if backend.name == "core":
         if env["platform"] in ("ios", "web"):
             # The native static archive carries part of EASTL (e.g. hashtable.cpp).
             # Link only supplemental EASTL objects to avoid duplicate symbols.
@@ -237,10 +214,10 @@ for project_info in project_infos:
 
     if env["target"] in ["editor", "template_debug"]:
         try:
-            doc_sources = Glob("src/{}/doc_classes/*.xml".format(project_info.source_dir))
+            doc_sources = Glob(f"src/{backend.source_dir}/doc_classes/*.xml")
             if doc_sources:
                 doc_data = env.GodotCPPDocData(
-                    "src/{}/gen/doc_data.gen.cpp".format(project_info.source_dir),
+                    f"src/{backend.source_dir}/gen/doc_data.gen.cpp",
                     source=doc_sources,
                 )
                 sources.append(doc_data)
@@ -249,18 +226,18 @@ for project_info in project_infos:
 
     lib_filename = "{}{}{}{}".format(
         env.subst("$SHLIBPREFIX"),
-        project_info.project_name,
+        backend.source_dir,
         env["suffix"],
         env.subst("$SHLIBSUFFIX"),
     )
 
     library = project_env.SharedLibrary(
-        "bin/{}".format(lib_filename),
+        f"bin/{lib_filename}",
         source=sources,
     )
-    built_libraries[project_info.backend_dir] = library
-    if project_info.backend_dir == "web":
-        project_env.Depends(library, built_libraries["puerts"])
+    built_libraries[backend.name] = library
+    if backend.name == "web":
+        project_env.Depends(library, built_libraries["core"])
     if env["platform"] == "macos":
         project_env.AddPostAction(library, _ensure_loader_rpath_action)
     default_args.append(library)

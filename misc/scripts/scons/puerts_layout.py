@@ -1,49 +1,38 @@
-"""Puerts backend layout helpers for SConstruct."""
-
 import glob
 import json
 import os
 
-from .puerts_matrix import map_puerts_arch, map_puerts_platform
-
-GODOT_LIBRARY_KEY_BY_TARGET = {
-    "template_debug": "debug",
-    "template_release": "release",
-}
+from ..manifest import Backend, Platform, Target
 
 
-def resolve_puerts_paths(puerts_root, godot_platform, godot_arch, godot_target, backend_dir, lib_name):
-    puerts_platform = map_puerts_platform(godot_platform)
-    if not puerts_platform:
-        raise ValueError(f"Unsupported Godot platform for puerts: {godot_platform}")
-
-    puerts_arch = map_puerts_arch(godot_platform, godot_arch)
-    if not puerts_arch:
-        raise ValueError(f"Unsupported arch mapping for puerts: platform={godot_platform} arch={godot_arch}")
-
-    is_debug = godot_target != "template_release"
-    puerts_config = "Debug" if is_debug else "Release"
-    if puerts_platform == "win" and is_debug:
+def resolve_puerts_paths(
+    puerts_root: str, platform: Platform, arch: str, target: Target, backend: Backend
+) -> tuple[str, str | None]:
+    puerts_arch = platform.map_arch(arch)
+    is_debug = target.cmake != "Release"
+    puerts_config = target.cmake
+    if platform.name == "windows" and is_debug:
         puerts_config = "RelWithDebInfo"
 
     suffix = "_debug" if is_debug else ""
-    build_dir_name = f"build_{puerts_platform}_{puerts_arch}_{backend_dir}{suffix}"
-    backend_root = os.path.join(puerts_root, backend_dir)
+    build_dir_name = f"build_{platform.puerts}_{puerts_arch}_{backend.native_dir}{suffix}"
+    backend_root = os.path.join(puerts_root, backend.native_dir)
 
-    if puerts_platform in ["win", "osx"]:
+    if platform.puerts in ("win", "osx"):
         lib_path = os.path.join(backend_root, build_dir_name, puerts_config)
-    elif puerts_platform == "ios":
+    elif platform.puerts == "ios":
         lib_path = os.path.join(backend_root, build_dir_name, f"{puerts_config}-iphoneos")
     else:
         lib_path = os.path.join(backend_root, build_dir_name)
 
     runtime = None
-    if puerts_platform == "win":
-        runtime = os.path.join(lib_path, f"{lib_name}.dll")
-    elif puerts_platform in ["linux", "android"]:
-        runtime = os.path.join(lib_path, f"lib{lib_name}.so")
-    elif puerts_platform == "osx":
-        runtime = os.path.join(lib_path, f"{lib_name}.bundle" if puerts_arch == "x64" else f"lib{lib_name}.dylib")
+    if platform.puerts == "win":
+        runtime = os.path.join(lib_path, f"{backend.library}.dll")
+    elif platform.puerts in ("linux", "android"):
+        runtime = os.path.join(lib_path, f"lib{backend.library}.so")
+    elif platform.puerts == "osx":
+        filename = f"{backend.library}.bundle" if puerts_arch == "x64" else f"lib{backend.library}.dylib"
+        runtime = os.path.join(lib_path, filename)
 
     return lib_path, runtime
 
@@ -79,7 +68,3 @@ def collect_ios_dependency_archives(backend_config, puerts_root, backend_dir, pu
                 seen_archives.add(normalized_path)
 
     return archives, missing_patterns
-
-
-def map_godot_target_to_library_key(godot_target):
-    return GODOT_LIBRARY_KEY_BY_TARGET.get(godot_target, "")

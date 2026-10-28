@@ -21,22 +21,18 @@ import time
 from pathlib import Path
 
 try:
-    from .scons.puerts_layout import map_godot_target_to_library_key
-    from .scons.puerts_matrix import BACKENDS, CONFIG, PLATFORMS, supports_runtime_tests
+    from .gdextension import LibraryMapping, render_gdextension
+    from .manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS
 except ImportError:
-    from scons.puerts_layout import map_godot_target_to_library_key
-    from scons.puerts_matrix import BACKENDS, CONFIG, PLATFORMS, supports_runtime_tests
+    from gdextension import LibraryMapping, render_gdextension
+    from manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS
 
 DEFAULT_TIMEOUT = 300
 IMPORT_TIMEOUT_RATIO = 0.5
 RUNTIME_SUFFIXES = {".dll", ".so", ".dylib"}
 BUILD_ARTIFACT_PREFIXES = ("Puerts", "Papi", "libPuerts", "libPapi", "libnode")
 RUNTIME_BACKEND_NAMES = set(BACKENDS) - {"core"}
-# Keep only one heavy JS backend in runtime tests.
-BACKEND_ALIAS = {
-    "nodejs": "v8",
-}
-DEFAULT_BACKENDS = ",".join(CONFIG["runtime_test_backends"])
+DEFAULT_BACKENDS = ",".join(MANIFEST.runtime_tests.backends)
 
 
 def _same_file(source: Path, target: Path) -> bool:
@@ -116,27 +112,11 @@ def sync_binaries(build_bin_dir: Path, project_bin_dir: Path) -> int:
     return copied_count
 
 
-def _render_gdextension(entry_symbol: str, library_lines: list[str]) -> str:
-    rendered = [
-        "[configuration]",
-        "",
-        f'entry_symbol = "{entry_symbol}"',
-        'compatibility_minimum = "4.4"',
-        "reloadable = true",
-        "",
-        "[libraries]",
-        "",
-    ]
-    rendered.extend(library_lines)
-    rendered.append("")
-    return "\n".join(rendered)
-
-
-def _collect_library_lines(project_bin_dir: Path, backend_stem: str, platform_name: str) -> list[str]:
+def _collect_library_mappings(project_bin_dir: Path, backend_stem: str, platform_name: str) -> list[LibraryMapping]:
     target_pattern = re.compile(
         rf"^(?:lib)?{re.escape(backend_stem)}\.{re.escape(platform_name)}\.(template_debug|template_release)\.([^.]+)\.([^.]+)$"
     )
-    lines: list[str] = []
+    mappings: dict[str, LibraryMapping] = {}
     for artifact in sorted(project_bin_dir.iterdir()):
         if not artifact.is_file() or artifact.suffix.lower() not in RUNTIME_SUFFIXES:
             continue
@@ -144,14 +124,11 @@ def _collect_library_lines(project_bin_dir: Path, backend_stem: str, platform_na
         if not match:
             continue
         target, arch, _suffix = match.groups()
-        library_key = map_godot_target_to_library_key(target)
-        if not library_key:
-            continue
         resource_path = f"res://bin/{artifact.name}"
-        lines.append(f'{platform_name}.{library_key}.{arch} = "{resource_path}"')
-        # Headless Godot in CI uses editor flavor; map it to current built artifact.
-        lines.append(f'{platform_name}.editor.{arch} = "{resource_path}"')
-    return lines
+        for feature in (TARGETS[target].feature, "editor"):
+            key = f"{platform_name}.{feature}.{arch}"
+            mappings[key] = LibraryMapping(key, resource_path)
+    return list(mappings.values())
 
 
 def _parse_requested_backends(raw_backends: str) -> tuple[list[str], list[str]]:
@@ -161,7 +138,7 @@ def _parse_requested_backends(raw_backends: str) -> tuple[list[str], list[str]]:
         normalized = token.strip().lower()
         if not normalized:
             continue
-        normalized = BACKEND_ALIAS.get(normalized, normalized)
+        normalized = MANIFEST.runtime_tests.aliases.get(normalized, normalized)
         if normalized in RUNTIME_BACKEND_NAMES:
             if normalized not in requested:
                 requested.append(normalized)
@@ -256,18 +233,19 @@ def rewrite_gdextension_files(project_dir: Path, platform_name: str, requested_b
     for name, backend in BACKENDS.items():
         if name != "core" and name not in requested_backends:
             continue
-        lines = _collect_library_lines(project_bin_dir, backend["source"], platform_name)
-        if not lines:
+        mappings = _collect_library_mappings(project_bin_dir, backend.source_dir, platform_name)
+        if not mappings:
             continue
-        config_path = project_dir / backend["extension"]
-        config_path.write_text(_render_gdextension(backend["entry"], lines), encoding="utf-8", newline="\n")
+        config_path = project_dir / backend.extension
+        rendered = render_gdextension(backend, "4.4", mappings)
+        config_path.write_text(rendered, encoding="utf-8", newline="\n")
         updated.append(config_path.name)
     return updated
 
 
 @contextlib.contextmanager
 def restore_gdextension_files(project_dir: Path):
-    paths = [project_dir / backend["extension"] for backend in BACKENDS.values()]
+    paths = [project_dir / backend.extension for backend in BACKENDS.values()]
     originals = {path: path.read_bytes() if path.exists() else None for path in paths}
     try:
         yield
@@ -289,7 +267,7 @@ def import_safe_backends(platform_name: str, requested_backends: set[str]) -> se
 
 @contextlib.contextmanager
 def temporarily_hide_gdextensions(project_dir: Path, keep_backends: set[str]):
-    keep_files = {BACKENDS[name]["extension"] for name in {"core"} | keep_backends}
+    keep_files = {BACKENDS[name].extension for name in {"core"} | keep_backends}
     extension_list = project_dir / ".godot" / "extension_list.cfg"
     original_list = extension_list.read_bytes() if extension_list.exists() else None
     with tempfile.TemporaryDirectory(prefix="puerts-import-") as temporary:
@@ -518,7 +496,7 @@ def main() -> int:
     if not platform_name:
         print("[test-runner] could not determine platform. Pass --platform explicitly.", file=sys.stderr)
         return 2
-    if not supports_runtime_tests(platform_name):
+    if platform_name not in MANIFEST.runtime_tests.platforms:
         print(f"[test-runner] skip: runtime tests are not supported on platform={platform_name}")
         return 0
 
