@@ -2,229 +2,90 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import type { BindingProfile, CliArgs } from "./types.js";
 
-import type { ClassSource, ClassesConfig, CliArgs, GenerateTarget } from "./types.js";
+export const HELP = `Usage:
+		node dist/index.js --api <api.json> --profile <profile.json> --output <file.inc>
+		node dist/index.js --api <api.json> --kind builtin|object --classes A,B --output <file.inc>
+		node dist/index.js --api <api.json> --kind builtin|object --all --output <file.inc>
+		node dist/index.js --api <api.json> --kind globalscope --output <file.inc>
 
-const DEFAULT_PROPERTY_RULES_JSON = "./config/puerts_builtin_property_rules.json";
-const DEFAULT_REGISTER_FUNCTION = "register_puerts_builtin_bindings_generated";
-const DEFAULT_GLOBAL_SCOPE_REGISTER_FUNCTION = "register_puerts_global_scope_generated";
-const GENERATE_TARGETS = ["classes", "globalscope"] as const;
-const CPP_IDENTIFIER_RE = /^[_A-Za-z][_0-9A-Za-z]*$/;
+Options:
+		--rules <path>  Override the bundled puerts_binding_rules.json
+		--help          Show this help
 
-function isClassSource(value: string): value is ClassSource {
-	return value === "builtin" || value === "classes";
-}
+Profiles and direct selection are mutually exclusive. Paths are relative to the current directory.`;
 
-function isGenerateTarget(value: string): value is GenerateTarget {
-	return GENERATE_TARGETS.includes(value as GenerateTarget);
-}
+const IDENTIFIER = /^[_A-Za-z][_0-9A-Za-z]*$/;
+const KINDS = ["builtin", "object", "globalscope"];
+const DEFAULT_RULES = fileURLToPath(new URL("../config/puerts_binding_rules.json", import.meta.url));
 
-function readOptionValue(argv: string[], index: number, flag: string): string {
-	const value = (argv[index + 1] ?? "").trim();
-	if (!value) {
-		throw new Error(`Missing value for ${flag}.`);
+function validateSelection(profile: BindingProfile): void {
+	if (!KINDS.includes(profile.kind)) throw new Error("kind must be builtin, object, or globalscope.");
+	if (profile.all !== undefined && typeof profile.all !== "boolean") throw new Error("all must be a boolean.");
+	if (profile.classes !== undefined && (!Array.isArray(profile.classes) || profile.classes.length === 0 ||
+			profile.classes.some(name => typeof name !== "string" || !IDENTIFIER.test(name)))) {
+		throw new Error("classes must be a nonempty array of class names.");
 	}
-	return value;
-}
-
-function readValidatedOption<T extends string>(
-	argv: string[],
-	index: number,
-	flag: string,
-	guard: (value: string) => value is T,
-	expected: string,
-): T {
-	const value = readOptionValue(argv, index, flag);
-	if (!guard(value)) {
-		throw new Error(`Invalid ${flag} value: ${value}. Expected ${expected}.`);
+	if (profile.classes && new Set(profile.classes).size !== profile.classes.length) throw new Error("Duplicate class names.");
+	if (profile.kind === "globalscope") {
+		if (profile.classes !== undefined || profile.all !== undefined) throw new Error("globalscope does not accept classes or all.");
+	} else if (Number(profile.classes !== undefined) + Number(profile.all === true) !== 1) {
+		throw new Error("Select either classes or all.");
 	}
-	return value;
-}
-
-function parseClassNamesFromText(raw: string): string[] {
-	return raw
-		.split(",")
-		.map((x) => x.trim())
-		.filter(Boolean);
-}
-
-function resolveClassNamesFromPuertsFile(classesFromPuertsFile: string): string[] {
-	const puertsPath = resolve(process.cwd(), classesFromPuertsFile);
-	const source = readFileSync(puertsPath, "utf8");
-	const matches = [...source.matchAll(/PUERTS_SCRIPT_TYPE\(godot::([A-Za-z0-9_]+)\s*,/g)];
-	let classNames = matches.map((m) => m[1]);
-
-	if (classNames.length === 0) {
-		const includeMatch = source.match(/#include\s+"([^"]*puerts_builtin_bindings[^"]*\.inc)"/);
-		if (includeMatch) {
-			const includePath = resolve(dirname(puertsPath), includeMatch[1]);
-			const includeSource = readFileSync(includePath, "utf8");
-			const includeMatches = [...includeSource.matchAll(/PUERTS_SCRIPT_TYPE\(godot::([A-Za-z0-9_]+)\s*,/g)];
-			classNames = includeMatches.map((m) => m[1]);
-		}
+	if (profile.register_function !== undefined &&
+			(typeof profile.register_function !== "string" || !IDENTIFIER.test(profile.register_function))) {
+		throw new Error("register_function must be a C++ identifier.");
 	}
-
-	if (classNames.length === 0) {
-		throw new Error(`No PUERTS_SCRIPT_TYPE(godot::...) entries found from ${classesFromPuertsFile}`);
-	}
-
-	return classNames;
-}
-
-function parseClassNamesFromJson(classesJson: string): {
-	classNames: string[];
-	classSource?: ClassSource;
-	registerFunction?: string;
-} {
-	const jsonPath = resolve(process.cwd(), classesJson);
-	const raw = readFileSync(jsonPath, "utf8");
-	const parsed = JSON.parse(raw) as unknown;
-
-	if (Array.isArray(parsed)) {
-		return { classNames: parsed.map((x) => String(x).trim()).filter(Boolean) };
-	}
-	if (typeof parsed === "object" && parsed !== null) {
-		const cfg = parsed as ClassesConfig;
-		return {
-			classNames: (cfg.classes ?? []).map((x) => String(x).trim()).filter(Boolean),
-			classSource: cfg.source,
-			registerFunction: cfg.register_function,
-		};
-	}
-	throw new Error(`Invalid classes json format: ${classesJson}`);
-}
-
-function resolveClassSelection(argv: {
-	classesArg: string;
-	classesJson: string;
-	classesFromPuertsFile: string;
-	allBuiltin: boolean;
-	classSource: ClassSource;
-	registerFunction: string;
-}): Pick<CliArgs, "classNames" | "classSource" | "registerFunction"> {
-	let classNames = argv.classesArg ? parseClassNamesFromText(argv.classesArg) : [];
-	let classSource = argv.classSource;
-	let registerFunction = argv.registerFunction;
-
-	if (argv.classesJson) {
-		const parsed = parseClassNamesFromJson(argv.classesJson);
-		classNames = parsed.classNames;
-		classSource = parsed.classSource ?? classSource;
-		registerFunction = parsed.registerFunction?.trim() || registerFunction;
-	}
-
-	if (argv.classesFromPuertsFile) {
-		classNames = resolveClassNamesFromPuertsFile(argv.classesFromPuertsFile);
-	}
-
-	if (argv.allBuiltin) {
-		classNames = [];
-	}
-
-	return {
-		classNames: [...new Set(classNames)],
-		classSource,
-		registerFunction,
-	};
 }
 
 export function parseArgs(argv: string[]): CliArgs {
-	let input = "";
-	let output = "";
-	let godotVersionMacro = "";
-	let classesArg = "";
-	let classesJson = "";
-	let classesFromPuertsFile = "";
-	let propertyRulesJson = DEFAULT_PROPERTY_RULES_JSON;
-	let classSource: ClassSource = "builtin";
-	let registerFunction = DEFAULT_REGISTER_FUNCTION;
-	let target: GenerateTarget = "classes";
-	let allBuiltin = false;
-
-	for (let i = 0; i < argv.length; i += 1) {
-		const token = argv[i];
-		switch (token) {
-			case "--input":
-				input = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--output":
-				output = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--godot-version-macro":
-				godotVersionMacro = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--classes":
-				classesArg = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--classes-json":
-				classesJson = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--classes-from-puerts-file":
-				classesFromPuertsFile = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--property-rules-json":
-				propertyRulesJson = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--class-source":
-				classSource = readValidatedOption(argv, i, token, isClassSource, "'builtin' or 'classes'");
-				i += 1;
-				break;
-			case "--register-function":
-				registerFunction = readOptionValue(argv, i, token);
-				i += 1;
-				break;
-			case "--target":
-				target = readValidatedOption(argv, i, token, isGenerateTarget, "'classes' or 'globalscope'");
-				i += 1;
-				break;
-			case "--all-builtin":
-				allBuiltin = true;
-				break;
+	const values = new Map<string, string>();
+	const options = new Set(["--api", "--output", "--profile", "--kind", "--classes", "--rules", "--all"]);
+	for (let index = 0; index < argv.length; index++) {
+		const option = argv[index];
+		if (!options.has(option)) throw new Error(`Unknown argument: ${option}. Use --help.`);
+		if (values.has(option)) throw new Error(`Duplicate argument: ${option}.`);
+		if (option === "--all") { values.set(option, "true"); continue; }
+		const value = argv[++index];
+		if (!value || value.startsWith("--") || !value.trim()) throw new Error(`Missing value for ${option}.`);
+		values.set(option, value);
+	}
+	const input = values.get("--api");
+	const output = values.get("--output");
+	if (!input || !output) throw new Error("--api and --output are required. Use --help.");
+	let profile: BindingProfile;
+	if (values.has("--profile")) {
+		if (["--kind", "--classes", "--all"].some(option => values.has(option))) {
+			throw new Error("--profile cannot be combined with --kind, --classes, or --all.");
 		}
+		const parsed: unknown = JSON.parse(readFileSync(resolve(values.get("--profile")!), "utf8"));
+		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Profile must be an object.");
+		for (const key of Object.keys(parsed)) {
+			if (!["kind", "classes", "all", "register_function"].includes(key)) throw new Error(`Unknown profile field: ${key}.`);
+		}
+		profile = parsed as BindingProfile;
+	} else {
+		profile = {
+			kind: values.get("--kind") as BindingProfile["kind"],
+			...(values.has("--classes") ? { classes: values.get("--classes")!.split(",").map(name => name.trim()) } : {}),
+			...(values.has("--all") ? { all: true } : {}),
+		};
 	}
-
-	if (!input || !output) {
-		throw new Error(
-			"Usage: node dist/index.js --input <extension_api.json> --output <output.inc> [--godot-version-macro <major.minor>] [--classes A,B,C | --classes-json <classes.json> | --classes-from-puerts-file <puerts_builtin_binding.cpp> | --all-builtin] [--class-source builtin|classes] [--register-function <identifier>]",
-		);
-	}
-	if (godotVersionMacro && !/^\d+\.\d+$/.test(godotVersionMacro)) {
-		throw new Error(`Invalid --godot-version-macro value: ${godotVersionMacro}. Expected <major>.<minor>.`);
-	}
-
-	if (target === "globalscope" && registerFunction === DEFAULT_REGISTER_FUNCTION) {
-		registerFunction = DEFAULT_GLOBAL_SCOPE_REGISTER_FUNCTION;
-	}
-
-	const selection = resolveClassSelection({
-		classesArg,
-		classesJson,
-		classesFromPuertsFile,
-		allBuiltin,
-		classSource,
-		registerFunction,
-	});
-
-	if (!CPP_IDENTIFIER_RE.test(selection.registerFunction)) {
-		throw new Error(`Invalid --register-function value: ${selection.registerFunction}. Expected a valid C++ identifier.`);
-	}
-
+	validateSelection(profile);
+	const registrationNames = {
+		builtin: "register_puerts_builtin_bindings_generated",
+		object: "register_puerts_object_profile_bindings_generated",
+		globalscope: "register_puerts_global_scope_generated",
+	};
 	return {
-		input,
-		output,
-		godotVersionMacro,
-		classNames: selection.classNames,
-		propertyRulesJson,
-		classSource: selection.classSource,
-		registerFunction: selection.registerFunction,
-		target,
+		input, output,
+		classNames: profile.classes ?? [],
+		bindingRulesJson: values.get("--rules") ?? DEFAULT_RULES,
+		classSource: profile.kind === "object" ? "classes" : "builtin",
+		target: profile.kind === "globalscope" ? "globalscope" : "classes",
+		registerFunction: profile.register_function ?? registrationNames[profile.kind],
 	};
 }

@@ -47,16 +47,6 @@
 #include <godot_cpp/variant/vector4.hpp>
 #include <godot_cpp/variant/vector4i.hpp>
 
-namespace puerts_generated {
-struct projection_planes_enum_tag {};
-struct vector2_axis_enum_tag {};
-struct vector2i_axis_enum_tag {};
-struct vector3_axis_enum_tag {};
-struct vector3i_axis_enum_tag {};
-struct vector4_axis_enum_tag {};
-struct vector4i_axis_enum_tag {};
-} // namespace puerts_generated
-
 PUERTS_SCRIPT_TYPE(godot::AABB, "AABB")
 PUERTS_SCRIPT_TYPE(godot::Array, "Array")
 PUERTS_SCRIPT_TYPE(godot::Basis, "Basis")
@@ -89,13 +79,6 @@ PUERTS_SCRIPT_TYPE(godot::Vector3, "Vector3")
 PUERTS_SCRIPT_TYPE(godot::Vector3i, "Vector3i")
 PUERTS_SCRIPT_TYPE(godot::Vector4, "Vector4")
 PUERTS_SCRIPT_TYPE(godot::Vector4i, "Vector4i")
-PUERTS_SCRIPT_TYPE(puerts_generated::projection_planes_enum_tag, "Projection.Planes")
-PUERTS_SCRIPT_TYPE(puerts_generated::vector2_axis_enum_tag, "Vector2.Axis")
-PUERTS_SCRIPT_TYPE(puerts_generated::vector2i_axis_enum_tag, "Vector2i.Axis")
-PUERTS_SCRIPT_TYPE(puerts_generated::vector3_axis_enum_tag, "Vector3.Axis")
-PUERTS_SCRIPT_TYPE(puerts_generated::vector3i_axis_enum_tag, "Vector3i.Axis")
-PUERTS_SCRIPT_TYPE(puerts_generated::vector4_axis_enum_tag, "Vector4.Axis")
-PUERTS_SCRIPT_TYPE(puerts_generated::vector4i_axis_enum_tag, "Vector4i.Axis")
 
 namespace puerts_generated {
 inline godot::Vector3 aabb_end_getter(const godot::AABB &p_self) {
@@ -135,7 +118,7 @@ inline int64_t color_r8_getter(const godot::Color &p_self) {
 }
 
 inline void color_r8_setter(godot::Color &p_self, int64_t p_value) {
-	p_self.set_r8(eastl::move(p_value));
+	p_self.set_r8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_r8), 0>>(p_value));
 }
 
 inline int64_t color_g8_getter(const godot::Color &p_self) {
@@ -143,7 +126,7 @@ inline int64_t color_g8_getter(const godot::Color &p_self) {
 }
 
 inline void color_g8_setter(godot::Color &p_self, int64_t p_value) {
-	p_self.set_g8(eastl::move(p_value));
+	p_self.set_g8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_g8), 0>>(p_value));
 }
 
 inline int64_t color_b8_getter(const godot::Color &p_self) {
@@ -151,7 +134,7 @@ inline int64_t color_b8_getter(const godot::Color &p_self) {
 }
 
 inline void color_b8_setter(godot::Color &p_self, int64_t p_value) {
-	p_self.set_b8(eastl::move(p_value));
+	p_self.set_b8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_b8), 0>>(p_value));
 }
 
 inline int64_t color_a8_getter(const godot::Color &p_self) {
@@ -159,55 +142,55 @@ inline int64_t color_a8_getter(const godot::Color &p_self) {
 }
 
 inline void color_a8_setter(godot::Color &p_self, int64_t p_value) {
-	p_self.set_a8(eastl::move(p_value));
+	p_self.set_a8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_a8), 0>>(p_value));
 }
 
-inline godot::real_t color_h_getter(const godot::Color &p_self) {
+inline double color_h_getter(const godot::Color &p_self) {
 	return p_self.get_h();
 }
 
-inline void color_h_setter(godot::Color &p_self, godot::real_t p_value) {
-	p_self.set_h(eastl::move(p_value));
+inline void color_h_setter(godot::Color &p_self, double p_value) {
+	p_self.set_h(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_h), 0>>(p_value));
 }
 
-inline godot::real_t color_s_getter(const godot::Color &p_self) {
+inline double color_s_getter(const godot::Color &p_self) {
 	return p_self.get_s();
 }
 
-inline void color_s_setter(godot::Color &p_self, godot::real_t p_value) {
-	p_self.set_s(eastl::move(p_value));
+inline void color_s_setter(godot::Color &p_self, double p_value) {
+	p_self.set_s(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_s), 0>>(p_value));
 }
 
-inline godot::real_t color_v_getter(const godot::Color &p_self) {
+inline double color_v_getter(const godot::Color &p_self) {
 	return p_self.get_v();
 }
 
-inline void color_v_setter(godot::Color &p_self, godot::real_t p_value) {
-	p_self.set_v(eastl::move(p_value));
+inline void color_v_setter(godot::Color &p_self, double p_value) {
+	p_self.set_v(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_v), 0>>(p_value));
 }
 
-inline godot::real_t plane_x_getter(const godot::Plane &p_self) {
+inline double plane_x_getter(const godot::Plane &p_self) {
 	return p_self.normal.x;
 }
 
-inline void plane_x_setter(godot::Plane &p_self, godot::real_t p_value) {
-	p_self.normal.x = eastl::move(p_value);
+inline void plane_x_setter(godot::Plane &p_self, double p_value) {
+	p_self.normal.x = static_cast<decltype(p_self.normal.x)>(p_value);
 }
 
-inline godot::real_t plane_y_getter(const godot::Plane &p_self) {
+inline double plane_y_getter(const godot::Plane &p_self) {
 	return p_self.normal.y;
 }
 
-inline void plane_y_setter(godot::Plane &p_self, godot::real_t p_value) {
-	p_self.normal.y = eastl::move(p_value);
+inline void plane_y_setter(godot::Plane &p_self, double p_value) {
+	p_self.normal.y = static_cast<decltype(p_self.normal.y)>(p_value);
 }
 
-inline godot::real_t plane_z_getter(const godot::Plane &p_self) {
+inline double plane_z_getter(const godot::Plane &p_self) {
 	return p_self.normal.z;
 }
 
-inline void plane_z_setter(godot::Plane &p_self, godot::real_t p_value) {
-	p_self.normal.z = eastl::move(p_value);
+inline void plane_z_setter(godot::Plane &p_self, double p_value) {
+	p_self.normal.z = static_cast<decltype(p_self.normal.z)>(p_value);
 }
 
 inline godot::Vector4 projection_x_getter(const godot::Projection &p_self) {
@@ -285,55 +268,55 @@ inline void transform2d_origin_setter(godot::Transform2D &p_self, godot::Vector2
 } // namespace puerts_generated
 
 inline void register_enum_projection_planes() {
-	puerts::define_type<puerts_generated::projection_planes_enum_tag>()
-			.constant<0>("PLANE_NEAR")
-			.constant<1>("PLANE_FAR")
-			.constant<2>("PLANE_LEFT")
-			.constant<3>("PLANE_TOP")
-			.constant<4>("PLANE_RIGHT")
-			.constant<5>("PLANE_BOTTOM")
+	puerts::define_namespace("Projection.Planes")
+			.constant("PLANE_NEAR", 0)
+			.constant("PLANE_FAR", 1)
+			.constant("PLANE_LEFT", 2)
+			.constant("PLANE_TOP", 3)
+			.constant("PLANE_RIGHT", 4)
+			.constant("PLANE_BOTTOM", 5)
 			.register_type();
 }
 inline void register_enum_vector2_axis() {
-	puerts::define_type<puerts_generated::vector2_axis_enum_tag>()
-			.constant<0>("AXIS_X")
-			.constant<1>("AXIS_Y")
+	puerts::define_namespace("Vector2.Axis")
+			.constant("AXIS_X", 0)
+			.constant("AXIS_Y", 1)
 			.register_type();
 }
 inline void register_enum_vector2i_axis() {
-	puerts::define_type<puerts_generated::vector2i_axis_enum_tag>()
-			.constant<0>("AXIS_X")
-			.constant<1>("AXIS_Y")
+	puerts::define_namespace("Vector2i.Axis")
+			.constant("AXIS_X", 0)
+			.constant("AXIS_Y", 1)
 			.register_type();
 }
 inline void register_enum_vector3_axis() {
-	puerts::define_type<puerts_generated::vector3_axis_enum_tag>()
-			.constant<0>("AXIS_X")
-			.constant<1>("AXIS_Y")
-			.constant<2>("AXIS_Z")
+	puerts::define_namespace("Vector3.Axis")
+			.constant("AXIS_X", 0)
+			.constant("AXIS_Y", 1)
+			.constant("AXIS_Z", 2)
 			.register_type();
 }
 inline void register_enum_vector3i_axis() {
-	puerts::define_type<puerts_generated::vector3i_axis_enum_tag>()
-			.constant<0>("AXIS_X")
-			.constant<1>("AXIS_Y")
-			.constant<2>("AXIS_Z")
+	puerts::define_namespace("Vector3i.Axis")
+			.constant("AXIS_X", 0)
+			.constant("AXIS_Y", 1)
+			.constant("AXIS_Z", 2)
 			.register_type();
 }
 inline void register_enum_vector4_axis() {
-	puerts::define_type<puerts_generated::vector4_axis_enum_tag>()
-			.constant<0>("AXIS_X")
-			.constant<1>("AXIS_Y")
-			.constant<2>("AXIS_Z")
-			.constant<3>("AXIS_W")
+	puerts::define_namespace("Vector4.Axis")
+			.constant("AXIS_X", 0)
+			.constant("AXIS_Y", 1)
+			.constant("AXIS_Z", 2)
+			.constant("AXIS_W", 3)
 			.register_type();
 }
 inline void register_enum_vector4i_axis() {
-	puerts::define_type<puerts_generated::vector4i_axis_enum_tag>()
-			.constant<0>("AXIS_X")
-			.constant<1>("AXIS_Y")
-			.constant<2>("AXIS_Z")
-			.constant<3>("AXIS_W")
+	puerts::define_namespace("Vector4i.Axis")
+			.constant("AXIS_X", 0)
+			.constant("AXIS_Y", 1)
+			.constant("AXIS_Z", 2)
+			.constant("AXIS_W", 3)
 			.register_type();
 }
 
@@ -362,6 +345,81 @@ inline bool aabb_op_in_6(const godot::AABB &left, const godot::Dictionary &right
 inline bool aabb_op_in_7(const godot::AABB &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline decltype(auto) aabb_abs_overload0_arity0(const godot::AABB &p_self) {
+	return p_self.abs();
+}
+inline decltype(auto) aabb_get_center_overload0_arity0(const godot::AABB &p_self) {
+	return p_self.get_center();
+}
+inline decltype(auto) aabb_get_volume_overload0_arity0(const godot::AABB &p_self) {
+	return static_cast<double>(p_self.get_volume());
+}
+inline decltype(auto) aabb_has_volume_overload0_arity0(const godot::AABB &p_self) {
+	return p_self.has_volume();
+}
+inline decltype(auto) aabb_has_surface_overload0_arity0(const godot::AABB &p_self) {
+	return p_self.has_surface();
+}
+inline decltype(auto) aabb_has_point_overload0_arity1(const godot::AABB &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.has_point(p_arg_0);
+}
+inline decltype(auto) aabb_is_equal_approx_overload0_arity1(const godot::AABB &p_self, const godot::AABB &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) aabb_is_finite_overload0_arity0(const godot::AABB &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) aabb_intersects_overload0_arity1(const godot::AABB &p_self, const godot::AABB &p_arg_0) {
+	return p_self.intersects(p_arg_0);
+}
+inline decltype(auto) aabb_encloses_overload0_arity1(const godot::AABB &p_self, const godot::AABB &p_arg_0) {
+	return p_self.encloses(p_arg_0);
+}
+inline decltype(auto) aabb_intersects_plane_overload0_arity1(const godot::AABB &p_self, const godot::Plane &p_arg_0) {
+	return p_self.intersects_plane(p_arg_0);
+}
+inline decltype(auto) aabb_intersection_overload0_arity1(const godot::AABB &p_self, const godot::AABB &p_arg_0) {
+	return p_self.intersection(p_arg_0);
+}
+inline decltype(auto) aabb_merge_overload0_arity1(const godot::AABB &p_self, const godot::AABB &p_arg_0) {
+	return p_self.merge(p_arg_0);
+}
+inline decltype(auto) aabb_expand_overload0_arity1(const godot::AABB &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.expand(p_arg_0);
+}
+inline decltype(auto) aabb_grow_overload0_arity1(const godot::AABB &p_self, double p_arg_0) {
+	return p_self.grow(static_cast<puerts::internal::native_parameter_t<decltype(&godot::AABB::grow), 0>>(p_arg_0));
+}
+inline decltype(auto) aabb_get_support_overload0_arity1(const godot::AABB &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.get_support(p_arg_0);
+}
+inline decltype(auto) aabb_get_longest_axis_overload0_arity0(const godot::AABB &p_self) {
+	return p_self.get_longest_axis();
+}
+inline decltype(auto) aabb_get_longest_axis_index_overload0_arity0(const godot::AABB &p_self) {
+	return static_cast<int64_t>(p_self.get_longest_axis_index());
+}
+inline decltype(auto) aabb_get_longest_axis_size_overload0_arity0(const godot::AABB &p_self) {
+	return static_cast<double>(p_self.get_longest_axis_size());
+}
+inline decltype(auto) aabb_get_shortest_axis_overload0_arity0(const godot::AABB &p_self) {
+	return p_self.get_shortest_axis();
+}
+inline decltype(auto) aabb_get_shortest_axis_index_overload0_arity0(const godot::AABB &p_self) {
+	return static_cast<int64_t>(p_self.get_shortest_axis_index());
+}
+inline decltype(auto) aabb_get_shortest_axis_size_overload0_arity0(const godot::AABB &p_self) {
+	return static_cast<double>(p_self.get_shortest_axis_size());
+}
+inline decltype(auto) aabb_get_endpoint_overload0_arity1(const godot::AABB &p_self, int64_t p_arg_0) {
+	return p_self.get_endpoint(static_cast<puerts::internal::native_parameter_t<decltype(&godot::AABB::get_endpoint), 0>>(p_arg_0));
+}
+inline decltype(auto) aabb_intersects_segment_overload0_arity2(const godot::AABB &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+	return p_self.intersects_segment_bind(p_arg_0, p_arg_1);
+}
+inline decltype(auto) aabb_intersects_ray_overload0_arity2(const godot::AABB &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+	return p_self.intersects_ray_bind(p_arg_0, p_arg_1);
+}
 } // namespace puerts_generated
 
 inline void register_type_aabb() {
@@ -374,31 +432,31 @@ inline void register_type_aabb() {
 			.constructor<>()
 			.constructor<const godot::AABB &>()
 			.constructor<const godot::Vector3 &, const godot::Vector3 &>()
-			.method<&godot::AABB::abs>("abs")
-			.method<&godot::AABB::get_center>("get_center")
-			.method<&godot::AABB::get_volume>("get_volume")
-			.method<&godot::AABB::has_volume>("has_volume")
-			.method<&godot::AABB::has_surface>("has_surface")
-			.method<&godot::AABB::has_point>("has_point")
-			.method<&godot::AABB::is_equal_approx>("is_equal_approx")
-			.method<&godot::AABB::is_finite>("is_finite")
-			.method<&godot::AABB::intersects>("intersects")
-			.method<&godot::AABB::encloses>("encloses")
-			.method<&godot::AABB::intersects_plane>("intersects_plane")
-			.method<&godot::AABB::intersection>("intersection")
-			.method<&godot::AABB::merge>("merge")
-			.method<&godot::AABB::expand>("expand")
-			.method<&godot::AABB::grow>("grow")
-			.method<&godot::AABB::get_support>("get_support")
-			.method<&godot::AABB::get_longest_axis>("get_longest_axis")
-			.method<&godot::AABB::get_longest_axis_index>("get_longest_axis_index")
-			.method<&godot::AABB::get_longest_axis_size>("get_longest_axis_size")
-			.method<&godot::AABB::get_shortest_axis>("get_shortest_axis")
-			.method<&godot::AABB::get_shortest_axis_index>("get_shortest_axis_index")
-			.method<&godot::AABB::get_shortest_axis_size>("get_shortest_axis_size")
-			.method<&godot::AABB::get_endpoint>("get_endpoint")
-			.method<&godot::AABB::intersects_segment>("intersects_segment")
-			.method<&godot::AABB::intersects_ray>("intersects_ray")
+			.method<&puerts_generated::aabb_abs_overload0_arity0>("abs")
+			.method<&puerts_generated::aabb_get_center_overload0_arity0>("get_center")
+			.method<&puerts_generated::aabb_get_volume_overload0_arity0>("get_volume")
+			.method<&puerts_generated::aabb_has_volume_overload0_arity0>("has_volume")
+			.method<&puerts_generated::aabb_has_surface_overload0_arity0>("has_surface")
+			.method<&puerts_generated::aabb_has_point_overload0_arity1>("has_point")
+			.method<&puerts_generated::aabb_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::aabb_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::aabb_intersects_overload0_arity1>("intersects")
+			.method<&puerts_generated::aabb_encloses_overload0_arity1>("encloses")
+			.method<&puerts_generated::aabb_intersects_plane_overload0_arity1>("intersects_plane")
+			.method<&puerts_generated::aabb_intersection_overload0_arity1>("intersection")
+			.method<&puerts_generated::aabb_merge_overload0_arity1>("merge")
+			.method<&puerts_generated::aabb_expand_overload0_arity1>("expand")
+			.method<&puerts_generated::aabb_grow_overload0_arity1>("grow")
+			.method<&puerts_generated::aabb_get_support_overload0_arity1>("get_support")
+			.method<&puerts_generated::aabb_get_longest_axis_overload0_arity0>("get_longest_axis")
+			.method<&puerts_generated::aabb_get_longest_axis_index_overload0_arity0>("get_longest_axis_index")
+			.method<&puerts_generated::aabb_get_longest_axis_size_overload0_arity0>("get_longest_axis_size")
+			.method<&puerts_generated::aabb_get_shortest_axis_overload0_arity0>("get_shortest_axis")
+			.method<&puerts_generated::aabb_get_shortest_axis_index_overload0_arity0>("get_shortest_axis_index")
+			.method<&puerts_generated::aabb_get_shortest_axis_size_overload0_arity0>("get_shortest_axis_size")
+			.method<&puerts_generated::aabb_get_endpoint_overload0_arity1>("get_endpoint")
+			.method<&puerts_generated::aabb_intersects_segment_overload0_arity2>("intersects_segment")
+			.method<&puerts_generated::aabb_intersects_ray_overload0_arity2>("intersects_ray")
 			.property<&puerts_generated::aabb_end_getter, &puerts_generated::aabb_end_setter>("end")
 			.property<&godot::AABB::position>("position")
 			.property<&godot::AABB::size>("size")
@@ -441,41 +499,194 @@ inline godot::Array array_op_addition_10(const godot::Array &left, const godot::
 inline bool array_op_in_11(const godot::Array &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline decltype(auto) array_find_default1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) array_size_overload0_arity0(const godot::Array &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) array_find_custom_default1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
-	return p_self.find_custom(p_arg_0);
+inline decltype(auto) array_is_empty_overload0_arity0(const godot::Array &p_self) {
+	return p_self.is_empty();
 }
-inline decltype(auto) array_rfind_default1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) array_clear_overload0_arity0(godot::Array &p_self) {
+	return p_self.clear();
 }
-inline decltype(auto) array_rfind_custom_default1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
-	return p_self.rfind_custom(p_arg_0);
+inline decltype(auto) array_hash_overload0_arity0(const godot::Array &p_self) {
+	return static_cast<int64_t>(p_self.hash());
 }
-inline decltype(auto) array_bsearch_default1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) array_assign_overload0_arity1(godot::Array &p_self, const godot::Array &p_arg_0) {
+	return p_self.assign(p_arg_0);
 }
-inline decltype(auto) array_bsearch_custom_default2(const godot::Array &p_self, const godot::Variant &p_arg_0, const godot::Callable &p_arg_1) {
-	return p_self.bsearch_custom(p_arg_0, p_arg_1);
+inline decltype(auto) array_get_overload0_arity1(const godot::Array &p_self, int64_t p_arg_0) {
+	return p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::get), 0>>(p_arg_0));
 }
-inline decltype(auto) array_duplicate_default0(const godot::Array &p_self) {
+inline decltype(auto) array_set_overload0_arity2(godot::Array &p_self, int64_t p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::set), 0>>(p_arg_0), p_arg_1);
+}
+inline decltype(auto) array_push_back_overload0_arity1(godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return p_self.push_back(p_arg_0);
+}
+inline decltype(auto) array_push_front_overload0_arity1(godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return p_self.push_front(p_arg_0);
+}
+inline decltype(auto) array_append_overload0_arity1(godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return p_self.append(p_arg_0);
+}
+inline decltype(auto) array_append_array_overload0_arity1(godot::Array &p_self, const godot::Array &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) array_resize_overload0_arity1(godot::Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) array_insert_overload0_arity2(godot::Array &p_self, int64_t p_arg_0, const godot::Variant &p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::insert), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) array_remove_at_overload0_arity1(godot::Array &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) array_fill_overload0_arity1(godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return p_self.fill(p_arg_0);
+}
+inline decltype(auto) array_erase_overload0_arity1(godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return p_self.erase(p_arg_0);
+}
+inline decltype(auto) array_front_overload0_arity0(const godot::Array &p_self) {
+	return p_self.front();
+}
+inline decltype(auto) array_back_overload0_arity0(const godot::Array &p_self) {
+	return p_self.back();
+}
+inline decltype(auto) array_pick_random_overload0_arity0(const godot::Array &p_self) {
+	return p_self.pick_random();
+}
+inline decltype(auto) array_find_overload0_arity1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return static_cast<int64_t>(p_self.find(p_arg_0));
+}
+inline decltype(auto) array_find_overload0_arity2(const godot::Array &p_self, const godot::Variant &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) array_find_custom_overload0_arity1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
+	return static_cast<int64_t>(p_self.find_custom(p_arg_0));
+}
+inline decltype(auto) array_find_custom_overload0_arity2(const godot::Array &p_self, const godot::Callable &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find_custom(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::find_custom), 1>>(p_arg_1)));
+}
+inline decltype(auto) array_rfind_overload0_arity1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0));
+}
+inline decltype(auto) array_rfind_overload0_arity2(const godot::Array &p_self, const godot::Variant &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) array_rfind_custom_overload0_arity1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind_custom(p_arg_0));
+}
+inline decltype(auto) array_rfind_custom_overload0_arity2(const godot::Array &p_self, const godot::Callable &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind_custom(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::rfind_custom), 1>>(p_arg_1)));
+}
+inline decltype(auto) array_count_overload0_arity1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return static_cast<int64_t>(p_self.count(p_arg_0));
+}
+inline decltype(auto) array_has_overload0_arity1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return p_self.has(p_arg_0);
+}
+inline decltype(auto) array_pop_back_overload0_arity0(godot::Array &p_self) {
+	return p_self.pop_back();
+}
+inline decltype(auto) array_pop_front_overload0_arity0(godot::Array &p_self) {
+	return p_self.pop_front();
+}
+inline decltype(auto) array_pop_at_overload0_arity1(godot::Array &p_self, int64_t p_arg_0) {
+	return p_self.pop_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::pop_at), 0>>(p_arg_0));
+}
+inline decltype(auto) array_sort_overload0_arity0(godot::Array &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) array_sort_custom_overload0_arity1(godot::Array &p_self, const godot::Callable &p_arg_0) {
+	return p_self.sort_custom(p_arg_0);
+}
+inline decltype(auto) array_shuffle_overload0_arity0(godot::Array &p_self) {
+	return p_self.shuffle();
+}
+inline decltype(auto) array_bsearch_overload0_arity1(const godot::Array &p_self, const godot::Variant &p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0));
+}
+inline decltype(auto) array_bsearch_overload0_arity2(const godot::Array &p_self, const godot::Variant &p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0, p_arg_1));
+}
+inline decltype(auto) array_bsearch_custom_overload0_arity2(const godot::Array &p_self, const godot::Variant &p_arg_0, const godot::Callable &p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch_custom(p_arg_0, p_arg_1));
+}
+inline decltype(auto) array_bsearch_custom_overload0_arity3(const godot::Array &p_self, const godot::Variant &p_arg_0, const godot::Callable &p_arg_1, bool p_arg_2) {
+	return static_cast<int64_t>(p_self.bsearch_custom(p_arg_0, p_arg_1, p_arg_2));
+}
+inline decltype(auto) array_reverse_overload0_arity0(godot::Array &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) array_duplicate_overload0_arity0(const godot::Array &p_self) {
 	return p_self.duplicate();
 }
-inline decltype(auto) array_duplicate_deep_default0(const godot::Array &p_self) {
+inline decltype(auto) array_duplicate_overload0_arity1(const godot::Array &p_self, bool p_arg_0) {
+	return p_self.duplicate(p_arg_0);
+}
+inline decltype(auto) array_duplicate_deep_overload0_arity0(const godot::Array &p_self) {
 	return p_self.duplicate_deep();
 }
-inline decltype(auto) array_slice_default1(const godot::Array &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) array_duplicate_deep_overload0_arity1(const godot::Array &p_self, int64_t p_arg_0) {
+	return p_self.duplicate_deep(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::duplicate_deep), 0>>(p_arg_0));
 }
-inline decltype(auto) array_slice_default2(const godot::Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
-	return p_self.slice(p_arg_0, p_arg_1);
+inline decltype(auto) array_slice_overload0_arity1(const godot::Array &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 0>>(p_arg_0));
 }
-inline decltype(auto) array_slice_default3(const godot::Array &p_self, int64_t p_arg_0, int64_t p_arg_1, int64_t p_arg_2) {
-	return p_self.slice(p_arg_0, p_arg_1, p_arg_2);
+inline decltype(auto) array_slice_overload0_arity2(const godot::Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 1>>(p_arg_1));
 }
-inline decltype(auto) array_reduce_default1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
+inline decltype(auto) array_slice_overload0_arity3(const godot::Array &p_self, int64_t p_arg_0, int64_t p_arg_1, int64_t p_arg_2) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 2>>(p_arg_2));
+}
+inline decltype(auto) array_slice_overload0_arity4(const godot::Array &p_self, int64_t p_arg_0, int64_t p_arg_1, int64_t p_arg_2, bool p_arg_3) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Array::slice), 2>>(p_arg_2), p_arg_3);
+}
+inline decltype(auto) array_filter_overload0_arity1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
+	return p_self.filter(p_arg_0);
+}
+inline decltype(auto) array_map_overload0_arity1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
+	return p_self.map(p_arg_0);
+}
+inline decltype(auto) array_reduce_overload0_arity1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
 	return p_self.reduce(p_arg_0, godot::Variant());
+}
+inline decltype(auto) array_reduce_overload0_arity2(const godot::Array &p_self, const godot::Callable &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.reduce(p_arg_0, p_arg_1);
+}
+inline decltype(auto) array_any_overload0_arity1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
+	return p_self.any(p_arg_0);
+}
+inline decltype(auto) array_all_overload0_arity1(const godot::Array &p_self, const godot::Callable &p_arg_0) {
+	return p_self.all(p_arg_0);
+}
+inline decltype(auto) array_max_overload0_arity0(const godot::Array &p_self) {
+	return p_self.max();
+}
+inline decltype(auto) array_min_overload0_arity0(const godot::Array &p_self) {
+	return p_self.min();
+}
+inline decltype(auto) array_is_typed_overload0_arity0(const godot::Array &p_self) {
+	return p_self.is_typed();
+}
+inline decltype(auto) array_is_same_typed_overload0_arity1(const godot::Array &p_self, const godot::Array &p_arg_0) {
+	return p_self.is_same_typed(p_arg_0);
+}
+inline decltype(auto) array_get_typed_builtin_overload0_arity0(const godot::Array &p_self) {
+	return static_cast<int64_t>(p_self.get_typed_builtin());
+}
+inline decltype(auto) array_get_typed_class_name_overload0_arity0(const godot::Array &p_self) {
+	return p_self.get_typed_class_name();
+}
+inline decltype(auto) array_get_typed_script_overload0_arity0(const godot::Array &p_self) {
+	return p_self.get_typed_script();
+}
+inline decltype(auto) array_make_read_only_overload0_arity0(godot::Array &p_self) {
+	return p_self.make_read_only();
+}
+inline decltype(auto) array_is_read_only_overload0_arity0(const godot::Array &p_self) {
+	return p_self.is_read_only();
 }
 } // namespace puerts_generated
 
@@ -503,57 +714,57 @@ inline void register_type_array() {
 			.constructor<const godot::PackedVector3Array &>()
 			.constructor<const godot::PackedColorArray &>()
 			.constructor<const godot::PackedVector4Array &>()
-			.method<&godot::Array::size>("size")
-			.method<&godot::Array::is_empty>("is_empty")
-			.method<&godot::Array::clear>("clear")
-			.method<&godot::Array::hash>("hash")
-			.method<&godot::Array::assign>("assign")
-			.method<&godot::Array::get>("get")
-			.method<&godot::Array::set>("set")
-			.method<&godot::Array::push_back>("push_back")
-			.method<&godot::Array::push_front>("push_front")
-			.method<&godot::Array::append>("append")
-			.method<&godot::Array::append_array>("append_array")
-			.method<&godot::Array::resize>("resize")
-			.method<&godot::Array::insert>("insert")
-			.method<&godot::Array::remove_at>("remove_at")
-			.method<&godot::Array::fill>("fill")
-			.method<&godot::Array::erase>("erase")
-			.method<&godot::Array::front>("front")
-			.method<&godot::Array::back>("back")
-			.method<&godot::Array::pick_random>("pick_random")
-			.method<&puerts_generated::array_find_default1, &godot::Array::find>("find")
-			.method<&puerts_generated::array_find_custom_default1, &godot::Array::find_custom>("find_custom")
-			.method<&puerts_generated::array_rfind_default1, &godot::Array::rfind>("rfind")
-			.method<&puerts_generated::array_rfind_custom_default1, &godot::Array::rfind_custom>("rfind_custom")
-			.method<&godot::Array::count>("count")
-			.method<&godot::Array::has>("has")
-			.method<&godot::Array::pop_back>("pop_back")
-			.method<&godot::Array::pop_front>("pop_front")
-			.method<&godot::Array::pop_at>("pop_at")
-			.method<&godot::Array::sort>("sort")
-			.method<&godot::Array::sort_custom>("sort_custom")
-			.method<&godot::Array::shuffle>("shuffle")
-			.method<&puerts_generated::array_bsearch_default1, &godot::Array::bsearch>("bsearch")
-			.method<&puerts_generated::array_bsearch_custom_default2, &godot::Array::bsearch_custom>("bsearch_custom")
-			.method<&godot::Array::reverse>("reverse")
-			.method<&puerts_generated::array_duplicate_default0, &godot::Array::duplicate>("duplicate")
-			.method<&puerts_generated::array_duplicate_deep_default0, &godot::Array::duplicate_deep>("duplicate_deep")
-			.method<&puerts_generated::array_slice_default1, &puerts_generated::array_slice_default2, &puerts_generated::array_slice_default3, &godot::Array::slice>("slice")
-			.method<&godot::Array::filter>("filter")
-			.method<&godot::Array::map>("map")
-			.method<&puerts_generated::array_reduce_default1, &godot::Array::reduce>("reduce")
-			.method<&godot::Array::any>("any")
-			.method<&godot::Array::all>("all")
-			.method<&godot::Array::max>("max")
-			.method<&godot::Array::min>("min")
-			.method<&godot::Array::is_typed>("is_typed")
-			.method<&godot::Array::is_same_typed>("is_same_typed")
-			.method<&godot::Array::get_typed_builtin>("get_typed_builtin")
-			.method<&godot::Array::get_typed_class_name>("get_typed_class_name")
-			.method<&godot::Array::get_typed_script>("get_typed_script")
-			.method<&godot::Array::make_read_only>("make_read_only")
-			.method<&godot::Array::is_read_only>("is_read_only")
+			.method<&puerts_generated::array_size_overload0_arity0>("size")
+			.method<&puerts_generated::array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::array_hash_overload0_arity0>("hash")
+			.method<&puerts_generated::array_assign_overload0_arity1>("assign")
+			.method<&puerts_generated::array_get_overload0_arity1>("get")
+			.method<&puerts_generated::array_set_overload0_arity2>("set")
+			.method<&puerts_generated::array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::array_push_front_overload0_arity1>("push_front")
+			.method<&puerts_generated::array_append_overload0_arity1>("append")
+			.method<&puerts_generated::array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::array_erase_overload0_arity1>("erase")
+			.method<&puerts_generated::array_front_overload0_arity0>("front")
+			.method<&puerts_generated::array_back_overload0_arity0>("back")
+			.method<&puerts_generated::array_pick_random_overload0_arity0>("pick_random")
+			.method<&puerts_generated::array_find_overload0_arity1, &puerts_generated::array_find_overload0_arity2>("find")
+			.method<&puerts_generated::array_find_custom_overload0_arity1, &puerts_generated::array_find_custom_overload0_arity2>("find_custom")
+			.method<&puerts_generated::array_rfind_overload0_arity1, &puerts_generated::array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::array_rfind_custom_overload0_arity1, &puerts_generated::array_rfind_custom_overload0_arity2>("rfind_custom")
+			.method<&puerts_generated::array_count_overload0_arity1>("count")
+			.method<&puerts_generated::array_has_overload0_arity1>("has")
+			.method<&puerts_generated::array_pop_back_overload0_arity0>("pop_back")
+			.method<&puerts_generated::array_pop_front_overload0_arity0>("pop_front")
+			.method<&puerts_generated::array_pop_at_overload0_arity1>("pop_at")
+			.method<&puerts_generated::array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::array_sort_custom_overload0_arity1>("sort_custom")
+			.method<&puerts_generated::array_shuffle_overload0_arity0>("shuffle")
+			.method<&puerts_generated::array_bsearch_overload0_arity1, &puerts_generated::array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::array_bsearch_custom_overload0_arity2, &puerts_generated::array_bsearch_custom_overload0_arity3>("bsearch_custom")
+			.method<&puerts_generated::array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::array_duplicate_overload0_arity0, &puerts_generated::array_duplicate_overload0_arity1>("duplicate")
+			.method<&puerts_generated::array_duplicate_deep_overload0_arity0, &puerts_generated::array_duplicate_deep_overload0_arity1>("duplicate_deep")
+			.method<&puerts_generated::array_slice_overload0_arity1, &puerts_generated::array_slice_overload0_arity2, &puerts_generated::array_slice_overload0_arity3, &puerts_generated::array_slice_overload0_arity4>("slice")
+			.method<&puerts_generated::array_filter_overload0_arity1>("filter")
+			.method<&puerts_generated::array_map_overload0_arity1>("map")
+			.method<&puerts_generated::array_reduce_overload0_arity1, &puerts_generated::array_reduce_overload0_arity2>("reduce")
+			.method<&puerts_generated::array_any_overload0_arity1>("any")
+			.method<&puerts_generated::array_all_overload0_arity1>("all")
+			.method<&puerts_generated::array_max_overload0_arity0>("max")
+			.method<&puerts_generated::array_min_overload0_arity0>("min")
+			.method<&puerts_generated::array_is_typed_overload0_arity0>("is_typed")
+			.method<&puerts_generated::array_is_same_typed_overload0_arity1>("is_same_typed")
+			.method<&puerts_generated::array_get_typed_builtin_overload0_arity0>("get_typed_builtin")
+			.method<&puerts_generated::array_get_typed_class_name_overload0_arity0>("get_typed_class_name")
+			.method<&puerts_generated::array_get_typed_script_overload0_arity0>("get_typed_script")
+			.method<&puerts_generated::array_make_read_only_overload0_arity0>("make_read_only")
+			.method<&puerts_generated::array_is_read_only_overload0_arity0>("is_read_only")
 			.register_type();
 }
 namespace puerts_generated {
@@ -572,10 +783,10 @@ inline godot::Basis basis_op_multiply_3(const godot::Basis &left, int64_t right)
 inline godot::Basis basis_op_division_4(const godot::Basis &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Basis>(left, right);
 }
-inline godot::Basis basis_op_multiply_5(const godot::Basis &left, godot::real_t right) {
+inline godot::Basis basis_op_multiply_5(const godot::Basis &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Basis>(left, right);
 }
-inline godot::Basis basis_op_division_6(const godot::Basis &left, godot::real_t right) {
+inline godot::Basis basis_op_division_6(const godot::Basis &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Basis>(left, right);
 }
 inline godot::Vector3 basis_op_multiply_7(const godot::Basis &left, const godot::Vector3 &right) {
@@ -608,17 +819,77 @@ inline godot::Basis basis_flip_y() {
 inline godot::Basis basis_flip_z() {
 	return { 1, 0, 0, 0, 1, 0, 0, 0, -1 };
 }
-inline decltype(auto) basis_get_euler_default0(const godot::Basis &p_self) {
+inline decltype(auto) basis_inverse_overload0_arity0(const godot::Basis &p_self) {
+	return p_self.inverse();
+}
+inline decltype(auto) basis_transposed_overload0_arity0(const godot::Basis &p_self) {
+	return p_self.transposed();
+}
+inline decltype(auto) basis_orthonormalized_overload0_arity0(const godot::Basis &p_self) {
+	return p_self.orthonormalized();
+}
+inline decltype(auto) basis_determinant_overload0_arity0(const godot::Basis &p_self) {
+	return static_cast<double>(p_self.determinant());
+}
+inline decltype(auto) basis_rotated_overload0_arity2(const godot::Basis &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.rotated(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(static_cast<godot::Basis (godot::Basis::*)(const godot::Vector3 &, godot::real_t) const>(&godot::Basis::rotated)), 1>>(p_arg_1));
+}
+inline decltype(auto) basis_scaled_overload0_arity1(const godot::Basis &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.scaled(p_arg_0);
+}
+inline decltype(auto) basis_scaled_local_overload0_arity1(const godot::Basis &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.scaled_local(p_arg_0);
+}
+inline decltype(auto) basis_get_scale_overload0_arity0(const godot::Basis &p_self) {
+	return p_self.get_scale();
+}
+inline decltype(auto) basis_get_euler_overload0_arity0(const godot::Basis &p_self) {
 	return p_self.get_euler();
 }
-inline decltype(auto) basis_looking_at_default1(const godot::Vector3 &p_arg_0) {
+inline decltype(auto) basis_get_euler_overload0_arity1(const godot::Basis &p_self, int64_t p_arg_0) {
+	return p_self.get_euler(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Basis::get_euler), 0>>(p_arg_0));
+}
+inline decltype(auto) basis_tdotx_overload0_arity1(const godot::Basis &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.tdotx(p_arg_0));
+}
+inline decltype(auto) basis_tdoty_overload0_arity1(const godot::Basis &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.tdoty(p_arg_0));
+}
+inline decltype(auto) basis_tdotz_overload0_arity1(const godot::Basis &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.tdotz(p_arg_0));
+}
+inline decltype(auto) basis_slerp_overload0_arity2(const godot::Basis &p_self, const godot::Basis &p_arg_0, double p_arg_1) {
+	return p_self.slerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Basis::slerp), 1>>(p_arg_1));
+}
+inline decltype(auto) basis_is_conformal_overload0_arity0(const godot::Basis &p_self) {
+	return p_self.is_conformal();
+}
+inline decltype(auto) basis_is_equal_approx_overload0_arity1(const godot::Basis &p_self, const godot::Basis &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) basis_is_finite_overload0_arity0(const godot::Basis &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) basis_get_rotation_quaternion_overload0_arity0(const godot::Basis &p_self) {
+	return p_self.get_rotation_quaternion();
+}
+inline decltype(auto) basis_looking_at_overload0_arity1(const godot::Vector3 &p_arg_0) {
 	return godot::Basis::looking_at(p_arg_0);
 }
-inline decltype(auto) basis_looking_at_default2(const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+inline decltype(auto) basis_looking_at_overload0_arity2(const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
 	return godot::Basis::looking_at(p_arg_0, p_arg_1);
 }
-inline decltype(auto) basis_from_euler_default1(const godot::Vector3 &p_arg_0) {
+inline decltype(auto) basis_looking_at_overload0_arity3(const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1, bool p_arg_2) {
+	return godot::Basis::looking_at(p_arg_0, p_arg_1, p_arg_2);
+}
+inline decltype(auto) basis_from_scale_overload0_arity1(const godot::Vector3 &p_arg_0) {
+	return godot::Basis::from_scale(p_arg_0);
+}
+inline decltype(auto) basis_from_euler_overload0_arity1(const godot::Vector3 &p_arg_0) {
 	return godot::Basis::from_euler(p_arg_0);
+}
+inline decltype(auto) basis_from_euler_overload0_arity2(const godot::Vector3 &p_arg_0, int64_t p_arg_1) {
+	return godot::Basis::from_euler(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Basis::from_euler), 1>>(p_arg_1));
 }
 } // namespace puerts_generated
 
@@ -637,28 +908,28 @@ inline void register_type_basis() {
 			.constructor<>()
 			.constructor<const godot::Basis &>()
 			.constructor<const godot::Quaternion &>()
-			.constructor<const godot::Vector3 &, godot::real_t>()
+			.constructor<const godot::Vector3 &, double>()
 			.constructor<const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>()
-			.method<&godot::Basis::inverse>("inverse")
-			.method<&godot::Basis::transposed>("transposed")
-			.method<&godot::Basis::orthonormalized>("orthonormalized")
-			.method<&godot::Basis::determinant>("determinant")
-			.method<static_cast<godot::Basis (godot::Basis::*)(const godot::Vector3 &, godot::real_t) const>(&godot::Basis::rotated)>("rotated")
-			.method<&godot::Basis::scaled>("scaled")
-			.method<&godot::Basis::scaled_local>("scaled_local")
-			.method<&godot::Basis::get_scale>("get_scale")
-			.method<&puerts_generated::basis_get_euler_default0, &godot::Basis::get_euler>("get_euler")
-			.method<&godot::Basis::tdotx>("tdotx")
-			.method<&godot::Basis::tdoty>("tdoty")
-			.method<&godot::Basis::tdotz>("tdotz")
-			.method<&godot::Basis::slerp>("slerp")
-			.method<&godot::Basis::is_conformal>("is_conformal")
-			.method<&godot::Basis::is_equal_approx>("is_equal_approx")
-			.method<&godot::Basis::is_finite>("is_finite")
-			.method<&godot::Basis::get_rotation_quaternion>("get_rotation_quaternion")
-			.static_method<&puerts_generated::basis_looking_at_default1, &puerts_generated::basis_looking_at_default2, &godot::Basis::looking_at>("looking_at")
-			.static_method<&godot::Basis::from_scale>("from_scale")
-			.static_method<&puerts_generated::basis_from_euler_default1, &godot::Basis::from_euler>("from_euler")
+			.method<&puerts_generated::basis_inverse_overload0_arity0>("inverse")
+			.method<&puerts_generated::basis_transposed_overload0_arity0>("transposed")
+			.method<&puerts_generated::basis_orthonormalized_overload0_arity0>("orthonormalized")
+			.method<&puerts_generated::basis_determinant_overload0_arity0>("determinant")
+			.method<&puerts_generated::basis_rotated_overload0_arity2>("rotated")
+			.method<&puerts_generated::basis_scaled_overload0_arity1>("scaled")
+			.method<&puerts_generated::basis_scaled_local_overload0_arity1>("scaled_local")
+			.method<&puerts_generated::basis_get_scale_overload0_arity0>("get_scale")
+			.method<&puerts_generated::basis_get_euler_overload0_arity0, &puerts_generated::basis_get_euler_overload0_arity1>("get_euler")
+			.method<&puerts_generated::basis_tdotx_overload0_arity1>("tdotx")
+			.method<&puerts_generated::basis_tdoty_overload0_arity1>("tdoty")
+			.method<&puerts_generated::basis_tdotz_overload0_arity1>("tdotz")
+			.method<&puerts_generated::basis_slerp_overload0_arity2>("slerp")
+			.method<&puerts_generated::basis_is_conformal_overload0_arity0>("is_conformal")
+			.method<&puerts_generated::basis_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::basis_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::basis_get_rotation_quaternion_overload0_arity0>("get_rotation_quaternion")
+			.static_method<&puerts_generated::basis_looking_at_overload0_arity1, &puerts_generated::basis_looking_at_overload0_arity2, &puerts_generated::basis_looking_at_overload0_arity3>("looking_at")
+			.static_method<&puerts_generated::basis_from_scale_overload0_arity1>("from_scale")
+			.static_method<&puerts_generated::basis_from_euler_overload0_arity1, &puerts_generated::basis_from_euler_overload0_arity2>("from_euler")
 			.property<&puerts_generated::basis_x_getter, &puerts_generated::basis_x_setter>("x")
 			.property<&puerts_generated::basis_y_getter, &puerts_generated::basis_y_setter>("y")
 			.property<&puerts_generated::basis_z_getter, &puerts_generated::basis_z_setter>("z")
@@ -686,6 +957,54 @@ inline bool callable_op_in_5(const godot::Callable &left, const godot::Dictionar
 inline bool callable_op_in_6(const godot::Callable &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline decltype(auto) callable_create_overload0_arity2(const godot::Variant &p_arg_0, const godot::StringName &p_arg_1) {
+	return godot::Callable::create(p_arg_0, p_arg_1);
+}
+inline decltype(auto) callable_callv_overload0_arity1(const godot::Callable &p_self, const godot::Array &p_arg_0) {
+	return p_self.callv(p_arg_0);
+}
+inline decltype(auto) callable_is_null_overload0_arity0(const godot::Callable &p_self) {
+	return p_self.is_null();
+}
+inline decltype(auto) callable_is_custom_overload0_arity0(const godot::Callable &p_self) {
+	return p_self.is_custom();
+}
+inline decltype(auto) callable_is_standard_overload0_arity0(const godot::Callable &p_self) {
+	return p_self.is_standard();
+}
+inline decltype(auto) callable_is_valid_overload0_arity0(const godot::Callable &p_self) {
+	return p_self.is_valid();
+}
+inline decltype(auto) callable_get_object_overload0_arity0(const godot::Callable &p_self) {
+	return p_self.get_object();
+}
+inline decltype(auto) callable_get_object_id_overload0_arity0(const godot::Callable &p_self) {
+	return static_cast<int64_t>(p_self.get_object_id());
+}
+inline decltype(auto) callable_get_method_overload0_arity0(const godot::Callable &p_self) {
+	return p_self.get_method();
+}
+inline decltype(auto) callable_get_argument_count_overload0_arity0(const godot::Callable &p_self) {
+	return static_cast<int64_t>(p_self.get_argument_count());
+}
+inline decltype(auto) callable_get_bound_arguments_count_overload0_arity0(const godot::Callable &p_self) {
+	return static_cast<int64_t>(p_self.get_bound_arguments_count());
+}
+inline decltype(auto) callable_get_bound_arguments_overload0_arity0(const godot::Callable &p_self) {
+	return p_self.get_bound_arguments();
+}
+inline decltype(auto) callable_get_unbound_arguments_count_overload0_arity0(const godot::Callable &p_self) {
+	return static_cast<int64_t>(p_self.get_unbound_arguments_count());
+}
+inline decltype(auto) callable_hash_overload0_arity0(const godot::Callable &p_self) {
+	return static_cast<int64_t>(p_self.hash());
+}
+inline decltype(auto) callable_bindv_overload0_arity1(godot::Callable &p_self, const godot::Array &p_arg_0) {
+	return p_self.bindv(p_arg_0);
+}
+inline decltype(auto) callable_unbind_overload0_arity1(const godot::Callable &p_self, int64_t p_arg_0) {
+	return p_self.unbind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Callable::unbind), 0>>(p_arg_0));
+}
 } // namespace puerts_generated
 
 inline void register_type_callable() {
@@ -697,27 +1016,27 @@ inline void register_type_callable() {
 			.constructor<>()
 			.constructor<const godot::Callable &>()
 			.constructor<godot::Object *, const godot::StringName &>()
-			.static_method<&godot::Callable::create>("create")
-			.method<&godot::Callable::callv>("callv")
-			.method<&godot::Callable::is_null>("is_null")
-			.method<&godot::Callable::is_custom>("is_custom")
-			.method<&godot::Callable::is_standard>("is_standard")
-			.method<&godot::Callable::is_valid>("is_valid")
-			.method<&godot::Callable::get_object>("get_object")
-			.method<&godot::Callable::get_object_id>("get_object_id")
-			.method<&godot::Callable::get_method>("get_method")
-			.method<&godot::Callable::get_argument_count>("get_argument_count")
-			.method<&godot::Callable::get_bound_arguments_count>("get_bound_arguments_count")
-			.method<&godot::Callable::get_bound_arguments>("get_bound_arguments")
-			.method<&godot::Callable::get_unbound_arguments_count>("get_unbound_arguments_count")
-			.method<&godot::Callable::hash>("hash")
-			.method<&godot::Callable::bindv>("bindv")
-			.method<&godot::Callable::unbind>("unbind")
-			.vararg_method<godot::Variant, false>("call", 0)
-			.vararg_method<void, false>("call_deferred", 0)
-			.vararg_method<void, false>("rpc", 0)
-			.vararg_method<void, false>("rpc_id", 1)
-			.vararg_method<godot::Callable, false>("bind", 0)
+			.static_method<&puerts_generated::callable_create_overload0_arity2>("create")
+			.method<&puerts_generated::callable_callv_overload0_arity1>("callv")
+			.method<&puerts_generated::callable_is_null_overload0_arity0>("is_null")
+			.method<&puerts_generated::callable_is_custom_overload0_arity0>("is_custom")
+			.method<&puerts_generated::callable_is_standard_overload0_arity0>("is_standard")
+			.method<&puerts_generated::callable_is_valid_overload0_arity0>("is_valid")
+			.method<&puerts_generated::callable_get_object_overload0_arity0>("get_object")
+			.method<&puerts_generated::callable_get_object_id_overload0_arity0>("get_object_id")
+			.method<&puerts_generated::callable_get_method_overload0_arity0>("get_method")
+			.method<&puerts_generated::callable_get_argument_count_overload0_arity0>("get_argument_count")
+			.method<&puerts_generated::callable_get_bound_arguments_count_overload0_arity0>("get_bound_arguments_count")
+			.method<&puerts_generated::callable_get_bound_arguments_overload0_arity0>("get_bound_arguments")
+			.method<&puerts_generated::callable_get_unbound_arguments_count_overload0_arity0>("get_unbound_arguments_count")
+			.method<&puerts_generated::callable_hash_overload0_arity0>("hash")
+			.method<&puerts_generated::callable_bindv_overload0_arity1>("bindv")
+			.method<&puerts_generated::callable_unbind_overload0_arity1>("unbind")
+			.vararg_method<godot::Variant, false, 0>("call")
+			.vararg_method<void, false, 0>("call_deferred")
+			.vararg_method<void, false, 0>("rpc")
+			.vararg_method<void, false, 1>("rpc_id")
+			.vararg_method<godot::Callable, false, 0>("bind")
 			.register_type();
 }
 namespace puerts_generated {
@@ -742,10 +1061,10 @@ inline godot::Color color_op_multiply_5(const godot::Color &left, int64_t right)
 inline godot::Color color_op_division_6(const godot::Color &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Color>(left, right);
 }
-inline godot::Color color_op_multiply_7(const godot::Color &left, godot::real_t right) {
+inline godot::Color color_op_multiply_7(const godot::Color &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Color>(left, right);
 }
-inline godot::Color color_op_division_8(const godot::Color &left, godot::real_t right) {
+inline godot::Color color_op_division_8(const godot::Color &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Color>(left, right);
 }
 inline bool color_op_equality_9(const godot::Color &left, const godot::Color &right) {
@@ -1213,20 +1532,95 @@ inline godot::Color color_yellow() {
 inline godot::Color color_yellow_green() {
 	return { 0.6039216, 0.8039216, 0.19607843, 1 };
 }
-inline decltype(auto) color_to_html_default0(const godot::Color &p_self) {
+inline decltype(auto) color_to_argb32_overload0_arity0(const godot::Color &p_self) {
+	return static_cast<int64_t>(p_self.to_argb32());
+}
+inline decltype(auto) color_to_abgr32_overload0_arity0(const godot::Color &p_self) {
+	return static_cast<int64_t>(p_self.to_abgr32());
+}
+inline decltype(auto) color_to_rgba32_overload0_arity0(const godot::Color &p_self) {
+	return static_cast<int64_t>(p_self.to_rgba32());
+}
+inline decltype(auto) color_to_argb64_overload0_arity0(const godot::Color &p_self) {
+	return static_cast<int64_t>(p_self.to_argb64());
+}
+inline decltype(auto) color_to_abgr64_overload0_arity0(const godot::Color &p_self) {
+	return static_cast<int64_t>(p_self.to_abgr64());
+}
+inline decltype(auto) color_to_rgba64_overload0_arity0(const godot::Color &p_self) {
+	return static_cast<int64_t>(p_self.to_rgba64());
+}
+inline decltype(auto) color_to_html_overload0_arity0(const godot::Color &p_self) {
 	return p_self.to_html();
 }
-inline decltype(auto) color_clamp_default0(const godot::Color &p_self) {
+inline decltype(auto) color_to_html_overload0_arity1(const godot::Color &p_self, bool p_arg_0) {
+	return p_self.to_html(p_arg_0);
+}
+inline decltype(auto) color_clamp_overload0_arity0(const godot::Color &p_self) {
 	return p_self.clamp();
 }
-inline decltype(auto) color_clamp_default1(const godot::Color &p_self, const godot::Color &p_arg_0) {
+inline decltype(auto) color_clamp_overload0_arity1(const godot::Color &p_self, const godot::Color &p_arg_0) {
 	return p_self.clamp(p_arg_0);
 }
-inline decltype(auto) color_from_hsv_default3(godot::real_t p_arg_0, godot::real_t p_arg_1, godot::real_t p_arg_2) {
-	return godot::Color::from_hsv(p_arg_0, p_arg_1, p_arg_2);
+inline decltype(auto) color_clamp_overload0_arity2(const godot::Color &p_self, const godot::Color &p_arg_0, const godot::Color &p_arg_1) {
+	return p_self.clamp(p_arg_0, p_arg_1);
 }
-inline decltype(auto) color_from_rgba8_default3(int64_t p_arg_0, int64_t p_arg_1, int64_t p_arg_2) {
-	return godot::Color::from_rgba8(p_arg_0, p_arg_1, p_arg_2);
+inline decltype(auto) color_inverted_overload0_arity0(const godot::Color &p_self) {
+	return p_self.inverted();
+}
+inline decltype(auto) color_lerp_overload0_arity2(const godot::Color &p_self, const godot::Color &p_arg_0, double p_arg_1) {
+	return p_self.lerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::lerp), 1>>(p_arg_1));
+}
+inline decltype(auto) color_lightened_overload0_arity1(const godot::Color &p_self, double p_arg_0) {
+	return p_self.lightened(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::lightened), 0>>(p_arg_0));
+}
+inline decltype(auto) color_darkened_overload0_arity1(const godot::Color &p_self, double p_arg_0) {
+	return p_self.darkened(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::darkened), 0>>(p_arg_0));
+}
+inline decltype(auto) color_blend_overload0_arity1(const godot::Color &p_self, const godot::Color &p_arg_0) {
+	return p_self.blend(p_arg_0);
+}
+inline decltype(auto) color_get_luminance_overload0_arity0(const godot::Color &p_self) {
+	return static_cast<double>(p_self.get_luminance());
+}
+inline decltype(auto) color_srgb_to_linear_overload0_arity0(const godot::Color &p_self) {
+	return p_self.srgb_to_linear();
+}
+inline decltype(auto) color_linear_to_srgb_overload0_arity0(const godot::Color &p_self) {
+	return p_self.linear_to_srgb();
+}
+inline decltype(auto) color_is_equal_approx_overload0_arity1(const godot::Color &p_self, const godot::Color &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) color_hex_overload0_arity1(int64_t p_arg_0) {
+	return godot::Color::hex(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::hex), 0>>(p_arg_0));
+}
+inline decltype(auto) color_hex64_overload0_arity1(int64_t p_arg_0) {
+	return godot::Color::hex64(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::hex64), 0>>(p_arg_0));
+}
+inline decltype(auto) color_html_overload0_arity1(const godot::String &p_arg_0) {
+	return godot::Color::html(p_arg_0);
+}
+inline decltype(auto) color_html_is_valid_overload0_arity1(const godot::String &p_arg_0) {
+	return godot::Color::html_is_valid(p_arg_0);
+}
+inline decltype(auto) color_from_string_overload0_arity2(const godot::String &p_arg_0, const godot::Color &p_arg_1) {
+	return godot::Color::from_string(p_arg_0, p_arg_1);
+}
+inline decltype(auto) color_from_hsv_overload0_arity3(double p_arg_0, double p_arg_1, double p_arg_2) {
+	return godot::Color::from_hsv(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 2>>(p_arg_2));
+}
+inline decltype(auto) color_from_hsv_overload0_arity4(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3) {
+	return godot::Color::from_hsv(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 3>>(p_arg_3));
+}
+inline decltype(auto) color_from_rgbe9995_overload0_arity1(int64_t p_arg_0) {
+	return godot::Color::from_rgbe9995(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgbe9995), 0>>(p_arg_0));
+}
+inline decltype(auto) color_from_rgba8_overload0_arity3(int64_t p_arg_0, int64_t p_arg_1, int64_t p_arg_2) {
+	return godot::Color::from_rgba8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgba8), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgba8), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgba8), 2>>(p_arg_2));
+}
+inline decltype(auto) color_from_rgba8_overload0_arity4(int64_t p_arg_0, int64_t p_arg_1, int64_t p_arg_2, int64_t p_arg_3) {
+	return godot::Color::from_rgba8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgba8), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgba8), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgba8), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgba8), 3>>(p_arg_3));
 }
 } // namespace puerts_generated
 
@@ -1390,36 +1784,36 @@ inline void register_type_color() {
 			.constant<&puerts_generated::color_yellow_green>("YELLOW_GREEN")
 			.constructor<>()
 			.constructor<const godot::Color &>()
-			.constructor<const godot::Color &, godot::real_t>()
-			.constructor<godot::real_t, godot::real_t, godot::real_t>()
-			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
+			.constructor<const godot::Color &, double>()
+			.constructor<double, double, double>()
+			.constructor<double, double, double, double>()
 			.constructor<const godot::String &>()
-			.constructor<const godot::String &, godot::real_t>()
-			.method<&godot::Color::to_argb32>("to_argb32")
-			.method<&godot::Color::to_abgr32>("to_abgr32")
-			.method<&godot::Color::to_rgba32>("to_rgba32")
-			.method<&godot::Color::to_argb64>("to_argb64")
-			.method<&godot::Color::to_abgr64>("to_abgr64")
-			.method<&godot::Color::to_rgba64>("to_rgba64")
-			.method<&puerts_generated::color_to_html_default0, &godot::Color::to_html>("to_html")
-			.method<&puerts_generated::color_clamp_default0, &puerts_generated::color_clamp_default1, &godot::Color::clamp>("clamp")
-			.method<&godot::Color::inverted>("inverted")
-			.method<&godot::Color::lerp>("lerp")
-			.method<&godot::Color::lightened>("lightened")
-			.method<&godot::Color::darkened>("darkened")
-			.method<&godot::Color::blend>("blend")
-			.method<&godot::Color::get_luminance>("get_luminance")
-			.method<&godot::Color::srgb_to_linear>("srgb_to_linear")
-			.method<&godot::Color::linear_to_srgb>("linear_to_srgb")
-			.method<&godot::Color::is_equal_approx>("is_equal_approx")
-			.static_method<&godot::Color::hex>("hex")
-			.static_method<&godot::Color::hex64>("hex64")
-			.static_method<&godot::Color::html>("html")
-			.static_method<&godot::Color::html_is_valid>("html_is_valid")
-			.static_method<&godot::Color::from_string>("from_string")
-			.static_method<&puerts_generated::color_from_hsv_default3, &godot::Color::from_hsv>("from_hsv")
-			.static_method<&godot::Color::from_rgbe9995>("from_rgbe9995")
-			.static_method<&puerts_generated::color_from_rgba8_default3, &godot::Color::from_rgba8>("from_rgba8")
+			.constructor<const godot::String &, double>()
+			.method<&puerts_generated::color_to_argb32_overload0_arity0>("to_argb32")
+			.method<&puerts_generated::color_to_abgr32_overload0_arity0>("to_abgr32")
+			.method<&puerts_generated::color_to_rgba32_overload0_arity0>("to_rgba32")
+			.method<&puerts_generated::color_to_argb64_overload0_arity0>("to_argb64")
+			.method<&puerts_generated::color_to_abgr64_overload0_arity0>("to_abgr64")
+			.method<&puerts_generated::color_to_rgba64_overload0_arity0>("to_rgba64")
+			.method<&puerts_generated::color_to_html_overload0_arity0, &puerts_generated::color_to_html_overload0_arity1>("to_html")
+			.method<&puerts_generated::color_clamp_overload0_arity0, &puerts_generated::color_clamp_overload0_arity1, &puerts_generated::color_clamp_overload0_arity2>("clamp")
+			.method<&puerts_generated::color_inverted_overload0_arity0>("inverted")
+			.method<&puerts_generated::color_lerp_overload0_arity2>("lerp")
+			.method<&puerts_generated::color_lightened_overload0_arity1>("lightened")
+			.method<&puerts_generated::color_darkened_overload0_arity1>("darkened")
+			.method<&puerts_generated::color_blend_overload0_arity1>("blend")
+			.method<&puerts_generated::color_get_luminance_overload0_arity0>("get_luminance")
+			.method<&puerts_generated::color_srgb_to_linear_overload0_arity0>("srgb_to_linear")
+			.method<&puerts_generated::color_linear_to_srgb_overload0_arity0>("linear_to_srgb")
+			.method<&puerts_generated::color_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.static_method<&puerts_generated::color_hex_overload0_arity1>("hex")
+			.static_method<&puerts_generated::color_hex64_overload0_arity1>("hex64")
+			.static_method<&puerts_generated::color_html_overload0_arity1>("html")
+			.static_method<&puerts_generated::color_html_is_valid_overload0_arity1>("html_is_valid")
+			.static_method<&puerts_generated::color_from_string_overload0_arity2>("from_string")
+			.static_method<&puerts_generated::color_from_hsv_overload0_arity3, &puerts_generated::color_from_hsv_overload0_arity4>("from_hsv")
+			.static_method<&puerts_generated::color_from_rgbe9995_overload0_arity1>("from_rgbe9995")
+			.static_method<&puerts_generated::color_from_rgba8_overload0_arity3, &puerts_generated::color_from_rgba8_overload0_arity4>("from_rgba8")
 			.property<&puerts_generated::color_r8_getter, &puerts_generated::color_r8_setter>("r8")
 			.property<&puerts_generated::color_g8_getter, &puerts_generated::color_g8_setter>("g8")
 			.property<&puerts_generated::color_b8_getter, &puerts_generated::color_b8_setter>("b8")
@@ -1455,23 +1849,125 @@ inline bool dictionary_op_in_5(const godot::Dictionary &left, const godot::Dicti
 inline bool dictionary_op_in_6(const godot::Dictionary &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline decltype(auto) dictionary_merge_default1(godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
+inline decltype(auto) dictionary_size_overload0_arity0(const godot::Dictionary &p_self) {
+	return static_cast<int64_t>(p_self.size());
+}
+inline decltype(auto) dictionary_is_empty_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) dictionary_clear_overload0_arity0(godot::Dictionary &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) dictionary_assign_overload0_arity1(godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
+	return p_self.assign(p_arg_0);
+}
+inline decltype(auto) dictionary_sort_overload0_arity0(godot::Dictionary &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) dictionary_merge_overload0_arity1(godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
 	return p_self.merge(p_arg_0);
 }
-inline decltype(auto) dictionary_merged_default1(const godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
+inline decltype(auto) dictionary_merge_overload0_arity2(godot::Dictionary &p_self, const godot::Dictionary &p_arg_0, bool p_arg_1) {
+	return p_self.merge(p_arg_0, p_arg_1);
+}
+inline decltype(auto) dictionary_merged_overload0_arity1(const godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
 	return p_self.merged(p_arg_0);
 }
-inline decltype(auto) dictionary_duplicate_default0(const godot::Dictionary &p_self) {
+inline decltype(auto) dictionary_merged_overload0_arity2(const godot::Dictionary &p_self, const godot::Dictionary &p_arg_0, bool p_arg_1) {
+	return p_self.merged(p_arg_0, p_arg_1);
+}
+inline decltype(auto) dictionary_has_overload0_arity1(const godot::Dictionary &p_self, const godot::Variant &p_arg_0) {
+	return p_self.has(p_arg_0);
+}
+inline decltype(auto) dictionary_has_all_overload0_arity1(const godot::Dictionary &p_self, const godot::Array &p_arg_0) {
+	return p_self.has_all(p_arg_0);
+}
+inline decltype(auto) dictionary_find_key_overload0_arity1(const godot::Dictionary &p_self, const godot::Variant &p_arg_0) {
+	return p_self.find_key(p_arg_0);
+}
+inline decltype(auto) dictionary_erase_overload0_arity1(godot::Dictionary &p_self, const godot::Variant &p_arg_0) {
+	return p_self.erase(p_arg_0);
+}
+inline decltype(auto) dictionary_hash_overload0_arity0(const godot::Dictionary &p_self) {
+	return static_cast<int64_t>(p_self.hash());
+}
+inline decltype(auto) dictionary_keys_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.keys();
+}
+inline decltype(auto) dictionary_values_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.values();
+}
+inline decltype(auto) dictionary_duplicate_overload0_arity0(const godot::Dictionary &p_self) {
 	return p_self.duplicate();
 }
-inline decltype(auto) dictionary_duplicate_deep_default0(const godot::Dictionary &p_self) {
+inline decltype(auto) dictionary_duplicate_overload0_arity1(const godot::Dictionary &p_self, bool p_arg_0) {
+	return p_self.duplicate(p_arg_0);
+}
+inline decltype(auto) dictionary_duplicate_deep_overload0_arity0(const godot::Dictionary &p_self) {
 	return p_self.duplicate_deep();
 }
-inline decltype(auto) dictionary_get_default1(const godot::Dictionary &p_self, const godot::Variant &p_arg_0) {
+inline decltype(auto) dictionary_duplicate_deep_overload0_arity1(const godot::Dictionary &p_self, int64_t p_arg_0) {
+	return p_self.duplicate_deep(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Dictionary::duplicate_deep), 0>>(p_arg_0));
+}
+inline decltype(auto) dictionary_get_overload0_arity1(const godot::Dictionary &p_self, const godot::Variant &p_arg_0) {
 	return p_self.get(p_arg_0, godot::Variant());
 }
-inline decltype(auto) dictionary_get_or_add_default1(godot::Dictionary &p_self, const godot::Variant &p_arg_0) {
+inline decltype(auto) dictionary_get_overload0_arity2(const godot::Dictionary &p_self, const godot::Variant &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.get(p_arg_0, p_arg_1);
+}
+inline decltype(auto) dictionary_get_or_add_overload0_arity1(godot::Dictionary &p_self, const godot::Variant &p_arg_0) {
 	return p_self.get_or_add(p_arg_0, godot::Variant());
+}
+inline decltype(auto) dictionary_get_or_add_overload0_arity2(godot::Dictionary &p_self, const godot::Variant &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.get_or_add(p_arg_0, p_arg_1);
+}
+inline decltype(auto) dictionary_set_overload0_arity2(godot::Dictionary &p_self, const godot::Variant &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.set(p_arg_0, p_arg_1);
+}
+inline decltype(auto) dictionary_is_typed_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.is_typed();
+}
+inline decltype(auto) dictionary_is_typed_key_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.is_typed_key();
+}
+inline decltype(auto) dictionary_is_typed_value_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.is_typed_value();
+}
+inline decltype(auto) dictionary_is_same_typed_overload0_arity1(const godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
+	return p_self.is_same_typed(p_arg_0);
+}
+inline decltype(auto) dictionary_is_same_typed_key_overload0_arity1(const godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
+	return p_self.is_same_typed_key(p_arg_0);
+}
+inline decltype(auto) dictionary_is_same_typed_value_overload0_arity1(const godot::Dictionary &p_self, const godot::Dictionary &p_arg_0) {
+	return p_self.is_same_typed_value(p_arg_0);
+}
+inline decltype(auto) dictionary_get_typed_key_builtin_overload0_arity0(const godot::Dictionary &p_self) {
+	return static_cast<int64_t>(p_self.get_typed_key_builtin());
+}
+inline decltype(auto) dictionary_get_typed_value_builtin_overload0_arity0(const godot::Dictionary &p_self) {
+	return static_cast<int64_t>(p_self.get_typed_value_builtin());
+}
+inline decltype(auto) dictionary_get_typed_key_class_name_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.get_typed_key_class_name();
+}
+inline decltype(auto) dictionary_get_typed_value_class_name_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.get_typed_value_class_name();
+}
+inline decltype(auto) dictionary_get_typed_key_script_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.get_typed_key_script();
+}
+inline decltype(auto) dictionary_get_typed_value_script_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.get_typed_value_script();
+}
+inline decltype(auto) dictionary_make_read_only_overload0_arity0(godot::Dictionary &p_self) {
+	return p_self.make_read_only();
+}
+inline decltype(auto) dictionary_is_read_only_overload0_arity0(const godot::Dictionary &p_self) {
+	return p_self.is_read_only();
+}
+inline decltype(auto) dictionary_recursive_equal_overload0_arity2(const godot::Dictionary &p_self, const godot::Dictionary &p_arg_0, int64_t p_arg_1) {
+	return p_self.recursive_equal(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Dictionary::recursive_equal), 1>>(p_arg_1));
 }
 } // namespace puerts_generated
 
@@ -1484,40 +1980,40 @@ inline void register_type_dictionary() {
 			.constructor<>()
 			.constructor<const godot::Dictionary &>()
 			.constructor<const godot::Dictionary &, int64_t, const godot::StringName &, const godot::Variant &, int64_t, const godot::StringName &, const godot::Variant &>()
-			.method<&godot::Dictionary::size>("size")
-			.method<&godot::Dictionary::is_empty>("is_empty")
-			.method<&godot::Dictionary::clear>("clear")
-			.method<&godot::Dictionary::assign>("assign")
-			.method<&godot::Dictionary::sort>("sort")
-			.method<&puerts_generated::dictionary_merge_default1, &godot::Dictionary::merge>("merge")
-			.method<&puerts_generated::dictionary_merged_default1, &godot::Dictionary::merged>("merged")
-			.method<&godot::Dictionary::has>("has")
-			.method<&godot::Dictionary::has_all>("has_all")
-			.method<&godot::Dictionary::find_key>("find_key")
-			.method<&godot::Dictionary::erase>("erase")
-			.method<&godot::Dictionary::hash>("hash")
-			.method<&godot::Dictionary::keys>("keys")
-			.method<&godot::Dictionary::values>("values")
-			.method<&puerts_generated::dictionary_duplicate_default0, &godot::Dictionary::duplicate>("duplicate")
-			.method<&puerts_generated::dictionary_duplicate_deep_default0, &godot::Dictionary::duplicate_deep>("duplicate_deep")
-			.method<&puerts_generated::dictionary_get_default1, &godot::Dictionary::get>("get")
-			.method<&puerts_generated::dictionary_get_or_add_default1, &godot::Dictionary::get_or_add>("get_or_add")
-			.method<&godot::Dictionary::set>("set")
-			.method<&godot::Dictionary::is_typed>("is_typed")
-			.method<&godot::Dictionary::is_typed_key>("is_typed_key")
-			.method<&godot::Dictionary::is_typed_value>("is_typed_value")
-			.method<&godot::Dictionary::is_same_typed>("is_same_typed")
-			.method<&godot::Dictionary::is_same_typed_key>("is_same_typed_key")
-			.method<&godot::Dictionary::is_same_typed_value>("is_same_typed_value")
-			.method<&godot::Dictionary::get_typed_key_builtin>("get_typed_key_builtin")
-			.method<&godot::Dictionary::get_typed_value_builtin>("get_typed_value_builtin")
-			.method<&godot::Dictionary::get_typed_key_class_name>("get_typed_key_class_name")
-			.method<&godot::Dictionary::get_typed_value_class_name>("get_typed_value_class_name")
-			.method<&godot::Dictionary::get_typed_key_script>("get_typed_key_script")
-			.method<&godot::Dictionary::get_typed_value_script>("get_typed_value_script")
-			.method<&godot::Dictionary::make_read_only>("make_read_only")
-			.method<&godot::Dictionary::is_read_only>("is_read_only")
-			.method<&godot::Dictionary::recursive_equal>("recursive_equal")
+			.method<&puerts_generated::dictionary_size_overload0_arity0>("size")
+			.method<&puerts_generated::dictionary_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::dictionary_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::dictionary_assign_overload0_arity1>("assign")
+			.method<&puerts_generated::dictionary_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::dictionary_merge_overload0_arity1, &puerts_generated::dictionary_merge_overload0_arity2>("merge")
+			.method<&puerts_generated::dictionary_merged_overload0_arity1, &puerts_generated::dictionary_merged_overload0_arity2>("merged")
+			.method<&puerts_generated::dictionary_has_overload0_arity1>("has")
+			.method<&puerts_generated::dictionary_has_all_overload0_arity1>("has_all")
+			.method<&puerts_generated::dictionary_find_key_overload0_arity1>("find_key")
+			.method<&puerts_generated::dictionary_erase_overload0_arity1>("erase")
+			.method<&puerts_generated::dictionary_hash_overload0_arity0>("hash")
+			.method<&puerts_generated::dictionary_keys_overload0_arity0>("keys")
+			.method<&puerts_generated::dictionary_values_overload0_arity0>("values")
+			.method<&puerts_generated::dictionary_duplicate_overload0_arity0, &puerts_generated::dictionary_duplicate_overload0_arity1>("duplicate")
+			.method<&puerts_generated::dictionary_duplicate_deep_overload0_arity0, &puerts_generated::dictionary_duplicate_deep_overload0_arity1>("duplicate_deep")
+			.method<&puerts_generated::dictionary_get_overload0_arity1, &puerts_generated::dictionary_get_overload0_arity2>("get")
+			.method<&puerts_generated::dictionary_get_or_add_overload0_arity1, &puerts_generated::dictionary_get_or_add_overload0_arity2>("get_or_add")
+			.method<&puerts_generated::dictionary_set_overload0_arity2>("set")
+			.method<&puerts_generated::dictionary_is_typed_overload0_arity0>("is_typed")
+			.method<&puerts_generated::dictionary_is_typed_key_overload0_arity0>("is_typed_key")
+			.method<&puerts_generated::dictionary_is_typed_value_overload0_arity0>("is_typed_value")
+			.method<&puerts_generated::dictionary_is_same_typed_overload0_arity1>("is_same_typed")
+			.method<&puerts_generated::dictionary_is_same_typed_key_overload0_arity1>("is_same_typed_key")
+			.method<&puerts_generated::dictionary_is_same_typed_value_overload0_arity1>("is_same_typed_value")
+			.method<&puerts_generated::dictionary_get_typed_key_builtin_overload0_arity0>("get_typed_key_builtin")
+			.method<&puerts_generated::dictionary_get_typed_value_builtin_overload0_arity0>("get_typed_value_builtin")
+			.method<&puerts_generated::dictionary_get_typed_key_class_name_overload0_arity0>("get_typed_key_class_name")
+			.method<&puerts_generated::dictionary_get_typed_value_class_name_overload0_arity0>("get_typed_value_class_name")
+			.method<&puerts_generated::dictionary_get_typed_key_script_overload0_arity0>("get_typed_key_script")
+			.method<&puerts_generated::dictionary_get_typed_value_script_overload0_arity0>("get_typed_value_script")
+			.method<&puerts_generated::dictionary_make_read_only_overload0_arity0>("make_read_only")
+			.method<&puerts_generated::dictionary_is_read_only_overload0_arity0>("is_read_only")
+			.method<&puerts_generated::dictionary_recursive_equal_overload0_arity2>("recursive_equal")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1542,8 +2038,41 @@ inline bool node_path_op_in_5(const godot::NodePath &left, const godot::Dictiona
 inline bool node_path_op_in_6(const godot::NodePath &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline decltype(auto) node_path_slice_default1(const godot::NodePath &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) node_path_is_absolute_overload0_arity0(const godot::NodePath &p_self) {
+	return p_self.is_absolute();
+}
+inline decltype(auto) node_path_get_name_count_overload0_arity0(const godot::NodePath &p_self) {
+	return static_cast<int64_t>(p_self.get_name_count());
+}
+inline decltype(auto) node_path_get_name_overload0_arity1(const godot::NodePath &p_self, int64_t p_arg_0) {
+	return p_self.get_name(static_cast<puerts::internal::native_parameter_t<decltype(&godot::NodePath::get_name), 0>>(p_arg_0));
+}
+inline decltype(auto) node_path_get_subname_count_overload0_arity0(const godot::NodePath &p_self) {
+	return static_cast<int64_t>(p_self.get_subname_count());
+}
+inline decltype(auto) node_path_hash_overload0_arity0(const godot::NodePath &p_self) {
+	return static_cast<int64_t>(p_self.hash());
+}
+inline decltype(auto) node_path_get_subname_overload0_arity1(const godot::NodePath &p_self, int64_t p_arg_0) {
+	return p_self.get_subname(static_cast<puerts::internal::native_parameter_t<decltype(&godot::NodePath::get_subname), 0>>(p_arg_0));
+}
+inline decltype(auto) node_path_get_concatenated_names_overload0_arity0(const godot::NodePath &p_self) {
+	return p_self.get_concatenated_names();
+}
+inline decltype(auto) node_path_get_concatenated_subnames_overload0_arity0(const godot::NodePath &p_self) {
+	return p_self.get_concatenated_subnames();
+}
+inline decltype(auto) node_path_slice_overload0_arity1(const godot::NodePath &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::NodePath::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) node_path_slice_overload0_arity2(const godot::NodePath &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::NodePath::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::NodePath::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) node_path_get_as_property_path_overload0_arity0(const godot::NodePath &p_self) {
+	return p_self.get_as_property_path();
+}
+inline decltype(auto) node_path_is_empty_overload0_arity0(const godot::NodePath &p_self) {
+	return p_self.is_empty();
 }
 } // namespace puerts_generated
 
@@ -1556,17 +2085,17 @@ inline void register_type_node_path() {
 			.constructor<>()
 			.constructor<const godot::NodePath &>()
 			.constructor<const godot::String &>()
-			.method<&godot::NodePath::is_absolute>("is_absolute")
-			.method<&godot::NodePath::get_name_count>("get_name_count")
-			.method<&godot::NodePath::get_name>("get_name")
-			.method<&godot::NodePath::get_subname_count>("get_subname_count")
-			.method<&godot::NodePath::hash>("hash")
-			.method<&godot::NodePath::get_subname>("get_subname")
-			.method<&godot::NodePath::get_concatenated_names>("get_concatenated_names")
-			.method<&godot::NodePath::get_concatenated_subnames>("get_concatenated_subnames")
-			.method<&puerts_generated::node_path_slice_default1, &godot::NodePath::slice>("slice")
-			.method<&godot::NodePath::get_as_property_path>("get_as_property_path")
-			.method<&godot::NodePath::is_empty>("is_empty")
+			.method<&puerts_generated::node_path_is_absolute_overload0_arity0>("is_absolute")
+			.method<&puerts_generated::node_path_get_name_count_overload0_arity0>("get_name_count")
+			.method<&puerts_generated::node_path_get_name_overload0_arity1>("get_name")
+			.method<&puerts_generated::node_path_get_subname_count_overload0_arity0>("get_subname_count")
+			.method<&puerts_generated::node_path_hash_overload0_arity0>("hash")
+			.method<&puerts_generated::node_path_get_subname_overload0_arity1>("get_subname")
+			.method<&puerts_generated::node_path_get_concatenated_names_overload0_arity0>("get_concatenated_names")
+			.method<&puerts_generated::node_path_get_concatenated_subnames_overload0_arity0>("get_concatenated_subnames")
+			.method<&puerts_generated::node_path_slice_overload0_arity1, &puerts_generated::node_path_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::node_path_get_as_property_path_overload0_arity0>("get_as_property_path")
+			.method<&puerts_generated::node_path_is_empty_overload0_arity0>("is_empty")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1594,59 +2123,266 @@ inline bool packed_byte_array_op_inequality_6(const godot::PackedByteArray &left
 inline godot::PackedByteArray packed_byte_array_op_addition_7(const godot::PackedByteArray &left, const godot::PackedByteArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedByteArray>(left, right);
 }
-inline decltype(auto) packed_byte_array_slice_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_byte_array_get_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::get), 0>>(p_arg_0)));
 }
-inline decltype(auto) packed_byte_array_bsearch_default1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_byte_array_set_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::set), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::set), 1>>(p_arg_1));
 }
-inline decltype(auto) packed_byte_array_find_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_byte_array_size_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_byte_array_rfind_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_byte_array_is_empty_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.is_empty();
 }
-inline decltype(auto) packed_byte_array_get_string_from_multibyte_char_default0(const godot::PackedByteArray &p_self) {
+inline decltype(auto) packed_byte_array_push_back_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.push_back(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::push_back), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_append_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.append(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::append), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_append_array_overload0_arity1(godot::PackedByteArray &p_self, const godot::PackedByteArray &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_byte_array_remove_at_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_insert_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::insert), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::insert), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_byte_array_fill_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.fill(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::fill), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_resize_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_clear_overload0_arity0(godot::PackedByteArray &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_byte_array_has_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.has(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::has), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_reverse_overload0_arity0(godot::PackedByteArray &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_byte_array_slice_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_slice_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_sort_overload0_arity0(godot::PackedByteArray &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_byte_array_bsearch_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bsearch), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_bsearch_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bsearch), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_byte_array_duplicate_overload0_arity0(godot::PackedByteArray &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_byte_array_find_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::find), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_find_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::find), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_byte_array_rfind_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::rfind), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_rfind_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::rfind), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_byte_array_count_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.count(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::count), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_erase_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.erase(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::erase), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_get_string_from_ascii_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.get_string_from_ascii();
+}
+inline decltype(auto) packed_byte_array_get_string_from_utf8_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.get_string_from_utf8();
+}
+inline decltype(auto) packed_byte_array_get_string_from_utf16_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.get_string_from_utf16();
+}
+inline decltype(auto) packed_byte_array_get_string_from_utf32_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.get_string_from_utf32();
+}
+inline decltype(auto) packed_byte_array_get_string_from_wchar_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.get_string_from_wchar();
+}
+inline decltype(auto) packed_byte_array_get_string_from_multibyte_char_overload0_arity0(const godot::PackedByteArray &p_self) {
 	return p_self.get_string_from_multibyte_char();
 }
-inline decltype(auto) packed_byte_array_compress_default0(const godot::PackedByteArray &p_self) {
+inline decltype(auto) packed_byte_array_get_string_from_multibyte_char_overload0_arity1(const godot::PackedByteArray &p_self, const godot::String &p_arg_0) {
+	return p_self.get_string_from_multibyte_char(p_arg_0);
+}
+inline decltype(auto) packed_byte_array_hex_encode_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.hex_encode();
+}
+inline decltype(auto) packed_byte_array_compress_overload0_arity0(const godot::PackedByteArray &p_self) {
 	return p_self.compress();
 }
-inline decltype(auto) packed_byte_array_decompress_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.decompress(p_arg_0);
+inline decltype(auto) packed_byte_array_compress_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.compress(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::compress), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_byte_array_decompress_dynamic_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.decompress_dynamic(p_arg_0);
+inline decltype(auto) packed_byte_array_decompress_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.decompress(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decompress), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_byte_array_has_encoded_var_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.has_encoded_var(p_arg_0);
+inline decltype(auto) packed_byte_array_decompress_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.decompress(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decompress), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decompress), 1>>(p_arg_1));
 }
-inline decltype(auto) packed_byte_array_decode_var_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.decode_var(p_arg_0);
+inline decltype(auto) packed_byte_array_decompress_dynamic_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.decompress_dynamic(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decompress_dynamic), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_byte_array_decode_var_size_default1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.decode_var_size(p_arg_0);
+inline decltype(auto) packed_byte_array_decompress_dynamic_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.decompress_dynamic(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decompress_dynamic), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decompress_dynamic), 1>>(p_arg_1));
 }
-inline decltype(auto) packed_byte_array_bswap16_default0(godot::PackedByteArray &p_self) {
+inline decltype(auto) packed_byte_array_decode_u8_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_u8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_u8), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_s8_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_s8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_s8), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_u16_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_u16(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_u16), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_s16_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_s16(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_s16), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_u32_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_u32(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_u32), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_s32_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_s32(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_s32), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_u64_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_u64(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_u64), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_s64_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_s64(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_s64), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_half_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<double>(p_self.decode_half(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_half), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_float_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<double>(p_self.decode_float(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_float), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_double_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<double>(p_self.decode_double(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_double), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_has_encoded_var_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.has_encoded_var(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::has_encoded_var), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_has_encoded_var_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, bool p_arg_1) {
+	return p_self.has_encoded_var(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::has_encoded_var), 0>>(p_arg_0), p_arg_1);
+}
+inline decltype(auto) packed_byte_array_decode_var_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.decode_var(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_var), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_byte_array_decode_var_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, bool p_arg_1) {
+	return p_self.decode_var(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_var), 0>>(p_arg_0), p_arg_1);
+}
+inline decltype(auto) packed_byte_array_decode_var_size_overload0_arity1(const godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.decode_var_size(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_var_size), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_byte_array_decode_var_size_overload0_arity2(const godot::PackedByteArray &p_self, int64_t p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.decode_var_size(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::decode_var_size), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_byte_array_to_int32_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_int32_array();
+}
+inline decltype(auto) packed_byte_array_to_int64_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_int64_array();
+}
+inline decltype(auto) packed_byte_array_to_float32_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_float32_array();
+}
+inline decltype(auto) packed_byte_array_to_float64_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_float64_array();
+}
+inline decltype(auto) packed_byte_array_to_vector2_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_vector2_array();
+}
+inline decltype(auto) packed_byte_array_to_vector3_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_vector3_array();
+}
+inline decltype(auto) packed_byte_array_to_vector4_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_vector4_array();
+}
+inline decltype(auto) packed_byte_array_to_color_array_overload0_arity0(const godot::PackedByteArray &p_self) {
+	return p_self.to_color_array();
+}
+inline decltype(auto) packed_byte_array_bswap16_overload0_arity0(godot::PackedByteArray &p_self) {
 	return p_self.bswap16();
 }
-inline decltype(auto) packed_byte_array_bswap16_default1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.bswap16(p_arg_0);
+inline decltype(auto) packed_byte_array_bswap16_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.bswap16(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap16), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_byte_array_bswap32_default0(godot::PackedByteArray &p_self) {
+inline decltype(auto) packed_byte_array_bswap16_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.bswap16(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap16), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap16), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_bswap32_overload0_arity0(godot::PackedByteArray &p_self) {
 	return p_self.bswap32();
 }
-inline decltype(auto) packed_byte_array_bswap32_default1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.bswap32(p_arg_0);
+inline decltype(auto) packed_byte_array_bswap32_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.bswap32(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap32), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_byte_array_bswap64_default0(godot::PackedByteArray &p_self) {
+inline decltype(auto) packed_byte_array_bswap32_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.bswap32(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap32), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap32), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_bswap64_overload0_arity0(godot::PackedByteArray &p_self) {
 	return p_self.bswap64();
 }
-inline decltype(auto) packed_byte_array_bswap64_default1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
-	return p_self.bswap64(p_arg_0);
+inline decltype(auto) packed_byte_array_bswap64_overload0_arity1(godot::PackedByteArray &p_self, int64_t p_arg_0) {
+	return p_self.bswap64(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap64), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_byte_array_encode_var_default2(godot::PackedByteArray &p_self, int64_t p_arg_0, const godot::Variant &p_arg_1) {
-	return p_self.encode_var(p_arg_0, p_arg_1);
+inline decltype(auto) packed_byte_array_bswap64_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.bswap64(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap64), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::bswap64), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_u8_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_u8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u8), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u8), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_s8_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_s8(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s8), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s8), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_u16_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_u16(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u16), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u16), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_s16_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_s16(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s16), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s16), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_u32_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_u32(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u32), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u32), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_s32_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_s32(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s32), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s32), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_u64_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_u64(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u64), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_u64), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_s64_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.encode_s64(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s64), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_s64), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_half_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, double p_arg_1) {
+	return p_self.encode_half(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_half), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_half), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_float_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, double p_arg_1) {
+	return p_self.encode_float(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_float), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_float), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_double_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, double p_arg_1) {
+	return p_self.encode_double(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_double), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_double), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_var_overload0_arity2(godot::PackedByteArray &p_self, int64_t p_arg_0, const godot::Variant &p_arg_1) {
+	return static_cast<int64_t>(p_self.encode_var(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_var), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_byte_array_encode_var_overload0_arity3(godot::PackedByteArray &p_self, int64_t p_arg_0, const godot::Variant &p_arg_1, bool p_arg_2) {
+	return static_cast<int64_t>(p_self.encode_var(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedByteArray::encode_var), 0>>(p_arg_0), p_arg_1, p_arg_2));
 }
 } // namespace puerts_generated
 
@@ -1660,75 +2396,75 @@ inline void register_type_packed_byte_array() {
 			.constructor<>()
 			.constructor<const godot::PackedByteArray &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedByteArray::get>("get")
-			.method<&godot::PackedByteArray::set>("set")
-			.method<&godot::PackedByteArray::size>("size")
-			.method<&godot::PackedByteArray::is_empty>("is_empty")
-			.method<&godot::PackedByteArray::push_back>("push_back")
-			.method<&godot::PackedByteArray::append>("append")
-			.method<&godot::PackedByteArray::append_array>("append_array")
-			.method<&godot::PackedByteArray::remove_at>("remove_at")
-			.method<&godot::PackedByteArray::insert>("insert")
-			.method<&godot::PackedByteArray::fill>("fill")
-			.method<&godot::PackedByteArray::resize>("resize")
-			.method<&godot::PackedByteArray::clear>("clear")
-			.method<&godot::PackedByteArray::has>("has")
-			.method<&godot::PackedByteArray::reverse>("reverse")
-			.method<&puerts_generated::packed_byte_array_slice_default1, &godot::PackedByteArray::slice>("slice")
-			.method<&godot::PackedByteArray::sort>("sort")
-			.method<&puerts_generated::packed_byte_array_bsearch_default1, &godot::PackedByteArray::bsearch>("bsearch")
-			.method<&godot::PackedByteArray::duplicate>("duplicate")
-			.method<&puerts_generated::packed_byte_array_find_default1, &godot::PackedByteArray::find>("find")
-			.method<&puerts_generated::packed_byte_array_rfind_default1, &godot::PackedByteArray::rfind>("rfind")
-			.method<&godot::PackedByteArray::count>("count")
-			.method<&godot::PackedByteArray::erase>("erase")
-			.method<&godot::PackedByteArray::get_string_from_ascii>("get_string_from_ascii")
-			.method<&godot::PackedByteArray::get_string_from_utf8>("get_string_from_utf8")
-			.method<&godot::PackedByteArray::get_string_from_utf16>("get_string_from_utf16")
-			.method<&godot::PackedByteArray::get_string_from_utf32>("get_string_from_utf32")
-			.method<&godot::PackedByteArray::get_string_from_wchar>("get_string_from_wchar")
-			.method<&puerts_generated::packed_byte_array_get_string_from_multibyte_char_default0, &godot::PackedByteArray::get_string_from_multibyte_char>("get_string_from_multibyte_char")
-			.method<&godot::PackedByteArray::hex_encode>("hex_encode")
-			.method<&puerts_generated::packed_byte_array_compress_default0, &godot::PackedByteArray::compress>("compress")
-			.method<&puerts_generated::packed_byte_array_decompress_default1, &godot::PackedByteArray::decompress>("decompress")
-			.method<&puerts_generated::packed_byte_array_decompress_dynamic_default1, &godot::PackedByteArray::decompress_dynamic>("decompress_dynamic")
-			.method<&godot::PackedByteArray::decode_u8>("decode_u8")
-			.method<&godot::PackedByteArray::decode_s8>("decode_s8")
-			.method<&godot::PackedByteArray::decode_u16>("decode_u16")
-			.method<&godot::PackedByteArray::decode_s16>("decode_s16")
-			.method<&godot::PackedByteArray::decode_u32>("decode_u32")
-			.method<&godot::PackedByteArray::decode_s32>("decode_s32")
-			.method<&godot::PackedByteArray::decode_u64>("decode_u64")
-			.method<&godot::PackedByteArray::decode_s64>("decode_s64")
-			.method<&godot::PackedByteArray::decode_half>("decode_half")
-			.method<&godot::PackedByteArray::decode_float>("decode_float")
-			.method<&godot::PackedByteArray::decode_double>("decode_double")
-			.method<&puerts_generated::packed_byte_array_has_encoded_var_default1, &godot::PackedByteArray::has_encoded_var>("has_encoded_var")
-			.method<&puerts_generated::packed_byte_array_decode_var_default1, &godot::PackedByteArray::decode_var>("decode_var")
-			.method<&puerts_generated::packed_byte_array_decode_var_size_default1, &godot::PackedByteArray::decode_var_size>("decode_var_size")
-			.method<&godot::PackedByteArray::to_int32_array>("to_int32_array")
-			.method<&godot::PackedByteArray::to_int64_array>("to_int64_array")
-			.method<&godot::PackedByteArray::to_float32_array>("to_float32_array")
-			.method<&godot::PackedByteArray::to_float64_array>("to_float64_array")
-			.method<&godot::PackedByteArray::to_vector2_array>("to_vector2_array")
-			.method<&godot::PackedByteArray::to_vector3_array>("to_vector3_array")
-			.method<&godot::PackedByteArray::to_vector4_array>("to_vector4_array")
-			.method<&godot::PackedByteArray::to_color_array>("to_color_array")
-			.method<&puerts_generated::packed_byte_array_bswap16_default0, &puerts_generated::packed_byte_array_bswap16_default1, &godot::PackedByteArray::bswap16>("bswap16")
-			.method<&puerts_generated::packed_byte_array_bswap32_default0, &puerts_generated::packed_byte_array_bswap32_default1, &godot::PackedByteArray::bswap32>("bswap32")
-			.method<&puerts_generated::packed_byte_array_bswap64_default0, &puerts_generated::packed_byte_array_bswap64_default1, &godot::PackedByteArray::bswap64>("bswap64")
-			.method<&godot::PackedByteArray::encode_u8>("encode_u8")
-			.method<&godot::PackedByteArray::encode_s8>("encode_s8")
-			.method<&godot::PackedByteArray::encode_u16>("encode_u16")
-			.method<&godot::PackedByteArray::encode_s16>("encode_s16")
-			.method<&godot::PackedByteArray::encode_u32>("encode_u32")
-			.method<&godot::PackedByteArray::encode_s32>("encode_s32")
-			.method<&godot::PackedByteArray::encode_u64>("encode_u64")
-			.method<&godot::PackedByteArray::encode_s64>("encode_s64")
-			.method<&godot::PackedByteArray::encode_half>("encode_half")
-			.method<&godot::PackedByteArray::encode_float>("encode_float")
-			.method<&godot::PackedByteArray::encode_double>("encode_double")
-			.method<&puerts_generated::packed_byte_array_encode_var_default2, &godot::PackedByteArray::encode_var>("encode_var")
+			.method<&puerts_generated::packed_byte_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_byte_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_byte_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_byte_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_byte_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_byte_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_byte_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_byte_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_byte_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_byte_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_byte_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_byte_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_byte_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_byte_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_byte_array_slice_overload0_arity1, &puerts_generated::packed_byte_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_byte_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_byte_array_bsearch_overload0_arity1, &puerts_generated::packed_byte_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_byte_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_byte_array_find_overload0_arity1, &puerts_generated::packed_byte_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_byte_array_rfind_overload0_arity1, &puerts_generated::packed_byte_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_byte_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_byte_array_erase_overload0_arity1>("erase")
+			.method<&puerts_generated::packed_byte_array_get_string_from_ascii_overload0_arity0>("get_string_from_ascii")
+			.method<&puerts_generated::packed_byte_array_get_string_from_utf8_overload0_arity0>("get_string_from_utf8")
+			.method<&puerts_generated::packed_byte_array_get_string_from_utf16_overload0_arity0>("get_string_from_utf16")
+			.method<&puerts_generated::packed_byte_array_get_string_from_utf32_overload0_arity0>("get_string_from_utf32")
+			.method<&puerts_generated::packed_byte_array_get_string_from_wchar_overload0_arity0>("get_string_from_wchar")
+			.method<&puerts_generated::packed_byte_array_get_string_from_multibyte_char_overload0_arity0, &puerts_generated::packed_byte_array_get_string_from_multibyte_char_overload0_arity1>("get_string_from_multibyte_char")
+			.method<&puerts_generated::packed_byte_array_hex_encode_overload0_arity0>("hex_encode")
+			.method<&puerts_generated::packed_byte_array_compress_overload0_arity0, &puerts_generated::packed_byte_array_compress_overload0_arity1>("compress")
+			.method<&puerts_generated::packed_byte_array_decompress_overload0_arity1, &puerts_generated::packed_byte_array_decompress_overload0_arity2>("decompress")
+			.method<&puerts_generated::packed_byte_array_decompress_dynamic_overload0_arity1, &puerts_generated::packed_byte_array_decompress_dynamic_overload0_arity2>("decompress_dynamic")
+			.method<&puerts_generated::packed_byte_array_decode_u8_overload0_arity1>("decode_u8")
+			.method<&puerts_generated::packed_byte_array_decode_s8_overload0_arity1>("decode_s8")
+			.method<&puerts_generated::packed_byte_array_decode_u16_overload0_arity1>("decode_u16")
+			.method<&puerts_generated::packed_byte_array_decode_s16_overload0_arity1>("decode_s16")
+			.method<&puerts_generated::packed_byte_array_decode_u32_overload0_arity1>("decode_u32")
+			.method<&puerts_generated::packed_byte_array_decode_s32_overload0_arity1>("decode_s32")
+			.method<&puerts_generated::packed_byte_array_decode_u64_overload0_arity1>("decode_u64")
+			.method<&puerts_generated::packed_byte_array_decode_s64_overload0_arity1>("decode_s64")
+			.method<&puerts_generated::packed_byte_array_decode_half_overload0_arity1>("decode_half")
+			.method<&puerts_generated::packed_byte_array_decode_float_overload0_arity1>("decode_float")
+			.method<&puerts_generated::packed_byte_array_decode_double_overload0_arity1>("decode_double")
+			.method<&puerts_generated::packed_byte_array_has_encoded_var_overload0_arity1, &puerts_generated::packed_byte_array_has_encoded_var_overload0_arity2>("has_encoded_var")
+			.method<&puerts_generated::packed_byte_array_decode_var_overload0_arity1, &puerts_generated::packed_byte_array_decode_var_overload0_arity2>("decode_var")
+			.method<&puerts_generated::packed_byte_array_decode_var_size_overload0_arity1, &puerts_generated::packed_byte_array_decode_var_size_overload0_arity2>("decode_var_size")
+			.method<&puerts_generated::packed_byte_array_to_int32_array_overload0_arity0>("to_int32_array")
+			.method<&puerts_generated::packed_byte_array_to_int64_array_overload0_arity0>("to_int64_array")
+			.method<&puerts_generated::packed_byte_array_to_float32_array_overload0_arity0>("to_float32_array")
+			.method<&puerts_generated::packed_byte_array_to_float64_array_overload0_arity0>("to_float64_array")
+			.method<&puerts_generated::packed_byte_array_to_vector2_array_overload0_arity0>("to_vector2_array")
+			.method<&puerts_generated::packed_byte_array_to_vector3_array_overload0_arity0>("to_vector3_array")
+			.method<&puerts_generated::packed_byte_array_to_vector4_array_overload0_arity0>("to_vector4_array")
+			.method<&puerts_generated::packed_byte_array_to_color_array_overload0_arity0>("to_color_array")
+			.method<&puerts_generated::packed_byte_array_bswap16_overload0_arity0, &puerts_generated::packed_byte_array_bswap16_overload0_arity1, &puerts_generated::packed_byte_array_bswap16_overload0_arity2>("bswap16")
+			.method<&puerts_generated::packed_byte_array_bswap32_overload0_arity0, &puerts_generated::packed_byte_array_bswap32_overload0_arity1, &puerts_generated::packed_byte_array_bswap32_overload0_arity2>("bswap32")
+			.method<&puerts_generated::packed_byte_array_bswap64_overload0_arity0, &puerts_generated::packed_byte_array_bswap64_overload0_arity1, &puerts_generated::packed_byte_array_bswap64_overload0_arity2>("bswap64")
+			.method<&puerts_generated::packed_byte_array_encode_u8_overload0_arity2>("encode_u8")
+			.method<&puerts_generated::packed_byte_array_encode_s8_overload0_arity2>("encode_s8")
+			.method<&puerts_generated::packed_byte_array_encode_u16_overload0_arity2>("encode_u16")
+			.method<&puerts_generated::packed_byte_array_encode_s16_overload0_arity2>("encode_s16")
+			.method<&puerts_generated::packed_byte_array_encode_u32_overload0_arity2>("encode_u32")
+			.method<&puerts_generated::packed_byte_array_encode_s32_overload0_arity2>("encode_s32")
+			.method<&puerts_generated::packed_byte_array_encode_u64_overload0_arity2>("encode_u64")
+			.method<&puerts_generated::packed_byte_array_encode_s64_overload0_arity2>("encode_s64")
+			.method<&puerts_generated::packed_byte_array_encode_half_overload0_arity2>("encode_half")
+			.method<&puerts_generated::packed_byte_array_encode_float_overload0_arity2>("encode_float")
+			.method<&puerts_generated::packed_byte_array_encode_double_overload0_arity2>("encode_double")
+			.method<&puerts_generated::packed_byte_array_encode_var_overload0_arity2, &puerts_generated::packed_byte_array_encode_var_overload0_arity3>("encode_var")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1756,17 +2492,86 @@ inline bool packed_color_array_op_inequality_6(const godot::PackedColorArray &le
 inline godot::PackedColorArray packed_color_array_op_addition_7(const godot::PackedColorArray &left, const godot::PackedColorArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedColorArray>(left, right);
 }
-inline decltype(auto) packed_color_array_slice_default1(const godot::PackedColorArray &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_color_array_get_overload0_arity1(const godot::PackedColorArray &p_self, int64_t p_arg_0) {
+	return p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::get), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_color_array_bsearch_default1(godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_color_array_set_overload0_arity2(godot::PackedColorArray &p_self, int64_t p_arg_0, const godot::Color &p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::set), 0>>(p_arg_0), p_arg_1);
 }
-inline decltype(auto) packed_color_array_find_default1(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_color_array_size_overload0_arity0(const godot::PackedColorArray &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_color_array_rfind_default1(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_color_array_is_empty_overload0_arity0(const godot::PackedColorArray &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_color_array_push_back_overload0_arity1(godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return p_self.push_back(p_arg_0);
+}
+inline decltype(auto) packed_color_array_append_overload0_arity1(godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return p_self.append(p_arg_0);
+}
+inline decltype(auto) packed_color_array_append_array_overload0_arity1(godot::PackedColorArray &p_self, const godot::PackedColorArray &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_color_array_remove_at_overload0_arity1(godot::PackedColorArray &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_color_array_insert_overload0_arity2(godot::PackedColorArray &p_self, int64_t p_arg_0, const godot::Color &p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::insert), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_color_array_fill_overload0_arity1(godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return p_self.fill(p_arg_0);
+}
+inline decltype(auto) packed_color_array_resize_overload0_arity1(godot::PackedColorArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_color_array_clear_overload0_arity0(godot::PackedColorArray &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_color_array_has_overload0_arity1(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return p_self.has(p_arg_0);
+}
+inline decltype(auto) packed_color_array_reverse_overload0_arity0(godot::PackedColorArray &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_color_array_slice_overload0_arity1(const godot::PackedColorArray &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_color_array_slice_overload0_arity2(const godot::PackedColorArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_color_array_to_byte_array_overload0_arity0(const godot::PackedColorArray &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_color_array_sort_overload0_arity0(godot::PackedColorArray &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_color_array_bsearch_overload0_arity1(godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0));
+}
+inline decltype(auto) packed_color_array_bsearch_overload0_arity2(godot::PackedColorArray &p_self, const godot::Color &p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0, p_arg_1));
+}
+inline decltype(auto) packed_color_array_duplicate_overload0_arity0(godot::PackedColorArray &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_color_array_find_overload0_arity1(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return static_cast<int64_t>(p_self.find(p_arg_0));
+}
+inline decltype(auto) packed_color_array_find_overload0_arity2(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_color_array_rfind_overload0_arity1(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0));
+}
+inline decltype(auto) packed_color_array_rfind_overload0_arity2(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedColorArray::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_color_array_count_overload0_arity1(const godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return static_cast<int64_t>(p_self.count(p_arg_0));
+}
+inline decltype(auto) packed_color_array_erase_overload0_arity1(godot::PackedColorArray &p_self, const godot::Color &p_arg_0) {
+	return p_self.erase(p_arg_0);
 }
 } // namespace puerts_generated
 
@@ -1780,29 +2585,29 @@ inline void register_type_packed_color_array() {
 			.constructor<>()
 			.constructor<const godot::PackedColorArray &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedColorArray::get>("get")
-			.method<&godot::PackedColorArray::set>("set")
-			.method<&godot::PackedColorArray::size>("size")
-			.method<&godot::PackedColorArray::is_empty>("is_empty")
-			.method<&godot::PackedColorArray::push_back>("push_back")
-			.method<&godot::PackedColorArray::append>("append")
-			.method<&godot::PackedColorArray::append_array>("append_array")
-			.method<&godot::PackedColorArray::remove_at>("remove_at")
-			.method<&godot::PackedColorArray::insert>("insert")
-			.method<&godot::PackedColorArray::fill>("fill")
-			.method<&godot::PackedColorArray::resize>("resize")
-			.method<&godot::PackedColorArray::clear>("clear")
-			.method<&godot::PackedColorArray::has>("has")
-			.method<&godot::PackedColorArray::reverse>("reverse")
-			.method<&puerts_generated::packed_color_array_slice_default1, &godot::PackedColorArray::slice>("slice")
-			.method<&godot::PackedColorArray::to_byte_array>("to_byte_array")
-			.method<&godot::PackedColorArray::sort>("sort")
-			.method<&puerts_generated::packed_color_array_bsearch_default1, &godot::PackedColorArray::bsearch>("bsearch")
-			.method<&godot::PackedColorArray::duplicate>("duplicate")
-			.method<&puerts_generated::packed_color_array_find_default1, &godot::PackedColorArray::find>("find")
-			.method<&puerts_generated::packed_color_array_rfind_default1, &godot::PackedColorArray::rfind>("rfind")
-			.method<&godot::PackedColorArray::count>("count")
-			.method<&godot::PackedColorArray::erase>("erase")
+			.method<&puerts_generated::packed_color_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_color_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_color_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_color_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_color_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_color_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_color_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_color_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_color_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_color_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_color_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_color_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_color_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_color_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_color_array_slice_overload0_arity1, &puerts_generated::packed_color_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_color_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_color_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_color_array_bsearch_overload0_arity1, &puerts_generated::packed_color_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_color_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_color_array_find_overload0_arity1, &puerts_generated::packed_color_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_color_array_rfind_overload0_arity1, &puerts_generated::packed_color_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_color_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_color_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1830,17 +2635,86 @@ inline bool packed_float32_array_op_inequality_6(const godot::PackedFloat32Array
 inline godot::PackedFloat32Array packed_float32_array_op_addition_7(const godot::PackedFloat32Array &left, const godot::PackedFloat32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedFloat32Array>(left, right);
 }
-inline decltype(auto) packed_float32_array_slice_default1(const godot::PackedFloat32Array &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_float32_array_get_overload0_arity1(const godot::PackedFloat32Array &p_self, int64_t p_arg_0) {
+	return static_cast<double>(p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::get), 0>>(p_arg_0)));
 }
-inline decltype(auto) packed_float32_array_bsearch_default1(godot::PackedFloat32Array &p_self, godot::real_t p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_float32_array_set_overload0_arity2(godot::PackedFloat32Array &p_self, int64_t p_arg_0, double p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::set), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::set), 1>>(p_arg_1));
 }
-inline decltype(auto) packed_float32_array_find_default1(const godot::PackedFloat32Array &p_self, godot::real_t p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_float32_array_size_overload0_arity0(const godot::PackedFloat32Array &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_float32_array_rfind_default1(const godot::PackedFloat32Array &p_self, godot::real_t p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_float32_array_is_empty_overload0_arity0(const godot::PackedFloat32Array &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_float32_array_push_back_overload0_arity1(godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return p_self.push_back(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::push_back), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float32_array_append_overload0_arity1(godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return p_self.append(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::append), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float32_array_append_array_overload0_arity1(godot::PackedFloat32Array &p_self, const godot::PackedFloat32Array &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_float32_array_remove_at_overload0_arity1(godot::PackedFloat32Array &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float32_array_insert_overload0_arity2(godot::PackedFloat32Array &p_self, int64_t p_arg_0, double p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::insert), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::insert), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_float32_array_fill_overload0_arity1(godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return p_self.fill(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::fill), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float32_array_resize_overload0_arity1(godot::PackedFloat32Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float32_array_clear_overload0_arity0(godot::PackedFloat32Array &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_float32_array_has_overload0_arity1(const godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return p_self.has(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::has), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float32_array_reverse_overload0_arity0(godot::PackedFloat32Array &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_float32_array_slice_overload0_arity1(const godot::PackedFloat32Array &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float32_array_slice_overload0_arity2(const godot::PackedFloat32Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_float32_array_to_byte_array_overload0_arity0(const godot::PackedFloat32Array &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_float32_array_sort_overload0_arity0(godot::PackedFloat32Array &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_float32_array_bsearch_overload0_arity1(godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::bsearch), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float32_array_bsearch_overload0_arity2(godot::PackedFloat32Array &p_self, double p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::bsearch), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_float32_array_duplicate_overload0_arity0(godot::PackedFloat32Array &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_float32_array_find_overload0_arity1(const godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::find), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float32_array_find_overload0_arity2(const godot::PackedFloat32Array &p_self, double p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::find), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_float32_array_rfind_overload0_arity1(const godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::rfind), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float32_array_rfind_overload0_arity2(const godot::PackedFloat32Array &p_self, double p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::rfind), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_float32_array_count_overload0_arity1(const godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.count(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::count), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float32_array_erase_overload0_arity1(godot::PackedFloat32Array &p_self, double p_arg_0) {
+	return p_self.erase(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat32Array::erase), 0>>(p_arg_0));
 }
 } // namespace puerts_generated
 
@@ -1854,29 +2728,29 @@ inline void register_type_packed_float32_array() {
 			.constructor<>()
 			.constructor<const godot::PackedFloat32Array &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedFloat32Array::get>("get")
-			.method<&godot::PackedFloat32Array::set>("set")
-			.method<&godot::PackedFloat32Array::size>("size")
-			.method<&godot::PackedFloat32Array::is_empty>("is_empty")
-			.method<&godot::PackedFloat32Array::push_back>("push_back")
-			.method<&godot::PackedFloat32Array::append>("append")
-			.method<&godot::PackedFloat32Array::append_array>("append_array")
-			.method<&godot::PackedFloat32Array::remove_at>("remove_at")
-			.method<&godot::PackedFloat32Array::insert>("insert")
-			.method<&godot::PackedFloat32Array::fill>("fill")
-			.method<&godot::PackedFloat32Array::resize>("resize")
-			.method<&godot::PackedFloat32Array::clear>("clear")
-			.method<&godot::PackedFloat32Array::has>("has")
-			.method<&godot::PackedFloat32Array::reverse>("reverse")
-			.method<&puerts_generated::packed_float32_array_slice_default1, &godot::PackedFloat32Array::slice>("slice")
-			.method<&godot::PackedFloat32Array::to_byte_array>("to_byte_array")
-			.method<&godot::PackedFloat32Array::sort>("sort")
-			.method<&puerts_generated::packed_float32_array_bsearch_default1, &godot::PackedFloat32Array::bsearch>("bsearch")
-			.method<&godot::PackedFloat32Array::duplicate>("duplicate")
-			.method<&puerts_generated::packed_float32_array_find_default1, &godot::PackedFloat32Array::find>("find")
-			.method<&puerts_generated::packed_float32_array_rfind_default1, &godot::PackedFloat32Array::rfind>("rfind")
-			.method<&godot::PackedFloat32Array::count>("count")
-			.method<&godot::PackedFloat32Array::erase>("erase")
+			.method<&puerts_generated::packed_float32_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_float32_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_float32_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_float32_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_float32_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_float32_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_float32_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_float32_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_float32_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_float32_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_float32_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_float32_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_float32_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_float32_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_float32_array_slice_overload0_arity1, &puerts_generated::packed_float32_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_float32_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_float32_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_float32_array_bsearch_overload0_arity1, &puerts_generated::packed_float32_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_float32_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_float32_array_find_overload0_arity1, &puerts_generated::packed_float32_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_float32_array_rfind_overload0_arity1, &puerts_generated::packed_float32_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_float32_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_float32_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1904,17 +2778,86 @@ inline bool packed_float64_array_op_inequality_6(const godot::PackedFloat64Array
 inline godot::PackedFloat64Array packed_float64_array_op_addition_7(const godot::PackedFloat64Array &left, const godot::PackedFloat64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedFloat64Array>(left, right);
 }
-inline decltype(auto) packed_float64_array_slice_default1(const godot::PackedFloat64Array &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_float64_array_get_overload0_arity1(const godot::PackedFloat64Array &p_self, int64_t p_arg_0) {
+	return static_cast<double>(p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::get), 0>>(p_arg_0)));
 }
-inline decltype(auto) packed_float64_array_bsearch_default1(godot::PackedFloat64Array &p_self, godot::real_t p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_float64_array_set_overload0_arity2(godot::PackedFloat64Array &p_self, int64_t p_arg_0, double p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::set), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::set), 1>>(p_arg_1));
 }
-inline decltype(auto) packed_float64_array_find_default1(const godot::PackedFloat64Array &p_self, godot::real_t p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_float64_array_size_overload0_arity0(const godot::PackedFloat64Array &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_float64_array_rfind_default1(const godot::PackedFloat64Array &p_self, godot::real_t p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_float64_array_is_empty_overload0_arity0(const godot::PackedFloat64Array &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_float64_array_push_back_overload0_arity1(godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return p_self.push_back(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::push_back), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float64_array_append_overload0_arity1(godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return p_self.append(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::append), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float64_array_append_array_overload0_arity1(godot::PackedFloat64Array &p_self, const godot::PackedFloat64Array &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_float64_array_remove_at_overload0_arity1(godot::PackedFloat64Array &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float64_array_insert_overload0_arity2(godot::PackedFloat64Array &p_self, int64_t p_arg_0, double p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::insert), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::insert), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_float64_array_fill_overload0_arity1(godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return p_self.fill(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::fill), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float64_array_resize_overload0_arity1(godot::PackedFloat64Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float64_array_clear_overload0_arity0(godot::PackedFloat64Array &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_float64_array_has_overload0_arity1(const godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return p_self.has(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::has), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float64_array_reverse_overload0_arity0(godot::PackedFloat64Array &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_float64_array_slice_overload0_arity1(const godot::PackedFloat64Array &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_float64_array_slice_overload0_arity2(const godot::PackedFloat64Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_float64_array_to_byte_array_overload0_arity0(const godot::PackedFloat64Array &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_float64_array_sort_overload0_arity0(godot::PackedFloat64Array &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_float64_array_bsearch_overload0_arity1(godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::bsearch), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float64_array_bsearch_overload0_arity2(godot::PackedFloat64Array &p_self, double p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::bsearch), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_float64_array_duplicate_overload0_arity0(godot::PackedFloat64Array &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_float64_array_find_overload0_arity1(const godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::find), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float64_array_find_overload0_arity2(const godot::PackedFloat64Array &p_self, double p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::find), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_float64_array_rfind_overload0_arity1(const godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::rfind), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float64_array_rfind_overload0_arity2(const godot::PackedFloat64Array &p_self, double p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::rfind), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_float64_array_count_overload0_arity1(const godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return static_cast<int64_t>(p_self.count(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::count), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_float64_array_erase_overload0_arity1(godot::PackedFloat64Array &p_self, double p_arg_0) {
+	return p_self.erase(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedFloat64Array::erase), 0>>(p_arg_0));
 }
 } // namespace puerts_generated
 
@@ -1928,29 +2871,29 @@ inline void register_type_packed_float64_array() {
 			.constructor<>()
 			.constructor<const godot::PackedFloat64Array &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedFloat64Array::get>("get")
-			.method<&godot::PackedFloat64Array::set>("set")
-			.method<&godot::PackedFloat64Array::size>("size")
-			.method<&godot::PackedFloat64Array::is_empty>("is_empty")
-			.method<&godot::PackedFloat64Array::push_back>("push_back")
-			.method<&godot::PackedFloat64Array::append>("append")
-			.method<&godot::PackedFloat64Array::append_array>("append_array")
-			.method<&godot::PackedFloat64Array::remove_at>("remove_at")
-			.method<&godot::PackedFloat64Array::insert>("insert")
-			.method<&godot::PackedFloat64Array::fill>("fill")
-			.method<&godot::PackedFloat64Array::resize>("resize")
-			.method<&godot::PackedFloat64Array::clear>("clear")
-			.method<&godot::PackedFloat64Array::has>("has")
-			.method<&godot::PackedFloat64Array::reverse>("reverse")
-			.method<&puerts_generated::packed_float64_array_slice_default1, &godot::PackedFloat64Array::slice>("slice")
-			.method<&godot::PackedFloat64Array::to_byte_array>("to_byte_array")
-			.method<&godot::PackedFloat64Array::sort>("sort")
-			.method<&puerts_generated::packed_float64_array_bsearch_default1, &godot::PackedFloat64Array::bsearch>("bsearch")
-			.method<&godot::PackedFloat64Array::duplicate>("duplicate")
-			.method<&puerts_generated::packed_float64_array_find_default1, &godot::PackedFloat64Array::find>("find")
-			.method<&puerts_generated::packed_float64_array_rfind_default1, &godot::PackedFloat64Array::rfind>("rfind")
-			.method<&godot::PackedFloat64Array::count>("count")
-			.method<&godot::PackedFloat64Array::erase>("erase")
+			.method<&puerts_generated::packed_float64_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_float64_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_float64_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_float64_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_float64_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_float64_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_float64_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_float64_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_float64_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_float64_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_float64_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_float64_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_float64_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_float64_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_float64_array_slice_overload0_arity1, &puerts_generated::packed_float64_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_float64_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_float64_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_float64_array_bsearch_overload0_arity1, &puerts_generated::packed_float64_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_float64_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_float64_array_find_overload0_arity1, &puerts_generated::packed_float64_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_float64_array_rfind_overload0_arity1, &puerts_generated::packed_float64_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_float64_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_float64_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -1978,17 +2921,86 @@ inline bool packed_int32_array_op_inequality_6(const godot::PackedInt32Array &le
 inline godot::PackedInt32Array packed_int32_array_op_addition_7(const godot::PackedInt32Array &left, const godot::PackedInt32Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedInt32Array>(left, right);
 }
-inline decltype(auto) packed_int32_array_slice_default1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_int32_array_get_overload0_arity1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::get), 0>>(p_arg_0)));
 }
-inline decltype(auto) packed_int32_array_bsearch_default1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_int32_array_set_overload0_arity2(godot::PackedInt32Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::set), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::set), 1>>(p_arg_1));
 }
-inline decltype(auto) packed_int32_array_find_default1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_int32_array_size_overload0_arity0(const godot::PackedInt32Array &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_int32_array_rfind_default1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_int32_array_is_empty_overload0_arity0(const godot::PackedInt32Array &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_int32_array_push_back_overload0_arity1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return p_self.push_back(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::push_back), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int32_array_append_overload0_arity1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return p_self.append(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::append), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int32_array_append_array_overload0_arity1(godot::PackedInt32Array &p_self, const godot::PackedInt32Array &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_int32_array_remove_at_overload0_arity1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int32_array_insert_overload0_arity2(godot::PackedInt32Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::insert), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::insert), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_int32_array_fill_overload0_arity1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return p_self.fill(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::fill), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int32_array_resize_overload0_arity1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int32_array_clear_overload0_arity0(godot::PackedInt32Array &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_int32_array_has_overload0_arity1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return p_self.has(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::has), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int32_array_reverse_overload0_arity0(godot::PackedInt32Array &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_int32_array_slice_overload0_arity1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int32_array_slice_overload0_arity2(const godot::PackedInt32Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_int32_array_to_byte_array_overload0_arity0(const godot::PackedInt32Array &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_int32_array_sort_overload0_arity0(godot::PackedInt32Array &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_int32_array_bsearch_overload0_arity1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::bsearch), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int32_array_bsearch_overload0_arity2(godot::PackedInt32Array &p_self, int64_t p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::bsearch), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_int32_array_duplicate_overload0_arity0(godot::PackedInt32Array &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_int32_array_find_overload0_arity1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::find), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int32_array_find_overload0_arity2(const godot::PackedInt32Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::find), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_int32_array_rfind_overload0_arity1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::rfind), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int32_array_rfind_overload0_arity2(const godot::PackedInt32Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::rfind), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_int32_array_count_overload0_arity1(const godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.count(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::count), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int32_array_erase_overload0_arity1(godot::PackedInt32Array &p_self, int64_t p_arg_0) {
+	return p_self.erase(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt32Array::erase), 0>>(p_arg_0));
 }
 } // namespace puerts_generated
 
@@ -2002,29 +3014,29 @@ inline void register_type_packed_int32_array() {
 			.constructor<>()
 			.constructor<const godot::PackedInt32Array &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedInt32Array::get>("get")
-			.method<&godot::PackedInt32Array::set>("set")
-			.method<&godot::PackedInt32Array::size>("size")
-			.method<&godot::PackedInt32Array::is_empty>("is_empty")
-			.method<&godot::PackedInt32Array::push_back>("push_back")
-			.method<&godot::PackedInt32Array::append>("append")
-			.method<&godot::PackedInt32Array::append_array>("append_array")
-			.method<&godot::PackedInt32Array::remove_at>("remove_at")
-			.method<&godot::PackedInt32Array::insert>("insert")
-			.method<&godot::PackedInt32Array::fill>("fill")
-			.method<&godot::PackedInt32Array::resize>("resize")
-			.method<&godot::PackedInt32Array::clear>("clear")
-			.method<&godot::PackedInt32Array::has>("has")
-			.method<&godot::PackedInt32Array::reverse>("reverse")
-			.method<&puerts_generated::packed_int32_array_slice_default1, &godot::PackedInt32Array::slice>("slice")
-			.method<&godot::PackedInt32Array::to_byte_array>("to_byte_array")
-			.method<&godot::PackedInt32Array::sort>("sort")
-			.method<&puerts_generated::packed_int32_array_bsearch_default1, &godot::PackedInt32Array::bsearch>("bsearch")
-			.method<&godot::PackedInt32Array::duplicate>("duplicate")
-			.method<&puerts_generated::packed_int32_array_find_default1, &godot::PackedInt32Array::find>("find")
-			.method<&puerts_generated::packed_int32_array_rfind_default1, &godot::PackedInt32Array::rfind>("rfind")
-			.method<&godot::PackedInt32Array::count>("count")
-			.method<&godot::PackedInt32Array::erase>("erase")
+			.method<&puerts_generated::packed_int32_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_int32_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_int32_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_int32_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_int32_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_int32_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_int32_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_int32_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_int32_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_int32_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_int32_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_int32_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_int32_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_int32_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_int32_array_slice_overload0_arity1, &puerts_generated::packed_int32_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_int32_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_int32_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_int32_array_bsearch_overload0_arity1, &puerts_generated::packed_int32_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_int32_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_int32_array_find_overload0_arity1, &puerts_generated::packed_int32_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_int32_array_rfind_overload0_arity1, &puerts_generated::packed_int32_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_int32_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_int32_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2052,17 +3064,86 @@ inline bool packed_int64_array_op_inequality_6(const godot::PackedInt64Array &le
 inline godot::PackedInt64Array packed_int64_array_op_addition_7(const godot::PackedInt64Array &left, const godot::PackedInt64Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedInt64Array>(left, right);
 }
-inline decltype(auto) packed_int64_array_slice_default1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_int64_array_get_overload0_arity1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::get), 0>>(p_arg_0)));
 }
-inline decltype(auto) packed_int64_array_bsearch_default1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_int64_array_set_overload0_arity2(godot::PackedInt64Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::set), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::set), 1>>(p_arg_1));
 }
-inline decltype(auto) packed_int64_array_find_default1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_int64_array_size_overload0_arity0(const godot::PackedInt64Array &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_int64_array_rfind_default1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_int64_array_is_empty_overload0_arity0(const godot::PackedInt64Array &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_int64_array_push_back_overload0_arity1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return p_self.push_back(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::push_back), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int64_array_append_overload0_arity1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return p_self.append(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::append), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int64_array_append_array_overload0_arity1(godot::PackedInt64Array &p_self, const godot::PackedInt64Array &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_int64_array_remove_at_overload0_arity1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int64_array_insert_overload0_arity2(godot::PackedInt64Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::insert), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::insert), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_int64_array_fill_overload0_arity1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return p_self.fill(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::fill), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int64_array_resize_overload0_arity1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int64_array_clear_overload0_arity0(godot::PackedInt64Array &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_int64_array_has_overload0_arity1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return p_self.has(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::has), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int64_array_reverse_overload0_arity0(godot::PackedInt64Array &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_int64_array_slice_overload0_arity1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_int64_array_slice_overload0_arity2(const godot::PackedInt64Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_int64_array_to_byte_array_overload0_arity0(const godot::PackedInt64Array &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_int64_array_sort_overload0_arity0(godot::PackedInt64Array &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_int64_array_bsearch_overload0_arity1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::bsearch), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int64_array_bsearch_overload0_arity2(godot::PackedInt64Array &p_self, int64_t p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::bsearch), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_int64_array_duplicate_overload0_arity0(godot::PackedInt64Array &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_int64_array_find_overload0_arity1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::find), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int64_array_find_overload0_arity2(const godot::PackedInt64Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::find), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_int64_array_rfind_overload0_arity1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::rfind), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int64_array_rfind_overload0_arity2(const godot::PackedInt64Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::rfind), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_int64_array_count_overload0_arity1(const godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.count(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::count), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_int64_array_erase_overload0_arity1(godot::PackedInt64Array &p_self, int64_t p_arg_0) {
+	return p_self.erase(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedInt64Array::erase), 0>>(p_arg_0));
 }
 } // namespace puerts_generated
 
@@ -2076,29 +3157,29 @@ inline void register_type_packed_int64_array() {
 			.constructor<>()
 			.constructor<const godot::PackedInt64Array &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedInt64Array::get>("get")
-			.method<&godot::PackedInt64Array::set>("set")
-			.method<&godot::PackedInt64Array::size>("size")
-			.method<&godot::PackedInt64Array::is_empty>("is_empty")
-			.method<&godot::PackedInt64Array::push_back>("push_back")
-			.method<&godot::PackedInt64Array::append>("append")
-			.method<&godot::PackedInt64Array::append_array>("append_array")
-			.method<&godot::PackedInt64Array::remove_at>("remove_at")
-			.method<&godot::PackedInt64Array::insert>("insert")
-			.method<&godot::PackedInt64Array::fill>("fill")
-			.method<&godot::PackedInt64Array::resize>("resize")
-			.method<&godot::PackedInt64Array::clear>("clear")
-			.method<&godot::PackedInt64Array::has>("has")
-			.method<&godot::PackedInt64Array::reverse>("reverse")
-			.method<&puerts_generated::packed_int64_array_slice_default1, &godot::PackedInt64Array::slice>("slice")
-			.method<&godot::PackedInt64Array::to_byte_array>("to_byte_array")
-			.method<&godot::PackedInt64Array::sort>("sort")
-			.method<&puerts_generated::packed_int64_array_bsearch_default1, &godot::PackedInt64Array::bsearch>("bsearch")
-			.method<&godot::PackedInt64Array::duplicate>("duplicate")
-			.method<&puerts_generated::packed_int64_array_find_default1, &godot::PackedInt64Array::find>("find")
-			.method<&puerts_generated::packed_int64_array_rfind_default1, &godot::PackedInt64Array::rfind>("rfind")
-			.method<&godot::PackedInt64Array::count>("count")
-			.method<&godot::PackedInt64Array::erase>("erase")
+			.method<&puerts_generated::packed_int64_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_int64_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_int64_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_int64_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_int64_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_int64_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_int64_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_int64_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_int64_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_int64_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_int64_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_int64_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_int64_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_int64_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_int64_array_slice_overload0_arity1, &puerts_generated::packed_int64_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_int64_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_int64_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_int64_array_bsearch_overload0_arity1, &puerts_generated::packed_int64_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_int64_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_int64_array_find_overload0_arity1, &puerts_generated::packed_int64_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_int64_array_rfind_overload0_arity1, &puerts_generated::packed_int64_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_int64_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_int64_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2126,17 +3207,86 @@ inline bool packed_string_array_op_inequality_6(const godot::PackedStringArray &
 inline godot::PackedStringArray packed_string_array_op_addition_7(const godot::PackedStringArray &left, const godot::PackedStringArray &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedStringArray>(left, right);
 }
-inline decltype(auto) packed_string_array_slice_default1(const godot::PackedStringArray &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_string_array_get_overload0_arity1(const godot::PackedStringArray &p_self, int64_t p_arg_0) {
+	return p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::get), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_string_array_bsearch_default1(godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_string_array_set_overload0_arity2(godot::PackedStringArray &p_self, int64_t p_arg_0, const godot::String &p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::set), 0>>(p_arg_0), p_arg_1);
 }
-inline decltype(auto) packed_string_array_find_default1(const godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_string_array_size_overload0_arity0(const godot::PackedStringArray &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_string_array_rfind_default1(const godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_string_array_is_empty_overload0_arity0(const godot::PackedStringArray &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_string_array_push_back_overload0_arity1(godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return p_self.push_back(p_arg_0);
+}
+inline decltype(auto) packed_string_array_append_overload0_arity1(godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return p_self.append(p_arg_0);
+}
+inline decltype(auto) packed_string_array_append_array_overload0_arity1(godot::PackedStringArray &p_self, const godot::PackedStringArray &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_string_array_remove_at_overload0_arity1(godot::PackedStringArray &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_string_array_insert_overload0_arity2(godot::PackedStringArray &p_self, int64_t p_arg_0, const godot::String &p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::insert), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_string_array_fill_overload0_arity1(godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return p_self.fill(p_arg_0);
+}
+inline decltype(auto) packed_string_array_resize_overload0_arity1(godot::PackedStringArray &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_string_array_clear_overload0_arity0(godot::PackedStringArray &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_string_array_has_overload0_arity1(const godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return p_self.has(p_arg_0);
+}
+inline decltype(auto) packed_string_array_reverse_overload0_arity0(godot::PackedStringArray &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_string_array_slice_overload0_arity1(const godot::PackedStringArray &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_string_array_slice_overload0_arity2(const godot::PackedStringArray &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_string_array_to_byte_array_overload0_arity0(const godot::PackedStringArray &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_string_array_sort_overload0_arity0(godot::PackedStringArray &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_string_array_bsearch_overload0_arity1(godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0));
+}
+inline decltype(auto) packed_string_array_bsearch_overload0_arity2(godot::PackedStringArray &p_self, const godot::String &p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0, p_arg_1));
+}
+inline decltype(auto) packed_string_array_duplicate_overload0_arity0(godot::PackedStringArray &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_string_array_find_overload0_arity1(const godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.find(p_arg_0));
+}
+inline decltype(auto) packed_string_array_find_overload0_arity2(const godot::PackedStringArray &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_string_array_rfind_overload0_arity1(const godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0));
+}
+inline decltype(auto) packed_string_array_rfind_overload0_arity2(const godot::PackedStringArray &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedStringArray::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_string_array_count_overload0_arity1(const godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.count(p_arg_0));
+}
+inline decltype(auto) packed_string_array_erase_overload0_arity1(godot::PackedStringArray &p_self, const godot::String &p_arg_0) {
+	return p_self.erase(p_arg_0);
 }
 } // namespace puerts_generated
 
@@ -2150,29 +3300,29 @@ inline void register_type_packed_string_array() {
 			.constructor<>()
 			.constructor<const godot::PackedStringArray &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedStringArray::get>("get")
-			.method<&godot::PackedStringArray::set>("set")
-			.method<&godot::PackedStringArray::size>("size")
-			.method<&godot::PackedStringArray::is_empty>("is_empty")
-			.method<&godot::PackedStringArray::push_back>("push_back")
-			.method<&godot::PackedStringArray::append>("append")
-			.method<&godot::PackedStringArray::append_array>("append_array")
-			.method<&godot::PackedStringArray::remove_at>("remove_at")
-			.method<&godot::PackedStringArray::insert>("insert")
-			.method<&godot::PackedStringArray::fill>("fill")
-			.method<&godot::PackedStringArray::resize>("resize")
-			.method<&godot::PackedStringArray::clear>("clear")
-			.method<&godot::PackedStringArray::has>("has")
-			.method<&godot::PackedStringArray::reverse>("reverse")
-			.method<&puerts_generated::packed_string_array_slice_default1, &godot::PackedStringArray::slice>("slice")
-			.method<&godot::PackedStringArray::to_byte_array>("to_byte_array")
-			.method<&godot::PackedStringArray::sort>("sort")
-			.method<&puerts_generated::packed_string_array_bsearch_default1, &godot::PackedStringArray::bsearch>("bsearch")
-			.method<&godot::PackedStringArray::duplicate>("duplicate")
-			.method<&puerts_generated::packed_string_array_find_default1, &godot::PackedStringArray::find>("find")
-			.method<&puerts_generated::packed_string_array_rfind_default1, &godot::PackedStringArray::rfind>("rfind")
-			.method<&godot::PackedStringArray::count>("count")
-			.method<&godot::PackedStringArray::erase>("erase")
+			.method<&puerts_generated::packed_string_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_string_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_string_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_string_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_string_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_string_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_string_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_string_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_string_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_string_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_string_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_string_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_string_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_string_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_string_array_slice_overload0_arity1, &puerts_generated::packed_string_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_string_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_string_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_string_array_bsearch_overload0_arity1, &puerts_generated::packed_string_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_string_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_string_array_find_overload0_arity1, &puerts_generated::packed_string_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_string_array_rfind_overload0_arity1, &puerts_generated::packed_string_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_string_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_string_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2203,17 +3353,86 @@ inline bool packed_vector2_array_op_inequality_7(const godot::PackedVector2Array
 inline godot::PackedVector2Array packed_vector2_array_op_addition_8(const godot::PackedVector2Array &left, const godot::PackedVector2Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedVector2Array>(left, right);
 }
-inline decltype(auto) packed_vector2_array_slice_default1(const godot::PackedVector2Array &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_vector2_array_get_overload0_arity1(const godot::PackedVector2Array &p_self, int64_t p_arg_0) {
+	return p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::get), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_vector2_array_bsearch_default1(godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_vector2_array_set_overload0_arity2(godot::PackedVector2Array &p_self, int64_t p_arg_0, const godot::Vector2 &p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::set), 0>>(p_arg_0), p_arg_1);
 }
-inline decltype(auto) packed_vector2_array_find_default1(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_vector2_array_size_overload0_arity0(const godot::PackedVector2Array &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_vector2_array_rfind_default1(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_vector2_array_is_empty_overload0_arity0(const godot::PackedVector2Array &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_vector2_array_push_back_overload0_arity1(godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.push_back(p_arg_0);
+}
+inline decltype(auto) packed_vector2_array_append_overload0_arity1(godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.append(p_arg_0);
+}
+inline decltype(auto) packed_vector2_array_append_array_overload0_arity1(godot::PackedVector2Array &p_self, const godot::PackedVector2Array &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_vector2_array_remove_at_overload0_arity1(godot::PackedVector2Array &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_vector2_array_insert_overload0_arity2(godot::PackedVector2Array &p_self, int64_t p_arg_0, const godot::Vector2 &p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::insert), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_vector2_array_fill_overload0_arity1(godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.fill(p_arg_0);
+}
+inline decltype(auto) packed_vector2_array_resize_overload0_arity1(godot::PackedVector2Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_vector2_array_clear_overload0_arity0(godot::PackedVector2Array &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_vector2_array_has_overload0_arity1(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.has(p_arg_0);
+}
+inline decltype(auto) packed_vector2_array_reverse_overload0_arity0(godot::PackedVector2Array &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_vector2_array_slice_overload0_arity1(const godot::PackedVector2Array &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_vector2_array_slice_overload0_arity2(const godot::PackedVector2Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_vector2_array_to_byte_array_overload0_arity0(const godot::PackedVector2Array &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_vector2_array_sort_overload0_arity0(godot::PackedVector2Array &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_vector2_array_bsearch_overload0_arity1(godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0));
+}
+inline decltype(auto) packed_vector2_array_bsearch_overload0_arity2(godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0, p_arg_1));
+}
+inline decltype(auto) packed_vector2_array_duplicate_overload0_arity0(godot::PackedVector2Array &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_vector2_array_find_overload0_arity1(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<int64_t>(p_self.find(p_arg_0));
+}
+inline decltype(auto) packed_vector2_array_find_overload0_arity2(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_vector2_array_rfind_overload0_arity1(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0));
+}
+inline decltype(auto) packed_vector2_array_rfind_overload0_arity2(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector2Array::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_vector2_array_count_overload0_arity1(const godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<int64_t>(p_self.count(p_arg_0));
+}
+inline decltype(auto) packed_vector2_array_erase_overload0_arity1(godot::PackedVector2Array &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.erase(p_arg_0);
 }
 } // namespace puerts_generated
 
@@ -2228,29 +3447,29 @@ inline void register_type_packed_vector2_array() {
 			.constructor<>()
 			.constructor<const godot::PackedVector2Array &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedVector2Array::get>("get")
-			.method<&godot::PackedVector2Array::set>("set")
-			.method<&godot::PackedVector2Array::size>("size")
-			.method<&godot::PackedVector2Array::is_empty>("is_empty")
-			.method<&godot::PackedVector2Array::push_back>("push_back")
-			.method<&godot::PackedVector2Array::append>("append")
-			.method<&godot::PackedVector2Array::append_array>("append_array")
-			.method<&godot::PackedVector2Array::remove_at>("remove_at")
-			.method<&godot::PackedVector2Array::insert>("insert")
-			.method<&godot::PackedVector2Array::fill>("fill")
-			.method<&godot::PackedVector2Array::resize>("resize")
-			.method<&godot::PackedVector2Array::clear>("clear")
-			.method<&godot::PackedVector2Array::has>("has")
-			.method<&godot::PackedVector2Array::reverse>("reverse")
-			.method<&puerts_generated::packed_vector2_array_slice_default1, &godot::PackedVector2Array::slice>("slice")
-			.method<&godot::PackedVector2Array::to_byte_array>("to_byte_array")
-			.method<&godot::PackedVector2Array::sort>("sort")
-			.method<&puerts_generated::packed_vector2_array_bsearch_default1, &godot::PackedVector2Array::bsearch>("bsearch")
-			.method<&godot::PackedVector2Array::duplicate>("duplicate")
-			.method<&puerts_generated::packed_vector2_array_find_default1, &godot::PackedVector2Array::find>("find")
-			.method<&puerts_generated::packed_vector2_array_rfind_default1, &godot::PackedVector2Array::rfind>("rfind")
-			.method<&godot::PackedVector2Array::count>("count")
-			.method<&godot::PackedVector2Array::erase>("erase")
+			.method<&puerts_generated::packed_vector2_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_vector2_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_vector2_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_vector2_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_vector2_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_vector2_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_vector2_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_vector2_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_vector2_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_vector2_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_vector2_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_vector2_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_vector2_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_vector2_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_vector2_array_slice_overload0_arity1, &puerts_generated::packed_vector2_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_vector2_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_vector2_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_vector2_array_bsearch_overload0_arity1, &puerts_generated::packed_vector2_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_vector2_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_vector2_array_find_overload0_arity1, &puerts_generated::packed_vector2_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_vector2_array_rfind_overload0_arity1, &puerts_generated::packed_vector2_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_vector2_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_vector2_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2281,17 +3500,86 @@ inline bool packed_vector3_array_op_inequality_7(const godot::PackedVector3Array
 inline godot::PackedVector3Array packed_vector3_array_op_addition_8(const godot::PackedVector3Array &left, const godot::PackedVector3Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_ADD, godot::PackedVector3Array>(left, right);
 }
-inline decltype(auto) packed_vector3_array_slice_default1(const godot::PackedVector3Array &p_self, int64_t p_arg_0) {
-	return p_self.slice(p_arg_0);
+inline decltype(auto) packed_vector3_array_get_overload0_arity1(const godot::PackedVector3Array &p_self, int64_t p_arg_0) {
+	return p_self.get(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::get), 0>>(p_arg_0));
 }
-inline decltype(auto) packed_vector3_array_bsearch_default1(godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
-	return p_self.bsearch(p_arg_0);
+inline decltype(auto) packed_vector3_array_set_overload0_arity2(godot::PackedVector3Array &p_self, int64_t p_arg_0, const godot::Vector3 &p_arg_1) {
+	return p_self.set(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::set), 0>>(p_arg_0), p_arg_1);
 }
-inline decltype(auto) packed_vector3_array_find_default1(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) packed_vector3_array_size_overload0_arity0(const godot::PackedVector3Array &p_self) {
+	return static_cast<int64_t>(p_self.size());
 }
-inline decltype(auto) packed_vector3_array_rfind_default1(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) packed_vector3_array_is_empty_overload0_arity0(const godot::PackedVector3Array &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) packed_vector3_array_push_back_overload0_arity1(godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.push_back(p_arg_0);
+}
+inline decltype(auto) packed_vector3_array_append_overload0_arity1(godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.append(p_arg_0);
+}
+inline decltype(auto) packed_vector3_array_append_array_overload0_arity1(godot::PackedVector3Array &p_self, const godot::PackedVector3Array &p_arg_0) {
+	return p_self.append_array(p_arg_0);
+}
+inline decltype(auto) packed_vector3_array_remove_at_overload0_arity1(godot::PackedVector3Array &p_self, int64_t p_arg_0) {
+	return p_self.remove_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::remove_at), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_vector3_array_insert_overload0_arity2(godot::PackedVector3Array &p_self, int64_t p_arg_0, const godot::Vector3 &p_arg_1) {
+	return static_cast<int64_t>(p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::insert), 0>>(p_arg_0), p_arg_1));
+}
+inline decltype(auto) packed_vector3_array_fill_overload0_arity1(godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.fill(p_arg_0);
+}
+inline decltype(auto) packed_vector3_array_resize_overload0_arity1(godot::PackedVector3Array &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.resize(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::resize), 0>>(p_arg_0)));
+}
+inline decltype(auto) packed_vector3_array_clear_overload0_arity0(godot::PackedVector3Array &p_self) {
+	return p_self.clear();
+}
+inline decltype(auto) packed_vector3_array_has_overload0_arity1(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.has(p_arg_0);
+}
+inline decltype(auto) packed_vector3_array_reverse_overload0_arity0(godot::PackedVector3Array &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) packed_vector3_array_slice_overload0_arity1(const godot::PackedVector3Array &p_self, int64_t p_arg_0) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::slice), 0>>(p_arg_0));
+}
+inline decltype(auto) packed_vector3_array_slice_overload0_arity2(const godot::PackedVector3Array &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.slice(static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::slice), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::slice), 1>>(p_arg_1));
+}
+inline decltype(auto) packed_vector3_array_to_byte_array_overload0_arity0(const godot::PackedVector3Array &p_self) {
+	return p_self.to_byte_array();
+}
+inline decltype(auto) packed_vector3_array_sort_overload0_arity0(godot::PackedVector3Array &p_self) {
+	return p_self.sort();
+}
+inline decltype(auto) packed_vector3_array_bsearch_overload0_arity1(godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0));
+}
+inline decltype(auto) packed_vector3_array_bsearch_overload0_arity2(godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0, bool p_arg_1) {
+	return static_cast<int64_t>(p_self.bsearch(p_arg_0, p_arg_1));
+}
+inline decltype(auto) packed_vector3_array_duplicate_overload0_arity0(godot::PackedVector3Array &p_self) {
+	return p_self.duplicate();
+}
+inline decltype(auto) packed_vector3_array_find_overload0_arity1(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<int64_t>(p_self.find(p_arg_0));
+}
+inline decltype(auto) packed_vector3_array_find_overload0_arity2(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_vector3_array_rfind_overload0_arity1(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0));
+}
+inline decltype(auto) packed_vector3_array_rfind_overload0_arity2(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::PackedVector3Array::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) packed_vector3_array_count_overload0_arity1(const godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<int64_t>(p_self.count(p_arg_0));
+}
+inline decltype(auto) packed_vector3_array_erase_overload0_arity1(godot::PackedVector3Array &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.erase(p_arg_0);
 }
 } // namespace puerts_generated
 
@@ -2306,29 +3594,29 @@ inline void register_type_packed_vector3_array() {
 			.constructor<>()
 			.constructor<const godot::PackedVector3Array &>()
 			.constructor<const godot::Array &>()
-			.method<&godot::PackedVector3Array::get>("get")
-			.method<&godot::PackedVector3Array::set>("set")
-			.method<&godot::PackedVector3Array::size>("size")
-			.method<&godot::PackedVector3Array::is_empty>("is_empty")
-			.method<&godot::PackedVector3Array::push_back>("push_back")
-			.method<&godot::PackedVector3Array::append>("append")
-			.method<&godot::PackedVector3Array::append_array>("append_array")
-			.method<&godot::PackedVector3Array::remove_at>("remove_at")
-			.method<&godot::PackedVector3Array::insert>("insert")
-			.method<&godot::PackedVector3Array::fill>("fill")
-			.method<&godot::PackedVector3Array::resize>("resize")
-			.method<&godot::PackedVector3Array::clear>("clear")
-			.method<&godot::PackedVector3Array::has>("has")
-			.method<&godot::PackedVector3Array::reverse>("reverse")
-			.method<&puerts_generated::packed_vector3_array_slice_default1, &godot::PackedVector3Array::slice>("slice")
-			.method<&godot::PackedVector3Array::to_byte_array>("to_byte_array")
-			.method<&godot::PackedVector3Array::sort>("sort")
-			.method<&puerts_generated::packed_vector3_array_bsearch_default1, &godot::PackedVector3Array::bsearch>("bsearch")
-			.method<&godot::PackedVector3Array::duplicate>("duplicate")
-			.method<&puerts_generated::packed_vector3_array_find_default1, &godot::PackedVector3Array::find>("find")
-			.method<&puerts_generated::packed_vector3_array_rfind_default1, &godot::PackedVector3Array::rfind>("rfind")
-			.method<&godot::PackedVector3Array::count>("count")
-			.method<&godot::PackedVector3Array::erase>("erase")
+			.method<&puerts_generated::packed_vector3_array_get_overload0_arity1>("get")
+			.method<&puerts_generated::packed_vector3_array_set_overload0_arity2>("set")
+			.method<&puerts_generated::packed_vector3_array_size_overload0_arity0>("size")
+			.method<&puerts_generated::packed_vector3_array_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::packed_vector3_array_push_back_overload0_arity1>("push_back")
+			.method<&puerts_generated::packed_vector3_array_append_overload0_arity1>("append")
+			.method<&puerts_generated::packed_vector3_array_append_array_overload0_arity1>("append_array")
+			.method<&puerts_generated::packed_vector3_array_remove_at_overload0_arity1>("remove_at")
+			.method<&puerts_generated::packed_vector3_array_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::packed_vector3_array_fill_overload0_arity1>("fill")
+			.method<&puerts_generated::packed_vector3_array_resize_overload0_arity1>("resize")
+			.method<&puerts_generated::packed_vector3_array_clear_overload0_arity0>("clear")
+			.method<&puerts_generated::packed_vector3_array_has_overload0_arity1>("has")
+			.method<&puerts_generated::packed_vector3_array_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::packed_vector3_array_slice_overload0_arity1, &puerts_generated::packed_vector3_array_slice_overload0_arity2>("slice")
+			.method<&puerts_generated::packed_vector3_array_to_byte_array_overload0_arity0>("to_byte_array")
+			.method<&puerts_generated::packed_vector3_array_sort_overload0_arity0>("sort")
+			.method<&puerts_generated::packed_vector3_array_bsearch_overload0_arity1, &puerts_generated::packed_vector3_array_bsearch_overload0_arity2>("bsearch")
+			.method<&puerts_generated::packed_vector3_array_duplicate_overload0_arity0>("duplicate")
+			.method<&puerts_generated::packed_vector3_array_find_overload0_arity1, &puerts_generated::packed_vector3_array_find_overload0_arity2>("find")
+			.method<&puerts_generated::packed_vector3_array_rfind_overload0_arity1, &puerts_generated::packed_vector3_array_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::packed_vector3_array_count_overload0_arity1>("count")
+			.method<&puerts_generated::packed_vector3_array_erase_overload0_arity1>("erase")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2371,8 +3659,41 @@ inline godot::Plane plane_plane_xz() {
 inline godot::Plane plane_plane_xy() {
 	return { 0, 0, 1, 0 };
 }
-inline decltype(auto) plane_has_point_default1(const godot::Plane &p_self, const godot::Vector3 &p_arg_0) {
+inline decltype(auto) plane_normalized_overload0_arity0(const godot::Plane &p_self) {
+	return p_self.normalized();
+}
+inline decltype(auto) plane_get_center_overload0_arity0(const godot::Plane &p_self) {
+	return p_self.get_center();
+}
+inline decltype(auto) plane_is_equal_approx_overload0_arity1(const godot::Plane &p_self, const godot::Plane &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) plane_is_finite_overload0_arity0(const godot::Plane &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) plane_is_point_over_overload0_arity1(const godot::Plane &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.is_point_over(p_arg_0);
+}
+inline decltype(auto) plane_distance_to_overload0_arity1(const godot::Plane &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.distance_to(p_arg_0));
+}
+inline decltype(auto) plane_has_point_overload0_arity1(const godot::Plane &p_self, const godot::Vector3 &p_arg_0) {
 	return p_self.has_point(p_arg_0);
+}
+inline decltype(auto) plane_has_point_overload0_arity2(const godot::Plane &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.has_point(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Plane::has_point), 1>>(p_arg_1));
+}
+inline decltype(auto) plane_project_overload0_arity1(const godot::Plane &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.project(p_arg_0);
+}
+inline decltype(auto) plane_intersect_3_overload0_arity2(const godot::Plane &p_self, const godot::Plane &p_arg_0, const godot::Plane &p_arg_1) {
+	return p_self.intersect_3_bind(p_arg_0, p_arg_1);
+}
+inline decltype(auto) plane_intersects_ray_overload0_arity2(const godot::Plane &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+	return p_self.intersects_ray_bind(p_arg_0, p_arg_1);
+}
+inline decltype(auto) plane_intersects_segment_overload0_arity2(const godot::Plane &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+	return p_self.intersects_segment_bind(p_arg_0, p_arg_1);
 }
 } // namespace puerts_generated
 
@@ -2391,21 +3712,21 @@ inline void register_type_plane() {
 			.constructor<>()
 			.constructor<const godot::Plane &>()
 			.constructor<const godot::Vector3 &>()
-			.constructor<const godot::Vector3 &, godot::real_t>()
+			.constructor<const godot::Vector3 &, double>()
 			.constructor<const godot::Vector3 &, const godot::Vector3 &>()
 			.constructor<const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>()
-			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
-			.method<&godot::Plane::normalized>("normalized")
-			.method<&godot::Plane::get_center>("get_center")
-			.method<&godot::Plane::is_equal_approx>("is_equal_approx")
-			.method<&godot::Plane::is_finite>("is_finite")
-			.method<&godot::Plane::is_point_over>("is_point_over")
-			.method<&godot::Plane::distance_to>("distance_to")
-			.method<&puerts_generated::plane_has_point_default1, &godot::Plane::has_point>("has_point")
-			.method<&godot::Plane::project>("project")
-			.method<&godot::Plane::intersect_3>("intersect_3")
-			.method<&godot::Plane::intersects_ray>("intersects_ray")
-			.method<&godot::Plane::intersects_segment>("intersects_segment")
+			.constructor<double, double, double, double>()
+			.method<&puerts_generated::plane_normalized_overload0_arity0>("normalized")
+			.method<&puerts_generated::plane_get_center_overload0_arity0>("get_center")
+			.method<&puerts_generated::plane_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::plane_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::plane_is_point_over_overload0_arity1>("is_point_over")
+			.method<&puerts_generated::plane_distance_to_overload0_arity1>("distance_to")
+			.method<&puerts_generated::plane_has_point_overload0_arity1, &puerts_generated::plane_has_point_overload0_arity2>("has_point")
+			.method<&puerts_generated::plane_project_overload0_arity1>("project")
+			.method<&puerts_generated::plane_intersect_3_overload0_arity2>("intersect_3")
+			.method<&puerts_generated::plane_intersects_ray_overload0_arity2>("intersects_ray")
+			.method<&puerts_generated::plane_intersects_segment_overload0_arity2>("intersects_segment")
 			.property<&puerts_generated::plane_x_getter, &puerts_generated::plane_x_setter>("x")
 			.property<&puerts_generated::plane_y_getter, &puerts_generated::plane_y_setter>("y")
 			.property<&puerts_generated::plane_z_getter, &puerts_generated::plane_z_setter>("z")
@@ -2447,14 +3768,92 @@ inline godot::Projection projection_identity() {
 inline godot::Projection projection_zero() {
 	return { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 }
-inline decltype(auto) projection_create_perspective_default4(godot::real_t p_arg_0, godot::real_t p_arg_1, godot::real_t p_arg_2, godot::real_t p_arg_3) {
-	return godot::Projection::create_perspective(p_arg_0, p_arg_1, p_arg_2, p_arg_3);
+inline decltype(auto) projection_create_depth_correction_overload0_arity1(bool p_arg_0) {
+	return godot::Projection::create_depth_correction(p_arg_0);
 }
-inline decltype(auto) projection_create_orthogonal_aspect_default4(godot::real_t p_arg_0, godot::real_t p_arg_1, godot::real_t p_arg_2, godot::real_t p_arg_3) {
-	return godot::Projection::create_orthogonal_aspect(p_arg_0, p_arg_1, p_arg_2, p_arg_3);
+inline decltype(auto) projection_create_light_atlas_rect_overload0_arity1(const godot::Rect2 &p_arg_0) {
+	return godot::Projection::create_light_atlas_rect(p_arg_0);
 }
-inline decltype(auto) projection_create_frustum_aspect_default5(godot::real_t p_arg_0, godot::real_t p_arg_1, const godot::Vector2 &p_arg_2, godot::real_t p_arg_3, godot::real_t p_arg_4) {
-	return godot::Projection::create_frustum_aspect(p_arg_0, p_arg_1, p_arg_2, p_arg_3, p_arg_4);
+inline decltype(auto) projection_create_perspective_overload0_arity4(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3) {
+	return godot::Projection::create_perspective(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 3>>(p_arg_3));
+}
+inline decltype(auto) projection_create_perspective_overload0_arity5(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3, bool p_arg_4) {
+	return godot::Projection::create_perspective(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective), 3>>(p_arg_3), p_arg_4);
+}
+inline decltype(auto) projection_create_perspective_hmd_overload0_arity8(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3, bool p_arg_4, int64_t p_arg_5, double p_arg_6, double p_arg_7) {
+	return godot::Projection::create_perspective_hmd(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective_hmd), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective_hmd), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective_hmd), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective_hmd), 3>>(p_arg_3), p_arg_4, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective_hmd), 5>>(p_arg_5), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective_hmd), 6>>(p_arg_6), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_perspective_hmd), 7>>(p_arg_7));
+}
+inline decltype(auto) projection_create_for_hmd_overload0_arity8(int64_t p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3, double p_arg_4, double p_arg_5, double p_arg_6, double p_arg_7) {
+	return godot::Projection::create_for_hmd(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 4>>(p_arg_4), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 5>>(p_arg_5), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 6>>(p_arg_6), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_for_hmd), 7>>(p_arg_7));
+}
+inline decltype(auto) projection_create_orthogonal_overload0_arity6(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3, double p_arg_4, double p_arg_5) {
+	return godot::Projection::create_orthogonal(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal), 4>>(p_arg_4), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal), 5>>(p_arg_5));
+}
+inline decltype(auto) projection_create_orthogonal_aspect_overload0_arity4(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3) {
+	return godot::Projection::create_orthogonal_aspect(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 3>>(p_arg_3));
+}
+inline decltype(auto) projection_create_orthogonal_aspect_overload0_arity5(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3, bool p_arg_4) {
+	return godot::Projection::create_orthogonal_aspect(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_orthogonal_aspect), 3>>(p_arg_3), p_arg_4);
+}
+inline decltype(auto) projection_create_frustum_overload0_arity6(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3, double p_arg_4, double p_arg_5) {
+	return godot::Projection::create_frustum(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum), 4>>(p_arg_4), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum), 5>>(p_arg_5));
+}
+inline decltype(auto) projection_create_frustum_aspect_overload0_arity5(double p_arg_0, double p_arg_1, const godot::Vector2 &p_arg_2, double p_arg_3, double p_arg_4) {
+	return godot::Projection::create_frustum_aspect(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 1>>(p_arg_1), p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 4>>(p_arg_4));
+}
+inline decltype(auto) projection_create_frustum_aspect_overload0_arity6(double p_arg_0, double p_arg_1, const godot::Vector2 &p_arg_2, double p_arg_3, double p_arg_4, bool p_arg_5) {
+	return godot::Projection::create_frustum_aspect(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 1>>(p_arg_1), p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::create_frustum_aspect), 4>>(p_arg_4), p_arg_5);
+}
+inline decltype(auto) projection_create_fit_aabb_overload0_arity1(const godot::AABB &p_arg_0) {
+	return godot::Projection::create_fit_aabb(p_arg_0);
+}
+inline decltype(auto) projection_determinant_overload0_arity0(const godot::Projection &p_self) {
+	return static_cast<double>(p_self.determinant());
+}
+inline decltype(auto) projection_perspective_znear_adjusted_overload0_arity1(const godot::Projection &p_self, double p_arg_0) {
+	return p_self.perspective_znear_adjusted(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::perspective_znear_adjusted), 0>>(p_arg_0));
+}
+inline decltype(auto) projection_get_projection_plane_overload0_arity1(const godot::Projection &p_self, int64_t p_arg_0) {
+	return p_self.get_projection_plane(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::get_projection_plane), 0>>(p_arg_0));
+}
+inline decltype(auto) projection_flipped_y_overload0_arity0(const godot::Projection &p_self) {
+	return p_self.flipped_y();
+}
+inline decltype(auto) projection_jitter_offseted_overload0_arity1(const godot::Projection &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.jitter_offseted(p_arg_0);
+}
+inline decltype(auto) projection_get_fovy_overload0_arity2(double p_arg_0, double p_arg_1) {
+	return static_cast<double>(godot::Projection::get_fovy(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::get_fovy), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::get_fovy), 1>>(p_arg_1)));
+}
+inline decltype(auto) projection_get_z_far_overload0_arity0(const godot::Projection &p_self) {
+	return static_cast<double>(p_self.get_z_far());
+}
+inline decltype(auto) projection_get_z_near_overload0_arity0(const godot::Projection &p_self) {
+	return static_cast<double>(p_self.get_z_near());
+}
+inline decltype(auto) projection_get_aspect_overload0_arity0(const godot::Projection &p_self) {
+	return static_cast<double>(p_self.get_aspect());
+}
+inline decltype(auto) projection_get_fov_overload0_arity0(const godot::Projection &p_self) {
+	return static_cast<double>(p_self.get_fov());
+}
+inline decltype(auto) projection_is_orthogonal_overload0_arity0(const godot::Projection &p_self) {
+	return p_self.is_orthogonal();
+}
+inline decltype(auto) projection_get_viewport_half_extents_overload0_arity0(const godot::Projection &p_self) {
+	return p_self.get_viewport_half_extents();
+}
+inline decltype(auto) projection_get_far_plane_half_extents_overload0_arity0(const godot::Projection &p_self) {
+	return p_self.get_far_plane_half_extents();
+}
+inline decltype(auto) projection_inverse_overload0_arity0(const godot::Projection &p_self) {
+	return p_self.inverse();
+}
+inline decltype(auto) projection_get_pixels_per_meter_overload0_arity1(const godot::Projection &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.get_pixels_per_meter(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Projection::get_pixels_per_meter), 0>>(p_arg_0)));
+}
+inline decltype(auto) projection_get_lod_multiplier_overload0_arity0(const godot::Projection &p_self) {
+	return static_cast<double>(p_self.get_lod_multiplier());
 }
 } // namespace puerts_generated
 
@@ -2471,37 +3870,37 @@ inline void register_type_projection() {
 			.constructor<const godot::Projection &>()
 			.constructor<const godot::Transform3D &>()
 			.constructor<const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &, const godot::Vector4 &>()
-			.static_method<&godot::Projection::create_depth_correction>("create_depth_correction")
-			.static_method<&godot::Projection::create_light_atlas_rect>("create_light_atlas_rect")
-			.static_method<&puerts_generated::projection_create_perspective_default4, &godot::Projection::create_perspective>("create_perspective")
-			.static_method<&godot::Projection::create_perspective_hmd>("create_perspective_hmd")
-			.static_method<&godot::Projection::create_for_hmd>("create_for_hmd")
-			.static_method<&godot::Projection::create_orthogonal>("create_orthogonal")
-			.static_method<&puerts_generated::projection_create_orthogonal_aspect_default4, &godot::Projection::create_orthogonal_aspect>("create_orthogonal_aspect")
-			.static_method<&godot::Projection::create_frustum>("create_frustum")
-			.static_method<&puerts_generated::projection_create_frustum_aspect_default5, &godot::Projection::create_frustum_aspect>("create_frustum_aspect")
-			.static_method<&godot::Projection::create_fit_aabb>("create_fit_aabb")
-			.method<&godot::Projection::determinant>("determinant")
-			.method<&godot::Projection::perspective_znear_adjusted>("perspective_znear_adjusted")
-			.method<&godot::Projection::get_projection_plane>("get_projection_plane")
-			.method<&godot::Projection::flipped_y>("flipped_y")
-			.method<&godot::Projection::jitter_offseted>("jitter_offseted")
-			.static_method<&godot::Projection::get_fovy>("get_fovy")
-			.method<&godot::Projection::get_z_far>("get_z_far")
-			.method<&godot::Projection::get_z_near>("get_z_near")
-			.method<&godot::Projection::get_aspect>("get_aspect")
-			.method<&godot::Projection::get_fov>("get_fov")
-			.method<&godot::Projection::is_orthogonal>("is_orthogonal")
-			.method<&godot::Projection::get_viewport_half_extents>("get_viewport_half_extents")
-			.method<&godot::Projection::get_far_plane_half_extents>("get_far_plane_half_extents")
-			.method<&godot::Projection::inverse>("inverse")
-			.method<&godot::Projection::get_pixels_per_meter>("get_pixels_per_meter")
-			.method<&godot::Projection::get_lod_multiplier>("get_lod_multiplier")
+			.static_method<&puerts_generated::projection_create_depth_correction_overload0_arity1>("create_depth_correction")
+			.static_method<&puerts_generated::projection_create_light_atlas_rect_overload0_arity1>("create_light_atlas_rect")
+			.static_method<&puerts_generated::projection_create_perspective_overload0_arity4, &puerts_generated::projection_create_perspective_overload0_arity5>("create_perspective")
+			.static_method<&puerts_generated::projection_create_perspective_hmd_overload0_arity8>("create_perspective_hmd")
+			.static_method<&puerts_generated::projection_create_for_hmd_overload0_arity8>("create_for_hmd")
+			.static_method<&puerts_generated::projection_create_orthogonal_overload0_arity6>("create_orthogonal")
+			.static_method<&puerts_generated::projection_create_orthogonal_aspect_overload0_arity4, &puerts_generated::projection_create_orthogonal_aspect_overload0_arity5>("create_orthogonal_aspect")
+			.static_method<&puerts_generated::projection_create_frustum_overload0_arity6>("create_frustum")
+			.static_method<&puerts_generated::projection_create_frustum_aspect_overload0_arity5, &puerts_generated::projection_create_frustum_aspect_overload0_arity6>("create_frustum_aspect")
+			.static_method<&puerts_generated::projection_create_fit_aabb_overload0_arity1>("create_fit_aabb")
+			.method<&puerts_generated::projection_determinant_overload0_arity0>("determinant")
+			.method<&puerts_generated::projection_perspective_znear_adjusted_overload0_arity1>("perspective_znear_adjusted")
+			.method<&puerts_generated::projection_get_projection_plane_overload0_arity1>("get_projection_plane")
+			.method<&puerts_generated::projection_flipped_y_overload0_arity0>("flipped_y")
+			.method<&puerts_generated::projection_jitter_offseted_overload0_arity1>("jitter_offseted")
+			.static_method<&puerts_generated::projection_get_fovy_overload0_arity2>("get_fovy")
+			.method<&puerts_generated::projection_get_z_far_overload0_arity0>("get_z_far")
+			.method<&puerts_generated::projection_get_z_near_overload0_arity0>("get_z_near")
+			.method<&puerts_generated::projection_get_aspect_overload0_arity0>("get_aspect")
+			.method<&puerts_generated::projection_get_fov_overload0_arity0>("get_fov")
+			.method<&puerts_generated::projection_is_orthogonal_overload0_arity0>("is_orthogonal")
+			.method<&puerts_generated::projection_get_viewport_half_extents_overload0_arity0>("get_viewport_half_extents")
+			.method<&puerts_generated::projection_get_far_plane_half_extents_overload0_arity0>("get_far_plane_half_extents")
+			.method<&puerts_generated::projection_inverse_overload0_arity0>("inverse")
+			.method<&puerts_generated::projection_get_pixels_per_meter_overload0_arity1>("get_pixels_per_meter")
+			.method<&puerts_generated::projection_get_lod_multiplier_overload0_arity0>("get_lod_multiplier")
 			.property<&puerts_generated::projection_x_getter, &puerts_generated::projection_x_setter>("x")
 			.property<&puerts_generated::projection_y_getter, &puerts_generated::projection_y_setter>("y")
 			.property<&puerts_generated::projection_z_getter, &puerts_generated::projection_z_setter>("z")
 			.property<&puerts_generated::projection_w_getter, &puerts_generated::projection_w_setter>("w")
-			.enum_type<puerts_generated::projection_planes_enum_tag>("Planes")
+			.nested_type("Planes", "Projection.Planes")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2526,10 +3925,10 @@ inline godot::Quaternion quaternion_op_multiply_5(const godot::Quaternion &left,
 inline godot::Quaternion quaternion_op_division_6(const godot::Quaternion &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Quaternion>(left, right);
 }
-inline godot::Quaternion quaternion_op_multiply_7(const godot::Quaternion &left, godot::real_t right) {
+inline godot::Quaternion quaternion_op_multiply_7(const godot::Quaternion &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Quaternion>(left, right);
 }
-inline godot::Quaternion quaternion_op_division_8(const godot::Quaternion &left, godot::real_t right) {
+inline godot::Quaternion quaternion_op_division_8(const godot::Quaternion &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Quaternion>(left, right);
 }
 inline godot::Vector3 quaternion_op_multiply_9(const godot::Quaternion &left, const godot::Vector3 &right) {
@@ -2559,8 +3958,65 @@ inline bool quaternion_op_in_16(const godot::Quaternion &left, const godot::Arra
 inline godot::Quaternion quaternion_identity() {
 	return { 0, 0, 0, 1 };
 }
-inline decltype(auto) quaternion_get_euler_default0(const godot::Quaternion &p_self) {
+inline decltype(auto) quaternion_length_overload0_arity0(const godot::Quaternion &p_self) {
+	return static_cast<double>(p_self.length());
+}
+inline decltype(auto) quaternion_length_squared_overload0_arity0(const godot::Quaternion &p_self) {
+	return static_cast<double>(p_self.length_squared());
+}
+inline decltype(auto) quaternion_normalized_overload0_arity0(const godot::Quaternion &p_self) {
+	return p_self.normalized();
+}
+inline decltype(auto) quaternion_is_normalized_overload0_arity0(const godot::Quaternion &p_self) {
+	return p_self.is_normalized();
+}
+inline decltype(auto) quaternion_is_equal_approx_overload0_arity1(const godot::Quaternion &p_self, const godot::Quaternion &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) quaternion_is_finite_overload0_arity0(const godot::Quaternion &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) quaternion_inverse_overload0_arity0(const godot::Quaternion &p_self) {
+	return p_self.inverse();
+}
+inline decltype(auto) quaternion_log_overload0_arity0(const godot::Quaternion &p_self) {
+	return p_self.log();
+}
+inline decltype(auto) quaternion_exp_overload0_arity0(const godot::Quaternion &p_self) {
+	return p_self.exp();
+}
+inline decltype(auto) quaternion_angle_to_overload0_arity1(const godot::Quaternion &p_self, const godot::Quaternion &p_arg_0) {
+	return static_cast<double>(p_self.angle_to(p_arg_0));
+}
+inline decltype(auto) quaternion_dot_overload0_arity1(const godot::Quaternion &p_self, const godot::Quaternion &p_arg_0) {
+	return static_cast<double>(p_self.dot(p_arg_0));
+}
+inline decltype(auto) quaternion_slerp_overload0_arity2(const godot::Quaternion &p_self, const godot::Quaternion &p_arg_0, double p_arg_1) {
+	return p_self.slerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::slerp), 1>>(p_arg_1));
+}
+inline decltype(auto) quaternion_slerpni_overload0_arity2(const godot::Quaternion &p_self, const godot::Quaternion &p_arg_0, double p_arg_1) {
+	return p_self.slerpni(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::slerpni), 1>>(p_arg_1));
+}
+inline decltype(auto) quaternion_spherical_cubic_interpolate_overload0_arity4(const godot::Quaternion &p_self, const godot::Quaternion &p_arg_0, const godot::Quaternion &p_arg_1, const godot::Quaternion &p_arg_2, double p_arg_3) {
+	return p_self.spherical_cubic_interpolate(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::spherical_cubic_interpolate), 3>>(p_arg_3));
+}
+inline decltype(auto) quaternion_spherical_cubic_interpolate_in_time_overload0_arity7(const godot::Quaternion &p_self, const godot::Quaternion &p_arg_0, const godot::Quaternion &p_arg_1, const godot::Quaternion &p_arg_2, double p_arg_3, double p_arg_4, double p_arg_5, double p_arg_6) {
+	return p_self.spherical_cubic_interpolate_in_time(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::spherical_cubic_interpolate_in_time), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::spherical_cubic_interpolate_in_time), 4>>(p_arg_4), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::spherical_cubic_interpolate_in_time), 5>>(p_arg_5), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::spherical_cubic_interpolate_in_time), 6>>(p_arg_6));
+}
+inline decltype(auto) quaternion_get_euler_overload0_arity0(const godot::Quaternion &p_self) {
 	return p_self.get_euler();
+}
+inline decltype(auto) quaternion_get_euler_overload0_arity1(const godot::Quaternion &p_self, int64_t p_arg_0) {
+	return p_self.get_euler(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Quaternion::get_euler), 0>>(p_arg_0));
+}
+inline decltype(auto) quaternion_from_euler_overload0_arity1(const godot::Vector3 &p_arg_0) {
+	return godot::Quaternion::from_euler(p_arg_0);
+}
+inline decltype(auto) quaternion_get_axis_overload0_arity0(const godot::Quaternion &p_self) {
+	return p_self.get_axis();
+}
+inline decltype(auto) quaternion_get_angle_overload0_arity0(const godot::Quaternion &p_self) {
+	return static_cast<double>(p_self.get_angle());
 }
 } // namespace puerts_generated
 
@@ -2580,28 +4036,28 @@ inline void register_type_quaternion() {
 			.constructor<>()
 			.constructor<const godot::Quaternion &>()
 			.constructor<const godot::Basis &>()
-			.constructor<const godot::Vector3 &, godot::real_t>()
+			.constructor<const godot::Vector3 &, double>()
 			.constructor<const godot::Vector3 &, const godot::Vector3 &>()
-			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
-			.method<&godot::Quaternion::length>("length")
-			.method<&godot::Quaternion::length_squared>("length_squared")
-			.method<&godot::Quaternion::normalized>("normalized")
-			.method<&godot::Quaternion::is_normalized>("is_normalized")
-			.method<&godot::Quaternion::is_equal_approx>("is_equal_approx")
-			.method<&godot::Quaternion::is_finite>("is_finite")
-			.method<&godot::Quaternion::inverse>("inverse")
-			.method<&godot::Quaternion::log>("log")
-			.method<&godot::Quaternion::exp>("exp")
-			.method<&godot::Quaternion::angle_to>("angle_to")
-			.method<&godot::Quaternion::dot>("dot")
-			.method<&godot::Quaternion::slerp>("slerp")
-			.method<&godot::Quaternion::slerpni>("slerpni")
-			.method<&godot::Quaternion::spherical_cubic_interpolate>("spherical_cubic_interpolate")
-			.method<&godot::Quaternion::spherical_cubic_interpolate_in_time>("spherical_cubic_interpolate_in_time")
-			.method<&puerts_generated::quaternion_get_euler_default0, &godot::Quaternion::get_euler>("get_euler")
-			.static_method<&godot::Quaternion::from_euler>("from_euler")
-			.method<&godot::Quaternion::get_axis>("get_axis")
-			.method<&godot::Quaternion::get_angle>("get_angle")
+			.constructor<double, double, double, double>()
+			.method<&puerts_generated::quaternion_length_overload0_arity0>("length")
+			.method<&puerts_generated::quaternion_length_squared_overload0_arity0>("length_squared")
+			.method<&puerts_generated::quaternion_normalized_overload0_arity0>("normalized")
+			.method<&puerts_generated::quaternion_is_normalized_overload0_arity0>("is_normalized")
+			.method<&puerts_generated::quaternion_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::quaternion_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::quaternion_inverse_overload0_arity0>("inverse")
+			.method<&puerts_generated::quaternion_log_overload0_arity0>("log")
+			.method<&puerts_generated::quaternion_exp_overload0_arity0>("exp")
+			.method<&puerts_generated::quaternion_angle_to_overload0_arity1>("angle_to")
+			.method<&puerts_generated::quaternion_dot_overload0_arity1>("dot")
+			.method<&puerts_generated::quaternion_slerp_overload0_arity2>("slerp")
+			.method<&puerts_generated::quaternion_slerpni_overload0_arity2>("slerpni")
+			.method<&puerts_generated::quaternion_spherical_cubic_interpolate_overload0_arity4>("spherical_cubic_interpolate")
+			.method<&puerts_generated::quaternion_spherical_cubic_interpolate_in_time_overload0_arity7>("spherical_cubic_interpolate_in_time")
+			.method<&puerts_generated::quaternion_get_euler_overload0_arity0, &puerts_generated::quaternion_get_euler_overload0_arity1>("get_euler")
+			.static_method<&puerts_generated::quaternion_from_euler_overload0_arity1>("from_euler")
+			.method<&puerts_generated::quaternion_get_axis_overload0_arity0>("get_axis")
+			.method<&puerts_generated::quaternion_get_angle_overload0_arity0>("get_angle")
 			.property<&godot::Quaternion::x>("x")
 			.property<&godot::Quaternion::y>("y")
 			.property<&godot::Quaternion::z>("z")
@@ -2633,8 +4089,56 @@ inline bool rect2_op_in_6(const godot::Rect2 &left, const godot::Dictionary &rig
 inline bool rect2_op_in_7(const godot::Rect2 &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline decltype(auto) rect2_intersects_default1(const godot::Rect2 &p_self, const godot::Rect2 &p_arg_0) {
+inline decltype(auto) rect2_get_center_overload0_arity0(const godot::Rect2 &p_self) {
+	return p_self.get_center();
+}
+inline decltype(auto) rect2_get_area_overload0_arity0(const godot::Rect2 &p_self) {
+	return static_cast<double>(p_self.get_area());
+}
+inline decltype(auto) rect2_has_area_overload0_arity0(const godot::Rect2 &p_self) {
+	return p_self.has_area();
+}
+inline decltype(auto) rect2_has_point_overload0_arity1(const godot::Rect2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.has_point(p_arg_0);
+}
+inline decltype(auto) rect2_is_equal_approx_overload0_arity1(const godot::Rect2 &p_self, const godot::Rect2 &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) rect2_is_finite_overload0_arity0(const godot::Rect2 &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) rect2_intersects_overload0_arity1(const godot::Rect2 &p_self, const godot::Rect2 &p_arg_0) {
 	return p_self.intersects(p_arg_0);
+}
+inline decltype(auto) rect2_intersects_overload0_arity2(const godot::Rect2 &p_self, const godot::Rect2 &p_arg_0, bool p_arg_1) {
+	return p_self.intersects(p_arg_0, p_arg_1);
+}
+inline decltype(auto) rect2_encloses_overload0_arity1(const godot::Rect2 &p_self, const godot::Rect2 &p_arg_0) {
+	return p_self.encloses(p_arg_0);
+}
+inline decltype(auto) rect2_intersection_overload0_arity1(const godot::Rect2 &p_self, const godot::Rect2 &p_arg_0) {
+	return p_self.intersection(p_arg_0);
+}
+inline decltype(auto) rect2_merge_overload0_arity1(const godot::Rect2 &p_self, const godot::Rect2 &p_arg_0) {
+	return p_self.merge(p_arg_0);
+}
+inline decltype(auto) rect2_expand_overload0_arity1(const godot::Rect2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.expand(p_arg_0);
+}
+inline decltype(auto) rect2_get_support_overload0_arity1(const godot::Rect2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.get_support(p_arg_0);
+}
+inline decltype(auto) rect2_grow_overload0_arity1(const godot::Rect2 &p_self, double p_arg_0) {
+	return p_self.grow(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2::grow), 0>>(p_arg_0));
+}
+inline decltype(auto) rect2_grow_side_overload0_arity2(const godot::Rect2 &p_self, int64_t p_arg_0, double p_arg_1) {
+	return p_self.grow_side_bind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2::grow_side_bind), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2::grow_side_bind), 1>>(p_arg_1));
+}
+inline decltype(auto) rect2_grow_individual_overload0_arity4(const godot::Rect2 &p_self, double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3) {
+	return p_self.grow_individual(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2::grow_individual), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2::grow_individual), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2::grow_individual), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2::grow_individual), 3>>(p_arg_3));
+}
+inline decltype(auto) rect2_abs_overload0_arity0(const godot::Rect2 &p_self) {
+	return p_self.abs();
 }
 } // namespace puerts_generated
 
@@ -2649,23 +4153,23 @@ inline void register_type_rect2() {
 			.constructor<const godot::Rect2 &>()
 			.constructor<const godot::Rect2i &>()
 			.constructor<const godot::Vector2 &, const godot::Vector2 &>()
-			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
-			.method<&godot::Rect2::get_center>("get_center")
-			.method<&godot::Rect2::get_area>("get_area")
-			.method<&godot::Rect2::has_area>("has_area")
-			.method<&godot::Rect2::has_point>("has_point")
-			.method<&godot::Rect2::is_equal_approx>("is_equal_approx")
-			.method<&godot::Rect2::is_finite>("is_finite")
-			.method<&puerts_generated::rect2_intersects_default1, &godot::Rect2::intersects>("intersects")
-			.method<&godot::Rect2::encloses>("encloses")
-			.method<&godot::Rect2::intersection>("intersection")
-			.method<&godot::Rect2::merge>("merge")
-			.method<&godot::Rect2::expand>("expand")
-			.method<&godot::Rect2::get_support>("get_support")
-			.method<&godot::Rect2::grow>("grow")
-			.method<&godot::Rect2::grow_side>("grow_side")
-			.method<&godot::Rect2::grow_individual>("grow_individual")
-			.method<&godot::Rect2::abs>("abs")
+			.constructor<double, double, double, double>()
+			.method<&puerts_generated::rect2_get_center_overload0_arity0>("get_center")
+			.method<&puerts_generated::rect2_get_area_overload0_arity0>("get_area")
+			.method<&puerts_generated::rect2_has_area_overload0_arity0>("has_area")
+			.method<&puerts_generated::rect2_has_point_overload0_arity1>("has_point")
+			.method<&puerts_generated::rect2_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::rect2_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::rect2_intersects_overload0_arity1, &puerts_generated::rect2_intersects_overload0_arity2>("intersects")
+			.method<&puerts_generated::rect2_encloses_overload0_arity1>("encloses")
+			.method<&puerts_generated::rect2_intersection_overload0_arity1>("intersection")
+			.method<&puerts_generated::rect2_merge_overload0_arity1>("merge")
+			.method<&puerts_generated::rect2_expand_overload0_arity1>("expand")
+			.method<&puerts_generated::rect2_get_support_overload0_arity1>("get_support")
+			.method<&puerts_generated::rect2_grow_overload0_arity1>("grow")
+			.method<&puerts_generated::rect2_grow_side_overload0_arity2>("grow_side")
+			.method<&puerts_generated::rect2_grow_individual_overload0_arity4>("grow_individual")
+			.method<&puerts_generated::rect2_abs_overload0_arity0>("abs")
 			.property<&puerts_generated::rect2_end_getter, &puerts_generated::rect2_end_setter>("end")
 			.property<&godot::Rect2::position>("position")
 			.property<&godot::Rect2::size>("size")
@@ -2693,6 +4197,45 @@ inline bool rect2i_op_in_5(const godot::Rect2i &left, const godot::Dictionary &r
 inline bool rect2i_op_in_6(const godot::Rect2i &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline decltype(auto) rect2i_get_center_overload0_arity0(const godot::Rect2i &p_self) {
+	return p_self.get_center();
+}
+inline decltype(auto) rect2i_get_area_overload0_arity0(const godot::Rect2i &p_self) {
+	return static_cast<int64_t>(p_self.get_area());
+}
+inline decltype(auto) rect2i_has_area_overload0_arity0(const godot::Rect2i &p_self) {
+	return p_self.has_area();
+}
+inline decltype(auto) rect2i_has_point_overload0_arity1(const godot::Rect2i &p_self, const godot::Vector2i &p_arg_0) {
+	return p_self.has_point(p_arg_0);
+}
+inline decltype(auto) rect2i_intersects_overload0_arity1(const godot::Rect2i &p_self, const godot::Rect2i &p_arg_0) {
+	return p_self.intersects(p_arg_0);
+}
+inline decltype(auto) rect2i_encloses_overload0_arity1(const godot::Rect2i &p_self, const godot::Rect2i &p_arg_0) {
+	return p_self.encloses(p_arg_0);
+}
+inline decltype(auto) rect2i_intersection_overload0_arity1(const godot::Rect2i &p_self, const godot::Rect2i &p_arg_0) {
+	return p_self.intersection(p_arg_0);
+}
+inline decltype(auto) rect2i_merge_overload0_arity1(const godot::Rect2i &p_self, const godot::Rect2i &p_arg_0) {
+	return p_self.merge(p_arg_0);
+}
+inline decltype(auto) rect2i_expand_overload0_arity1(const godot::Rect2i &p_self, const godot::Vector2i &p_arg_0) {
+	return p_self.expand(p_arg_0);
+}
+inline decltype(auto) rect2i_grow_overload0_arity1(const godot::Rect2i &p_self, int64_t p_arg_0) {
+	return p_self.grow(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2i::grow), 0>>(p_arg_0));
+}
+inline decltype(auto) rect2i_grow_side_overload0_arity2(const godot::Rect2i &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.grow_side_bind(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2i::grow_side_bind), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2i::grow_side_bind), 1>>(p_arg_1));
+}
+inline decltype(auto) rect2i_grow_individual_overload0_arity4(const godot::Rect2i &p_self, int64_t p_arg_0, int64_t p_arg_1, int64_t p_arg_2, int64_t p_arg_3) {
+	return p_self.grow_individual(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2i::grow_individual), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2i::grow_individual), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2i::grow_individual), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Rect2i::grow_individual), 3>>(p_arg_3));
+}
+inline decltype(auto) rect2i_abs_overload0_arity0(const godot::Rect2i &p_self) {
+	return p_self.abs();
+}
 } // namespace puerts_generated
 
 inline void register_type_rect2i() {
@@ -2706,19 +4249,19 @@ inline void register_type_rect2i() {
 			.constructor<const godot::Rect2 &>()
 			.constructor<const godot::Vector2i &, const godot::Vector2i &>()
 			.constructor<int64_t, int64_t, int64_t, int64_t>()
-			.method<&godot::Rect2i::get_center>("get_center")
-			.method<&godot::Rect2i::get_area>("get_area")
-			.method<&godot::Rect2i::has_area>("has_area")
-			.method<&godot::Rect2i::has_point>("has_point")
-			.method<&godot::Rect2i::intersects>("intersects")
-			.method<&godot::Rect2i::encloses>("encloses")
-			.method<&godot::Rect2i::intersection>("intersection")
-			.method<&godot::Rect2i::merge>("merge")
-			.method<&godot::Rect2i::expand>("expand")
-			.method<&godot::Rect2i::grow>("grow")
-			.method<&godot::Rect2i::grow_side>("grow_side")
-			.method<&godot::Rect2i::grow_individual>("grow_individual")
-			.method<&godot::Rect2i::abs>("abs")
+			.method<&puerts_generated::rect2i_get_center_overload0_arity0>("get_center")
+			.method<&puerts_generated::rect2i_get_area_overload0_arity0>("get_area")
+			.method<&puerts_generated::rect2i_has_area_overload0_arity0>("has_area")
+			.method<&puerts_generated::rect2i_has_point_overload0_arity1>("has_point")
+			.method<&puerts_generated::rect2i_intersects_overload0_arity1>("intersects")
+			.method<&puerts_generated::rect2i_encloses_overload0_arity1>("encloses")
+			.method<&puerts_generated::rect2i_intersection_overload0_arity1>("intersection")
+			.method<&puerts_generated::rect2i_merge_overload0_arity1>("merge")
+			.method<&puerts_generated::rect2i_expand_overload0_arity1>("expand")
+			.method<&puerts_generated::rect2i_grow_overload0_arity1>("grow")
+			.method<&puerts_generated::rect2i_grow_side_overload0_arity2>("grow_side")
+			.method<&puerts_generated::rect2i_grow_individual_overload0_arity4>("grow_individual")
+			.method<&puerts_generated::rect2i_abs_overload0_arity0>("abs")
 			.property<&puerts_generated::rect2i_end_getter, &puerts_generated::rect2i_end_setter>("end")
 			.property<&godot::Rect2i::position>("position")
 			.property<&godot::Rect2i::size>("size")
@@ -2758,6 +4301,12 @@ inline bool rid_op_in_9(const godot::RID &left, const godot::Dictionary &right) 
 inline bool rid_op_in_10(const godot::RID &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
+inline decltype(auto) rid_is_valid_overload0_arity0(const godot::RID &p_self) {
+	return p_self.is_valid();
+}
+inline decltype(auto) rid_get_id_overload0_arity0(const godot::RID &p_self) {
+	return static_cast<int64_t>(p_self.get_id());
+}
 } // namespace puerts_generated
 
 inline void register_type_rid() {
@@ -2772,8 +4321,8 @@ inline void register_type_rid() {
 			.static_method<&puerts_generated::rid_op_in_9, &puerts_generated::rid_op_in_10>("op_In")
 			.constructor<>()
 			.constructor<const godot::RID &>()
-			.method<&godot::RID::is_valid>("is_valid")
-			.method<&godot::RID::get_id>("get_id")
+			.method<&puerts_generated::rid_is_valid_overload0_arity0>("is_valid")
+			.method<&puerts_generated::rid_get_id_overload0_arity0>("get_id")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2798,8 +4347,35 @@ inline bool signal_op_in_5(const godot::Signal &left, const godot::Dictionary &r
 inline bool signal_op_in_6(const godot::Signal &left, const godot::Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_IN, bool>(left, right);
 }
-inline decltype(auto) signal_connect_default1(godot::Signal &p_self, const godot::Callable &p_arg_0) {
-	return p_self.connect(p_arg_0);
+inline decltype(auto) signal_is_null_overload0_arity0(const godot::Signal &p_self) {
+	return p_self.is_null();
+}
+inline decltype(auto) signal_get_object_overload0_arity0(const godot::Signal &p_self) {
+	return p_self.get_object();
+}
+inline decltype(auto) signal_get_object_id_overload0_arity0(const godot::Signal &p_self) {
+	return static_cast<int64_t>(p_self.get_object_id());
+}
+inline decltype(auto) signal_get_name_overload0_arity0(const godot::Signal &p_self) {
+	return p_self.get_name();
+}
+inline decltype(auto) signal_connect_overload0_arity1(godot::Signal &p_self, const godot::Callable &p_arg_0) {
+	return static_cast<int64_t>(p_self.connect(p_arg_0));
+}
+inline decltype(auto) signal_connect_overload0_arity2(godot::Signal &p_self, const godot::Callable &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.connect(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Signal::connect), 1>>(p_arg_1)));
+}
+inline decltype(auto) signal_disconnect_overload0_arity1(godot::Signal &p_self, const godot::Callable &p_arg_0) {
+	return p_self.disconnect(p_arg_0);
+}
+inline decltype(auto) signal_is_connected_overload0_arity1(const godot::Signal &p_self, const godot::Callable &p_arg_0) {
+	return p_self.is_connected(p_arg_0);
+}
+inline decltype(auto) signal_get_connections_overload0_arity0(const godot::Signal &p_self) {
+	return p_self.get_connections();
+}
+inline decltype(auto) signal_has_connections_overload0_arity0(const godot::Signal &p_self) {
+	return p_self.has_connections();
 }
 } // namespace puerts_generated
 
@@ -2812,16 +4388,16 @@ inline void register_type_signal() {
 			.constructor<>()
 			.constructor<const godot::Signal &>()
 			.constructor<godot::Object *, const godot::StringName &>()
-			.method<&godot::Signal::is_null>("is_null")
-			.method<&godot::Signal::get_object>("get_object")
-			.method<&godot::Signal::get_object_id>("get_object_id")
-			.method<&godot::Signal::get_name>("get_name")
-			.method<&puerts_generated::signal_connect_default1, &godot::Signal::connect>("connect")
-			.method<&godot::Signal::disconnect>("disconnect")
-			.method<&godot::Signal::is_connected>("is_connected")
-			.method<&godot::Signal::get_connections>("get_connections")
-			.method<&godot::Signal::has_connections>("has_connections")
-			.vararg_method<void, false>("emit", 0)
+			.method<&puerts_generated::signal_is_null_overload0_arity0>("is_null")
+			.method<&puerts_generated::signal_get_object_overload0_arity0>("get_object")
+			.method<&puerts_generated::signal_get_object_id_overload0_arity0>("get_object_id")
+			.method<&puerts_generated::signal_get_name_overload0_arity0>("get_name")
+			.method<&puerts_generated::signal_connect_overload0_arity1, &puerts_generated::signal_connect_overload0_arity2>("connect")
+			.method<&puerts_generated::signal_disconnect_overload0_arity1>("disconnect")
+			.method<&puerts_generated::signal_is_connected_overload0_arity1>("is_connected")
+			.method<&puerts_generated::signal_get_connections_overload0_arity0>("get_connections")
+			.method<&puerts_generated::signal_has_connections_overload0_arity0>("has_connections")
+			.vararg_method<void, false, 0>("emit")
 			.register_type();
 }
 namespace puerts_generated {
@@ -2843,7 +4419,7 @@ inline godot::String string_name_op_modulus_4(const godot::StringName &left, boo
 inline godot::String string_name_op_modulus_5(const godot::StringName &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline godot::String string_name_op_modulus_6(const godot::StringName &left, godot::real_t right) {
+inline godot::String string_name_op_modulus_6(const godot::StringName &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
 inline bool string_name_op_equality_7(const godot::StringName &left, const godot::String &right) {
@@ -2999,80 +4575,410 @@ inline godot::String string_name_op_modulus_56(const godot::StringName &left, co
 inline godot::String string_name_op_modulus_57(const godot::StringName &left, const godot::PackedVector4Array &right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::String>(left, right);
 }
-inline decltype(auto) string_name_substr_default1(const godot::StringName &p_self, int64_t p_arg_0) {
-	return p_self.substr(p_arg_0);
+inline decltype(auto) string_name_casecmp_to_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.casecmp_to(p_arg_0));
 }
-inline decltype(auto) string_name_find_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
-	return p_self.find(p_arg_0);
+inline decltype(auto) string_name_nocasecmp_to_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.nocasecmp_to(p_arg_0));
 }
-inline decltype(auto) string_name_findn_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
-	return p_self.findn(p_arg_0);
+inline decltype(auto) string_name_naturalcasecmp_to_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.naturalcasecmp_to(p_arg_0));
 }
-inline decltype(auto) string_name_count_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
-	return p_self.count(p_arg_0);
+inline decltype(auto) string_name_naturalnocasecmp_to_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.naturalnocasecmp_to(p_arg_0));
 }
-inline decltype(auto) string_name_count_default2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
-	return p_self.count(p_arg_0, p_arg_1);
+inline decltype(auto) string_name_filecasecmp_to_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.filecasecmp_to(p_arg_0));
 }
-inline decltype(auto) string_name_countn_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
-	return p_self.countn(p_arg_0);
+inline decltype(auto) string_name_filenocasecmp_to_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.filenocasecmp_to(p_arg_0));
 }
-inline decltype(auto) string_name_countn_default2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
-	return p_self.countn(p_arg_0, p_arg_1);
+inline decltype(auto) string_name_length_overload0_arity0(const godot::StringName &p_self) {
+	return static_cast<int64_t>(p_self.length());
 }
-inline decltype(auto) string_name_rfind_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
-	return p_self.rfind(p_arg_0);
+inline decltype(auto) string_name_substr_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.substr(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::substr), 0>>(p_arg_0));
 }
-inline decltype(auto) string_name_rfindn_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
-	return p_self.rfindn(p_arg_0);
+inline decltype(auto) string_name_substr_overload0_arity2(const godot::StringName &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.substr(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::substr), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::substr), 1>>(p_arg_1));
 }
-inline decltype(auto) string_name_format_default1(const godot::StringName &p_self, const godot::Variant &p_arg_0) {
+inline decltype(auto) string_name_get_slice_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return p_self.get_slice(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::get_slice), 1>>(p_arg_1));
+}
+inline decltype(auto) string_name_get_slicec_overload0_arity2(const godot::StringName &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.get_slicec(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::get_slicec), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::get_slicec), 1>>(p_arg_1));
+}
+inline decltype(auto) string_name_get_slice_count_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.get_slice_count(p_arg_0));
+}
+inline decltype(auto) string_name_find_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.find(p_arg_0));
+}
+inline decltype(auto) string_name_find_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.find(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::find), 1>>(p_arg_1)));
+}
+inline decltype(auto) string_name_findn_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.findn(p_arg_0));
+}
+inline decltype(auto) string_name_findn_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.findn(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::findn), 1>>(p_arg_1)));
+}
+inline decltype(auto) string_name_count_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.count(p_arg_0));
+}
+inline decltype(auto) string_name_count_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.count(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::count), 1>>(p_arg_1)));
+}
+inline decltype(auto) string_name_count_overload0_arity3(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1, int64_t p_arg_2) {
+	return static_cast<int64_t>(p_self.count(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::count), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::count), 2>>(p_arg_2)));
+}
+inline decltype(auto) string_name_countn_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.countn(p_arg_0));
+}
+inline decltype(auto) string_name_countn_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.countn(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::countn), 1>>(p_arg_1)));
+}
+inline decltype(auto) string_name_countn_overload0_arity3(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1, int64_t p_arg_2) {
+	return static_cast<int64_t>(p_self.countn(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::countn), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::countn), 2>>(p_arg_2)));
+}
+inline decltype(auto) string_name_rfind_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0));
+}
+inline decltype(auto) string_name_rfind_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfind(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::rfind), 1>>(p_arg_1)));
+}
+inline decltype(auto) string_name_rfindn_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<int64_t>(p_self.rfindn(p_arg_0));
+}
+inline decltype(auto) string_name_rfindn_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return static_cast<int64_t>(p_self.rfindn(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::rfindn), 1>>(p_arg_1)));
+}
+inline decltype(auto) string_name_match_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.match(p_arg_0);
+}
+inline decltype(auto) string_name_matchn_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.matchn(p_arg_0);
+}
+inline decltype(auto) string_name_begins_with_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.begins_with(p_arg_0);
+}
+inline decltype(auto) string_name_ends_with_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.ends_with(p_arg_0);
+}
+inline decltype(auto) string_name_is_subsequence_of_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.is_subsequence_of(p_arg_0);
+}
+inline decltype(auto) string_name_is_subsequence_ofn_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.is_subsequence_ofn(p_arg_0);
+}
+inline decltype(auto) string_name_bigrams_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.bigrams();
+}
+inline decltype(auto) string_name_similarity_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return static_cast<double>(p_self.similarity(p_arg_0));
+}
+inline decltype(auto) string_name_format_overload0_arity1(const godot::StringName &p_self, const godot::Variant &p_arg_0) {
 	return p_self.format(p_arg_0);
 }
-inline decltype(auto) string_name_erase_default1(const godot::StringName &p_self, int64_t p_arg_0) {
-	return p_self.erase(p_arg_0);
+inline decltype(auto) string_name_format_overload0_arity2(const godot::StringName &p_self, const godot::Variant &p_arg_0, const godot::String &p_arg_1) {
+	return p_self.format(p_arg_0, p_arg_1);
 }
-inline decltype(auto) string_name_split_default0(const godot::StringName &p_self) {
+inline decltype(auto) string_name_replace_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, const godot::String &p_arg_1) {
+	return p_self.replace(p_arg_0, p_arg_1);
+}
+inline decltype(auto) string_name_replacen_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, const godot::String &p_arg_1) {
+	return p_self.replacen(p_arg_0, p_arg_1);
+}
+inline decltype(auto) string_name_replace_char_overload0_arity2(const godot::StringName &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.replace_char(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::replace_char), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::replace_char), 1>>(p_arg_1));
+}
+inline decltype(auto) string_name_replace_chars_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, int64_t p_arg_1) {
+	return p_self.replace_chars(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::replace_chars), 1>>(p_arg_1));
+}
+inline decltype(auto) string_name_remove_char_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.remove_char(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::remove_char), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_remove_chars_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.remove_chars(p_arg_0);
+}
+inline decltype(auto) string_name_repeat_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.repeat(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::repeat), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_reverse_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.reverse();
+}
+inline decltype(auto) string_name_insert_overload0_arity2(const godot::StringName &p_self, int64_t p_arg_0, const godot::String &p_arg_1) {
+	return p_self.insert(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::insert), 0>>(p_arg_0), p_arg_1);
+}
+inline decltype(auto) string_name_erase_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.erase(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::erase), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_erase_overload0_arity2(const godot::StringName &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.erase(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::erase), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::erase), 1>>(p_arg_1));
+}
+inline decltype(auto) string_name_capitalize_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.capitalize();
+}
+inline decltype(auto) string_name_to_camel_case_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_camel_case();
+}
+inline decltype(auto) string_name_to_pascal_case_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_pascal_case();
+}
+inline decltype(auto) string_name_to_snake_case_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_snake_case();
+}
+inline decltype(auto) string_name_to_kebab_case_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_kebab_case();
+}
+inline decltype(auto) string_name_split_overload0_arity0(const godot::StringName &p_self) {
 	return p_self.split();
 }
-inline decltype(auto) string_name_split_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+inline decltype(auto) string_name_split_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
 	return p_self.split(p_arg_0);
 }
-inline decltype(auto) string_name_split_default2(const godot::StringName &p_self, const godot::String &p_arg_0, bool p_arg_1) {
+inline decltype(auto) string_name_split_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, bool p_arg_1) {
 	return p_self.split(p_arg_0, p_arg_1);
 }
-inline decltype(auto) string_name_rsplit_default0(const godot::StringName &p_self) {
+inline decltype(auto) string_name_split_overload0_arity3(const godot::StringName &p_self, const godot::String &p_arg_0, bool p_arg_1, int64_t p_arg_2) {
+	return p_self.split(p_arg_0, p_arg_1, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::split), 2>>(p_arg_2));
+}
+inline decltype(auto) string_name_rsplit_overload0_arity0(const godot::StringName &p_self) {
 	return p_self.rsplit();
 }
-inline decltype(auto) string_name_rsplit_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+inline decltype(auto) string_name_rsplit_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
 	return p_self.rsplit(p_arg_0);
 }
-inline decltype(auto) string_name_rsplit_default2(const godot::StringName &p_self, const godot::String &p_arg_0, bool p_arg_1) {
+inline decltype(auto) string_name_rsplit_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, bool p_arg_1) {
 	return p_self.rsplit(p_arg_0, p_arg_1);
 }
-inline decltype(auto) string_name_split_floats_default1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+inline decltype(auto) string_name_rsplit_overload0_arity3(const godot::StringName &p_self, const godot::String &p_arg_0, bool p_arg_1, int64_t p_arg_2) {
+	return p_self.rsplit(p_arg_0, p_arg_1, static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::rsplit), 2>>(p_arg_2));
+}
+inline decltype(auto) string_name_split_floats_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
 	return p_self.split_floats(p_arg_0);
 }
-inline decltype(auto) string_name_strip_edges_default0(const godot::StringName &p_self) {
+inline decltype(auto) string_name_split_floats_overload0_arity2(const godot::StringName &p_self, const godot::String &p_arg_0, bool p_arg_1) {
+	return p_self.split_floats(p_arg_0, p_arg_1);
+}
+inline decltype(auto) string_name_join_overload0_arity1(const godot::StringName &p_self, const godot::PackedStringArray &p_arg_0) {
+	return p_self.join(p_arg_0);
+}
+inline decltype(auto) string_name_to_upper_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_upper();
+}
+inline decltype(auto) string_name_to_lower_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_lower();
+}
+inline decltype(auto) string_name_left_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.left(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::left), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_right_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.right(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::right), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_strip_edges_overload0_arity0(const godot::StringName &p_self) {
 	return p_self.strip_edges();
 }
-inline decltype(auto) string_name_strip_edges_default1(const godot::StringName &p_self, bool p_arg_0) {
+inline decltype(auto) string_name_strip_edges_overload0_arity1(const godot::StringName &p_self, bool p_arg_0) {
 	return p_self.strip_edges(p_arg_0);
 }
-inline decltype(auto) string_name_xml_escape_default0(const godot::StringName &p_self) {
+inline decltype(auto) string_name_strip_edges_overload0_arity2(const godot::StringName &p_self, bool p_arg_0, bool p_arg_1) {
+	return p_self.strip_edges(p_arg_0, p_arg_1);
+}
+inline decltype(auto) string_name_strip_escapes_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.strip_escapes();
+}
+inline decltype(auto) string_name_lstrip_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.lstrip(p_arg_0);
+}
+inline decltype(auto) string_name_rstrip_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.rstrip(p_arg_0);
+}
+inline decltype(auto) string_name_get_extension_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.get_extension();
+}
+inline decltype(auto) string_name_get_basename_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.get_basename();
+}
+inline decltype(auto) string_name_path_join_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.path_join(p_arg_0);
+}
+inline decltype(auto) string_name_unicode_at_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return static_cast<int64_t>(p_self.unicode_at(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::unicode_at), 0>>(p_arg_0)));
+}
+inline decltype(auto) string_name_indent_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.indent(p_arg_0);
+}
+inline decltype(auto) string_name_dedent_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.dedent();
+}
+inline decltype(auto) string_name_md5_text_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.md5_text();
+}
+inline decltype(auto) string_name_sha1_text_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.sha1_text();
+}
+inline decltype(auto) string_name_sha256_text_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.sha256_text();
+}
+inline decltype(auto) string_name_md5_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.md5_buffer();
+}
+inline decltype(auto) string_name_sha1_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.sha1_buffer();
+}
+inline decltype(auto) string_name_sha256_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.sha256_buffer();
+}
+inline decltype(auto) string_name_is_empty_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_empty();
+}
+inline decltype(auto) string_name_contains_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.contains(p_arg_0);
+}
+inline decltype(auto) string_name_containsn_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.containsn(p_arg_0);
+}
+inline decltype(auto) string_name_is_absolute_path_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_absolute_path();
+}
+inline decltype(auto) string_name_is_relative_path_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_relative_path();
+}
+inline decltype(auto) string_name_simplify_path_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.simplify_path();
+}
+inline decltype(auto) string_name_get_base_dir_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.get_base_dir();
+}
+inline decltype(auto) string_name_get_file_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.get_file();
+}
+inline decltype(auto) string_name_xml_escape_overload0_arity0(const godot::StringName &p_self) {
 	return p_self.xml_escape();
 }
-inline decltype(auto) string_name_is_valid_hex_number_default0(const godot::StringName &p_self) {
+inline decltype(auto) string_name_xml_escape_overload0_arity1(const godot::StringName &p_self, bool p_arg_0) {
+	return p_self.xml_escape(p_arg_0);
+}
+inline decltype(auto) string_name_xml_unescape_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.xml_unescape();
+}
+inline decltype(auto) string_name_uri_encode_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.uri_encode();
+}
+inline decltype(auto) string_name_uri_decode_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.uri_decode();
+}
+inline decltype(auto) string_name_uri_file_decode_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.uri_file_decode();
+}
+inline decltype(auto) string_name_c_escape_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.c_escape();
+}
+inline decltype(auto) string_name_c_unescape_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.c_unescape();
+}
+inline decltype(auto) string_name_json_escape_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.json_escape();
+}
+inline decltype(auto) string_name_validate_node_name_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.validate_node_name();
+}
+inline decltype(auto) string_name_validate_filename_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.validate_filename();
+}
+inline decltype(auto) string_name_is_valid_ascii_identifier_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_ascii_identifier();
+}
+inline decltype(auto) string_name_is_valid_unicode_identifier_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_unicode_identifier();
+}
+inline decltype(auto) string_name_is_valid_identifier_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_identifier();
+}
+inline decltype(auto) string_name_is_valid_int_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_int();
+}
+inline decltype(auto) string_name_is_valid_float_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_float();
+}
+inline decltype(auto) string_name_is_valid_hex_number_overload0_arity0(const godot::StringName &p_self) {
 	return p_self.is_valid_hex_number();
 }
-inline decltype(auto) string_name_lpad_default1(const godot::StringName &p_self, int64_t p_arg_0) {
-	return p_self.lpad(p_arg_0);
+inline decltype(auto) string_name_is_valid_hex_number_overload0_arity1(const godot::StringName &p_self, bool p_arg_0) {
+	return p_self.is_valid_hex_number(p_arg_0);
 }
-inline decltype(auto) string_name_rpad_default1(const godot::StringName &p_self, int64_t p_arg_0) {
-	return p_self.rpad(p_arg_0);
+inline decltype(auto) string_name_is_valid_html_color_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_html_color();
 }
-inline decltype(auto) string_name_to_multibyte_char_buffer_default0(const godot::StringName &p_self) {
+inline decltype(auto) string_name_is_valid_ip_address_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_ip_address();
+}
+inline decltype(auto) string_name_is_valid_filename_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.is_valid_filename();
+}
+inline decltype(auto) string_name_to_int_overload0_arity0(const godot::StringName &p_self) {
+	return static_cast<int64_t>(p_self.to_int());
+}
+inline decltype(auto) string_name_to_float_overload0_arity0(const godot::StringName &p_self) {
+	return static_cast<double>(p_self.to_float());
+}
+inline decltype(auto) string_name_hex_to_int_overload0_arity0(const godot::StringName &p_self) {
+	return static_cast<int64_t>(p_self.hex_to_int());
+}
+inline decltype(auto) string_name_bin_to_int_overload0_arity0(const godot::StringName &p_self) {
+	return static_cast<int64_t>(p_self.bin_to_int());
+}
+inline decltype(auto) string_name_lpad_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.lpad(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::lpad), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_lpad_overload0_arity2(const godot::StringName &p_self, int64_t p_arg_0, const godot::String &p_arg_1) {
+	return p_self.lpad(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::lpad), 0>>(p_arg_0), p_arg_1);
+}
+inline decltype(auto) string_name_rpad_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.rpad(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::rpad), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_rpad_overload0_arity2(const godot::StringName &p_self, int64_t p_arg_0, const godot::String &p_arg_1) {
+	return p_self.rpad(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::rpad), 0>>(p_arg_0), p_arg_1);
+}
+inline decltype(auto) string_name_pad_decimals_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.pad_decimals(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::pad_decimals), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_pad_zeros_overload0_arity1(const godot::StringName &p_self, int64_t p_arg_0) {
+	return p_self.pad_zeros(static_cast<puerts::internal::native_parameter_t<decltype(&godot::StringName::pad_zeros), 0>>(p_arg_0));
+}
+inline decltype(auto) string_name_trim_prefix_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.trim_prefix(p_arg_0);
+}
+inline decltype(auto) string_name_trim_suffix_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.trim_suffix(p_arg_0);
+}
+inline decltype(auto) string_name_to_ascii_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_ascii_buffer();
+}
+inline decltype(auto) string_name_to_utf8_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_utf8_buffer();
+}
+inline decltype(auto) string_name_to_utf16_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_utf16_buffer();
+}
+inline decltype(auto) string_name_to_utf32_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_utf32_buffer();
+}
+inline decltype(auto) string_name_to_wchar_buffer_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.to_wchar_buffer();
+}
+inline decltype(auto) string_name_to_multibyte_char_buffer_overload0_arity0(const godot::StringName &p_self) {
 	return p_self.to_multibyte_char_buffer();
+}
+inline decltype(auto) string_name_to_multibyte_char_buffer_overload0_arity1(const godot::StringName &p_self, const godot::String &p_arg_0) {
+	return p_self.to_multibyte_char_buffer(p_arg_0);
+}
+inline decltype(auto) string_name_hex_decode_overload0_arity0(const godot::StringName &p_self) {
+	return p_self.hex_decode();
+}
+inline decltype(auto) string_name_hash_overload0_arity0(const godot::StringName &p_self) {
+	return static_cast<int64_t>(p_self.hash());
 }
 } // namespace puerts_generated
 
@@ -3091,116 +4997,116 @@ inline void register_type_string_name() {
 			.constructor<>()
 			.constructor<const godot::StringName &>()
 			.constructor<const godot::String &>()
-			.method<&godot::StringName::casecmp_to>("casecmp_to")
-			.method<&godot::StringName::nocasecmp_to>("nocasecmp_to")
-			.method<&godot::StringName::naturalcasecmp_to>("naturalcasecmp_to")
-			.method<&godot::StringName::naturalnocasecmp_to>("naturalnocasecmp_to")
-			.method<&godot::StringName::filecasecmp_to>("filecasecmp_to")
-			.method<&godot::StringName::filenocasecmp_to>("filenocasecmp_to")
-			.method<&godot::StringName::length>("length")
-			.method<&puerts_generated::string_name_substr_default1, &godot::StringName::substr>("substr")
-			.method<&godot::StringName::get_slice>("get_slice")
-			.method<&godot::StringName::get_slicec>("get_slicec")
-			.method<&godot::StringName::get_slice_count>("get_slice_count")
-			.method<&puerts_generated::string_name_find_default1, &godot::StringName::find>("find")
-			.method<&puerts_generated::string_name_findn_default1, &godot::StringName::findn>("findn")
-			.method<&puerts_generated::string_name_count_default1, &puerts_generated::string_name_count_default2, &godot::StringName::count>("count")
-			.method<&puerts_generated::string_name_countn_default1, &puerts_generated::string_name_countn_default2, &godot::StringName::countn>("countn")
-			.method<&puerts_generated::string_name_rfind_default1, &godot::StringName::rfind>("rfind")
-			.method<&puerts_generated::string_name_rfindn_default1, &godot::StringName::rfindn>("rfindn")
-			.method<&godot::StringName::match>("match")
-			.method<&godot::StringName::matchn>("matchn")
-			.method<&godot::StringName::begins_with>("begins_with")
-			.method<&godot::StringName::ends_with>("ends_with")
-			.method<&godot::StringName::is_subsequence_of>("is_subsequence_of")
-			.method<&godot::StringName::is_subsequence_ofn>("is_subsequence_ofn")
-			.method<&godot::StringName::bigrams>("bigrams")
-			.method<&godot::StringName::similarity>("similarity")
-			.method<&puerts_generated::string_name_format_default1, &godot::StringName::format>("format")
-			.method<&godot::StringName::replace>("replace")
-			.method<&godot::StringName::replacen>("replacen")
-			.method<&godot::StringName::replace_char>("replace_char")
-			.method<&godot::StringName::replace_chars>("replace_chars")
-			.method<&godot::StringName::remove_char>("remove_char")
-			.method<&godot::StringName::remove_chars>("remove_chars")
-			.method<&godot::StringName::repeat>("repeat")
-			.method<&godot::StringName::reverse>("reverse")
-			.method<&godot::StringName::insert>("insert")
-			.method<&puerts_generated::string_name_erase_default1, &godot::StringName::erase>("erase")
-			.method<&godot::StringName::capitalize>("capitalize")
-			.method<&godot::StringName::to_camel_case>("to_camel_case")
-			.method<&godot::StringName::to_pascal_case>("to_pascal_case")
-			.method<&godot::StringName::to_snake_case>("to_snake_case")
-			.method<&godot::StringName::to_kebab_case>("to_kebab_case")
-			.method<&puerts_generated::string_name_split_default0, &puerts_generated::string_name_split_default1, &puerts_generated::string_name_split_default2, &godot::StringName::split>("split")
-			.method<&puerts_generated::string_name_rsplit_default0, &puerts_generated::string_name_rsplit_default1, &puerts_generated::string_name_rsplit_default2, &godot::StringName::rsplit>("rsplit")
-			.method<&puerts_generated::string_name_split_floats_default1, &godot::StringName::split_floats>("split_floats")
-			.method<&godot::StringName::join>("join")
-			.method<&godot::StringName::to_upper>("to_upper")
-			.method<&godot::StringName::to_lower>("to_lower")
-			.method<&godot::StringName::left>("left")
-			.method<&godot::StringName::right>("right")
-			.method<&puerts_generated::string_name_strip_edges_default0, &puerts_generated::string_name_strip_edges_default1, &godot::StringName::strip_edges>("strip_edges")
-			.method<&godot::StringName::strip_escapes>("strip_escapes")
-			.method<&godot::StringName::lstrip>("lstrip")
-			.method<&godot::StringName::rstrip>("rstrip")
-			.method<&godot::StringName::get_extension>("get_extension")
-			.method<&godot::StringName::get_basename>("get_basename")
-			.method<&godot::StringName::path_join>("path_join")
-			.method<&godot::StringName::unicode_at>("unicode_at")
-			.method<&godot::StringName::indent>("indent")
-			.method<&godot::StringName::dedent>("dedent")
-			.method<&godot::StringName::md5_text>("md5_text")
-			.method<&godot::StringName::sha1_text>("sha1_text")
-			.method<&godot::StringName::sha256_text>("sha256_text")
-			.method<&godot::StringName::md5_buffer>("md5_buffer")
-			.method<&godot::StringName::sha1_buffer>("sha1_buffer")
-			.method<&godot::StringName::sha256_buffer>("sha256_buffer")
-			.method<&godot::StringName::is_empty>("is_empty")
-			.method<&godot::StringName::contains>("contains")
-			.method<&godot::StringName::containsn>("containsn")
-			.method<&godot::StringName::is_absolute_path>("is_absolute_path")
-			.method<&godot::StringName::is_relative_path>("is_relative_path")
-			.method<&godot::StringName::simplify_path>("simplify_path")
-			.method<&godot::StringName::get_base_dir>("get_base_dir")
-			.method<&godot::StringName::get_file>("get_file")
-			.method<&puerts_generated::string_name_xml_escape_default0, &godot::StringName::xml_escape>("xml_escape")
-			.method<&godot::StringName::xml_unescape>("xml_unescape")
-			.method<&godot::StringName::uri_encode>("uri_encode")
-			.method<&godot::StringName::uri_decode>("uri_decode")
-			.method<&godot::StringName::uri_file_decode>("uri_file_decode")
-			.method<&godot::StringName::c_escape>("c_escape")
-			.method<&godot::StringName::c_unescape>("c_unescape")
-			.method<&godot::StringName::json_escape>("json_escape")
-			.method<&godot::StringName::validate_node_name>("validate_node_name")
-			.method<&godot::StringName::validate_filename>("validate_filename")
-			.method<&godot::StringName::is_valid_ascii_identifier>("is_valid_ascii_identifier")
-			.method<&godot::StringName::is_valid_unicode_identifier>("is_valid_unicode_identifier")
-			.method<&godot::StringName::is_valid_identifier>("is_valid_identifier")
-			.method<&godot::StringName::is_valid_int>("is_valid_int")
-			.method<&godot::StringName::is_valid_float>("is_valid_float")
-			.method<&puerts_generated::string_name_is_valid_hex_number_default0, &godot::StringName::is_valid_hex_number>("is_valid_hex_number")
-			.method<&godot::StringName::is_valid_html_color>("is_valid_html_color")
-			.method<&godot::StringName::is_valid_ip_address>("is_valid_ip_address")
-			.method<&godot::StringName::is_valid_filename>("is_valid_filename")
-			.method<&godot::StringName::to_int>("to_int")
-			.method<&godot::StringName::to_float>("to_float")
-			.method<&godot::StringName::hex_to_int>("hex_to_int")
-			.method<&godot::StringName::bin_to_int>("bin_to_int")
-			.method<&puerts_generated::string_name_lpad_default1, &godot::StringName::lpad>("lpad")
-			.method<&puerts_generated::string_name_rpad_default1, &godot::StringName::rpad>("rpad")
-			.method<&godot::StringName::pad_decimals>("pad_decimals")
-			.method<&godot::StringName::pad_zeros>("pad_zeros")
-			.method<&godot::StringName::trim_prefix>("trim_prefix")
-			.method<&godot::StringName::trim_suffix>("trim_suffix")
-			.method<&godot::StringName::to_ascii_buffer>("to_ascii_buffer")
-			.method<&godot::StringName::to_utf8_buffer>("to_utf8_buffer")
-			.method<&godot::StringName::to_utf16_buffer>("to_utf16_buffer")
-			.method<&godot::StringName::to_utf32_buffer>("to_utf32_buffer")
-			.method<&godot::StringName::to_wchar_buffer>("to_wchar_buffer")
-			.method<&puerts_generated::string_name_to_multibyte_char_buffer_default0, &godot::StringName::to_multibyte_char_buffer>("to_multibyte_char_buffer")
-			.method<&godot::StringName::hex_decode>("hex_decode")
-			.method<&godot::StringName::hash>("hash")
+			.method<&puerts_generated::string_name_casecmp_to_overload0_arity1>("casecmp_to")
+			.method<&puerts_generated::string_name_nocasecmp_to_overload0_arity1>("nocasecmp_to")
+			.method<&puerts_generated::string_name_naturalcasecmp_to_overload0_arity1>("naturalcasecmp_to")
+			.method<&puerts_generated::string_name_naturalnocasecmp_to_overload0_arity1>("naturalnocasecmp_to")
+			.method<&puerts_generated::string_name_filecasecmp_to_overload0_arity1>("filecasecmp_to")
+			.method<&puerts_generated::string_name_filenocasecmp_to_overload0_arity1>("filenocasecmp_to")
+			.method<&puerts_generated::string_name_length_overload0_arity0>("length")
+			.method<&puerts_generated::string_name_substr_overload0_arity1, &puerts_generated::string_name_substr_overload0_arity2>("substr")
+			.method<&puerts_generated::string_name_get_slice_overload0_arity2>("get_slice")
+			.method<&puerts_generated::string_name_get_slicec_overload0_arity2>("get_slicec")
+			.method<&puerts_generated::string_name_get_slice_count_overload0_arity1>("get_slice_count")
+			.method<&puerts_generated::string_name_find_overload0_arity1, &puerts_generated::string_name_find_overload0_arity2>("find")
+			.method<&puerts_generated::string_name_findn_overload0_arity1, &puerts_generated::string_name_findn_overload0_arity2>("findn")
+			.method<&puerts_generated::string_name_count_overload0_arity1, &puerts_generated::string_name_count_overload0_arity2, &puerts_generated::string_name_count_overload0_arity3>("count")
+			.method<&puerts_generated::string_name_countn_overload0_arity1, &puerts_generated::string_name_countn_overload0_arity2, &puerts_generated::string_name_countn_overload0_arity3>("countn")
+			.method<&puerts_generated::string_name_rfind_overload0_arity1, &puerts_generated::string_name_rfind_overload0_arity2>("rfind")
+			.method<&puerts_generated::string_name_rfindn_overload0_arity1, &puerts_generated::string_name_rfindn_overload0_arity2>("rfindn")
+			.method<&puerts_generated::string_name_match_overload0_arity1>("match")
+			.method<&puerts_generated::string_name_matchn_overload0_arity1>("matchn")
+			.method<&puerts_generated::string_name_begins_with_overload0_arity1>("begins_with")
+			.method<&puerts_generated::string_name_ends_with_overload0_arity1>("ends_with")
+			.method<&puerts_generated::string_name_is_subsequence_of_overload0_arity1>("is_subsequence_of")
+			.method<&puerts_generated::string_name_is_subsequence_ofn_overload0_arity1>("is_subsequence_ofn")
+			.method<&puerts_generated::string_name_bigrams_overload0_arity0>("bigrams")
+			.method<&puerts_generated::string_name_similarity_overload0_arity1>("similarity")
+			.method<&puerts_generated::string_name_format_overload0_arity1, &puerts_generated::string_name_format_overload0_arity2>("format")
+			.method<&puerts_generated::string_name_replace_overload0_arity2>("replace")
+			.method<&puerts_generated::string_name_replacen_overload0_arity2>("replacen")
+			.method<&puerts_generated::string_name_replace_char_overload0_arity2>("replace_char")
+			.method<&puerts_generated::string_name_replace_chars_overload0_arity2>("replace_chars")
+			.method<&puerts_generated::string_name_remove_char_overload0_arity1>("remove_char")
+			.method<&puerts_generated::string_name_remove_chars_overload0_arity1>("remove_chars")
+			.method<&puerts_generated::string_name_repeat_overload0_arity1>("repeat")
+			.method<&puerts_generated::string_name_reverse_overload0_arity0>("reverse")
+			.method<&puerts_generated::string_name_insert_overload0_arity2>("insert")
+			.method<&puerts_generated::string_name_erase_overload0_arity1, &puerts_generated::string_name_erase_overload0_arity2>("erase")
+			.method<&puerts_generated::string_name_capitalize_overload0_arity0>("capitalize")
+			.method<&puerts_generated::string_name_to_camel_case_overload0_arity0>("to_camel_case")
+			.method<&puerts_generated::string_name_to_pascal_case_overload0_arity0>("to_pascal_case")
+			.method<&puerts_generated::string_name_to_snake_case_overload0_arity0>("to_snake_case")
+			.method<&puerts_generated::string_name_to_kebab_case_overload0_arity0>("to_kebab_case")
+			.method<&puerts_generated::string_name_split_overload0_arity0, &puerts_generated::string_name_split_overload0_arity1, &puerts_generated::string_name_split_overload0_arity2, &puerts_generated::string_name_split_overload0_arity3>("split")
+			.method<&puerts_generated::string_name_rsplit_overload0_arity0, &puerts_generated::string_name_rsplit_overload0_arity1, &puerts_generated::string_name_rsplit_overload0_arity2, &puerts_generated::string_name_rsplit_overload0_arity3>("rsplit")
+			.method<&puerts_generated::string_name_split_floats_overload0_arity1, &puerts_generated::string_name_split_floats_overload0_arity2>("split_floats")
+			.method<&puerts_generated::string_name_join_overload0_arity1>("join")
+			.method<&puerts_generated::string_name_to_upper_overload0_arity0>("to_upper")
+			.method<&puerts_generated::string_name_to_lower_overload0_arity0>("to_lower")
+			.method<&puerts_generated::string_name_left_overload0_arity1>("left")
+			.method<&puerts_generated::string_name_right_overload0_arity1>("right")
+			.method<&puerts_generated::string_name_strip_edges_overload0_arity0, &puerts_generated::string_name_strip_edges_overload0_arity1, &puerts_generated::string_name_strip_edges_overload0_arity2>("strip_edges")
+			.method<&puerts_generated::string_name_strip_escapes_overload0_arity0>("strip_escapes")
+			.method<&puerts_generated::string_name_lstrip_overload0_arity1>("lstrip")
+			.method<&puerts_generated::string_name_rstrip_overload0_arity1>("rstrip")
+			.method<&puerts_generated::string_name_get_extension_overload0_arity0>("get_extension")
+			.method<&puerts_generated::string_name_get_basename_overload0_arity0>("get_basename")
+			.method<&puerts_generated::string_name_path_join_overload0_arity1>("path_join")
+			.method<&puerts_generated::string_name_unicode_at_overload0_arity1>("unicode_at")
+			.method<&puerts_generated::string_name_indent_overload0_arity1>("indent")
+			.method<&puerts_generated::string_name_dedent_overload0_arity0>("dedent")
+			.method<&puerts_generated::string_name_md5_text_overload0_arity0>("md5_text")
+			.method<&puerts_generated::string_name_sha1_text_overload0_arity0>("sha1_text")
+			.method<&puerts_generated::string_name_sha256_text_overload0_arity0>("sha256_text")
+			.method<&puerts_generated::string_name_md5_buffer_overload0_arity0>("md5_buffer")
+			.method<&puerts_generated::string_name_sha1_buffer_overload0_arity0>("sha1_buffer")
+			.method<&puerts_generated::string_name_sha256_buffer_overload0_arity0>("sha256_buffer")
+			.method<&puerts_generated::string_name_is_empty_overload0_arity0>("is_empty")
+			.method<&puerts_generated::string_name_contains_overload0_arity1>("contains")
+			.method<&puerts_generated::string_name_containsn_overload0_arity1>("containsn")
+			.method<&puerts_generated::string_name_is_absolute_path_overload0_arity0>("is_absolute_path")
+			.method<&puerts_generated::string_name_is_relative_path_overload0_arity0>("is_relative_path")
+			.method<&puerts_generated::string_name_simplify_path_overload0_arity0>("simplify_path")
+			.method<&puerts_generated::string_name_get_base_dir_overload0_arity0>("get_base_dir")
+			.method<&puerts_generated::string_name_get_file_overload0_arity0>("get_file")
+			.method<&puerts_generated::string_name_xml_escape_overload0_arity0, &puerts_generated::string_name_xml_escape_overload0_arity1>("xml_escape")
+			.method<&puerts_generated::string_name_xml_unescape_overload0_arity0>("xml_unescape")
+			.method<&puerts_generated::string_name_uri_encode_overload0_arity0>("uri_encode")
+			.method<&puerts_generated::string_name_uri_decode_overload0_arity0>("uri_decode")
+			.method<&puerts_generated::string_name_uri_file_decode_overload0_arity0>("uri_file_decode")
+			.method<&puerts_generated::string_name_c_escape_overload0_arity0>("c_escape")
+			.method<&puerts_generated::string_name_c_unescape_overload0_arity0>("c_unescape")
+			.method<&puerts_generated::string_name_json_escape_overload0_arity0>("json_escape")
+			.method<&puerts_generated::string_name_validate_node_name_overload0_arity0>("validate_node_name")
+			.method<&puerts_generated::string_name_validate_filename_overload0_arity0>("validate_filename")
+			.method<&puerts_generated::string_name_is_valid_ascii_identifier_overload0_arity0>("is_valid_ascii_identifier")
+			.method<&puerts_generated::string_name_is_valid_unicode_identifier_overload0_arity0>("is_valid_unicode_identifier")
+			.method<&puerts_generated::string_name_is_valid_identifier_overload0_arity0>("is_valid_identifier")
+			.method<&puerts_generated::string_name_is_valid_int_overload0_arity0>("is_valid_int")
+			.method<&puerts_generated::string_name_is_valid_float_overload0_arity0>("is_valid_float")
+			.method<&puerts_generated::string_name_is_valid_hex_number_overload0_arity0, &puerts_generated::string_name_is_valid_hex_number_overload0_arity1>("is_valid_hex_number")
+			.method<&puerts_generated::string_name_is_valid_html_color_overload0_arity0>("is_valid_html_color")
+			.method<&puerts_generated::string_name_is_valid_ip_address_overload0_arity0>("is_valid_ip_address")
+			.method<&puerts_generated::string_name_is_valid_filename_overload0_arity0>("is_valid_filename")
+			.method<&puerts_generated::string_name_to_int_overload0_arity0>("to_int")
+			.method<&puerts_generated::string_name_to_float_overload0_arity0>("to_float")
+			.method<&puerts_generated::string_name_hex_to_int_overload0_arity0>("hex_to_int")
+			.method<&puerts_generated::string_name_bin_to_int_overload0_arity0>("bin_to_int")
+			.method<&puerts_generated::string_name_lpad_overload0_arity1, &puerts_generated::string_name_lpad_overload0_arity2>("lpad")
+			.method<&puerts_generated::string_name_rpad_overload0_arity1, &puerts_generated::string_name_rpad_overload0_arity2>("rpad")
+			.method<&puerts_generated::string_name_pad_decimals_overload0_arity1>("pad_decimals")
+			.method<&puerts_generated::string_name_pad_zeros_overload0_arity1>("pad_zeros")
+			.method<&puerts_generated::string_name_trim_prefix_overload0_arity1>("trim_prefix")
+			.method<&puerts_generated::string_name_trim_suffix_overload0_arity1>("trim_suffix")
+			.method<&puerts_generated::string_name_to_ascii_buffer_overload0_arity0>("to_ascii_buffer")
+			.method<&puerts_generated::string_name_to_utf8_buffer_overload0_arity0>("to_utf8_buffer")
+			.method<&puerts_generated::string_name_to_utf16_buffer_overload0_arity0>("to_utf16_buffer")
+			.method<&puerts_generated::string_name_to_utf32_buffer_overload0_arity0>("to_utf32_buffer")
+			.method<&puerts_generated::string_name_to_wchar_buffer_overload0_arity0>("to_wchar_buffer")
+			.method<&puerts_generated::string_name_to_multibyte_char_buffer_overload0_arity0, &puerts_generated::string_name_to_multibyte_char_buffer_overload0_arity1>("to_multibyte_char_buffer")
+			.method<&puerts_generated::string_name_hex_decode_overload0_arity0>("hex_decode")
+			.method<&puerts_generated::string_name_hash_overload0_arity0>("hash")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3219,10 +5125,10 @@ inline godot::Transform2D transform2d_op_multiply_3(const godot::Transform2D &le
 inline godot::Transform2D transform2d_op_division_4(const godot::Transform2D &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform2D>(left, right);
 }
-inline godot::Transform2D transform2d_op_multiply_5(const godot::Transform2D &left, godot::real_t right) {
+inline godot::Transform2D transform2d_op_multiply_5(const godot::Transform2D &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform2D>(left, right);
 }
-inline godot::Transform2D transform2d_op_division_6(const godot::Transform2D &left, godot::real_t right) {
+inline godot::Transform2D transform2d_op_division_6(const godot::Transform2D &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform2D>(left, right);
 }
 inline godot::Vector2 transform2d_op_multiply_7(const godot::Transform2D &left, const godot::Vector2 &right) {
@@ -3258,8 +5164,71 @@ inline godot::Transform2D transform2d_flip_x() {
 inline godot::Transform2D transform2d_flip_y() {
 	return { 1, 0, 0, -1, 0, 0 };
 }
-inline decltype(auto) transform2d_looking_at_default0(const godot::Transform2D &p_self) {
+inline decltype(auto) transform2d_inverse_overload0_arity0(const godot::Transform2D &p_self) {
+	return p_self.inverse();
+}
+inline decltype(auto) transform2d_affine_inverse_overload0_arity0(const godot::Transform2D &p_self) {
+	return p_self.affine_inverse();
+}
+inline decltype(auto) transform2d_get_rotation_overload0_arity0(const godot::Transform2D &p_self) {
+	return static_cast<double>(p_self.get_rotation());
+}
+inline decltype(auto) transform2d_get_origin_overload0_arity0(const godot::Transform2D &p_self) {
+	return p_self.get_origin();
+}
+inline decltype(auto) transform2d_get_scale_overload0_arity0(const godot::Transform2D &p_self) {
+	return p_self.get_scale();
+}
+inline decltype(auto) transform2d_get_skew_overload0_arity0(const godot::Transform2D &p_self) {
+	return static_cast<double>(p_self.get_skew());
+}
+inline decltype(auto) transform2d_orthonormalized_overload0_arity0(const godot::Transform2D &p_self) {
+	return p_self.orthonormalized();
+}
+inline decltype(auto) transform2d_rotated_overload0_arity1(const godot::Transform2D &p_self, double p_arg_0) {
+	return p_self.rotated(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Transform2D::rotated), 0>>(p_arg_0));
+}
+inline decltype(auto) transform2d_rotated_local_overload0_arity1(const godot::Transform2D &p_self, double p_arg_0) {
+	return p_self.rotated_local(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Transform2D::rotated_local), 0>>(p_arg_0));
+}
+inline decltype(auto) transform2d_scaled_overload0_arity1(const godot::Transform2D &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.scaled(p_arg_0);
+}
+inline decltype(auto) transform2d_scaled_local_overload0_arity1(const godot::Transform2D &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.scaled_local(p_arg_0);
+}
+inline decltype(auto) transform2d_translated_overload0_arity1(const godot::Transform2D &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.translated(p_arg_0);
+}
+inline decltype(auto) transform2d_translated_local_overload0_arity1(const godot::Transform2D &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.translated_local(p_arg_0);
+}
+inline decltype(auto) transform2d_determinant_overload0_arity0(const godot::Transform2D &p_self) {
+	return static_cast<double>(p_self.determinant());
+}
+inline decltype(auto) transform2d_basis_xform_overload0_arity1(const godot::Transform2D &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.basis_xform(p_arg_0);
+}
+inline decltype(auto) transform2d_basis_xform_inv_overload0_arity1(const godot::Transform2D &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.basis_xform_inv(p_arg_0);
+}
+inline decltype(auto) transform2d_interpolate_with_overload0_arity2(const godot::Transform2D &p_self, const godot::Transform2D &p_arg_0, double p_arg_1) {
+	return p_self.interpolate_with(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Transform2D::interpolate_with), 1>>(p_arg_1));
+}
+inline decltype(auto) transform2d_is_conformal_overload0_arity0(const godot::Transform2D &p_self) {
+	return p_self.is_conformal();
+}
+inline decltype(auto) transform2d_is_equal_approx_overload0_arity1(const godot::Transform2D &p_self, const godot::Transform2D &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) transform2d_is_finite_overload0_arity0(const godot::Transform2D &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) transform2d_looking_at_overload0_arity0(const godot::Transform2D &p_self) {
 	return p_self.looking_at(godot::Vector2());
+}
+inline decltype(auto) transform2d_looking_at_overload0_arity1(const godot::Transform2D &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.looking_at(p_arg_0);
 }
 } // namespace puerts_generated
 
@@ -3276,30 +5245,30 @@ inline void register_type_transform2d() {
 			.constant<&puerts_generated::transform2d_flip_y>("FLIP_Y")
 			.constructor<>()
 			.constructor<const godot::Transform2D &>()
-			.constructor<godot::real_t, const godot::Vector2 &>()
-			.constructor<godot::real_t, const godot::Vector2 &, godot::real_t, const godot::Vector2 &>()
+			.constructor<double, const godot::Vector2 &>()
+			.constructor<double, const godot::Vector2 &, double, const godot::Vector2 &>()
 			.constructor<const godot::Vector2 &, const godot::Vector2 &, const godot::Vector2 &>()
-			.method<&godot::Transform2D::inverse>("inverse")
-			.method<&godot::Transform2D::affine_inverse>("affine_inverse")
-			.method<&godot::Transform2D::get_rotation>("get_rotation")
-			.method<&godot::Transform2D::get_origin>("get_origin")
-			.method<&godot::Transform2D::get_scale>("get_scale")
-			.method<&godot::Transform2D::get_skew>("get_skew")
-			.method<&godot::Transform2D::orthonormalized>("orthonormalized")
-			.method<&godot::Transform2D::rotated>("rotated")
-			.method<&godot::Transform2D::rotated_local>("rotated_local")
-			.method<&godot::Transform2D::scaled>("scaled")
-			.method<&godot::Transform2D::scaled_local>("scaled_local")
-			.method<&godot::Transform2D::translated>("translated")
-			.method<&godot::Transform2D::translated_local>("translated_local")
-			.method<&godot::Transform2D::determinant>("determinant")
-			.method<&godot::Transform2D::basis_xform>("basis_xform")
-			.method<&godot::Transform2D::basis_xform_inv>("basis_xform_inv")
-			.method<&godot::Transform2D::interpolate_with>("interpolate_with")
-			.method<&godot::Transform2D::is_conformal>("is_conformal")
-			.method<&godot::Transform2D::is_equal_approx>("is_equal_approx")
-			.method<&godot::Transform2D::is_finite>("is_finite")
-			.method<&puerts_generated::transform2d_looking_at_default0, &godot::Transform2D::looking_at>("looking_at")
+			.method<&puerts_generated::transform2d_inverse_overload0_arity0>("inverse")
+			.method<&puerts_generated::transform2d_affine_inverse_overload0_arity0>("affine_inverse")
+			.method<&puerts_generated::transform2d_get_rotation_overload0_arity0>("get_rotation")
+			.method<&puerts_generated::transform2d_get_origin_overload0_arity0>("get_origin")
+			.method<&puerts_generated::transform2d_get_scale_overload0_arity0>("get_scale")
+			.method<&puerts_generated::transform2d_get_skew_overload0_arity0>("get_skew")
+			.method<&puerts_generated::transform2d_orthonormalized_overload0_arity0>("orthonormalized")
+			.method<&puerts_generated::transform2d_rotated_overload0_arity1>("rotated")
+			.method<&puerts_generated::transform2d_rotated_local_overload0_arity1>("rotated_local")
+			.method<&puerts_generated::transform2d_scaled_overload0_arity1>("scaled")
+			.method<&puerts_generated::transform2d_scaled_local_overload0_arity1>("scaled_local")
+			.method<&puerts_generated::transform2d_translated_overload0_arity1>("translated")
+			.method<&puerts_generated::transform2d_translated_local_overload0_arity1>("translated_local")
+			.method<&puerts_generated::transform2d_determinant_overload0_arity0>("determinant")
+			.method<&puerts_generated::transform2d_basis_xform_overload0_arity1>("basis_xform")
+			.method<&puerts_generated::transform2d_basis_xform_inv_overload0_arity1>("basis_xform_inv")
+			.method<&puerts_generated::transform2d_interpolate_with_overload0_arity2>("interpolate_with")
+			.method<&puerts_generated::transform2d_is_conformal_overload0_arity0>("is_conformal")
+			.method<&puerts_generated::transform2d_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::transform2d_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::transform2d_looking_at_overload0_arity0, &puerts_generated::transform2d_looking_at_overload0_arity1>("looking_at")
 			.property<&puerts_generated::transform2d_x_getter, &puerts_generated::transform2d_x_setter>("x")
 			.property<&puerts_generated::transform2d_y_getter, &puerts_generated::transform2d_y_setter>("y")
 			.property<&puerts_generated::transform2d_origin_getter, &puerts_generated::transform2d_origin_setter>("origin")
@@ -3321,10 +5290,10 @@ inline godot::Transform3D transform3d_op_multiply_3(const godot::Transform3D &le
 inline godot::Transform3D transform3d_op_division_4(const godot::Transform3D &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform3D>(left, right);
 }
-inline godot::Transform3D transform3d_op_multiply_5(const godot::Transform3D &left, godot::real_t right) {
+inline godot::Transform3D transform3d_op_multiply_5(const godot::Transform3D &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Transform3D>(left, right);
 }
-inline godot::Transform3D transform3d_op_division_6(const godot::Transform3D &left, godot::real_t right) {
+inline godot::Transform3D transform3d_op_division_6(const godot::Transform3D &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Transform3D>(left, right);
 }
 inline godot::Vector3 transform3d_op_multiply_7(const godot::Transform3D &left, const godot::Vector3 &right) {
@@ -3366,11 +5335,50 @@ inline godot::Transform3D transform3d_flip_y() {
 inline godot::Transform3D transform3d_flip_z() {
 	return { 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0 };
 }
-inline decltype(auto) transform3d_looking_at_default1(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0) {
+inline decltype(auto) transform3d_inverse_overload0_arity0(const godot::Transform3D &p_self) {
+	return p_self.inverse();
+}
+inline decltype(auto) transform3d_affine_inverse_overload0_arity0(const godot::Transform3D &p_self) {
+	return p_self.affine_inverse();
+}
+inline decltype(auto) transform3d_orthonormalized_overload0_arity0(const godot::Transform3D &p_self) {
+	return p_self.orthonormalized();
+}
+inline decltype(auto) transform3d_rotated_overload0_arity2(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.rotated(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Transform3D::rotated), 1>>(p_arg_1));
+}
+inline decltype(auto) transform3d_rotated_local_overload0_arity2(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.rotated_local(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Transform3D::rotated_local), 1>>(p_arg_1));
+}
+inline decltype(auto) transform3d_scaled_overload0_arity1(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.scaled(p_arg_0);
+}
+inline decltype(auto) transform3d_scaled_local_overload0_arity1(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.scaled_local(p_arg_0);
+}
+inline decltype(auto) transform3d_translated_overload0_arity1(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.translated(p_arg_0);
+}
+inline decltype(auto) transform3d_translated_local_overload0_arity1(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.translated_local(p_arg_0);
+}
+inline decltype(auto) transform3d_looking_at_overload0_arity1(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0) {
 	return p_self.looking_at(p_arg_0);
 }
-inline decltype(auto) transform3d_looking_at_default2(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+inline decltype(auto) transform3d_looking_at_overload0_arity2(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
 	return p_self.looking_at(p_arg_0, p_arg_1);
+}
+inline decltype(auto) transform3d_looking_at_overload0_arity3(const godot::Transform3D &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1, bool p_arg_2) {
+	return p_self.looking_at(p_arg_0, p_arg_1, p_arg_2);
+}
+inline decltype(auto) transform3d_interpolate_with_overload0_arity2(const godot::Transform3D &p_self, const godot::Transform3D &p_arg_0, double p_arg_1) {
+	return p_self.interpolate_with(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Transform3D::interpolate_with), 1>>(p_arg_1));
+}
+inline decltype(auto) transform3d_is_equal_approx_overload0_arity1(const godot::Transform3D &p_self, const godot::Transform3D &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) transform3d_is_finite_overload0_arity0(const godot::Transform3D &p_self) {
+	return p_self.is_finite();
 }
 } // namespace puerts_generated
 
@@ -3391,19 +5399,19 @@ inline void register_type_transform3d() {
 			.constructor<const godot::Basis &, const godot::Vector3 &>()
 			.constructor<const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &, const godot::Vector3 &>()
 			.constructor<const godot::Projection &>()
-			.method<&godot::Transform3D::inverse>("inverse")
-			.method<&godot::Transform3D::affine_inverse>("affine_inverse")
-			.method<&godot::Transform3D::orthonormalized>("orthonormalized")
-			.method<&godot::Transform3D::rotated>("rotated")
-			.method<&godot::Transform3D::rotated_local>("rotated_local")
-			.method<&godot::Transform3D::scaled>("scaled")
-			.method<&godot::Transform3D::scaled_local>("scaled_local")
-			.method<&godot::Transform3D::translated>("translated")
-			.method<&godot::Transform3D::translated_local>("translated_local")
-			.method<&puerts_generated::transform3d_looking_at_default1, &puerts_generated::transform3d_looking_at_default2, &godot::Transform3D::looking_at>("looking_at")
-			.method<&godot::Transform3D::interpolate_with>("interpolate_with")
-			.method<&godot::Transform3D::is_equal_approx>("is_equal_approx")
-			.method<&godot::Transform3D::is_finite>("is_finite")
+			.method<&puerts_generated::transform3d_inverse_overload0_arity0>("inverse")
+			.method<&puerts_generated::transform3d_affine_inverse_overload0_arity0>("affine_inverse")
+			.method<&puerts_generated::transform3d_orthonormalized_overload0_arity0>("orthonormalized")
+			.method<&puerts_generated::transform3d_rotated_overload0_arity2>("rotated")
+			.method<&puerts_generated::transform3d_rotated_local_overload0_arity2>("rotated_local")
+			.method<&puerts_generated::transform3d_scaled_overload0_arity1>("scaled")
+			.method<&puerts_generated::transform3d_scaled_local_overload0_arity1>("scaled_local")
+			.method<&puerts_generated::transform3d_translated_overload0_arity1>("translated")
+			.method<&puerts_generated::transform3d_translated_local_overload0_arity1>("translated_local")
+			.method<&puerts_generated::transform3d_looking_at_overload0_arity1, &puerts_generated::transform3d_looking_at_overload0_arity2, &puerts_generated::transform3d_looking_at_overload0_arity3>("looking_at")
+			.method<&puerts_generated::transform3d_interpolate_with_overload0_arity2>("interpolate_with")
+			.method<&puerts_generated::transform3d_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::transform3d_is_finite_overload0_arity0>("is_finite")
 			.property<&godot::Transform3D::basis>("basis")
 			.property<&godot::Transform3D::origin>("origin")
 			.register_type();
@@ -3430,10 +5438,10 @@ inline godot::Vector2 vector2_op_multiply_5(const godot::Vector2 &left, int64_t 
 inline godot::Vector2 vector2_op_division_6(const godot::Vector2 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_multiply_7(const godot::Vector2 &left, godot::real_t right) {
+inline godot::Vector2 vector2_op_multiply_7(const godot::Vector2 &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2_op_division_8(const godot::Vector2 &left, godot::real_t right) {
+inline godot::Vector2 vector2_op_division_8(const godot::Vector2 &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2>(left, right);
 }
 inline bool vector2_op_equality_9(const godot::Vector2 &left, const godot::Vector2 &right) {
@@ -3499,8 +5507,152 @@ inline godot::Vector2 vector2_up() {
 inline godot::Vector2 vector2_down() {
 	return { 0, 1 };
 }
-inline decltype(auto) vector2_limit_length_default0(const godot::Vector2 &p_self) {
+inline decltype(auto) vector2_angle_overload0_arity0(const godot::Vector2 &p_self) {
+	return static_cast<double>(p_self.angle());
+}
+inline decltype(auto) vector2_angle_to_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<double>(p_self.angle_to(p_arg_0));
+}
+inline decltype(auto) vector2_angle_to_point_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<double>(p_self.angle_to_point(p_arg_0));
+}
+inline decltype(auto) vector2_direction_to_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.direction_to(p_arg_0);
+}
+inline decltype(auto) vector2_distance_to_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<double>(p_self.distance_to(p_arg_0));
+}
+inline decltype(auto) vector2_distance_squared_to_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<double>(p_self.distance_squared_to(p_arg_0));
+}
+inline decltype(auto) vector2_length_overload0_arity0(const godot::Vector2 &p_self) {
+	return static_cast<double>(p_self.length());
+}
+inline decltype(auto) vector2_length_squared_overload0_arity0(const godot::Vector2 &p_self) {
+	return static_cast<double>(p_self.length_squared());
+}
+inline decltype(auto) vector2_limit_length_overload0_arity0(const godot::Vector2 &p_self) {
 	return p_self.limit_length();
+}
+inline decltype(auto) vector2_limit_length_overload0_arity1(const godot::Vector2 &p_self, double p_arg_0) {
+	return p_self.limit_length(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::limit_length), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2_normalized_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.normalized();
+}
+inline decltype(auto) vector2_is_normalized_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.is_normalized();
+}
+inline decltype(auto) vector2_is_equal_approx_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) vector2_is_zero_approx_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.is_zero_approx();
+}
+inline decltype(auto) vector2_is_finite_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) vector2_posmod_overload0_arity1(const godot::Vector2 &p_self, double p_arg_0) {
+	return p_self.posmod(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::posmod), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2_posmodv_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.posmodv(p_arg_0);
+}
+inline decltype(auto) vector2_project_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.project(p_arg_0);
+}
+inline decltype(auto) vector2_lerp_overload0_arity2(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, double p_arg_1) {
+	return p_self.lerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::lerp), 1>>(p_arg_1));
+}
+inline decltype(auto) vector2_slerp_overload0_arity2(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, double p_arg_1) {
+	return p_self.slerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::slerp), 1>>(p_arg_1));
+}
+inline decltype(auto) vector2_cubic_interpolate_overload0_arity4(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, const godot::Vector2 &p_arg_1, const godot::Vector2 &p_arg_2, double p_arg_3) {
+	return p_self.cubic_interpolate(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::cubic_interpolate), 3>>(p_arg_3));
+}
+inline decltype(auto) vector2_cubic_interpolate_in_time_overload0_arity7(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, const godot::Vector2 &p_arg_1, const godot::Vector2 &p_arg_2, double p_arg_3, double p_arg_4, double p_arg_5, double p_arg_6) {
+	return p_self.cubic_interpolate_in_time(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::cubic_interpolate_in_time), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::cubic_interpolate_in_time), 4>>(p_arg_4), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::cubic_interpolate_in_time), 5>>(p_arg_5), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::cubic_interpolate_in_time), 6>>(p_arg_6));
+}
+inline decltype(auto) vector2_bezier_interpolate_overload0_arity4(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, const godot::Vector2 &p_arg_1, const godot::Vector2 &p_arg_2, double p_arg_3) {
+	return p_self.bezier_interpolate(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::bezier_interpolate), 3>>(p_arg_3));
+}
+inline decltype(auto) vector2_bezier_derivative_overload0_arity4(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, const godot::Vector2 &p_arg_1, const godot::Vector2 &p_arg_2, double p_arg_3) {
+	return p_self.bezier_derivative(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::bezier_derivative), 3>>(p_arg_3));
+}
+inline decltype(auto) vector2_max_axis_index_overload0_arity0(const godot::Vector2 &p_self) {
+	return static_cast<int64_t>(p_self.max_axis_index());
+}
+inline decltype(auto) vector2_min_axis_index_overload0_arity0(const godot::Vector2 &p_self) {
+	return static_cast<int64_t>(p_self.min_axis_index());
+}
+inline decltype(auto) vector2_move_toward_overload0_arity2(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, double p_arg_1) {
+	return p_self.move_toward(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::move_toward), 1>>(p_arg_1));
+}
+inline decltype(auto) vector2_rotated_overload0_arity1(const godot::Vector2 &p_self, double p_arg_0) {
+	return p_self.rotated(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::rotated), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2_orthogonal_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.orthogonal();
+}
+inline decltype(auto) vector2_floor_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.floor();
+}
+inline decltype(auto) vector2_ceil_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.ceil();
+}
+inline decltype(auto) vector2_round_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.round();
+}
+inline decltype(auto) vector2_aspect_overload0_arity0(const godot::Vector2 &p_self) {
+	return static_cast<double>(p_self.aspect());
+}
+inline decltype(auto) vector2_dot_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<double>(p_self.dot(p_arg_0));
+}
+inline decltype(auto) vector2_slide_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.slide(p_arg_0);
+}
+inline decltype(auto) vector2_bounce_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.bounce(p_arg_0);
+}
+inline decltype(auto) vector2_reflect_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.reflect(p_arg_0);
+}
+inline decltype(auto) vector2_cross_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return static_cast<double>(p_self.cross(p_arg_0));
+}
+inline decltype(auto) vector2_abs_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.abs();
+}
+inline decltype(auto) vector2_sign_overload0_arity0(const godot::Vector2 &p_self) {
+	return p_self.sign();
+}
+inline decltype(auto) vector2_clamp_overload0_arity2(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0, const godot::Vector2 &p_arg_1) {
+	return p_self.clamp(p_arg_0, p_arg_1);
+}
+inline decltype(auto) vector2_clampf_overload0_arity2(const godot::Vector2 &p_self, double p_arg_0, double p_arg_1) {
+	return p_self.clampf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::clampf), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::clampf), 1>>(p_arg_1));
+}
+inline decltype(auto) vector2_snapped_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.snapped(p_arg_0);
+}
+inline decltype(auto) vector2_snappedf_overload0_arity1(const godot::Vector2 &p_self, double p_arg_0) {
+	return p_self.snappedf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::snappedf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2_min_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.min(p_arg_0);
+}
+inline decltype(auto) vector2_minf_overload0_arity1(const godot::Vector2 &p_self, double p_arg_0) {
+	return p_self.minf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::minf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2_max_overload0_arity1(const godot::Vector2 &p_self, const godot::Vector2 &p_arg_0) {
+	return p_self.max(p_arg_0);
+}
+inline decltype(auto) vector2_maxf_overload0_arity1(const godot::Vector2 &p_self, double p_arg_0) {
+	return p_self.maxf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::maxf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2_from_angle_overload0_arity1(double p_arg_0) {
+	return godot::Vector2::from_angle(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2::from_angle), 0>>(p_arg_0));
 }
 } // namespace puerts_generated
 
@@ -3530,58 +5682,58 @@ inline void register_type_vector2() {
 			.constructor<>()
 			.constructor<const godot::Vector2 &>()
 			.constructor<const godot::Vector2i &>()
-			.constructor<godot::real_t, godot::real_t>()
-			.method<&godot::Vector2::angle>("angle")
-			.method<&godot::Vector2::angle_to>("angle_to")
-			.method<&godot::Vector2::angle_to_point>("angle_to_point")
-			.method<&godot::Vector2::direction_to>("direction_to")
-			.method<&godot::Vector2::distance_to>("distance_to")
-			.method<&godot::Vector2::distance_squared_to>("distance_squared_to")
-			.method<&godot::Vector2::length>("length")
-			.method<&godot::Vector2::length_squared>("length_squared")
-			.method<&puerts_generated::vector2_limit_length_default0, &godot::Vector2::limit_length>("limit_length")
-			.method<&godot::Vector2::normalized>("normalized")
-			.method<&godot::Vector2::is_normalized>("is_normalized")
-			.method<&godot::Vector2::is_equal_approx>("is_equal_approx")
-			.method<&godot::Vector2::is_zero_approx>("is_zero_approx")
-			.method<&godot::Vector2::is_finite>("is_finite")
-			.method<&godot::Vector2::posmod>("posmod")
-			.method<&godot::Vector2::posmodv>("posmodv")
-			.method<&godot::Vector2::project>("project")
-			.method<&godot::Vector2::lerp>("lerp")
-			.method<&godot::Vector2::slerp>("slerp")
-			.method<&godot::Vector2::cubic_interpolate>("cubic_interpolate")
-			.method<&godot::Vector2::cubic_interpolate_in_time>("cubic_interpolate_in_time")
-			.method<&godot::Vector2::bezier_interpolate>("bezier_interpolate")
-			.method<&godot::Vector2::bezier_derivative>("bezier_derivative")
-			.method<&godot::Vector2::max_axis_index>("max_axis_index")
-			.method<&godot::Vector2::min_axis_index>("min_axis_index")
-			.method<&godot::Vector2::move_toward>("move_toward")
-			.method<&godot::Vector2::rotated>("rotated")
-			.method<&godot::Vector2::orthogonal>("orthogonal")
-			.method<&godot::Vector2::floor>("floor")
-			.method<&godot::Vector2::ceil>("ceil")
-			.method<&godot::Vector2::round>("round")
-			.method<&godot::Vector2::aspect>("aspect")
-			.method<&godot::Vector2::dot>("dot")
-			.method<&godot::Vector2::slide>("slide")
-			.method<&godot::Vector2::bounce>("bounce")
-			.method<&godot::Vector2::reflect>("reflect")
-			.method<&godot::Vector2::cross>("cross")
-			.method<&godot::Vector2::abs>("abs")
-			.method<&godot::Vector2::sign>("sign")
-			.method<&godot::Vector2::clamp>("clamp")
-			.method<&godot::Vector2::clampf>("clampf")
-			.method<&godot::Vector2::snapped>("snapped")
-			.method<&godot::Vector2::snappedf>("snappedf")
-			.method<&godot::Vector2::min>("min")
-			.method<&godot::Vector2::minf>("minf")
-			.method<&godot::Vector2::max>("max")
-			.method<&godot::Vector2::maxf>("maxf")
-			.static_method<&godot::Vector2::from_angle>("from_angle")
+			.constructor<double, double>()
+			.method<&puerts_generated::vector2_angle_overload0_arity0>("angle")
+			.method<&puerts_generated::vector2_angle_to_overload0_arity1>("angle_to")
+			.method<&puerts_generated::vector2_angle_to_point_overload0_arity1>("angle_to_point")
+			.method<&puerts_generated::vector2_direction_to_overload0_arity1>("direction_to")
+			.method<&puerts_generated::vector2_distance_to_overload0_arity1>("distance_to")
+			.method<&puerts_generated::vector2_distance_squared_to_overload0_arity1>("distance_squared_to")
+			.method<&puerts_generated::vector2_length_overload0_arity0>("length")
+			.method<&puerts_generated::vector2_length_squared_overload0_arity0>("length_squared")
+			.method<&puerts_generated::vector2_limit_length_overload0_arity0, &puerts_generated::vector2_limit_length_overload0_arity1>("limit_length")
+			.method<&puerts_generated::vector2_normalized_overload0_arity0>("normalized")
+			.method<&puerts_generated::vector2_is_normalized_overload0_arity0>("is_normalized")
+			.method<&puerts_generated::vector2_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::vector2_is_zero_approx_overload0_arity0>("is_zero_approx")
+			.method<&puerts_generated::vector2_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::vector2_posmod_overload0_arity1>("posmod")
+			.method<&puerts_generated::vector2_posmodv_overload0_arity1>("posmodv")
+			.method<&puerts_generated::vector2_project_overload0_arity1>("project")
+			.method<&puerts_generated::vector2_lerp_overload0_arity2>("lerp")
+			.method<&puerts_generated::vector2_slerp_overload0_arity2>("slerp")
+			.method<&puerts_generated::vector2_cubic_interpolate_overload0_arity4>("cubic_interpolate")
+			.method<&puerts_generated::vector2_cubic_interpolate_in_time_overload0_arity7>("cubic_interpolate_in_time")
+			.method<&puerts_generated::vector2_bezier_interpolate_overload0_arity4>("bezier_interpolate")
+			.method<&puerts_generated::vector2_bezier_derivative_overload0_arity4>("bezier_derivative")
+			.method<&puerts_generated::vector2_max_axis_index_overload0_arity0>("max_axis_index")
+			.method<&puerts_generated::vector2_min_axis_index_overload0_arity0>("min_axis_index")
+			.method<&puerts_generated::vector2_move_toward_overload0_arity2>("move_toward")
+			.method<&puerts_generated::vector2_rotated_overload0_arity1>("rotated")
+			.method<&puerts_generated::vector2_orthogonal_overload0_arity0>("orthogonal")
+			.method<&puerts_generated::vector2_floor_overload0_arity0>("floor")
+			.method<&puerts_generated::vector2_ceil_overload0_arity0>("ceil")
+			.method<&puerts_generated::vector2_round_overload0_arity0>("round")
+			.method<&puerts_generated::vector2_aspect_overload0_arity0>("aspect")
+			.method<&puerts_generated::vector2_dot_overload0_arity1>("dot")
+			.method<&puerts_generated::vector2_slide_overload0_arity1>("slide")
+			.method<&puerts_generated::vector2_bounce_overload0_arity1>("bounce")
+			.method<&puerts_generated::vector2_reflect_overload0_arity1>("reflect")
+			.method<&puerts_generated::vector2_cross_overload0_arity1>("cross")
+			.method<&puerts_generated::vector2_abs_overload0_arity0>("abs")
+			.method<&puerts_generated::vector2_sign_overload0_arity0>("sign")
+			.method<&puerts_generated::vector2_clamp_overload0_arity2>("clamp")
+			.method<&puerts_generated::vector2_clampf_overload0_arity2>("clampf")
+			.method<&puerts_generated::vector2_snapped_overload0_arity1>("snapped")
+			.method<&puerts_generated::vector2_snappedf_overload0_arity1>("snappedf")
+			.method<&puerts_generated::vector2_min_overload0_arity1>("min")
+			.method<&puerts_generated::vector2_minf_overload0_arity1>("minf")
+			.method<&puerts_generated::vector2_max_overload0_arity1>("max")
+			.method<&puerts_generated::vector2_maxf_overload0_arity1>("maxf")
+			.static_method<&puerts_generated::vector2_from_angle_overload0_arity1>("from_angle")
 			.property<&godot::Vector2::x>("x")
 			.property<&godot::Vector2::y>("y")
-			.enum_type<puerts_generated::vector2_axis_enum_tag>("Axis")
+			.nested_type("Axis", "Vector2.Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3609,10 +5761,10 @@ inline godot::Vector2i vector2i_op_division_6(const godot::Vector2i &left, int64
 inline godot::Vector2i vector2i_op_modulus_7(const godot::Vector2i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector2i>(left, right);
 }
-inline godot::Vector2 vector2i_op_multiply_8(const godot::Vector2i &left, godot::real_t right) {
+inline godot::Vector2 vector2i_op_multiply_8(const godot::Vector2i &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector2>(left, right);
 }
-inline godot::Vector2 vector2i_op_division_9(const godot::Vector2i &left, godot::real_t right) {
+inline godot::Vector2 vector2i_op_division_9(const godot::Vector2i &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector2>(left, right);
 }
 inline bool vector2i_op_equality_10(const godot::Vector2i &left, const godot::Vector2i &right) {
@@ -3678,6 +5830,57 @@ inline godot::Vector2i vector2i_up() {
 inline godot::Vector2i vector2i_down() {
 	return { 0, 1 };
 }
+inline decltype(auto) vector2i_aspect_overload0_arity0(const godot::Vector2i &p_self) {
+	return static_cast<double>(p_self.aspect());
+}
+inline decltype(auto) vector2i_max_axis_index_overload0_arity0(const godot::Vector2i &p_self) {
+	return static_cast<int64_t>(p_self.max_axis_index());
+}
+inline decltype(auto) vector2i_min_axis_index_overload0_arity0(const godot::Vector2i &p_self) {
+	return static_cast<int64_t>(p_self.min_axis_index());
+}
+inline decltype(auto) vector2i_distance_to_overload0_arity1(const godot::Vector2i &p_self, const godot::Vector2i &p_arg_0) {
+	return static_cast<double>(p_self.distance_to(p_arg_0));
+}
+inline decltype(auto) vector2i_distance_squared_to_overload0_arity1(const godot::Vector2i &p_self, const godot::Vector2i &p_arg_0) {
+	return static_cast<int64_t>(p_self.distance_squared_to(p_arg_0));
+}
+inline decltype(auto) vector2i_length_overload0_arity0(const godot::Vector2i &p_self) {
+	return static_cast<double>(p_self.length());
+}
+inline decltype(auto) vector2i_length_squared_overload0_arity0(const godot::Vector2i &p_self) {
+	return static_cast<int64_t>(p_self.length_squared());
+}
+inline decltype(auto) vector2i_sign_overload0_arity0(const godot::Vector2i &p_self) {
+	return p_self.sign();
+}
+inline decltype(auto) vector2i_abs_overload0_arity0(const godot::Vector2i &p_self) {
+	return p_self.abs();
+}
+inline decltype(auto) vector2i_clamp_overload0_arity2(const godot::Vector2i &p_self, const godot::Vector2i &p_arg_0, const godot::Vector2i &p_arg_1) {
+	return p_self.clamp(p_arg_0, p_arg_1);
+}
+inline decltype(auto) vector2i_clampi_overload0_arity2(const godot::Vector2i &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.clampi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2i::clampi), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2i::clampi), 1>>(p_arg_1));
+}
+inline decltype(auto) vector2i_snapped_overload0_arity1(const godot::Vector2i &p_self, const godot::Vector2i &p_arg_0) {
+	return p_self.snapped(p_arg_0);
+}
+inline decltype(auto) vector2i_snappedi_overload0_arity1(const godot::Vector2i &p_self, int64_t p_arg_0) {
+	return p_self.snappedi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2i::snappedi), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2i_min_overload0_arity1(const godot::Vector2i &p_self, const godot::Vector2i &p_arg_0) {
+	return p_self.min(p_arg_0);
+}
+inline decltype(auto) vector2i_mini_overload0_arity1(const godot::Vector2i &p_self, int64_t p_arg_0) {
+	return p_self.mini(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2i::mini), 0>>(p_arg_0));
+}
+inline decltype(auto) vector2i_max_overload0_arity1(const godot::Vector2i &p_self, const godot::Vector2i &p_arg_0) {
+	return p_self.max(p_arg_0);
+}
+inline decltype(auto) vector2i_maxi_overload0_arity1(const godot::Vector2i &p_self, int64_t p_arg_0) {
+	return p_self.maxi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector2i::maxi), 0>>(p_arg_0));
+}
 } // namespace puerts_generated
 
 inline void register_type_vector2i() {
@@ -3709,26 +5912,26 @@ inline void register_type_vector2i() {
 			.constructor<const godot::Vector2i &>()
 			.constructor<const godot::Vector2 &>()
 			.constructor<int64_t, int64_t>()
-			.method<&godot::Vector2i::aspect>("aspect")
-			.method<&godot::Vector2i::max_axis_index>("max_axis_index")
-			.method<&godot::Vector2i::min_axis_index>("min_axis_index")
-			.method<&godot::Vector2i::distance_to>("distance_to")
-			.method<&godot::Vector2i::distance_squared_to>("distance_squared_to")
-			.method<&godot::Vector2i::length>("length")
-			.method<&godot::Vector2i::length_squared>("length_squared")
-			.method<&godot::Vector2i::sign>("sign")
-			.method<&godot::Vector2i::abs>("abs")
-			.method<&godot::Vector2i::clamp>("clamp")
-			.method<&godot::Vector2i::clampi>("clampi")
-			.method<&godot::Vector2i::snapped>("snapped")
-			.method<&godot::Vector2i::snappedi>("snappedi")
-			.method<&godot::Vector2i::min>("min")
-			.method<&godot::Vector2i::mini>("mini")
-			.method<&godot::Vector2i::max>("max")
-			.method<&godot::Vector2i::maxi>("maxi")
+			.method<&puerts_generated::vector2i_aspect_overload0_arity0>("aspect")
+			.method<&puerts_generated::vector2i_max_axis_index_overload0_arity0>("max_axis_index")
+			.method<&puerts_generated::vector2i_min_axis_index_overload0_arity0>("min_axis_index")
+			.method<&puerts_generated::vector2i_distance_to_overload0_arity1>("distance_to")
+			.method<&puerts_generated::vector2i_distance_squared_to_overload0_arity1>("distance_squared_to")
+			.method<&puerts_generated::vector2i_length_overload0_arity0>("length")
+			.method<&puerts_generated::vector2i_length_squared_overload0_arity0>("length_squared")
+			.method<&puerts_generated::vector2i_sign_overload0_arity0>("sign")
+			.method<&puerts_generated::vector2i_abs_overload0_arity0>("abs")
+			.method<&puerts_generated::vector2i_clamp_overload0_arity2>("clamp")
+			.method<&puerts_generated::vector2i_clampi_overload0_arity2>("clampi")
+			.method<&puerts_generated::vector2i_snapped_overload0_arity1>("snapped")
+			.method<&puerts_generated::vector2i_snappedi_overload0_arity1>("snappedi")
+			.method<&puerts_generated::vector2i_min_overload0_arity1>("min")
+			.method<&puerts_generated::vector2i_mini_overload0_arity1>("mini")
+			.method<&puerts_generated::vector2i_max_overload0_arity1>("max")
+			.method<&puerts_generated::vector2i_maxi_overload0_arity1>("maxi")
 			.property<&godot::Vector2i::x>("x")
 			.property<&godot::Vector2i::y>("y")
-			.enum_type<puerts_generated::vector2i_axis_enum_tag>("Axis")
+			.nested_type("Axis", "Vector2i.Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3753,10 +5956,10 @@ inline godot::Vector3 vector3_op_multiply_5(const godot::Vector3 &left, int64_t 
 inline godot::Vector3 vector3_op_division_6(const godot::Vector3 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_multiply_7(const godot::Vector3 &left, godot::real_t right) {
+inline godot::Vector3 vector3_op_multiply_7(const godot::Vector3 &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3_op_division_8(const godot::Vector3 &left, godot::real_t right) {
+inline godot::Vector3 vector3_op_division_8(const godot::Vector3 &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3>(left, right);
 }
 inline bool vector3_op_equality_9(const godot::Vector3 &left, const godot::Vector3 &right) {
@@ -3852,8 +6055,152 @@ inline godot::Vector3 vector3_model_front() {
 inline godot::Vector3 vector3_model_rear() {
 	return { 0, 0, -1 };
 }
-inline decltype(auto) vector3_limit_length_default0(const godot::Vector3 &p_self) {
+inline decltype(auto) vector3_min_axis_index_overload0_arity0(const godot::Vector3 &p_self) {
+	return static_cast<int64_t>(p_self.min_axis_index());
+}
+inline decltype(auto) vector3_max_axis_index_overload0_arity0(const godot::Vector3 &p_self) {
+	return static_cast<int64_t>(p_self.max_axis_index());
+}
+inline decltype(auto) vector3_angle_to_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.angle_to(p_arg_0));
+}
+inline decltype(auto) vector3_signed_angle_to_overload0_arity2(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+	return static_cast<double>(p_self.signed_angle_to(p_arg_0, p_arg_1));
+}
+inline decltype(auto) vector3_direction_to_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.direction_to(p_arg_0);
+}
+inline decltype(auto) vector3_distance_to_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.distance_to(p_arg_0));
+}
+inline decltype(auto) vector3_distance_squared_to_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.distance_squared_to(p_arg_0));
+}
+inline decltype(auto) vector3_length_overload0_arity0(const godot::Vector3 &p_self) {
+	return static_cast<double>(p_self.length());
+}
+inline decltype(auto) vector3_length_squared_overload0_arity0(const godot::Vector3 &p_self) {
+	return static_cast<double>(p_self.length_squared());
+}
+inline decltype(auto) vector3_limit_length_overload0_arity0(const godot::Vector3 &p_self) {
 	return p_self.limit_length();
+}
+inline decltype(auto) vector3_limit_length_overload0_arity1(const godot::Vector3 &p_self, double p_arg_0) {
+	return p_self.limit_length(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::limit_length), 0>>(p_arg_0));
+}
+inline decltype(auto) vector3_normalized_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.normalized();
+}
+inline decltype(auto) vector3_is_normalized_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.is_normalized();
+}
+inline decltype(auto) vector3_is_equal_approx_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) vector3_is_zero_approx_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.is_zero_approx();
+}
+inline decltype(auto) vector3_is_finite_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) vector3_inverse_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.inverse();
+}
+inline decltype(auto) vector3_clamp_overload0_arity2(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1) {
+	return p_self.clamp(p_arg_0, p_arg_1);
+}
+inline decltype(auto) vector3_clampf_overload0_arity2(const godot::Vector3 &p_self, double p_arg_0, double p_arg_1) {
+	return p_self.clampf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::clampf), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::clampf), 1>>(p_arg_1));
+}
+inline decltype(auto) vector3_snapped_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.snapped(p_arg_0);
+}
+inline decltype(auto) vector3_snappedf_overload0_arity1(const godot::Vector3 &p_self, double p_arg_0) {
+	return p_self.snappedf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::snappedf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector3_rotated_overload0_arity2(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.rotated(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::rotated), 1>>(p_arg_1));
+}
+inline decltype(auto) vector3_lerp_overload0_arity2(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.lerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::lerp), 1>>(p_arg_1));
+}
+inline decltype(auto) vector3_slerp_overload0_arity2(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.slerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::slerp), 1>>(p_arg_1));
+}
+inline decltype(auto) vector3_cubic_interpolate_overload0_arity4(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1, const godot::Vector3 &p_arg_2, double p_arg_3) {
+	return p_self.cubic_interpolate(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::cubic_interpolate), 3>>(p_arg_3));
+}
+inline decltype(auto) vector3_cubic_interpolate_in_time_overload0_arity7(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1, const godot::Vector3 &p_arg_2, double p_arg_3, double p_arg_4, double p_arg_5, double p_arg_6) {
+	return p_self.cubic_interpolate_in_time(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::cubic_interpolate_in_time), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::cubic_interpolate_in_time), 4>>(p_arg_4), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::cubic_interpolate_in_time), 5>>(p_arg_5), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::cubic_interpolate_in_time), 6>>(p_arg_6));
+}
+inline decltype(auto) vector3_bezier_interpolate_overload0_arity4(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1, const godot::Vector3 &p_arg_2, double p_arg_3) {
+	return p_self.bezier_interpolate(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::bezier_interpolate), 3>>(p_arg_3));
+}
+inline decltype(auto) vector3_bezier_derivative_overload0_arity4(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, const godot::Vector3 &p_arg_1, const godot::Vector3 &p_arg_2, double p_arg_3) {
+	return p_self.bezier_derivative(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::bezier_derivative), 3>>(p_arg_3));
+}
+inline decltype(auto) vector3_move_toward_overload0_arity2(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0, double p_arg_1) {
+	return p_self.move_toward(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::move_toward), 1>>(p_arg_1));
+}
+inline decltype(auto) vector3_dot_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return static_cast<double>(p_self.dot(p_arg_0));
+}
+inline decltype(auto) vector3_cross_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.cross(p_arg_0);
+}
+inline decltype(auto) vector3_outer_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.outer(p_arg_0);
+}
+inline decltype(auto) vector3_abs_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.abs();
+}
+inline decltype(auto) vector3_floor_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.floor();
+}
+inline decltype(auto) vector3_ceil_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.ceil();
+}
+inline decltype(auto) vector3_round_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.round();
+}
+inline decltype(auto) vector3_posmod_overload0_arity1(const godot::Vector3 &p_self, double p_arg_0) {
+	return p_self.posmod(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::posmod), 0>>(p_arg_0));
+}
+inline decltype(auto) vector3_posmodv_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.posmodv(p_arg_0);
+}
+inline decltype(auto) vector3_project_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.project(p_arg_0);
+}
+inline decltype(auto) vector3_slide_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.slide(p_arg_0);
+}
+inline decltype(auto) vector3_bounce_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.bounce(p_arg_0);
+}
+inline decltype(auto) vector3_reflect_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.reflect(p_arg_0);
+}
+inline decltype(auto) vector3_sign_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.sign();
+}
+inline decltype(auto) vector3_octahedron_encode_overload0_arity0(const godot::Vector3 &p_self) {
+	return p_self.octahedron_encode();
+}
+inline decltype(auto) vector3_min_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.min(p_arg_0);
+}
+inline decltype(auto) vector3_minf_overload0_arity1(const godot::Vector3 &p_self, double p_arg_0) {
+	return p_self.minf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::minf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector3_max_overload0_arity1(const godot::Vector3 &p_self, const godot::Vector3 &p_arg_0) {
+	return p_self.max(p_arg_0);
+}
+inline decltype(auto) vector3_maxf_overload0_arity1(const godot::Vector3 &p_self, double p_arg_0) {
+	return p_self.maxf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3::maxf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector3_octahedron_decode_overload0_arity1(const godot::Vector2 &p_arg_0) {
+	return godot::Vector3::octahedron_decode(p_arg_0);
 }
 } // namespace puerts_generated
 
@@ -3891,59 +6238,59 @@ inline void register_type_vector3() {
 			.constructor<>()
 			.constructor<const godot::Vector3 &>()
 			.constructor<const godot::Vector3i &>()
-			.constructor<godot::real_t, godot::real_t, godot::real_t>()
-			.method<&godot::Vector3::min_axis_index>("min_axis_index")
-			.method<&godot::Vector3::max_axis_index>("max_axis_index")
-			.method<&godot::Vector3::angle_to>("angle_to")
-			.method<&godot::Vector3::signed_angle_to>("signed_angle_to")
-			.method<&godot::Vector3::direction_to>("direction_to")
-			.method<&godot::Vector3::distance_to>("distance_to")
-			.method<&godot::Vector3::distance_squared_to>("distance_squared_to")
-			.method<&godot::Vector3::length>("length")
-			.method<&godot::Vector3::length_squared>("length_squared")
-			.method<&puerts_generated::vector3_limit_length_default0, &godot::Vector3::limit_length>("limit_length")
-			.method<&godot::Vector3::normalized>("normalized")
-			.method<&godot::Vector3::is_normalized>("is_normalized")
-			.method<&godot::Vector3::is_equal_approx>("is_equal_approx")
-			.method<&godot::Vector3::is_zero_approx>("is_zero_approx")
-			.method<&godot::Vector3::is_finite>("is_finite")
-			.method<&godot::Vector3::inverse>("inverse")
-			.method<&godot::Vector3::clamp>("clamp")
-			.method<&godot::Vector3::clampf>("clampf")
-			.method<&godot::Vector3::snapped>("snapped")
-			.method<&godot::Vector3::snappedf>("snappedf")
-			.method<&godot::Vector3::rotated>("rotated")
-			.method<&godot::Vector3::lerp>("lerp")
-			.method<&godot::Vector3::slerp>("slerp")
-			.method<&godot::Vector3::cubic_interpolate>("cubic_interpolate")
-			.method<&godot::Vector3::cubic_interpolate_in_time>("cubic_interpolate_in_time")
-			.method<&godot::Vector3::bezier_interpolate>("bezier_interpolate")
-			.method<&godot::Vector3::bezier_derivative>("bezier_derivative")
-			.method<&godot::Vector3::move_toward>("move_toward")
-			.method<&godot::Vector3::dot>("dot")
-			.method<&godot::Vector3::cross>("cross")
-			.method<&godot::Vector3::outer>("outer")
-			.method<&godot::Vector3::abs>("abs")
-			.method<&godot::Vector3::floor>("floor")
-			.method<&godot::Vector3::ceil>("ceil")
-			.method<&godot::Vector3::round>("round")
-			.method<&godot::Vector3::posmod>("posmod")
-			.method<&godot::Vector3::posmodv>("posmodv")
-			.method<&godot::Vector3::project>("project")
-			.method<&godot::Vector3::slide>("slide")
-			.method<&godot::Vector3::bounce>("bounce")
-			.method<&godot::Vector3::reflect>("reflect")
-			.method<&godot::Vector3::sign>("sign")
-			.method<&godot::Vector3::octahedron_encode>("octahedron_encode")
-			.method<&godot::Vector3::min>("min")
-			.method<&godot::Vector3::minf>("minf")
-			.method<&godot::Vector3::max>("max")
-			.method<&godot::Vector3::maxf>("maxf")
-			.static_method<&godot::Vector3::octahedron_decode>("octahedron_decode")
+			.constructor<double, double, double>()
+			.method<&puerts_generated::vector3_min_axis_index_overload0_arity0>("min_axis_index")
+			.method<&puerts_generated::vector3_max_axis_index_overload0_arity0>("max_axis_index")
+			.method<&puerts_generated::vector3_angle_to_overload0_arity1>("angle_to")
+			.method<&puerts_generated::vector3_signed_angle_to_overload0_arity2>("signed_angle_to")
+			.method<&puerts_generated::vector3_direction_to_overload0_arity1>("direction_to")
+			.method<&puerts_generated::vector3_distance_to_overload0_arity1>("distance_to")
+			.method<&puerts_generated::vector3_distance_squared_to_overload0_arity1>("distance_squared_to")
+			.method<&puerts_generated::vector3_length_overload0_arity0>("length")
+			.method<&puerts_generated::vector3_length_squared_overload0_arity0>("length_squared")
+			.method<&puerts_generated::vector3_limit_length_overload0_arity0, &puerts_generated::vector3_limit_length_overload0_arity1>("limit_length")
+			.method<&puerts_generated::vector3_normalized_overload0_arity0>("normalized")
+			.method<&puerts_generated::vector3_is_normalized_overload0_arity0>("is_normalized")
+			.method<&puerts_generated::vector3_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::vector3_is_zero_approx_overload0_arity0>("is_zero_approx")
+			.method<&puerts_generated::vector3_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::vector3_inverse_overload0_arity0>("inverse")
+			.method<&puerts_generated::vector3_clamp_overload0_arity2>("clamp")
+			.method<&puerts_generated::vector3_clampf_overload0_arity2>("clampf")
+			.method<&puerts_generated::vector3_snapped_overload0_arity1>("snapped")
+			.method<&puerts_generated::vector3_snappedf_overload0_arity1>("snappedf")
+			.method<&puerts_generated::vector3_rotated_overload0_arity2>("rotated")
+			.method<&puerts_generated::vector3_lerp_overload0_arity2>("lerp")
+			.method<&puerts_generated::vector3_slerp_overload0_arity2>("slerp")
+			.method<&puerts_generated::vector3_cubic_interpolate_overload0_arity4>("cubic_interpolate")
+			.method<&puerts_generated::vector3_cubic_interpolate_in_time_overload0_arity7>("cubic_interpolate_in_time")
+			.method<&puerts_generated::vector3_bezier_interpolate_overload0_arity4>("bezier_interpolate")
+			.method<&puerts_generated::vector3_bezier_derivative_overload0_arity4>("bezier_derivative")
+			.method<&puerts_generated::vector3_move_toward_overload0_arity2>("move_toward")
+			.method<&puerts_generated::vector3_dot_overload0_arity1>("dot")
+			.method<&puerts_generated::vector3_cross_overload0_arity1>("cross")
+			.method<&puerts_generated::vector3_outer_overload0_arity1>("outer")
+			.method<&puerts_generated::vector3_abs_overload0_arity0>("abs")
+			.method<&puerts_generated::vector3_floor_overload0_arity0>("floor")
+			.method<&puerts_generated::vector3_ceil_overload0_arity0>("ceil")
+			.method<&puerts_generated::vector3_round_overload0_arity0>("round")
+			.method<&puerts_generated::vector3_posmod_overload0_arity1>("posmod")
+			.method<&puerts_generated::vector3_posmodv_overload0_arity1>("posmodv")
+			.method<&puerts_generated::vector3_project_overload0_arity1>("project")
+			.method<&puerts_generated::vector3_slide_overload0_arity1>("slide")
+			.method<&puerts_generated::vector3_bounce_overload0_arity1>("bounce")
+			.method<&puerts_generated::vector3_reflect_overload0_arity1>("reflect")
+			.method<&puerts_generated::vector3_sign_overload0_arity0>("sign")
+			.method<&puerts_generated::vector3_octahedron_encode_overload0_arity0>("octahedron_encode")
+			.method<&puerts_generated::vector3_min_overload0_arity1>("min")
+			.method<&puerts_generated::vector3_minf_overload0_arity1>("minf")
+			.method<&puerts_generated::vector3_max_overload0_arity1>("max")
+			.method<&puerts_generated::vector3_maxf_overload0_arity1>("maxf")
+			.static_method<&puerts_generated::vector3_octahedron_decode_overload0_arity1>("octahedron_decode")
 			.property<&godot::Vector3::x>("x")
 			.property<&godot::Vector3::y>("y")
 			.property<&godot::Vector3::z>("z")
-			.enum_type<puerts_generated::vector3_axis_enum_tag>("Axis")
+			.nested_type("Axis", "Vector3.Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -3971,10 +6318,10 @@ inline godot::Vector3i vector3i_op_division_6(const godot::Vector3i &left, int64
 inline godot::Vector3i vector3i_op_modulus_7(const godot::Vector3i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector3i>(left, right);
 }
-inline godot::Vector3 vector3i_op_multiply_8(const godot::Vector3i &left, godot::real_t right) {
+inline godot::Vector3 vector3i_op_multiply_8(const godot::Vector3i &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector3>(left, right);
 }
-inline godot::Vector3 vector3i_op_division_9(const godot::Vector3i &left, godot::real_t right) {
+inline godot::Vector3 vector3i_op_division_9(const godot::Vector3i &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector3>(left, right);
 }
 inline bool vector3i_op_equality_10(const godot::Vector3i &left, const godot::Vector3i &right) {
@@ -4046,6 +6393,54 @@ inline godot::Vector3i vector3i_forward() {
 inline godot::Vector3i vector3i_back() {
 	return { 0, 0, 1 };
 }
+inline decltype(auto) vector3i_min_axis_index_overload0_arity0(const godot::Vector3i &p_self) {
+	return static_cast<int64_t>(p_self.min_axis_index());
+}
+inline decltype(auto) vector3i_max_axis_index_overload0_arity0(const godot::Vector3i &p_self) {
+	return static_cast<int64_t>(p_self.max_axis_index());
+}
+inline decltype(auto) vector3i_distance_to_overload0_arity1(const godot::Vector3i &p_self, const godot::Vector3i &p_arg_0) {
+	return static_cast<double>(p_self.distance_to(p_arg_0));
+}
+inline decltype(auto) vector3i_distance_squared_to_overload0_arity1(const godot::Vector3i &p_self, const godot::Vector3i &p_arg_0) {
+	return static_cast<int64_t>(p_self.distance_squared_to(p_arg_0));
+}
+inline decltype(auto) vector3i_length_overload0_arity0(const godot::Vector3i &p_self) {
+	return static_cast<double>(p_self.length());
+}
+inline decltype(auto) vector3i_length_squared_overload0_arity0(const godot::Vector3i &p_self) {
+	return static_cast<int64_t>(p_self.length_squared());
+}
+inline decltype(auto) vector3i_sign_overload0_arity0(const godot::Vector3i &p_self) {
+	return p_self.sign();
+}
+inline decltype(auto) vector3i_abs_overload0_arity0(const godot::Vector3i &p_self) {
+	return p_self.abs();
+}
+inline decltype(auto) vector3i_clamp_overload0_arity2(const godot::Vector3i &p_self, const godot::Vector3i &p_arg_0, const godot::Vector3i &p_arg_1) {
+	return p_self.clamp(p_arg_0, p_arg_1);
+}
+inline decltype(auto) vector3i_clampi_overload0_arity2(const godot::Vector3i &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.clampi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3i::clampi), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3i::clampi), 1>>(p_arg_1));
+}
+inline decltype(auto) vector3i_snapped_overload0_arity1(const godot::Vector3i &p_self, const godot::Vector3i &p_arg_0) {
+	return p_self.snapped(p_arg_0);
+}
+inline decltype(auto) vector3i_snappedi_overload0_arity1(const godot::Vector3i &p_self, int64_t p_arg_0) {
+	return p_self.snappedi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3i::snappedi), 0>>(p_arg_0));
+}
+inline decltype(auto) vector3i_min_overload0_arity1(const godot::Vector3i &p_self, const godot::Vector3i &p_arg_0) {
+	return p_self.min(p_arg_0);
+}
+inline decltype(auto) vector3i_mini_overload0_arity1(const godot::Vector3i &p_self, int64_t p_arg_0) {
+	return p_self.mini(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3i::mini), 0>>(p_arg_0));
+}
+inline decltype(auto) vector3i_max_overload0_arity1(const godot::Vector3i &p_self, const godot::Vector3i &p_arg_0) {
+	return p_self.max(p_arg_0);
+}
+inline decltype(auto) vector3i_maxi_overload0_arity1(const godot::Vector3i &p_self, int64_t p_arg_0) {
+	return p_self.maxi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector3i::maxi), 0>>(p_arg_0));
+}
 } // namespace puerts_generated
 
 inline void register_type_vector3i() {
@@ -4079,26 +6474,26 @@ inline void register_type_vector3i() {
 			.constructor<const godot::Vector3i &>()
 			.constructor<const godot::Vector3 &>()
 			.constructor<int64_t, int64_t, int64_t>()
-			.method<&godot::Vector3i::min_axis_index>("min_axis_index")
-			.method<&godot::Vector3i::max_axis_index>("max_axis_index")
-			.method<&godot::Vector3i::distance_to>("distance_to")
-			.method<&godot::Vector3i::distance_squared_to>("distance_squared_to")
-			.method<&godot::Vector3i::length>("length")
-			.method<&godot::Vector3i::length_squared>("length_squared")
-			.method<&godot::Vector3i::sign>("sign")
-			.method<&godot::Vector3i::abs>("abs")
-			.method<&godot::Vector3i::clamp>("clamp")
-			.method<&godot::Vector3i::clampi>("clampi")
-			.method<&godot::Vector3i::snapped>("snapped")
-			.method<&godot::Vector3i::snappedi>("snappedi")
-			.method<&godot::Vector3i::min>("min")
-			.method<&godot::Vector3i::mini>("mini")
-			.method<&godot::Vector3i::max>("max")
-			.method<&godot::Vector3i::maxi>("maxi")
+			.method<&puerts_generated::vector3i_min_axis_index_overload0_arity0>("min_axis_index")
+			.method<&puerts_generated::vector3i_max_axis_index_overload0_arity0>("max_axis_index")
+			.method<&puerts_generated::vector3i_distance_to_overload0_arity1>("distance_to")
+			.method<&puerts_generated::vector3i_distance_squared_to_overload0_arity1>("distance_squared_to")
+			.method<&puerts_generated::vector3i_length_overload0_arity0>("length")
+			.method<&puerts_generated::vector3i_length_squared_overload0_arity0>("length_squared")
+			.method<&puerts_generated::vector3i_sign_overload0_arity0>("sign")
+			.method<&puerts_generated::vector3i_abs_overload0_arity0>("abs")
+			.method<&puerts_generated::vector3i_clamp_overload0_arity2>("clamp")
+			.method<&puerts_generated::vector3i_clampi_overload0_arity2>("clampi")
+			.method<&puerts_generated::vector3i_snapped_overload0_arity1>("snapped")
+			.method<&puerts_generated::vector3i_snappedi_overload0_arity1>("snappedi")
+			.method<&puerts_generated::vector3i_min_overload0_arity1>("min")
+			.method<&puerts_generated::vector3i_mini_overload0_arity1>("mini")
+			.method<&puerts_generated::vector3i_max_overload0_arity1>("max")
+			.method<&puerts_generated::vector3i_maxi_overload0_arity1>("maxi")
 			.property<&godot::Vector3i::x>("x")
 			.property<&godot::Vector3i::y>("y")
 			.property<&godot::Vector3i::z>("z")
-			.enum_type<puerts_generated::vector3i_axis_enum_tag>("Axis")
+			.nested_type("Axis", "Vector3i.Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4123,10 +6518,10 @@ inline godot::Vector4 vector4_op_multiply_5(const godot::Vector4 &left, int64_t 
 inline godot::Vector4 vector4_op_division_6(const godot::Vector4 &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_multiply_7(const godot::Vector4 &left, godot::real_t right) {
+inline godot::Vector4 vector4_op_multiply_7(const godot::Vector4 &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4_op_division_8(const godot::Vector4 &left, godot::real_t right) {
+inline godot::Vector4 vector4_op_division_8(const godot::Vector4 &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4>(left, right);
 }
 inline bool vector4_op_equality_9(const godot::Vector4 &left, const godot::Vector4 &right) {
@@ -4180,6 +6575,102 @@ inline godot::Vector4 vector4_one() {
 inline godot::Vector4 vector4_inf() {
 	return { INFINITY, INFINITY, INFINITY, INFINITY };
 }
+inline decltype(auto) vector4_min_axis_index_overload0_arity0(const godot::Vector4 &p_self) {
+	return static_cast<int64_t>(p_self.min_axis_index());
+}
+inline decltype(auto) vector4_max_axis_index_overload0_arity0(const godot::Vector4 &p_self) {
+	return static_cast<int64_t>(p_self.max_axis_index());
+}
+inline decltype(auto) vector4_length_overload0_arity0(const godot::Vector4 &p_self) {
+	return static_cast<double>(p_self.length());
+}
+inline decltype(auto) vector4_length_squared_overload0_arity0(const godot::Vector4 &p_self) {
+	return static_cast<double>(p_self.length_squared());
+}
+inline decltype(auto) vector4_abs_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.abs();
+}
+inline decltype(auto) vector4_sign_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.sign();
+}
+inline decltype(auto) vector4_floor_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.floor();
+}
+inline decltype(auto) vector4_ceil_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.ceil();
+}
+inline decltype(auto) vector4_round_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.round();
+}
+inline decltype(auto) vector4_lerp_overload0_arity2(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0, double p_arg_1) {
+	return p_self.lerp(p_arg_0, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::lerp), 1>>(p_arg_1));
+}
+inline decltype(auto) vector4_cubic_interpolate_overload0_arity4(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0, const godot::Vector4 &p_arg_1, const godot::Vector4 &p_arg_2, double p_arg_3) {
+	return p_self.cubic_interpolate(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::cubic_interpolate), 3>>(p_arg_3));
+}
+inline decltype(auto) vector4_cubic_interpolate_in_time_overload0_arity7(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0, const godot::Vector4 &p_arg_1, const godot::Vector4 &p_arg_2, double p_arg_3, double p_arg_4, double p_arg_5, double p_arg_6) {
+	return p_self.cubic_interpolate_in_time(p_arg_0, p_arg_1, p_arg_2, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::cubic_interpolate_in_time), 3>>(p_arg_3), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::cubic_interpolate_in_time), 4>>(p_arg_4), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::cubic_interpolate_in_time), 5>>(p_arg_5), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::cubic_interpolate_in_time), 6>>(p_arg_6));
+}
+inline decltype(auto) vector4_posmod_overload0_arity1(const godot::Vector4 &p_self, double p_arg_0) {
+	return p_self.posmod(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::posmod), 0>>(p_arg_0));
+}
+inline decltype(auto) vector4_posmodv_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return p_self.posmodv(p_arg_0);
+}
+inline decltype(auto) vector4_snapped_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return p_self.snapped(p_arg_0);
+}
+inline decltype(auto) vector4_snappedf_overload0_arity1(const godot::Vector4 &p_self, double p_arg_0) {
+	return p_self.snappedf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::snappedf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector4_clamp_overload0_arity2(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0, const godot::Vector4 &p_arg_1) {
+	return p_self.clamp(p_arg_0, p_arg_1);
+}
+inline decltype(auto) vector4_clampf_overload0_arity2(const godot::Vector4 &p_self, double p_arg_0, double p_arg_1) {
+	return p_self.clampf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::clampf), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::clampf), 1>>(p_arg_1));
+}
+inline decltype(auto) vector4_normalized_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.normalized();
+}
+inline decltype(auto) vector4_is_normalized_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.is_normalized();
+}
+inline decltype(auto) vector4_direction_to_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return p_self.direction_to(p_arg_0);
+}
+inline decltype(auto) vector4_distance_to_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return static_cast<double>(p_self.distance_to(p_arg_0));
+}
+inline decltype(auto) vector4_distance_squared_to_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return static_cast<double>(p_self.distance_squared_to(p_arg_0));
+}
+inline decltype(auto) vector4_dot_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return static_cast<double>(p_self.dot(p_arg_0));
+}
+inline decltype(auto) vector4_inverse_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.inverse();
+}
+inline decltype(auto) vector4_is_equal_approx_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return p_self.is_equal_approx(p_arg_0);
+}
+inline decltype(auto) vector4_is_zero_approx_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.is_zero_approx();
+}
+inline decltype(auto) vector4_is_finite_overload0_arity0(const godot::Vector4 &p_self) {
+	return p_self.is_finite();
+}
+inline decltype(auto) vector4_min_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return p_self.min(p_arg_0);
+}
+inline decltype(auto) vector4_minf_overload0_arity1(const godot::Vector4 &p_self, double p_arg_0) {
+	return p_self.minf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::minf), 0>>(p_arg_0));
+}
+inline decltype(auto) vector4_max_overload0_arity1(const godot::Vector4 &p_self, const godot::Vector4 &p_arg_0) {
+	return p_self.max(p_arg_0);
+}
+inline decltype(auto) vector4_maxf_overload0_arity1(const godot::Vector4 &p_self, double p_arg_0) {
+	return p_self.maxf(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4::maxf), 0>>(p_arg_0));
+}
 } // namespace puerts_generated
 
 inline void register_type_vector4() {
@@ -4204,44 +6695,44 @@ inline void register_type_vector4() {
 			.constructor<>()
 			.constructor<const godot::Vector4 &>()
 			.constructor<const godot::Vector4i &>()
-			.constructor<godot::real_t, godot::real_t, godot::real_t, godot::real_t>()
-			.method<&godot::Vector4::min_axis_index>("min_axis_index")
-			.method<&godot::Vector4::max_axis_index>("max_axis_index")
-			.method<&godot::Vector4::length>("length")
-			.method<&godot::Vector4::length_squared>("length_squared")
-			.method<&godot::Vector4::abs>("abs")
-			.method<&godot::Vector4::sign>("sign")
-			.method<&godot::Vector4::floor>("floor")
-			.method<&godot::Vector4::ceil>("ceil")
-			.method<&godot::Vector4::round>("round")
-			.method<&godot::Vector4::lerp>("lerp")
-			.method<&godot::Vector4::cubic_interpolate>("cubic_interpolate")
-			.method<&godot::Vector4::cubic_interpolate_in_time>("cubic_interpolate_in_time")
-			.method<&godot::Vector4::posmod>("posmod")
-			.method<&godot::Vector4::posmodv>("posmodv")
-			.method<&godot::Vector4::snapped>("snapped")
-			.method<&godot::Vector4::snappedf>("snappedf")
-			.method<&godot::Vector4::clamp>("clamp")
-			.method<&godot::Vector4::clampf>("clampf")
-			.method<&godot::Vector4::normalized>("normalized")
-			.method<&godot::Vector4::is_normalized>("is_normalized")
-			.method<&godot::Vector4::direction_to>("direction_to")
-			.method<&godot::Vector4::distance_to>("distance_to")
-			.method<&godot::Vector4::distance_squared_to>("distance_squared_to")
-			.method<&godot::Vector4::dot>("dot")
-			.method<&godot::Vector4::inverse>("inverse")
-			.method<&godot::Vector4::is_equal_approx>("is_equal_approx")
-			.method<&godot::Vector4::is_zero_approx>("is_zero_approx")
-			.method<&godot::Vector4::is_finite>("is_finite")
-			.method<&godot::Vector4::min>("min")
-			.method<&godot::Vector4::minf>("minf")
-			.method<&godot::Vector4::max>("max")
-			.method<&godot::Vector4::maxf>("maxf")
+			.constructor<double, double, double, double>()
+			.method<&puerts_generated::vector4_min_axis_index_overload0_arity0>("min_axis_index")
+			.method<&puerts_generated::vector4_max_axis_index_overload0_arity0>("max_axis_index")
+			.method<&puerts_generated::vector4_length_overload0_arity0>("length")
+			.method<&puerts_generated::vector4_length_squared_overload0_arity0>("length_squared")
+			.method<&puerts_generated::vector4_abs_overload0_arity0>("abs")
+			.method<&puerts_generated::vector4_sign_overload0_arity0>("sign")
+			.method<&puerts_generated::vector4_floor_overload0_arity0>("floor")
+			.method<&puerts_generated::vector4_ceil_overload0_arity0>("ceil")
+			.method<&puerts_generated::vector4_round_overload0_arity0>("round")
+			.method<&puerts_generated::vector4_lerp_overload0_arity2>("lerp")
+			.method<&puerts_generated::vector4_cubic_interpolate_overload0_arity4>("cubic_interpolate")
+			.method<&puerts_generated::vector4_cubic_interpolate_in_time_overload0_arity7>("cubic_interpolate_in_time")
+			.method<&puerts_generated::vector4_posmod_overload0_arity1>("posmod")
+			.method<&puerts_generated::vector4_posmodv_overload0_arity1>("posmodv")
+			.method<&puerts_generated::vector4_snapped_overload0_arity1>("snapped")
+			.method<&puerts_generated::vector4_snappedf_overload0_arity1>("snappedf")
+			.method<&puerts_generated::vector4_clamp_overload0_arity2>("clamp")
+			.method<&puerts_generated::vector4_clampf_overload0_arity2>("clampf")
+			.method<&puerts_generated::vector4_normalized_overload0_arity0>("normalized")
+			.method<&puerts_generated::vector4_is_normalized_overload0_arity0>("is_normalized")
+			.method<&puerts_generated::vector4_direction_to_overload0_arity1>("direction_to")
+			.method<&puerts_generated::vector4_distance_to_overload0_arity1>("distance_to")
+			.method<&puerts_generated::vector4_distance_squared_to_overload0_arity1>("distance_squared_to")
+			.method<&puerts_generated::vector4_dot_overload0_arity1>("dot")
+			.method<&puerts_generated::vector4_inverse_overload0_arity0>("inverse")
+			.method<&puerts_generated::vector4_is_equal_approx_overload0_arity1>("is_equal_approx")
+			.method<&puerts_generated::vector4_is_zero_approx_overload0_arity0>("is_zero_approx")
+			.method<&puerts_generated::vector4_is_finite_overload0_arity0>("is_finite")
+			.method<&puerts_generated::vector4_min_overload0_arity1>("min")
+			.method<&puerts_generated::vector4_minf_overload0_arity1>("minf")
+			.method<&puerts_generated::vector4_max_overload0_arity1>("max")
+			.method<&puerts_generated::vector4_maxf_overload0_arity1>("maxf")
 			.property<&godot::Vector4::x>("x")
 			.property<&godot::Vector4::y>("y")
 			.property<&godot::Vector4::z>("z")
 			.property<&godot::Vector4::w>("w")
-			.enum_type<puerts_generated::vector4_axis_enum_tag>("Axis")
+			.nested_type("Axis", "Vector4.Axis")
 			.register_type();
 }
 namespace puerts_generated {
@@ -4269,10 +6760,10 @@ inline godot::Vector4i vector4i_op_division_6(const godot::Vector4i &left, int64
 inline godot::Vector4i vector4i_op_modulus_7(const godot::Vector4i &left, int64_t right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MODULE, godot::Vector4i>(left, right);
 }
-inline godot::Vector4 vector4i_op_multiply_8(const godot::Vector4i &left, godot::real_t right) {
+inline godot::Vector4 vector4i_op_multiply_8(const godot::Vector4i &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_MULTIPLY, godot::Vector4>(left, right);
 }
-inline godot::Vector4 vector4i_op_division_9(const godot::Vector4i &left, godot::real_t right) {
+inline godot::Vector4 vector4i_op_division_9(const godot::Vector4i &left, double right) {
 	return puerts::evaluate_operator<godot::Variant::OP_DIVIDE, godot::Vector4>(left, right);
 }
 inline bool vector4i_op_equality_10(const godot::Vector4i &left, const godot::Vector4i &right) {
@@ -4326,6 +6817,54 @@ inline godot::Vector4i vector4i_min() {
 inline godot::Vector4i vector4i_max() {
 	return { INT32_MAX, INT32_MAX, INT32_MAX, INT32_MAX };
 }
+inline decltype(auto) vector4i_min_axis_index_overload0_arity0(const godot::Vector4i &p_self) {
+	return static_cast<int64_t>(p_self.min_axis_index());
+}
+inline decltype(auto) vector4i_max_axis_index_overload0_arity0(const godot::Vector4i &p_self) {
+	return static_cast<int64_t>(p_self.max_axis_index());
+}
+inline decltype(auto) vector4i_length_overload0_arity0(const godot::Vector4i &p_self) {
+	return static_cast<double>(p_self.length());
+}
+inline decltype(auto) vector4i_length_squared_overload0_arity0(const godot::Vector4i &p_self) {
+	return static_cast<int64_t>(p_self.length_squared());
+}
+inline decltype(auto) vector4i_sign_overload0_arity0(const godot::Vector4i &p_self) {
+	return p_self.sign();
+}
+inline decltype(auto) vector4i_abs_overload0_arity0(const godot::Vector4i &p_self) {
+	return p_self.abs();
+}
+inline decltype(auto) vector4i_clamp_overload0_arity2(const godot::Vector4i &p_self, const godot::Vector4i &p_arg_0, const godot::Vector4i &p_arg_1) {
+	return p_self.clamp(p_arg_0, p_arg_1);
+}
+inline decltype(auto) vector4i_clampi_overload0_arity2(const godot::Vector4i &p_self, int64_t p_arg_0, int64_t p_arg_1) {
+	return p_self.clampi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4i::clampi), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4i::clampi), 1>>(p_arg_1));
+}
+inline decltype(auto) vector4i_snapped_overload0_arity1(const godot::Vector4i &p_self, const godot::Vector4i &p_arg_0) {
+	return p_self.snapped(p_arg_0);
+}
+inline decltype(auto) vector4i_snappedi_overload0_arity1(const godot::Vector4i &p_self, int64_t p_arg_0) {
+	return p_self.snappedi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4i::snappedi), 0>>(p_arg_0));
+}
+inline decltype(auto) vector4i_min_overload0_arity1(const godot::Vector4i &p_self, const godot::Vector4i &p_arg_0) {
+	return p_self.min(p_arg_0);
+}
+inline decltype(auto) vector4i_mini_overload0_arity1(const godot::Vector4i &p_self, int64_t p_arg_0) {
+	return p_self.mini(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4i::mini), 0>>(p_arg_0));
+}
+inline decltype(auto) vector4i_max_overload0_arity1(const godot::Vector4i &p_self, const godot::Vector4i &p_arg_0) {
+	return p_self.max(p_arg_0);
+}
+inline decltype(auto) vector4i_maxi_overload0_arity1(const godot::Vector4i &p_self, int64_t p_arg_0) {
+	return p_self.maxi(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Vector4i::maxi), 0>>(p_arg_0));
+}
+inline decltype(auto) vector4i_distance_to_overload0_arity1(const godot::Vector4i &p_self, const godot::Vector4i &p_arg_0) {
+	return static_cast<double>(p_self.distance_to(p_arg_0));
+}
+inline decltype(auto) vector4i_distance_squared_to_overload0_arity1(const godot::Vector4i &p_self, const godot::Vector4i &p_arg_0) {
+	return static_cast<int64_t>(p_self.distance_squared_to(p_arg_0));
+}
 } // namespace puerts_generated
 
 inline void register_type_vector4i() {
@@ -4353,27 +6892,27 @@ inline void register_type_vector4i() {
 			.constructor<const godot::Vector4i &>()
 			.constructor<const godot::Vector4 &>()
 			.constructor<int64_t, int64_t, int64_t, int64_t>()
-			.method<&godot::Vector4i::min_axis_index>("min_axis_index")
-			.method<&godot::Vector4i::max_axis_index>("max_axis_index")
-			.method<&godot::Vector4i::length>("length")
-			.method<&godot::Vector4i::length_squared>("length_squared")
-			.method<&godot::Vector4i::sign>("sign")
-			.method<&godot::Vector4i::abs>("abs")
-			.method<&godot::Vector4i::clamp>("clamp")
-			.method<&godot::Vector4i::clampi>("clampi")
-			.method<&godot::Vector4i::snapped>("snapped")
-			.method<&godot::Vector4i::snappedi>("snappedi")
-			.method<&godot::Vector4i::min>("min")
-			.method<&godot::Vector4i::mini>("mini")
-			.method<&godot::Vector4i::max>("max")
-			.method<&godot::Vector4i::maxi>("maxi")
-			.method<&godot::Vector4i::distance_to>("distance_to")
-			.method<&godot::Vector4i::distance_squared_to>("distance_squared_to")
+			.method<&puerts_generated::vector4i_min_axis_index_overload0_arity0>("min_axis_index")
+			.method<&puerts_generated::vector4i_max_axis_index_overload0_arity0>("max_axis_index")
+			.method<&puerts_generated::vector4i_length_overload0_arity0>("length")
+			.method<&puerts_generated::vector4i_length_squared_overload0_arity0>("length_squared")
+			.method<&puerts_generated::vector4i_sign_overload0_arity0>("sign")
+			.method<&puerts_generated::vector4i_abs_overload0_arity0>("abs")
+			.method<&puerts_generated::vector4i_clamp_overload0_arity2>("clamp")
+			.method<&puerts_generated::vector4i_clampi_overload0_arity2>("clampi")
+			.method<&puerts_generated::vector4i_snapped_overload0_arity1>("snapped")
+			.method<&puerts_generated::vector4i_snappedi_overload0_arity1>("snappedi")
+			.method<&puerts_generated::vector4i_min_overload0_arity1>("min")
+			.method<&puerts_generated::vector4i_mini_overload0_arity1>("mini")
+			.method<&puerts_generated::vector4i_max_overload0_arity1>("max")
+			.method<&puerts_generated::vector4i_maxi_overload0_arity1>("maxi")
+			.method<&puerts_generated::vector4i_distance_to_overload0_arity1>("distance_to")
+			.method<&puerts_generated::vector4i_distance_squared_to_overload0_arity1>("distance_squared_to")
 			.property<&godot::Vector4i::x>("x")
 			.property<&godot::Vector4i::y>("y")
 			.property<&godot::Vector4i::z>("z")
 			.property<&godot::Vector4i::w>("w")
-			.enum_type<puerts_generated::vector4i_axis_enum_tag>("Axis")
+			.nested_type("Axis", "Vector4i.Axis")
 			.register_type();
 }
 

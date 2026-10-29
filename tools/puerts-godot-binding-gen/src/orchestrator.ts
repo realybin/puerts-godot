@@ -7,7 +7,6 @@ import { basename, dirname, resolve } from "node:path";
 import { normalizeOperators } from "../../puerts-godot-operator-model/index.js";
 import { generateClassBinding, generateEnumBindings } from "./class_codegen.js";
 import { generateGlobalScopeBinding } from "./global_scope_codegen.js";
-import { analyzeHeaderMethods, readClassHeaderSource } from "./header_analysis.js";
 import { collectPropertyBindings } from "./property_bindings.js";
 import { resolveApiVersion, toIncludeGuardMacro, toSnakeCase } from "./text_utils.js";
 import type {
@@ -17,24 +16,25 @@ import type {
 	GeneratedClassBinding,
 	GeneratedEnumBinding,
 	PropertyRule,
-	PropertyRulesConfig,
+	MethodAdapter,
+	BindingRulesConfig,
 } from "./types.js";
 
-function loadPropertyRules(propertyRulesPath: string): PropertyRule[] {
-	try {
-		const propertyRaw = readFileSync(propertyRulesPath, "utf8");
-		const propertyRulesConfig = JSON.parse(propertyRaw) as PropertyRulesConfig;
-		return propertyRulesConfig.custom_properties ?? [];
-	} catch (error) {
-		if (isMissingFileError(error)) {
-			return [];
+function loadBindingRules(bindingRulesPath: string): BindingRulesConfig {
+	const rules = JSON.parse(readFileSync(bindingRulesPath, "utf8")) as BindingRulesConfig;
+	for (const key of Object.keys(rules)) {
+		if (!["methods", "properties", "excluded_methods", "excluded_properties"].includes(key)) {
+			throw new Error(`Unknown binding rules field: ${key}.`);
 		}
-		throw error;
 	}
-}
-
-function isMissingFileError(error: unknown): error is NodeJS.ErrnoException {
-	return typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
+	for (const [name, rule] of Object.entries(rules.methods ?? {})) {
+		for (const key of Object.keys(rule)) {
+			if (!["cpp_name", "native_signature", "default_argument", "reason"].includes(key)) {
+				throw new Error(`Unknown method rule field: ${name}.${key}.`);
+			}
+		}
+	}
+	return rules;
 }
 
 function groupByClassName(customRules: PropertyRule[]): Map<string, PropertyRule[]> {
@@ -63,16 +63,6 @@ function dedupe<T>(values: T[]): T[] {
 	return [...new Set(values)];
 }
 
-function warnMissingClasses(args: CliArgs, missingNames: string[]): void {
-	if (missingNames.length === 0) {
-		return;
-	}
-
-	console.warn(
-		`Warning: class not found in extension_api.${args.classSource === "builtin" ? "builtin_classes" : "classes"}, skipped: ${missingNames.join(", ")}`,
-	);
-}
-
 function resolveSelectedClasses(sourceClasses: ApiClassLike[], args: CliArgs): ApiClassLike[] {
 	if (args.classNames.length === 0) {
 		return sourceClasses;
@@ -80,7 +70,9 @@ function resolveSelectedClasses(sourceClasses: ApiClassLike[], args: CliArgs): A
 
 	const classMap = new Map(sourceClasses.map((cls) => [cls.name, cls]));
 	const missingNames = args.classNames.filter((name) => !classMap.has(name));
-	warnMissingClasses(args, missingNames);
+	if (missingNames.length > 0) {
+		throw new Error(`Classes are missing from the selected API: ${missingNames.join(", ")}.`);
+	}
 	return args.classNames.flatMap((name) => {
 		const found = classMap.get(name);
 		return found ? [found] : [];
@@ -142,56 +134,38 @@ function resolveBuiltinTypeInclude(typeName: string): string | null {
 
 function buildGeneratedArtifacts(
 	selectedClasses: ApiClassLike[],
-	projectRoot: string,
 	args: CliArgs,
 	customRulesByClass: Map<string, PropertyRule[]>,
 	helperNamespace: string,
+	excludedMethods: ReadonlySet<string>,
+	excludedProperties: ReadonlySet<string>,
+	methodAdapters: ReadonlyMap<string, MethodAdapter>,
 ): {
 	generated: GeneratedClassBinding[];
 	generatedEnums: GeneratedEnumBinding[];
 	propertyHelpers: string[];
-	missingPropertyNotes: string[];
 } {
 	const generated: GeneratedClassBinding[] = [];
 	const generatedEnums: GeneratedEnumBinding[] = [];
 	const propertyHelpers: string[] = [];
-	const missingPropertyNotes: string[] = [];
 
 	for (const cls of selectedClasses) {
-		const apiMethods = cls.methods ?? [];
+		for (const key of methodAdapters.keys()) {
+			if (key.startsWith(`${cls.name}.`) && !(cls.methods ?? []).some(method => key === `${cls.name}.${method.name}`)) {
+				throw new Error(`Method rule does not match the selected API: ${key}.`);
+			}
+		}
+		const apiMethods = (cls.methods ?? []).filter((method) => !excludedMethods.has(`${cls.name}.${method.name}`));
 		const nonVarargMethods = apiMethods.filter((m) => !m.is_vararg);
 		const varargMethods = apiMethods.filter((m) => !!m.is_vararg);
 		const enumBindings = generateEnumBindings(cls);
 		generatedEnums.push(...enumBindings);
 
-		let headerAnalysis = {
-			methodNameCounts: new Map<string, number>(),
-			topLevelMembers: new Set<string>(),
-			source: "",
-		};
-		let filteredMethods = nonVarargMethods;
-		const headerSource = readClassHeaderSource(projectRoot, cls.name, args.classSource);
-		if (headerSource !== null) {
-			headerAnalysis = analyzeHeaderMethods(headerSource, nonVarargMethods.map((m) => m.name), cls.name);
-			const missingInHeader = [
-				...new Set(nonVarargMethods.filter((m) => (headerAnalysis.methodNameCounts.get(m.name) ?? 0) === 0).map((m) => m.name)),
-			];
-			if (missingInHeader.length > 0) {
-				console.warn(
-					`Warning: skipped methods missing in header for ${cls.name}: ${missingInHeader.join(", ")}`,
-				);
-			}
-			filteredMethods = nonVarargMethods.filter((m) => (headerAnalysis.methodNameCounts.get(m.name) ?? 0) > 0);
-		} else {
-			console.warn(`Warning: header not found for ${cls.name}, keep all non-vararg methods from JSON.`);
-		}
-
 		const propertyBindings = collectPropertyBindings(
 			cls,
-			headerAnalysis,
 			customRulesByClass,
-			missingPropertyNotes,
 			helperNamespace,
+			excludedProperties,
 		);
 		for (const p of propertyBindings) {
 			if (p.helperCode) {
@@ -203,16 +177,16 @@ function buildGeneratedArtifacts(
 			generateClassBinding(
 				cls,
 				args.classSource,
-				filteredMethods,
+				nonVarargMethods,
 				varargMethods,
 				propertyBindings,
 				enumBindings,
-				headerAnalysis,
+				methodAdapters,
 			),
 		);
 	}
 
-	return { generated, generatedEnums, propertyHelpers, missingPropertyNotes };
+	return { generated, generatedEnums, propertyHelpers };
 }
 
 function renderOutput(
@@ -259,19 +233,10 @@ function renderOutput(
 		...operatorIncludeLines,
 	];
 	const uniqueIncludes = dedupe(includeLines).sort();
-	const enumTagDeclLines = generatedEnums.length > 0
-		? [
-			"namespace puerts_generated {",
-			...generatedEnums.map((e) => `struct ${e.tagStructName} {};`),
-			"} // namespace puerts_generated",
-			"",
-		]
-		: [];
 	const scriptTypeLines = [
 		...generated.map((c) => `PUERTS_SCRIPT_TYPE(godot::${c.className}, "${c.className}")`),
-		...generatedEnums.map((e) => e.scriptTypeLine),
 	];
-	const registerCalls = [...generatedEnums.map((e) => e.registerCall), ...generated.map((g) => `\t${g.functionName}();`)].join("\n");
+	const registerCalls = [...generatedEnums.map((e) => `\t${e.registrationFunctionName}();`), ...generated.map((g) => `\t${g.registrationFunctionName}();`)].join("\n");
 	const includeGuard = toIncludeGuardMacro(basename(outputPath));
 	const apiVersion = resolveApiVersion(data);
 
@@ -288,7 +253,6 @@ function renderOutput(
 		"",
 		...uniqueIncludes,
 		"",
-		...enumTagDeclLines,
 		...scriptTypeLines,
 		"",
 		...(propertyHelpers.length > 0
@@ -316,14 +280,19 @@ export function generateBindings(args: CliArgs): void {
 	const cwd = process.cwd();
 	const inputPath = resolve(cwd, args.input);
 	const outputPath = resolve(cwd, args.output);
-	const propertyRulesPath = resolve(cwd, args.propertyRulesJson);
-	const projectRoot = resolve(dirname(dirname(dirname(inputPath))));
+	const bindingRulesPath = resolve(cwd, args.bindingRulesJson);
 	const raw = readFileSync(inputPath, "utf8");
 	const data = JSON.parse(raw) as ApiData;
+	const major = data.header?.version_major;
+	const minor = data.header?.version_minor;
+	if (!Number.isInteger(major) || !Number.isInteger(minor) || major! < 0 || minor! < 0) {
+		throw new Error("API header must contain valid version_major and version_minor.");
+	}
+	const apiVersion = `${major}.${minor}`;
 
 	if (args.target === "globalscope") {
 		const out = generateGlobalScopeBinding(args, data);
-		writeGeneratedFile(outputPath, wrapWithGodotVersionMacro(out, args.godotVersionMacro));
+		writeGeneratedFile(outputPath, wrapWithGodotVersionMacro(out, apiVersion));
 		console.log(`Generated GlobalScope bindings: ${outputPath}`);
 		return;
 	}
@@ -335,14 +304,17 @@ export function generateBindings(args: CliArgs): void {
 	}
 
 	const helperNamespace = "puerts_generated";
-	const customRules = loadPropertyRules(propertyRulesPath);
+	const rules = loadBindingRules(bindingRulesPath);
+	const customRules = rules.properties ?? [];
 	const customRulesByClass = groupByClassName(customRules);
-	const { generated, generatedEnums, propertyHelpers, missingPropertyNotes } = buildGeneratedArtifacts(
+	const { generated, generatedEnums, propertyHelpers } = buildGeneratedArtifacts(
 		selectedClasses,
-		projectRoot,
 		args,
 		customRulesByClass,
 		helperNamespace,
+		new Set(rules.excluded_methods ?? []),
+		new Set(rules.excluded_properties ?? []),
+		new Map(Object.entries(rules.methods ?? {})),
 	);
 	const out = renderOutput(
 		outputPath,
@@ -354,9 +326,7 @@ export function generateBindings(args: CliArgs): void {
 		propertyHelpers,
 	);
 
-	writeGeneratedFile(outputPath, wrapWithGodotVersionMacro(out, args.godotVersionMacro));
-	if (missingPropertyNotes.length > 0) {
-		console.warn(`Warning: skipped properties: ${dedupe(missingPropertyNotes).join(", ")}`);
-	}
+	writeGeneratedFile(outputPath, wrapWithGodotVersionMacro(out, apiVersion));
+
 	console.log(`Generated ${generated.length}/${selectedClasses.length} classes: ${outputPath}`);
 }

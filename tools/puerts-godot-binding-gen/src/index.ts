@@ -1,12 +1,22 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
-import { parseArgs } from "./cli.js";
+import { HELP, parseArgs } from "./cli.js";
 import { generateBindings } from "./orchestrator.js";
 
 function main(): void {
-	const args = parseArgs(process.argv.slice(2));
+	const argv = process.argv.slice(2);
+	if (argv.length === 1 && argv[0] === "--help") {
+		console.log(HELP);
+		return;
+	}
+	const args = parseArgs(argv);
 	generateBindings(args);
 }
 
-main();
+try {
+	main();
+} catch (error) {
+	console.error(error instanceof Error ? error.message : String(error));
+	process.exitCode = 1;
+}

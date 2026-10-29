@@ -21,16 +21,6 @@ export function sanitizeIdentifier(name: string): string {
 	return replaced || "arg";
 }
 
-export function escapeRegex(text: string): string {
-	return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-export function stripCppComments(source: string): string {
-	let out = source.replace(/\/\*[\s\S]*?\*\//g, "");
-	out = out.replace(/\/\/.*$/gm, "");
-	return out;
-}
-
 export function toIncludeGuardMacro(outputPath: string): string {
 	const base = outputPath.toUpperCase().replace(/[^A-Z0-9]/g, "_");
 	return `PUERTS_GODOT_${base}`;

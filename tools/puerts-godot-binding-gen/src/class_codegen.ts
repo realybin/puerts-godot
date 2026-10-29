@@ -11,31 +11,22 @@ import {
 	mapApiMethodReturnType,
 	mapCtorType,
 	mapMethodArgType,
-	mapMethodReturnType,
-	methodPointerExprFromApi
+	mapMethodReturnType
 } from "./type_mapping.js";
 import type {
 	ApiBuiltinClass,
 	ApiClassLike,
 	ApiConstant,
 	ApiMethod,
+	MethodAdapter,
 	BoundPropertyBinding,
 	ClassSource,
 	GeneratedClassBinding,
 	GeneratedEnumBinding,
-	HeaderAnalysis,
 } from "./types.js";
-
-function enumTagStructName(className: string, enumName: string): string {
-	return `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(toSnakeCase(enumName))}_enum_tag`;
-}
 
 function enumRegisterFunctionName(className: string, enumName: string): string {
 	return `register_enum_${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(toSnakeCase(enumName))}`;
-}
-
-function signalNameSymbol(className: string, signalName: string): string {
-	return `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(toSnakeCase(signalName))}_signal_name`;
 }
 
 function isBuiltinClass(cls: ApiClassLike): cls is ApiBuiltinClass {
@@ -88,7 +79,7 @@ function pushConstantBindings(
 
 		const literal = constantLiteral(constant);
 		if (literal !== null) {
-			bindingLines.push(`\t\t\t.constant<${literal}>("${constant.name}")`);
+			bindingLines.push(`\t\t\t.constant("${constant.name}", ${literal})`);
 			continue;
 		}
 
@@ -110,13 +101,6 @@ function parameterDeclaration(type: string, name: string): string {
 	return `${type}${/[&*]\s*$/.test(type) ? "" : " "}${name}`;
 }
 
-const EXPLICIT_BUILTIN_DEFAULT_ARGUMENTS = new Map<string, { type: string; value: string; expression: string }>([
-	["Transform2D.looking_at", { type: "Vector2", value: "Vector2(0, 0)", expression: "godot::Vector2()" }],
-	["Dictionary.get", { type: "Variant", value: "null", expression: "godot::Variant()" }],
-	["Dictionary.get_or_add", { type: "Variant", value: "null", expression: "godot::Variant()" }],
-	["Array.reduce", { type: "Variant", value: "null", expression: "godot::Variant()" }],
-]);
-
 function firstDefaultArgumentIndex(className: string, method: ApiMethod): number | null {
 	const args = method.arguments ?? [];
 	const firstDefault = args.findIndex((arg) => arg.default_value !== undefined);
@@ -129,14 +113,14 @@ function firstDefaultArgumentIndex(className: string, method: ApiMethod): number
 	return firstDefault;
 }
 
-function explicitBuiltinDefaultArgument(
+function explicitDefaultArgument(
 	className: string,
-	classSource: ClassSource,
 	method: ApiMethod,
+	adapter: MethodAdapter,
 ): string | null {
 	const key = `${className}.${method.name}`;
-	const spec = EXPLICIT_BUILTIN_DEFAULT_ARGUMENTS.get(key);
-	if (classSource !== "builtin" || !spec) {
+	const spec = adapter.default_argument;
+	if (!spec) {
 		return null;
 	}
 
@@ -148,48 +132,50 @@ function explicitBuiltinDefaultArgument(
 	return spec.expression;
 }
 
-function defaultMethodHelperName(className: string, methodName: string, arity: number): string {
-	return `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(toSnakeCase(methodName))}_default${arity}`;
-}
-
-function buildDefaultMethodHelpers(
+function buildMethodHelpers(
 	className: string,
-	classSource: ClassSource,
 	method: ApiMethod,
-	firstDefault: number,
+	overloadIndex: number,
+	adapter: MethodAdapter = {},
 ): { helpers: string[]; callables: string[] } {
 	const args = method.arguments ?? [];
+	const firstArity = firstDefaultArgumentIndex(className, method) ?? args.length;
 	const helpers: string[] = [];
 	const callables: string[] = [];
-	const explicitDefault = explicitBuiltinDefaultArgument(className, classSource, method);
+	const explicitDefault = explicitDefaultArgument(className, method, adapter);
+	const cppName = adapter.cpp_name ?? method.name;
+	const nativeMethod = `&godot::${className}::${cppName}`;
+	const signature = adapter.native_signature
+		? `decltype(static_cast<${adapter.native_signature}>(${nativeMethod}))`
+		: `decltype(${nativeMethod})`;
 
-	for (let arity = firstDefault; arity < args.length; arity++) {
-		const helperName = defaultMethodHelperName(className, method.name, arity);
-		const declarations = args
-			.slice(0, arity)
-			.map((arg, index) => parameterDeclaration(mapMethodArgType(arg.type), `p_arg_${index}`));
-		const invocationArgs = args.slice(0, arity).map((_, index) => `p_arg_${index}`);
-		if (explicitDefault) {
+	for (let arity = firstArity; arity <= args.length; arity++) {
+		const helperName = `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(method.name)}_overload${overloadIndex}_arity${arity}`;
+		const declarations = args.slice(0, arity).map((arg, index) => parameterDeclaration(mapMethodArgType(arg.type), `p_arg_${index}`));
+		const invocationArgs = args.slice(0, arity).map((argument, index) => {
+			return argument.type === "int" || argument.type === "float"
+				? `static_cast<puerts::internal::native_parameter_t<${signature}, ${index}>>(p_arg_${index})`
+				: `p_arg_${index}`;
+		});
+		if (explicitDefault && arity < args.length) {
 			invocationArgs.push(explicitDefault);
 		}
 
 		let invocation: string;
 		if (method.is_static) {
-			invocation = `godot::${className}::${method.name}(${invocationArgs.join(", ")})`;
+			invocation = `godot::${className}::${cppName}(${invocationArgs.join(", ")})`;
 		} else {
-			const receiverType = `${method.is_const ? "const " : ""}godot::${className} &`;
-			declarations.unshift(parameterDeclaration(receiverType, "p_self"));
-			invocation = `p_self.${method.name}(${invocationArgs.join(", ")})`;
+			declarations.unshift(parameterDeclaration(`${method.is_const ? "const " : ""}godot::${className} &`, "p_self"));
+			invocation = `p_self.${cppName}(${invocationArgs.join(", ")})`;
+		}
+		// Godot script scalars are signed int64 and double, regardless of C++ storage precision.
+		const returnType = method.return_type ?? method.return_value?.type;
+		if (returnType === "int" || returnType === "float") {
+			invocation = `static_cast<${returnType === "int" ? "int64_t" : "double"}>(${invocation})`;
 		}
 		callables.push(`&puerts_generated::${helperName}`);
-
-		helpers.push(
-			`inline decltype(auto) ${helperName}(${declarations.join(", ")}) {\n` +
-			`\treturn ${invocation};\n` +
-			`}`,
-		);
+		helpers.push(`inline decltype(auto) ${helperName}(${declarations.join(", ")}) {\n\treturn ${invocation};\n}`);
 	}
-
 	return { helpers, callables };
 }
 
@@ -243,38 +229,29 @@ export function generateEnumBindings(cls: ApiClassLike): GeneratedEnumBinding[] 
 			continue;
 		}
 		if (seenEnumNames.has(enumName)) {
-			console.warn(`Warning: skipped duplicate enum for ${cls.name}.${enumName}.`);
-			continue;
+			throw new Error(`Duplicate enum: ${cls.name}.${enumName}.`);
 		}
 		seenEnumNames.add(enumName);
 
 		const enumValues = classEnum.values ?? [];
 		if (enumValues.length === 0) {
-			console.warn(`Warning: skipped enum without values for ${cls.name}.${enumName}.`);
-			continue;
+			throw new Error(`Enum has no values: ${cls.name}.${enumName}.`);
 		}
 
-		const tagStruct = enumTagStructName(cls.name, enumName);
-		const tagType = `puerts_generated::${tagStruct}`;
-		const functionName = enumRegisterFunctionName(cls.name, enumName);
+		const registrationFunctionName = enumRegisterFunctionName(cls.name, enumName);
 		const constantLines = enumValues
-			.map((v) => `\t\t\t.constant<${Math.trunc(v.value)}>("${v.name}")`)
+			.map((v) => `\t\t\t.constant("${v.name}", ${Math.trunc(v.value)})`)
 			.join("\n");
 		const code =
-			`inline void ${functionName}() {\n` +
-			`\tpuerts::define_type<${tagType}>()\n` +
+			`inline void ${registrationFunctionName}() {\n` +
+			`\tpuerts::define_namespace("${cls.name}.${enumName}")\n` +
 			`${constantLines}\n` +
 			`\t\t\t.register_type();\n` +
 			`}\n`;
 
 		enumBindings.push({
-			className: cls.name,
 			enumName,
-			tagStructName: tagStruct,
-			tagType,
-			functionName,
-			scriptTypeLine: `PUERTS_SCRIPT_TYPE(${tagType}, "${cls.name}.${enumName}")`,
-			registerCall: `\t${functionName}();`,
+			registrationFunctionName,
 			code,
 		});
 	}
@@ -284,64 +261,30 @@ export function generateEnumBindings(cls: ApiClassLike): GeneratedEnumBinding[] 
 
 function pushMethodBindings(
 	className: string,
-	classSource: ClassSource,
 	methods: ApiMethod[],
-	headerAnalysis: HeaderAnalysis,
 	bindingLines: string[],
+	methodAdapters: ReadonlyMap<string, MethodAdapter>,
 ): string[] {
 	const helpers: string[] = [];
-	const byName = new Map<string, ApiMethod[]>();
-	const orderedNames: string[] = [];
+	const methodsByName = new Map<string, ApiMethod[]>();
 	for (const method of methods) {
-		if (!byName.has(method.name)) {
-			byName.set(method.name, []);
-			orderedNames.push(method.name);
-		}
-		byName.get(method.name)!.push(method);
+		const overloads = methodsByName.get(method.name) ?? [];
+		overloads.push(method);
+		methodsByName.set(method.name, overloads);
 	}
-
-	for (const name of orderedNames) {
-		const methodGroup = byName.get(name) ?? [];
-		if (methodGroup.length === 0) {
-			continue;
+	for (const [name, overloads] of methodsByName) {
+		const isStatic = !!overloads[0].is_static;
+		if (overloads.some((method) => !!method.is_static !== isStatic)) {
+			throw new Error(`Mixed static and instance overloads are unsupported: ${className}.${name}.`);
 		}
-
-		if (methodGroup.length === 1) {
-			const method = methodGroup[0];
-			const needsDisambiguation = (headerAnalysis.methodNameCounts.get(name) ?? 0) > 1;
-			const callable = needsDisambiguation
-				? methodPointerExprFromApi(className, method)
-				: `&godot::${className}::${name}`;
-			const firstDefault = firstDefaultArgumentIndex(className, method);
-			if (firstDefault !== null) {
-				if (needsDisambiguation) {
-					throw new Error(`Default arguments on overloaded methods are unsupported for ${className}.${name}.`);
-				}
-				const generated = buildDefaultMethodHelpers(className, classSource, method, firstDefault);
-				helpers.push(...generated.helpers);
-				const callables = [...generated.callables, callable].join(", ");
-				const bindingKind = method.is_static ? "static_method" : "method";
-				bindingLines.push(`\t\t\t.${bindingKind}<${callables}>("${name}")`);
-			} else {
-				const bindingKind = method.is_static ? "static_method" : "method";
-				bindingLines.push(`\t\t\t.${bindingKind}<${callable}>("${name}")`);
-			}
-			continue;
-		}
-
-		const staticMethods = methodGroup.filter((m) => !!m.is_static);
-		const instanceMethods = methodGroup.filter((m) => !m.is_static);
-		let selectedMethods = staticMethods.length > 0 ? staticMethods : instanceMethods;
-		if (staticMethods.length > 0 && instanceMethods.length > 0) {
-			const chosenKind = staticMethods.length >= instanceMethods.length ? "static" : "instance";
-			selectedMethods = chosenKind === "static" ? staticMethods : instanceMethods;
-			console.warn(`Warning: mixed static/instance overloads for ${className}.${name}, chose ${chosenKind} overloads.`);
-		}
-		const callables = selectedMethods.map((m) => methodPointerExprFromApi(className, m)).join(", ");
-		const bindingKind = selectedMethods[0].is_static ? "static_method" : "method";
-		bindingLines.push(`\t\t\t.${bindingKind}<${callables}>("${name}")`);
+		const callables: string[] = [];
+		overloads.forEach((method, index) => {
+			const generated = buildMethodHelpers(className, method, index, methodAdapters.get(`${className}.${name}`));
+			helpers.push(...generated.helpers);
+			callables.push(...generated.callables);
+		});
+		bindingLines.push(`\t\t\t.${isStatic ? "static_method" : "method"}<${callables.join(", ")}>("${name}")`);
 	}
-
 	return helpers;
 }
 
@@ -352,11 +295,10 @@ export function generateClassBinding(
 	varargMethods: ApiMethod[],
 	properties: BoundPropertyBinding[],
 	enumBindings: GeneratedEnumBinding[],
-	headerAnalysis: HeaderAnalysis,
+	methodAdapters: ReadonlyMap<string, MethodAdapter> = new Map(),
 ): GeneratedClassBinding {
 	const className = cls.name;
 	const bindingLines: string[] = [];
-	const signalNameDefinitions: string[] = [];
 	const operatorHelpers = pushOperatorBindings(cls, bindingLines);
 	const constantHelpers = pushConstantBindings(cls, classSource, bindingLines);
 	const baseClassName = cls.inherits?.trim();
@@ -374,7 +316,7 @@ export function generateClassBinding(
 		bindingLines.push(`\t\t\t.constructor<${args}>()`);
 	}
 
-	const methodHelpers = pushMethodBindings(className, classSource, methods, headerAnalysis, bindingLines);
+	const methodHelpers = pushMethodBindings(className, methods, bindingLines, methodAdapters);
 
 	const emittedMethodNames = new Set<string>(methods.map((m) => m.name));
 	const seenVarargNames = new Set<string>();
@@ -385,17 +327,15 @@ export function generateClassBinding(
 		seenVarargNames.add(method.name);
 
 		if (emittedMethodNames.has(method.name)) {
-			console.warn(`Warning: skipped vararg method with duplicate name for ${className}.${method.name}.`);
-			continue;
+			throw new Error(`Duplicate fixed and vararg method: ${className}.${method.name}.`);
 		}
 		if (method.is_static) {
-			console.warn(`Warning: skipped static vararg method for ${className}.${method.name} (unsupported).`);
-			continue;
+			throw new Error(`Static vararg methods are unsupported: ${className}.${method.name}.`);
 		}
 
-		const writeBack = method.is_const ? ", false" : "";
+		const writeBack = method.is_const ? "false" : "true";
 		bindingLines.push(
-			`\t\t\t.vararg_method<${mapApiMethodReturnType(method)}${writeBack}>("${method.name}", ${(method.arguments ?? []).length})`,
+			`\t\t\t.vararg_method<${mapApiMethodReturnType(method)}, ${writeBack}, ${(method.arguments ?? []).length}>("${method.name}")`,
 		);
 		emittedMethodNames.add(method.name);
 	}
@@ -407,10 +347,9 @@ export function generateClassBinding(
 	const boundPropertyNames = new Set<string>(properties.map((p) => p.name));
 	for (const enumBinding of enumBindings) {
 		if (boundPropertyNames.has(enumBinding.enumName)) {
-			console.warn(`Warning: skipped enum group property due to name collision for ${className}.${enumBinding.enumName}.`);
-			continue;
+			throw new Error(`Enum group name collision: ${className}.${enumBinding.enumName}.`);
 		}
-		bindingLines.push(`\t\t\t.enum_type<${enumBinding.tagType}>("${enumBinding.enumName}")`);
+		bindingLines.push(`\t\t\t.nested_type("${enumBinding.enumName}", "${cls.name}.${enumBinding.enumName}")`);
 		boundPropertyNames.add(enumBinding.enumName);
 	}
 
@@ -425,22 +364,19 @@ export function generateClassBinding(
 		}
 		seenSignalNames.add(signalName);
 		if (boundPropertyNames.has(signalName)) {
-			console.warn(`Warning: skipped signal property due to name collision for ${className}.${signalName}.`);
-			continue;
+			throw new Error(`Signal property name collision: ${className}.${signalName}.`);
 		}
-		const signalSymbol = signalNameSymbol(className, signalName);
-		signalNameDefinitions.push(`inline constexpr char ${signalSymbol}[] = "${signalName}";`);
-		bindingLines.push(`\t\t\t.signal<puerts_generated::${signalSymbol}>("${signalName}")`);
+		bindingLines.push(`\t\t\t.signal("${signalName}")`);
 		boundPropertyNames.add(signalName);
 	}
 
 	bindingLines.push("\t\t\t.register_type();");
 
 	const fnName = `register_type_${sanitizeIdentifier(toSnakeCase(className))}`;
-	const prefixLines = [...signalNameDefinitions, ...operatorHelpers, ...constantHelpers, ...methodHelpers];
+	const prefixLines = [...operatorHelpers, ...constantHelpers, ...methodHelpers];
 	const prefix = prefixLines.length > 0
 		? `namespace puerts_generated {\n${prefixLines.join("\n")}\n} // namespace puerts_generated\n\n`
 		: "";
 	const code = `${prefix}inline void ${fnName}() {\n\tpuerts::define_type<godot::${className}>()\n${bindingLines.join("\n")}\n}\n`;
-	return {className, classSource, functionName: fnName, code};
+	return {className, classSource, registrationFunctionName: fnName, code};
 }

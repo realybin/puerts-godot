@@ -102,17 +102,17 @@ export type GenerateTarget = "classes" | "globalscope";
 export type CliArgs = {
 	input: string;
 	output: string;
-	godotVersionMacro: string;
 	classNames: string[];
-	propertyRulesJson: string;
+	bindingRulesJson: string;
 	classSource: ClassSource;
 	registerFunction: string;
 	target: GenerateTarget;
 };
 
-export type ClassesConfig = {
+export type BindingProfile = {
+	kind: "builtin" | "object" | "globalscope";
 	classes?: string[];
-	source?: ClassSource;
+	all?: boolean;
 	register_function?: string;
 };
 
@@ -129,20 +129,24 @@ export type PropertyRule = {
 	index?: number;
 };
 
-export type PropertyRulesConfig = {
-	custom_properties?: PropertyRule[];
+export type MethodAdapter = {
+	cpp_name?: string;
+	native_signature?: string;
+	default_argument?: { type: string; value: string; expression: string };
+	reason?: string;
+};
+
+export type BindingRulesConfig = {
+	methods?: Record<string, MethodAdapter>;
+	properties?: PropertyRule[];
+	excluded_methods?: string[];
+	excluded_properties?: string[];
 };
 
 export type BoundPropertyBinding = {
 	name: string;
 	bindingLine: string;
 	helperCode?: string;
-};
-
-export type HeaderAnalysis = {
-	methodNameCounts: Map<string, number>;
-	topLevelMembers: Set<string>;
-	source: string;
 };
 
 export type ApiClassLike = ApiBuiltinClass | ApiClass;
@@ -153,26 +157,21 @@ export type ParsedApiType =
 	| { kind: "float" }
 	| { kind: "bool" }
 	| { kind: "object" }
-	| { kind: "enum_like" }
+	| { kind: "enum_like"; value: string }
 	| { kind: "typed_array"; base: string }
 	| { kind: "typed_dictionary"; body: string }
 	| { kind: "pointer"; value: string }
 	| { kind: "named"; value: string };
 
 export type GeneratedEnumBinding = {
-	className: string;
 	enumName: string;
-	tagStructName: string;
-	tagType: string;
-	functionName: string;
-	scriptTypeLine: string;
-	registerCall: string;
+	registrationFunctionName: string;
 	code: string;
 };
 
 export type GeneratedClassBinding = {
 	className: string;
 	classSource: ClassSource;
-	functionName: string;
+	registrationFunctionName: string;
 	code: string;
 };

@@ -14,10 +14,7 @@ import type {ApiData, ApiEnum, ApiMethod, CliArgs} from "./types.js";
 type GlobalEnumBinding = {
 	name: string;
 	propertyName: string;
-	tagStructName: string;
-	tagType: string;
-	registerFunctionName: string;
-	scriptTypeLine: string;
+	registrationFunctionName: string;
 	code: string;
 };
 
@@ -28,23 +25,18 @@ function utilityCppMethodName(name: string): string {
 function buildGlobalEnumBinding(enumDef: ApiEnum): GlobalEnumBinding {
 	const nameKey = sanitizeIdentifier(toSnakeCase(enumDef.name.replaceAll(".", "_")));
 	const propertyName = enumDef.name.includes(".") ? enumDef.name.split(".").at(-1)! : enumDef.name;
-	const tagStructName = `global_scope_${nameKey}_enum_tag`;
-	const tagType = `puerts_generated::${tagStructName}`;
-	const registerFunctionName = `register_enum_global_scope_${nameKey}`;
+	const registrationFunctionName = `register_enum_global_scope_${nameKey}`;
 	const constantLines = (enumDef.values ?? [])
-		.map((value) => `\t\t\t.constant<${Math.trunc(value.value)}>("${value.name}")`)
+		.map((value) => `\t\t\t.constant("${value.name}", ${Math.trunc(value.value)})`)
 		.join("\n");
 
 	return {
 		name: enumDef.name,
 		propertyName,
-		tagStructName,
-		tagType,
-		registerFunctionName,
-		scriptTypeLine: `PUERTS_SCRIPT_TYPE(${tagType}, "GlobalScope.${enumDef.name}")`,
+		registrationFunctionName,
 		code:
-			`inline void ${registerFunctionName}() {\n` +
-			`\tpuerts::define_type<${tagType}>()\n` +
+			`inline void ${registrationFunctionName}() {\n` +
+			`\tpuerts::define_namespace("GlobalScope.${enumDef.name}")\n` +
 			`${constantLines}\n` +
 			`\t\t\t.register_type();\n` +
 			`}\n`,
@@ -58,7 +50,7 @@ function buildUtilityBinding(fn: ApiMethod): string {
 
 	const returnType = fn.return_type === "Variant" || fn.return_type === "String" ? `godot::${fn.return_type}` : fn.return_type ?? "void";
 	const arity = fn.is_vararg ? "" : `, ${fn.arguments?.length ?? 0}`;
-	return `\t\t\t.utility_function<${fn.hash ?? 0}, ${returnType}>("${fn.name}"${arity})`;
+	return `\t\t\t.utility_function<${fn.hash ?? 0}, ${returnType}${arity}>("${fn.name}")`;
 }
 
 function splitGlobalEnumBindings(globalEnums: GlobalEnumBinding[]): {
@@ -115,45 +107,31 @@ export function generateGlobalScopeBinding(args: CliArgs, data: ApiData): string
 	lines.push("");
 	lines.push("#include <godot_cpp/variant/utility_functions.hpp>");
 	lines.push("");
-	lines.push("namespace puerts_generated {");
-	lines.push("struct GlobalScope {};");
-	lines.push("struct GlobalScopeVariant {};");
-	for (const binding of globalEnums) {
-		lines.push(`struct ${binding.tagStructName} {};`);
-	}
-	lines.push("} // namespace puerts_generated");
-	lines.push("");
-	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScope, "GlobalScope")');
-	lines.push('PUERTS_SCRIPT_TYPE(puerts_generated::GlobalScopeVariant, "GlobalScope.Variant")');
-	for (const binding of globalEnums) {
-		lines.push(binding.scriptTypeLine);
-	}
-	lines.push("");
 	for (const binding of globalEnums) {
 		lines.push(binding.code.trimEnd());
 		lines.push("");
 	}
 	lines.push("inline void register_type_global_scope_variant() {");
-	lines.push("\tpuerts::define_type<puerts_generated::GlobalScopeVariant>()");
-	lines.push(`\t\t\t.enum_type<${variantType.tagType}>("Type")`);
-	lines.push(`\t\t\t.enum_type<${variantOperator.tagType}>("Operator")`);
+	lines.push("\tpuerts::define_namespace(\"GlobalScope.Variant\")");
+	lines.push(`\t\t\t.nested_type("Type", "GlobalScope.${variantType.name}")`);
+	lines.push(`\t\t\t.nested_type("Operator", "GlobalScope.${variantOperator.name}")`);
 	lines.push("\t\t\t.register_type();");
 	lines.push("}");
 	lines.push("");
 	lines.push(`inline void ${args.registerFunction}() {`);
 	for (const binding of globalEnums) {
-		lines.push(`\t${binding.registerFunctionName}();`);
+		lines.push(`\t${binding.registrationFunctionName}();`);
 	}
 	lines.push("\tregister_type_global_scope_variant();");
-	lines.push("\tpuerts::define_type<puerts_generated::GlobalScope>()");
+	lines.push("\tpuerts::define_namespace(\"GlobalScope\")");
 	lines.push(...utilityBindings);
 	for (const singleton of singletonNames) {
 		lines.push(`\t\t\t.singleton("${singleton.name}")`);
 	}
 	for (const binding of topLevelEnumBindings) {
-		lines.push(`\t\t\t.enum_type<${binding.tagType}>("${binding.propertyName}")`);
+		lines.push(`\t\t\t.nested_type("${binding.propertyName}", "GlobalScope.${binding.name}")`);
 	}
-	lines.push('\t\t\t.enum_type<puerts_generated::GlobalScopeVariant>("Variant")');
+	lines.push('\t\t\t.nested_type("Variant", "GlobalScope.Variant")');
 	lines.push("\t\t\t.register_type();");
 	lines.push("}");
 	lines.push("");

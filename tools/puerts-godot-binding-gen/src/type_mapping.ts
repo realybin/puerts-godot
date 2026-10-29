@@ -14,7 +14,8 @@ export function parseApiType(typeName: string): ParsedApiType {
 	if (t === "float") return { kind: "float" };
 	if (t === "bool") return { kind: "bool" };
 	if (t === "Object") return { kind: "object" };
-	if (t.startsWith("enum::") || t.startsWith("bitfield::")) return { kind: "enum_like" };
+	if (t.startsWith("enum::")) return { kind: "enum_like", value: normalizeGodotTypeName(t.slice(6).replaceAll(".", "::")) };
+	if (t.startsWith("bitfield::")) return { kind: "enum_like", value: `godot::BitField<${normalizeGodotTypeName(t.slice(10).replaceAll(".", "::"))}>` };
 	if (t.startsWith("typedarray::")) {
 		return { kind: "typed_array", base: t.slice("typedarray::".length) };
 	}
@@ -40,8 +41,9 @@ function mapParsedType(
 		case "void":
 			return options.voidType;
 		case "int":
-		case "enum_like":
 			return options.intType;
+		case "enum_like":
+			return parsed.value;
 		case "float":
 			return options.floatType;
 		case "bool":
@@ -67,7 +69,7 @@ export function mapPropertyValueType(typeName: string): string {
 	return mapParsedType(parseApiType(typeName), {
 		voidType: "godot::Variant",
 		intType: "int64_t",
-		floatType: "godot::real_t",
+		floatType: "double",
 		typeMode: "value",
 	});
 }
@@ -76,7 +78,7 @@ export function mapCtorType(typeName: string): string {
 	return mapParsedType(parseApiType(typeName), {
 		voidType: "const godot::Variant &",
 		intType: "int64_t",
-		floatType: "godot::real_t",
+		floatType: "double",
 		typeMode: "const_ref",
 	});
 }
@@ -85,7 +87,7 @@ export function mapMethodReturnType(typeName?: string): string {
 	return mapParsedType(parseApiType(typeName ?? "void"), {
 		voidType: "void",
 		intType: "int64_t",
-		floatType: "godot::real_t",
+		floatType: "double",
 		typeMode: "value",
 	});
 }
@@ -98,24 +100,11 @@ export function mapMethodArgType(typeName: string): string {
 	return mapParsedType(parseApiType(typeName), {
 		voidType: "",
 		intType: "int64_t",
-		floatType: "godot::real_t",
+		floatType: "double",
 		typeMode: "const_ref",
 	});
 }
 
 export function mapOperatorArgType(typeName: string): string {
 	return mapMethodArgType(typeName);
-}
-
-export function methodPointerExprFromApi(className: string, method: ApiMethod): string {
-	const args = (method.arguments ?? [])
-		.map((a) => mapMethodArgType(a.type))
-		.filter(Boolean)
-		.join(", ");
-	const returnType = mapApiMethodReturnType(method);
-	if (method.is_static) {
-		return `static_cast<${returnType} (*)(${args})>(&godot::${className}::${method.name})`;
-	}
-	const constSuffix = method.is_const ? " const" : "";
-	return `static_cast<${returnType} (godot::${className}::*)(${args})${constSuffix}>(&godot::${className}::${method.name})`;
 }

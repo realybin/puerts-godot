@@ -13,104 +13,235 @@
 
 #include <godot_cpp/classes/object.hpp>
 
-namespace puerts_generated {
-struct object_connect_flags_enum_tag {};
-} // namespace puerts_generated
-
 PUERTS_SCRIPT_TYPE(godot::Object, "Object")
-PUERTS_SCRIPT_TYPE(puerts_generated::object_connect_flags_enum_tag, "Object.ConnectFlags")
 
 inline void register_enum_object_connect_flags() {
-	puerts::define_type<puerts_generated::object_connect_flags_enum_tag>()
-			.constant<1>("CONNECT_DEFERRED")
-			.constant<2>("CONNECT_PERSIST")
-			.constant<4>("CONNECT_ONE_SHOT")
-			.constant<8>("CONNECT_REFERENCE_COUNTED")
-			.constant<16>("CONNECT_APPEND_SOURCE_OBJECT")
+	puerts::define_namespace("Object.ConnectFlags")
+			.constant("CONNECT_DEFERRED", 1)
+			.constant("CONNECT_PERSIST", 2)
+			.constant("CONNECT_ONE_SHOT", 4)
+			.constant("CONNECT_REFERENCE_COUNTED", 8)
+			.constant("CONNECT_APPEND_SOURCE_OBJECT", 16)
 			.register_type();
 }
 
 namespace puerts_generated {
-inline constexpr char object_script_changed_signal_name[] = "script_changed";
-inline constexpr char object_property_list_changed_signal_name[] = "property_list_changed";
-inline decltype(auto) object_notification_default1(godot::Object &p_self, int64_t p_arg_0) {
-	return p_self.notification(p_arg_0);
+inline decltype(auto) object_get_class_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_class();
 }
-inline decltype(auto) object_get_meta_default1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+inline decltype(auto) object_is_class_overload0_arity1(const godot::Object &p_self, const godot::String &p_arg_0) {
+	return p_self.is_class(p_arg_0);
+}
+inline decltype(auto) object_set_overload0_arity2(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.set(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_get_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.get(p_arg_0);
+}
+inline decltype(auto) object_set_indexed_overload0_arity2(godot::Object &p_self, const godot::NodePath &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.set_indexed(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_get_indexed_overload0_arity1(const godot::Object &p_self, const godot::NodePath &p_arg_0) {
+	return p_self.get_indexed(p_arg_0);
+}
+inline decltype(auto) object_get_property_list_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_property_list();
+}
+inline decltype(auto) object_get_method_list_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_method_list();
+}
+inline decltype(auto) object_property_can_revert_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.property_can_revert(p_arg_0);
+}
+inline decltype(auto) object_property_get_revert_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.property_get_revert(p_arg_0);
+}
+inline decltype(auto) object_notification_overload0_arity1(godot::Object &p_self, int64_t p_arg_0) {
+	return p_self.notification(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Object::notification), 0>>(p_arg_0));
+}
+inline decltype(auto) object_notification_overload0_arity2(godot::Object &p_self, int64_t p_arg_0, bool p_arg_1) {
+	return p_self.notification(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Object::notification), 0>>(p_arg_0), p_arg_1);
+}
+inline decltype(auto) object_to_string_overload0_arity0(godot::Object &p_self) {
+	return p_self.to_string();
+}
+inline decltype(auto) object_get_instance_id_overload0_arity0(const godot::Object &p_self) {
+	return static_cast<int64_t>(p_self.get_instance_id());
+}
+inline decltype(auto) object_set_script_overload0_arity1(godot::Object &p_self, const godot::Variant &p_arg_0) {
+	return p_self.set_script(p_arg_0);
+}
+inline decltype(auto) object_get_script_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_script();
+}
+inline decltype(auto) object_set_meta_overload0_arity2(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.set_meta(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_remove_meta_overload0_arity1(godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.remove_meta(p_arg_0);
+}
+inline decltype(auto) object_get_meta_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
 	return p_self.get_meta(p_arg_0);
 }
-inline decltype(auto) object_add_user_signal_default1(godot::Object &p_self, const godot::String &p_arg_0) {
+inline decltype(auto) object_get_meta_overload0_arity2(const godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.get_meta(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_has_meta_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.has_meta(p_arg_0);
+}
+inline decltype(auto) object_get_meta_list_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_meta_list();
+}
+inline decltype(auto) object_add_user_signal_overload0_arity1(godot::Object &p_self, const godot::String &p_arg_0) {
 	return p_self.add_user_signal(p_arg_0);
 }
-inline decltype(auto) object_connect_default2(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Callable &p_arg_1) {
+inline decltype(auto) object_add_user_signal_overload0_arity2(godot::Object &p_self, const godot::String &p_arg_0, const godot::Array &p_arg_1) {
+	return p_self.add_user_signal(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_has_user_signal_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.has_user_signal(p_arg_0);
+}
+inline decltype(auto) object_remove_user_signal_overload0_arity1(godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.remove_user_signal(p_arg_0);
+}
+inline decltype(auto) object_set_deferred_overload0_arity2(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Variant &p_arg_1) {
+	return p_self.set_deferred(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_callv_overload0_arity2(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Array &p_arg_1) {
+	return p_self.callv(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_has_method_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.has_method(p_arg_0);
+}
+inline decltype(auto) object_get_method_argument_count_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return static_cast<int64_t>(p_self.get_method_argument_count(p_arg_0));
+}
+inline decltype(auto) object_has_signal_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.has_signal(p_arg_0);
+}
+inline decltype(auto) object_get_signal_list_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_signal_list();
+}
+inline decltype(auto) object_get_signal_connection_list_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.get_signal_connection_list(p_arg_0);
+}
+inline decltype(auto) object_get_incoming_connections_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_incoming_connections();
+}
+inline decltype(auto) object_connect_overload0_arity2(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Callable &p_arg_1) {
 	return p_self.connect(p_arg_0, p_arg_1);
 }
-inline decltype(auto) object_tr_default1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+inline decltype(auto) object_connect_overload0_arity3(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Callable &p_arg_1, int64_t p_arg_2) {
+	return p_self.connect(p_arg_0, p_arg_1, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Object::connect), 2>>(p_arg_2));
+}
+inline decltype(auto) object_disconnect_overload0_arity2(godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Callable &p_arg_1) {
+	return p_self.disconnect(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_is_connected_overload0_arity2(const godot::Object &p_self, const godot::StringName &p_arg_0, const godot::Callable &p_arg_1) {
+	return p_self.is_connected(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_has_connections_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.has_connections(p_arg_0);
+}
+inline decltype(auto) object_set_block_signals_overload0_arity1(godot::Object &p_self, bool p_arg_0) {
+	return p_self.set_block_signals(p_arg_0);
+}
+inline decltype(auto) object_is_blocking_signals_overload0_arity0(const godot::Object &p_self) {
+	return p_self.is_blocking_signals();
+}
+inline decltype(auto) object_notify_property_list_changed_overload0_arity0(godot::Object &p_self) {
+	return p_self.notify_property_list_changed();
+}
+inline decltype(auto) object_set_message_translation_overload0_arity1(godot::Object &p_self, bool p_arg_0) {
+	return p_self.set_message_translation(p_arg_0);
+}
+inline decltype(auto) object_can_translate_messages_overload0_arity0(const godot::Object &p_self) {
+	return p_self.can_translate_messages();
+}
+inline decltype(auto) object_tr_overload0_arity1(const godot::Object &p_self, const godot::StringName &p_arg_0) {
 	return p_self.tr(p_arg_0);
 }
-inline decltype(auto) object_tr_n_default3(const godot::Object &p_self, const godot::StringName &p_arg_0, const godot::StringName &p_arg_1, int64_t p_arg_2) {
-	return p_self.tr_n(p_arg_0, p_arg_1, p_arg_2);
+inline decltype(auto) object_tr_overload0_arity2(const godot::Object &p_self, const godot::StringName &p_arg_0, const godot::StringName &p_arg_1) {
+	return p_self.tr(p_arg_0, p_arg_1);
+}
+inline decltype(auto) object_tr_n_overload0_arity3(const godot::Object &p_self, const godot::StringName &p_arg_0, const godot::StringName &p_arg_1, int64_t p_arg_2) {
+	return p_self.tr_n(p_arg_0, p_arg_1, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Object::tr_n), 2>>(p_arg_2));
+}
+inline decltype(auto) object_tr_n_overload0_arity4(const godot::Object &p_self, const godot::StringName &p_arg_0, const godot::StringName &p_arg_1, int64_t p_arg_2, const godot::StringName &p_arg_3) {
+	return p_self.tr_n(p_arg_0, p_arg_1, static_cast<puerts::internal::native_parameter_t<decltype(&godot::Object::tr_n), 2>>(p_arg_2), p_arg_3);
+}
+inline decltype(auto) object_get_translation_domain_overload0_arity0(const godot::Object &p_self) {
+	return p_self.get_translation_domain();
+}
+inline decltype(auto) object_set_translation_domain_overload0_arity1(godot::Object &p_self, const godot::StringName &p_arg_0) {
+	return p_self.set_translation_domain(p_arg_0);
+}
+inline decltype(auto) object_is_queued_for_deletion_overload0_arity0(const godot::Object &p_self) {
+	return p_self.is_queued_for_deletion();
+}
+inline decltype(auto) object_cancel_free_overload0_arity0(godot::Object &p_self) {
+	return p_self.cancel_free();
 }
 } // namespace puerts_generated
 
 inline void register_type_object() {
 	puerts::define_type<godot::Object>()
-			.constant<0>("NOTIFICATION_POSTINITIALIZE")
-			.constant<1>("NOTIFICATION_PREDELETE")
-			.constant<2>("NOTIFICATION_EXTENSION_RELOADED")
+			.constant("NOTIFICATION_POSTINITIALIZE", 0)
+			.constant("NOTIFICATION_PREDELETE", 1)
+			.constant("NOTIFICATION_EXTENSION_RELOADED", 2)
 			.constructor<>()
-			.method<&godot::Object::get_class>("get_class")
-			.method<&godot::Object::is_class>("is_class")
-			.method<&godot::Object::set>("set")
-			.method<&godot::Object::get>("get")
-			.method<&godot::Object::set_indexed>("set_indexed")
-			.method<&godot::Object::get_indexed>("get_indexed")
-			.method<&godot::Object::get_property_list>("get_property_list")
-			.method<&godot::Object::get_method_list>("get_method_list")
-			.method<&godot::Object::property_can_revert>("property_can_revert")
-			.method<&godot::Object::property_get_revert>("property_get_revert")
-			.method<&puerts_generated::object_notification_default1, &godot::Object::notification>("notification")
-			.method<&godot::Object::to_string>("to_string")
-			.method<&godot::Object::get_instance_id>("get_instance_id")
-			.method<&godot::Object::set_script>("set_script")
-			.method<&godot::Object::get_script>("get_script")
-			.method<&godot::Object::set_meta>("set_meta")
-			.method<&godot::Object::remove_meta>("remove_meta")
-			.method<&puerts_generated::object_get_meta_default1, &godot::Object::get_meta>("get_meta")
-			.method<&godot::Object::has_meta>("has_meta")
-			.method<&godot::Object::get_meta_list>("get_meta_list")
-			.method<&puerts_generated::object_add_user_signal_default1, &godot::Object::add_user_signal>("add_user_signal")
-			.method<&godot::Object::has_user_signal>("has_user_signal")
-			.method<&godot::Object::remove_user_signal>("remove_user_signal")
-			.method<&godot::Object::set_deferred>("set_deferred")
-			.method<&godot::Object::callv>("callv")
-			.method<&godot::Object::has_method>("has_method")
-			.method<&godot::Object::get_method_argument_count>("get_method_argument_count")
-			.method<&godot::Object::has_signal>("has_signal")
-			.method<&godot::Object::get_signal_list>("get_signal_list")
-			.method<&godot::Object::get_signal_connection_list>("get_signal_connection_list")
-			.method<&godot::Object::get_incoming_connections>("get_incoming_connections")
-			.method<&puerts_generated::object_connect_default2, &godot::Object::connect>("connect")
-			.method<&godot::Object::disconnect>("disconnect")
-			.method<&godot::Object::is_connected>("is_connected")
-			.method<&godot::Object::has_connections>("has_connections")
-			.method<&godot::Object::set_block_signals>("set_block_signals")
-			.method<&godot::Object::is_blocking_signals>("is_blocking_signals")
-			.method<&godot::Object::notify_property_list_changed>("notify_property_list_changed")
-			.method<&godot::Object::set_message_translation>("set_message_translation")
-			.method<&godot::Object::can_translate_messages>("can_translate_messages")
-			.method<&puerts_generated::object_tr_default1, &godot::Object::tr>("tr")
-			.method<&puerts_generated::object_tr_n_default3, &godot::Object::tr_n>("tr_n")
-			.method<&godot::Object::get_translation_domain>("get_translation_domain")
-			.method<&godot::Object::set_translation_domain>("set_translation_domain")
-			.method<&godot::Object::is_queued_for_deletion>("is_queued_for_deletion")
-			.method<&godot::Object::cancel_free>("cancel_free")
-			.vararg_method<int64_t>("emit_signal", 1)
-			.vararg_method<godot::Variant>("call", 1)
-			.vararg_method<godot::Variant>("call_deferred", 1)
-			.enum_type<puerts_generated::object_connect_flags_enum_tag>("ConnectFlags")
-			.signal<puerts_generated::object_script_changed_signal_name>("script_changed")
-			.signal<puerts_generated::object_property_list_changed_signal_name>("property_list_changed")
+			.method<&puerts_generated::object_get_class_overload0_arity0>("get_class")
+			.method<&puerts_generated::object_is_class_overload0_arity1>("is_class")
+			.method<&puerts_generated::object_set_overload0_arity2>("set")
+			.method<&puerts_generated::object_get_overload0_arity1>("get")
+			.method<&puerts_generated::object_set_indexed_overload0_arity2>("set_indexed")
+			.method<&puerts_generated::object_get_indexed_overload0_arity1>("get_indexed")
+			.method<&puerts_generated::object_get_property_list_overload0_arity0>("get_property_list")
+			.method<&puerts_generated::object_get_method_list_overload0_arity0>("get_method_list")
+			.method<&puerts_generated::object_property_can_revert_overload0_arity1>("property_can_revert")
+			.method<&puerts_generated::object_property_get_revert_overload0_arity1>("property_get_revert")
+			.method<&puerts_generated::object_notification_overload0_arity1, &puerts_generated::object_notification_overload0_arity2>("notification")
+			.method<&puerts_generated::object_to_string_overload0_arity0>("to_string")
+			.method<&puerts_generated::object_get_instance_id_overload0_arity0>("get_instance_id")
+			.method<&puerts_generated::object_set_script_overload0_arity1>("set_script")
+			.method<&puerts_generated::object_get_script_overload0_arity0>("get_script")
+			.method<&puerts_generated::object_set_meta_overload0_arity2>("set_meta")
+			.method<&puerts_generated::object_remove_meta_overload0_arity1>("remove_meta")
+			.method<&puerts_generated::object_get_meta_overload0_arity1, &puerts_generated::object_get_meta_overload0_arity2>("get_meta")
+			.method<&puerts_generated::object_has_meta_overload0_arity1>("has_meta")
+			.method<&puerts_generated::object_get_meta_list_overload0_arity0>("get_meta_list")
+			.method<&puerts_generated::object_add_user_signal_overload0_arity1, &puerts_generated::object_add_user_signal_overload0_arity2>("add_user_signal")
+			.method<&puerts_generated::object_has_user_signal_overload0_arity1>("has_user_signal")
+			.method<&puerts_generated::object_remove_user_signal_overload0_arity1>("remove_user_signal")
+			.method<&puerts_generated::object_set_deferred_overload0_arity2>("set_deferred")
+			.method<&puerts_generated::object_callv_overload0_arity2>("callv")
+			.method<&puerts_generated::object_has_method_overload0_arity1>("has_method")
+			.method<&puerts_generated::object_get_method_argument_count_overload0_arity1>("get_method_argument_count")
+			.method<&puerts_generated::object_has_signal_overload0_arity1>("has_signal")
+			.method<&puerts_generated::object_get_signal_list_overload0_arity0>("get_signal_list")
+			.method<&puerts_generated::object_get_signal_connection_list_overload0_arity1>("get_signal_connection_list")
+			.method<&puerts_generated::object_get_incoming_connections_overload0_arity0>("get_incoming_connections")
+			.method<&puerts_generated::object_connect_overload0_arity2, &puerts_generated::object_connect_overload0_arity3>("connect")
+			.method<&puerts_generated::object_disconnect_overload0_arity2>("disconnect")
+			.method<&puerts_generated::object_is_connected_overload0_arity2>("is_connected")
+			.method<&puerts_generated::object_has_connections_overload0_arity1>("has_connections")
+			.method<&puerts_generated::object_set_block_signals_overload0_arity1>("set_block_signals")
+			.method<&puerts_generated::object_is_blocking_signals_overload0_arity0>("is_blocking_signals")
+			.method<&puerts_generated::object_notify_property_list_changed_overload0_arity0>("notify_property_list_changed")
+			.method<&puerts_generated::object_set_message_translation_overload0_arity1>("set_message_translation")
+			.method<&puerts_generated::object_can_translate_messages_overload0_arity0>("can_translate_messages")
+			.method<&puerts_generated::object_tr_overload0_arity1, &puerts_generated::object_tr_overload0_arity2>("tr")
+			.method<&puerts_generated::object_tr_n_overload0_arity3, &puerts_generated::object_tr_n_overload0_arity4>("tr_n")
+			.method<&puerts_generated::object_get_translation_domain_overload0_arity0>("get_translation_domain")
+			.method<&puerts_generated::object_set_translation_domain_overload0_arity1>("set_translation_domain")
+			.method<&puerts_generated::object_is_queued_for_deletion_overload0_arity0>("is_queued_for_deletion")
+			.method<&puerts_generated::object_cancel_free_overload0_arity0>("cancel_free")
+			.vararg_method<godot::Error, true, 1>("emit_signal")
+			.vararg_method<godot::Variant, true, 1>("call")
+			.vararg_method<godot::Variant, true, 1>("call_deferred")
+			.nested_type("ConnectFlags", "Object.ConnectFlags")
+			.signal("script_changed")
+			.signal("property_list_changed")
 			.register_type();
 }
 

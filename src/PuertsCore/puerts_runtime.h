@@ -184,16 +184,8 @@ public:
 		return true;
 	}
 
-	[[nodiscard]] bool report_errors() const { return report_errors_; }
-	void set_report_errors(bool p_enabled) { report_errors_ = p_enabled; }
-	[[nodiscard]] const char *last_rejection() const { return last_rejection_; }
-
 	[[nodiscard]] bool reject(const char *p_message) {
-		if (report_errors_) {
-			api_->throw_by_string(callback_info_, p_message);
-		} else {
-			last_rejection_ = p_message;
-		}
+		api_->throw_by_string(callback_info_, p_message);
 		return false;
 	}
 
@@ -211,8 +203,6 @@ private:
 	const godot::Variant *holder_boxed_variant_ = nullptr;
 	PuertsEnvironmentContext *environment_context_ = nullptr;
 	PuertsEnvironment *puerts_environment_ = nullptr;
-	bool report_errors_ = true;
-	const char *last_rejection_ = nullptr;
 
 	void ensure_holder_loaded() {
 		if (holder_loaded_) {

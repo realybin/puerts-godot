@@ -230,14 +230,7 @@ Variant PuertsEnvironment::script_value_to_variant(pesapi_env p_env, pesapi_valu
 }
 
 bool PuertsEnvironment::native_handle_to_variant(void *p_handle, const void *p_type_id, Variant &r_value) {
-	if (PuertsBridgeRegistry::is_handle(p_handle)) {
-		return environment_context_.bridge.try_get_variant(p_handle, p_type_id, r_value);
-	}
-	return PuertsTypeRegistry::get_singleton().native_handle_to_variant(p_handle, p_type_id, r_value);
-}
-
-bool puerts::native_handle_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, Variant &r_value) {
-	return p_environment->native_handle_to_variant(p_handle, p_type_id, r_value);
+	return environment_context_.bridge.try_get_variant(p_handle, p_type_id, r_value);
 }
 
 Variant puerts::script_value_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) {

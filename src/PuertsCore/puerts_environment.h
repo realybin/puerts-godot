@@ -30,7 +30,6 @@ class PuertsEnvironment;
 
 namespace puerts {
 godot::Variant script_value_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
-bool native_handle_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
 bool return_variant_to_script(pesapi_ffi *p_api, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 } //namespace puerts
 
@@ -98,7 +97,6 @@ private:
 	friend class PuertsScriptValue;
 	friend class PuertsTypeRegistry;
 	friend godot::Variant puerts::script_value_to_variant(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value);
-	friend bool puerts::native_handle_to_variant(PuertsEnvironment *p_environment, void *p_handle, const void *p_type_id, godot::Variant &r_value);
 	friend bool puerts::return_variant_to_script(pesapi_ffi *p_api, pesapi_callback_info p_info, pesapi_env p_env, PuertsEnvironment *p_environment, const godot::Variant &p_value);
 
 	void log_error(const godot::String &p_message);

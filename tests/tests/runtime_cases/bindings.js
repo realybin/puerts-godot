@@ -254,11 +254,32 @@
 
 		},
 
+		binding_contracts() {
+			const ObjectType = load_type("Object");
+			const RandomNumberGenerator = load_type("RandomNumberGenerator");
+			const generator = new RandomNumberGenerator();
+			expect(generator instanceof ObjectType, "reflected types inherit the canonical Object binding");
+			expect(ObjectType.prototype.get_class.call(generator) === "RandomNumberGenerator", "static base method accepts reflected derived receiver");
+			expect(load_type("GlobalScope").instance_from_id(generator.get_instance_id()) === generator, "object round trip preserves wrapper identity");
+
+			const Vector2 = load_type("Vector2");
+			const Vector2i = load_type("Vector2i");
+			const vector = new Vector2i(2, 4);
+			const scaledFloat = Vector2i.op_Multiply(vector, 0.5);
+			expect(scaledFloat instanceof Vector2 && scaledFloat.x === 1 && scaledFloat.y === 2, "floating overload wins over integer narrowing");
+			const scaledInteger = Vector2i.op_Multiply(vector, 2);
+			expect(scaledInteger instanceof Vector2i && scaledInteger.x === 4 && scaledInteger.y === 8, "integer overload keeps its return type");
+			const divided = Vector2i.op_Division(vector, 0.5);
+			expect(divided instanceof Vector2 && divided.x === 4 && divided.y === 8, "division preserves a fractional scalar");
+			expect(vector.x === 2 && vector.y === 4, "operator invocation keeps the source value unchanged");
+			expect(Vector2.Axis === load_type("Vector2.Axis"), "enum scope has one type identity");
+		},
+
 		static_argument_conversion() {
 			const Vector2 = load_type("Vector2");
 			const Vector2i = load_type("Vector2i");
 			const vector = new Vector2(3, 4);
-			expect(vector.dot(vector) === 25 && vector.dot(boxed_vector) === 25, "raw and boxed argument conversion");
+			expect(vector.dot(vector) === 25 && vector.dot(boxed_vector) === 25, "constructed and engine value argument conversion");
 			expect(vector.dot(new Vector2i(3, 4)) === 25 && vector.dot(boxed_int_vector) === 25, "cross-type argument conversion");
 			const copy = new Vector2(vector);
 			copy.x = 10;

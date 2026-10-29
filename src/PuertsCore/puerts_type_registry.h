@@ -18,13 +18,17 @@ public:
 
 	[[nodiscard]] pesapi_registry get_registry() const;
 
-	void register_static_type(TypeRecord &&p_record);
+	bool register_static_type(TypeRecord &&p_record);
 	[[nodiscard]] const void *find_or_add_object_type(const godot::StringName &p_name);
 	[[nodiscard]] const void *get_builtin_type_id(godot::Variant::Type p_type) const;
 	[[nodiscard]] bool has_type(const void *p_type_id) const;
 	bool ensure_registered(const void *p_type_id);
-	[[nodiscard]] bool is_assignable(const void *p_type_id, const void *p_base_type_id) const;
-	bool native_handle_to_variant(void *p_pointer, const void *p_type_id, godot::Variant &r_value) const;
+	[[nodiscard]] void *cast_native(void *p_pointer, const void *p_type_id, const void *p_base_type_id) const;
+	[[nodiscard]] bool can_own_native(const void *p_type_id) const;
+	static void signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
+	static void nested_type_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
+	static void singleton_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
+	static void integer_constant_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 
 	static void on_native_binding_exit(void *ptr, void *class_data, void *environment_context, void *userdata);
 	static void load_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
@@ -52,30 +56,24 @@ private:
 	~PuertsTypeRegistry();
 
 	static void *bound_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
-	static void bound_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void *object_default_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void *no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void object_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void object_static_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void object_property_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void object_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
-	static void object_signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
-	static void enum_group_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
-	static void integer_constant_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	static void read_only_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 
 	[[nodiscard]] TypeRecord *find_record(const void *p_type_id) const;
 	[[nodiscard]] TypeRecord *find_type_by_name(const godot::StringName &p_name);
 	[[nodiscard]] TypeRecord *find_or_add_object_record(const godot::StringName &p_name);
-	void store_type(TypeRecordOwner p_owner);
-	bool resolve_base_type(TypeRecord *p_type);
+	bool store_type(TypeRecordOwner p_owner);
 	void register_type(TypeRecord *p_type);
 	bool ensure_registered(TypeRecord *p_type);
 
 	pesapi_registry_api reg_api_{};
 	pesapi_registry registry_ = nullptr;
 	puerts_eastl::hash_map<godot::StringName, TypeRecord *, StringNameHash, StringNameEqual> types_by_name_;
-	puerts_eastl::hash_map<godot::StringName, TypeRecord *, StringNameHash, StringNameEqual> reflected_types_by_name_;
 	puerts_eastl::hash_map<const void *, TypeRecord *> types_by_id_;
 	TypeRecord *builtin_types_[godot::Variant::VARIANT_MAX] = {};
 	puerts_eastl::vector<TypeRecordOwner> owned_types_;

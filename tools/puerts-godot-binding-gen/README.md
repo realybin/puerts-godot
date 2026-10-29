@@ -1,75 +1,62 @@
 # puerts-godot-binding-gen
 
-Generate C++ builtin binding code for `puerts_builtin_binding.cpp`.
+Generate static bindings from Godot API JSON and explicit binding rules.
 
-Pass class list from JSON config for full programmatic generation.
+## Project commands
 
-## Use
-
-```bash
-npm install
-npm run build
-```
-
-## Generate
+Run from this directory:
 
 ```bash
-# single class
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --classes PackedByteArray --output ./output/packed_byte_array.binding.inc
-
-# all classes currently used by puerts
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --classes-json ./config/puerts_builtin_classes.json --output ./output/puerts_builtin_bindings.generated.inc
-
-# object profile (from extension_api.classes)
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --classes-json ./config/puerts_object_profile_classes.json --output ./output/puerts_object_profile_bindings.generated.inc
-
-# custom register entry name (optional)
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --classes-json ./config/puerts_builtin_classes.json --register-function register_puerts_builtin_bindings_generated --output ./output/puerts_builtin_bindings.generated.inc
-
-# class list auto-read from puerts file, optional
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --classes-from-puerts-file ../../src/PuertsCore/puerts_builtin_binding.cpp --output ./output/puerts_builtin_bindings.generated.inc
-
-# all builtin classes in JSON
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --all-builtin --output ./output/all_builtin_bindings.generated.inc
-```
-
-## Generate versioned project bindings
-
-First generate the `godot-cpp` headers for the same API version from the project
-root, then build this generator:
-
-```bash
-scons api_version=4.7 godot-cpp/gen/include/godot_cpp/core/version.hpp
-cd tools/puerts-godot-binding-gen
 npm ci
-npm run build
+npm run generate
 ```
 
-Run these three commands to update the project bindings for Godot 4.7:
+`generate` builds the generator and updates all nine project binding files for Godot 4.5, 4.6, and 4.7.
+After `npm run build`, individual outputs can be generated with:
 
 ```bash
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --godot-version-macro 4.7 --classes-json ./config/puerts_builtin_classes.json --output ../../src/PuertsCore/puerts_builtin_bindings.4_7.generated.inc
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --godot-version-macro 4.7 --classes-json ./config/puerts_object_profile_classes.json --output ../../src/PuertsCore/puerts_object_profile_bindings.4_7.generated.inc
-node dist/index.js --input ../../godot-cpp/gdextension/extension_api-4-7.json --godot-version-macro 4.7 --target globalscope --output ../../src/PuertsCore/puerts_global_scope.4_7.generated.inc
+npm run generate:4.7
+npm run generate:4.7:builtin
+npm run generate:4.7:object
+npm run generate:4.7:globalscope
 ```
 
-## NPM shortcuts
+The same commands exist for `4.5` and `4.6`.
+
+## CLI
 
 ```bash
-npm run generate:packed-byte-array
-npm run generate:puerts-all
-npm run generate:puerts-object-profile
+node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-7.json --profile config/puerts_builtin.json --output output/bindings.inc
+node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-7.json --kind builtin --classes Vector2,Color --output output/math.inc
+node dist/index.js --help
 ```
 
-## Output
+- `--api` and `--output` are required. Version guards follow the API header.
+- Use `--profile`, or select directly with `--kind builtin|object|globalscope`.
+- builtin/object require either `--classes A,B` or `--all`. globalscope accepts neither.
+- `--rules` overrides the bundled `config/puerts_binding_rules.json`.
+- CLI paths are relative to the current directory. The default rules path is relative to the tool.
 
-The generated file ends with:
+Profiles specify selection and an optional C++ registration function:
 
-- `void <register_function>()`
+```json
+{
+  "kind": "object",
+  "classes": ["Object"],
+  "register_function": "register_puerts_object_profile_bindings_generated"
+}
+```
 
-If `--classes-json` is an object config, you can set:
+Replace `classes` with `"all": true` to select all classes of that kind. Unknown fields, duplicate arguments, and conflicting selection options are errors.
 
-- `source`: `"builtin"` or `"classes"`
-- `register_function`: custom generated register entry function name
+## Binding rules
 
-Generated registrations use the fluent API from `puerts_static_binding.h`; they do not call internal callback or conversion APIs. Each constructor overload emits a separate `.constructor<Args...>()` call. When `constructors` is empty and `is_instantiable != false`, the generator emits `.constructor<>()`.
+`config/puerts_binding_rules.json` is shared by builtin and Object generation:
+
+- `methods`: native method names, signatures for ambiguous overloads, and explicit trailing defaults. `reason` explains each exception.
+- `properties`: member expressions and accessor methods.
+- `excluded_methods` / `excluded_properties`: known godot-cpp gaps; no fallback is generated.
+
+Numeric arguments convert to types extracted from C++ declarations. Script scalars remain signed int64 and double. Default argument rules verify the API type and value before use. Missing native members fail C++ compilation; stale selected method/property rules fail generation.
+
+Run focused generator tests with `npm test`.

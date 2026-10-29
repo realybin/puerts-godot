@@ -233,11 +233,33 @@ _G.binding_cases = {
 
 	end,
 
+	binding_contracts = function()
+		local ObjectType = load_type("Object")
+		local RandomNumberGenerator = load_type("RandomNumberGenerator")
+		local generator = RandomNumberGenerator()
+		local base_instance = ObjectType()
+		expect(base_instance.get_class(generator) == "RandomNumberGenerator", "static base method accepts reflected derived receiver")
+		expect(load_type("GlobalScope").instance_from_id(generator:get_instance_id()) == generator, "object round trip preserves wrapper identity")
+
+		local Vector2 = load_type("Vector2")
+		local Vector2i = load_type("Vector2i")
+		local vector = Vector2i(2, 4)
+		local scaled_float = Vector2i.op_Multiply(vector, 0.5)
+		expect(scaled_float.x == 1 and scaled_float.y == 2, "floating overload wins over integer narrowing")
+		local scaled_integer = Vector2i.op_Multiply(vector, 2)
+		expect(scaled_integer.x == 4 and scaled_integer.y == 8, "integer overload preserves its result")
+		local divided = Vector2i.op_Division(vector, 0.5)
+		expect(divided.x == 4 and divided.y == 8, "division preserves a fractional scalar")
+		expect(vector.x == 2 and vector.y == 4, "operator invocation keeps the source value unchanged")
+		local axis = load_type("Vector2.Axis")
+		expect(getmetatable(Vector2.Axis) == getmetatable(axis) and Vector2.Axis.AXIS_X == axis.AXIS_X and Vector2.Axis.AXIS_Y == axis.AXIS_Y, "enum scope shares its type metatable and constants")
+	end,
+
 	static_argument_conversion = function()
 		local Vector2 = load_type("Vector2")
 		local Vector2i = load_type("Vector2i")
 		local vector = Vector2(3, 4)
-		expect(vector:dot(vector) == 25 and vector:dot(boxed_vector) == 25, "raw and boxed argument conversion")
+		expect(vector:dot(vector) == 25 and vector:dot(boxed_vector) == 25, "constructed and engine value argument conversion")
 		expect(vector:dot(Vector2i(3, 4)) == 25 and vector:dot(boxed_int_vector) == 25, "cross-type argument conversion")
 		local copy = Vector2(vector)
 		copy.x = 10

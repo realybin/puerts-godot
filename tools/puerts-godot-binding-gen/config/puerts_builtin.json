@@ -1,5 +1,5 @@
 {
-	"source": "builtin",
+	"kind": "builtin",
 	"register_function": "register_puerts_builtin_bindings_generated",
 	"classes": [
 		"AABB",

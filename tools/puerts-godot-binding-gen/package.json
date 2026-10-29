@@ -5,10 +5,20 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "generate:packed-byte-array": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --classes PackedByteArray --output ./output/packed_byte_array.binding.inc",
-    "generate:puerts-all": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --classes-json ./config/puerts_builtin_classes.json --output ./output/puerts_builtin_bindings.generated.inc",
-    "generate:puerts-object-profile": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --classes-json ./config/puerts_object_profile_classes.json --output ./output/puerts_object_profile_bindings.generated.inc",
-    "generate:puerts-global-scope": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --target globalscope --output ./output/puerts_global_scope.generated.inc"
+    "generate": "npm run build && npm run generate:4.5 && npm run generate:4.6 && npm run generate:4.7",
+    "generate:4.5": "npm run generate:4.5:builtin && npm run generate:4.5:object && npm run generate:4.5:globalscope",
+    "generate:4.5:builtin": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-5.json --profile ./config/puerts_builtin.json --output ../../src/PuertsCore/puerts_builtin_bindings.4_5.generated.inc",
+    "generate:4.5:object": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-5.json --profile ./config/puerts_object.json --output ../../src/PuertsCore/puerts_object_profile_bindings.4_5.generated.inc",
+    "generate:4.5:globalscope": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-5.json --kind globalscope --output ../../src/PuertsCore/puerts_global_scope.4_5.generated.inc",
+    "generate:4.6": "npm run generate:4.6:builtin && npm run generate:4.6:object && npm run generate:4.6:globalscope",
+    "generate:4.6:builtin": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-6.json --profile ./config/puerts_builtin.json --output ../../src/PuertsCore/puerts_builtin_bindings.4_6.generated.inc",
+    "generate:4.6:object": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-6.json --profile ./config/puerts_object.json --output ../../src/PuertsCore/puerts_object_profile_bindings.4_6.generated.inc",
+    "generate:4.6:globalscope": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-6.json --kind globalscope --output ../../src/PuertsCore/puerts_global_scope.4_6.generated.inc",
+    "generate:4.7": "npm run generate:4.7:builtin && npm run generate:4.7:object && npm run generate:4.7:globalscope",
+    "generate:4.7:builtin": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-7.json --profile ./config/puerts_builtin.json --output ../../src/PuertsCore/puerts_builtin_bindings.4_7.generated.inc",
+    "generate:4.7:object": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-7.json --profile ./config/puerts_object.json --output ../../src/PuertsCore/puerts_object_profile_bindings.4_7.generated.inc",
+    "generate:4.7:globalscope": "node dist/index.js --api ../../godot-cpp/gdextension/extension_api-4-7.json --kind globalscope --output ../../src/PuertsCore/puerts_global_scope.4_7.generated.inc",
+    "test": "npm run build && node --test test/*.test.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",

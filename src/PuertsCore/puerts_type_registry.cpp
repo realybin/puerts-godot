@@ -5,15 +5,19 @@
 
 #include "puerts_bridge_registry.h"
 #include "puerts_environment.h"
-#include "puerts_type_record.h"
+#include "puerts_reflected_binding.h"
 
+#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/object.hpp>
+
 #include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/core/object.hpp>
 #include <godot_cpp/core/version.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/char_string.hpp>
 #include <godot_cpp/variant/signal.hpp>
+
+#include <climits>
 
 using namespace godot;
 
@@ -81,7 +85,7 @@ Object *require_holder_object(puerts::internal::CallbackContext &p_frame) {
 	return object;
 }
 
-String get_method_target_name(const TypeRecord::Method *p_method) {
+String get_method_target_name(const PuertsReflectedMethod *p_method) {
 	if (p_method == nullptr || p_method->owner_type == nullptr) {
 		return "unknown method";
 	}
@@ -90,7 +94,7 @@ String get_method_target_name(const TypeRecord::Method *p_method) {
 
 bool call_reflected_method(
 		Object *p_object,
-		const TypeRecord::Method *p_method,
+		const PuertsReflectedMethod *p_method,
 		puerts::internal::CallbackContext &p_frame,
 		Variant &r_result) {
 	// MethodBind resolution is intentionally performed once while building the
@@ -143,7 +147,7 @@ void dispatch_callback(pesapi_ffi *p_api, pesapi_callback_info p_info, Callback 
 	}
 }
 
-void return_reflected_method(Object *p_object, const TypeRecord::Method *p_method, puerts::internal::CallbackContext &p_frame) {
+void return_reflected_method(Object *p_object, const PuertsReflectedMethod *p_method, puerts::internal::CallbackContext &p_frame) {
 	Variant result;
 	if (call_reflected_method(p_object, p_method, p_frame, result)) {
 		puerts::return_variant_to_script(p_frame.api(), p_frame.callback_info(), p_frame.script_env(), p_frame.puerts_environment(), result);
@@ -190,30 +194,53 @@ bool PuertsTypeRegistry::has_type(const void *p_type_id) const {
 	return find_record(p_type_id) != nullptr;
 }
 
-void PuertsTypeRegistry::register_static_type(TypeRecord &&p_record) {
+bool PuertsTypeRegistry::register_static_type(TypeRecord &&p_record) {
+	ERR_FAIL_COND_V_MSG(p_record.name.is_empty(), false, "A bound type requires a name.");
+	ERR_FAIL_COND_V_MSG(types_by_name_.find(p_record.name) != types_by_name_.end(), false, "A type with this name is already registered.");
+	ERR_FAIL_COND_V_MSG(p_record.type_id != nullptr && has_type(p_record.type_id), false, "This C++ type is already registered.");
+	ERR_FAIL_COND_V_MSG(p_record.variant_type == Variant::NIL && !p_record.constructor_overloads.empty() && p_record.finalize == nullptr,
+			false, "Native constructors require a finalizer.");
+	auto has_unique_members = [](const auto &methods, const auto &properties) {
+		puerts_eastl::hash_set<StringName, StringNameHash, StringNameEqual> names;
+		auto add_names = [&](const auto &members) {
+			for (const auto &member : members) {
+				if (member.name.is_empty() || !names.insert(member.name).second) {
+					return false;
+				}
+			}
+			return true;
+		};
+		return add_names(methods) && add_names(properties);
+	};
+	ERR_FAIL_COND_V_MSG(!has_unique_members(p_record.instance_methods, p_record.instance_properties) ||
+					!has_unique_members(p_record.static_methods, p_record.static_properties),
+			false, "Bound member names must be nonempty and unique within each scope.");
+	ERR_FAIL_COND_V_MSG(p_record.variant_type != Variant::OBJECT && ClassDB::class_exists(p_record.name),
+			false, "Native types and namespaces cannot replace Godot classes.");
 	TypeRecordOwner owner(memnew(TypeRecord(puerts_eastl::move(p_record))));
 	TypeRecord *type = owner.get();
-	if (type->base_id != nullptr) {
-		type->base = find_record(type->base_id);
+	if (type->type_id == nullptr) {
+		type->type_id = type;
 	}
-	for (auto *methods : { &type->instance_methods, &type->static_methods }) {
-		for (TypeRecord::Method &method : *methods) {
-			method.owner_type = type;
-			method.callback = &PuertsTypeRegistry::bound_method_callback;
-			if (method.utility_hash >= 0) {
-				method.utility_function = godot::gdextension_interface::variant_get_ptr_utility_function(
-						method.name._native_ptr(),
-						static_cast<uint32_t>(method.utility_hash));
-			}
+	if (type->base_id != nullptr && type->variant_type != Variant::OBJECT) {
+		type->base = find_record(type->base_id);
+		ERR_FAIL_NULL_V_MSG(type->base, false, "Register a native base type before its derived types.");
+	}
+	if (should_index_builtin_variant(type)) {
+		ERR_FAIL_COND_V_MSG(builtin_types_[static_cast<int>(type->variant_type)] != nullptr, false, "This builtin Variant type is already registered.");
+	}
+	if (type->variant_type == Variant::OBJECT) {
+		if (!TypeRecordBuilder::complete_object_type(*this, type)) {
+			return false;
 		}
 	}
-	store_type(puerts_eastl::move(owner));
+	return store_type(puerts_eastl::move(owner));
 }
 
 PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_or_add_object_record(const StringName &p_name) {
-	auto found = reflected_types_by_name_.find(p_name);
-	if (found != reflected_types_by_name_.end()) {
-		return found->second;
+	auto found = types_by_name_.find(p_name);
+	if (found != types_by_name_.end()) {
+		return found->second->variant_type == Variant::OBJECT ? found->second : nullptr;
 	}
 
 	TypeRecordOwner owner = TypeRecordBuilder::build_object_type(*this, p_name);
@@ -222,8 +249,7 @@ PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_or_add_object_record(co
 	}
 
 	TypeRecord *type = owner.get();
-	store_type(puerts_eastl::move(owner));
-	return type;
+	return store_type(puerts_eastl::move(owner)) ? type : nullptr;
 }
 
 const void *PuertsTypeRegistry::find_or_add_object_type(const StringName &p_name) {
@@ -263,10 +289,6 @@ bool PuertsTypeRegistry::ensure_registered(TypeRecord *p_type) {
 	}
 
 	p_type->registration_state = TypeRecord::RegistrationState::Registering;
-	if (!resolve_base_type(p_type)) {
-		p_type->registration_state = TypeRecord::RegistrationState::Unregistered;
-		return false;
-	}
 	if (p_type->base != nullptr && !ensure_registered(p_type->base)) {
 		p_type->registration_state = TypeRecord::RegistrationState::Unregistered;
 		return false;
@@ -281,59 +303,34 @@ bool PuertsTypeRegistry::ensure_registered(const void *p_type_id) {
 	return type != nullptr && ensure_registered(type);
 }
 
-bool PuertsTypeRegistry::is_assignable(const void *p_type_id, const void *p_base_id) const {
+void *PuertsTypeRegistry::cast_native(void *p_pointer, const void *p_type_id, const void *p_base_type_id) const {
 	for (TypeRecord *type = find_record(p_type_id); type != nullptr; type = type->base) {
-		if (type->type_id == p_base_id) {
-			return true;
+		if (type->type_id == p_base_type_id) {
+			return p_pointer;
 		}
+		if (type->upcast == nullptr) {
+			return nullptr;
+		}
+		p_pointer = type->upcast(p_pointer);
 	}
-	return false;
+	return nullptr;
 }
 
-bool PuertsTypeRegistry::native_handle_to_variant(void *p_pointer, const void *p_type_id, Variant &r_value) const {
+bool PuertsTypeRegistry::can_own_native(const void *p_type_id) const {
 	const TypeRecord *type = find_record(p_type_id);
-	if (type == nullptr || type->kind != TypeRecord::Kind::StaticBinding || type->to_variant == nullptr) {
-		return false;
-	}
-	r_value = type->to_variant(p_pointer);
-	return true;
+	return type != nullptr && type->finalize != nullptr;
 }
 
-void PuertsTypeRegistry::store_type(TypeRecordOwner p_owner) {
+bool PuertsTypeRegistry::store_type(TypeRecordOwner p_owner) {
 	TypeRecord *type = p_owner.get();
-	owned_types_.push_back(puerts_eastl::move(p_owner));
+	ERR_FAIL_COND_V_MSG(has_type(type->type_id) || types_by_name_.find(type->name) != types_by_name_.end(), false, "Duplicate type registration.");
 	types_by_id_.insert({ type->type_id, type });
-	if (type->kind == TypeRecord::Kind::ReflectedObject) {
-		reflected_types_by_name_.insert({ type->name, type });
-	}
-
-	auto by_name = types_by_name_.find(type->name);
-	const bool keep_existing_static_binding = by_name != types_by_name_.end() &&
-			by_name->second->kind == TypeRecord::Kind::StaticBinding &&
-			type->kind != TypeRecord::Kind::StaticBinding;
-	if (by_name == types_by_name_.end()) {
-		types_by_name_.insert({ type->name, type });
-	} else if (!keep_existing_static_binding) {
-		by_name->second = type;
-	}
-
+	types_by_name_.insert({ type->name, type });
 	if (should_index_builtin_variant(type)) {
 		builtin_types_[static_cast<int>(type->variant_type)] = type;
 	}
-}
-
-bool PuertsTypeRegistry::resolve_base_type(TypeRecord *p_type) {
-	if (p_type->base != nullptr) {
-		return true;
-	}
-	if (p_type->base_id != nullptr) {
-		p_type->base = find_record(p_type->base_id);
-	} else if (!p_type->base_name.is_empty()) {
-		p_type->base = find_type_by_name(p_type->base_name);
-	} else {
-		return true;
-	}
-	return p_type->base != nullptr;
+	owned_types_.push_back(puerts_eastl::move(p_owner));
+	return true;
 }
 
 void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
@@ -369,7 +366,7 @@ void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
 			CharString method_name = String(method->name).utf8();
 			reg_api_.set_method_info(
 					registry_, p_type->type_id, i, method_name.get_data(), p_is_static,
-					method->callback, method, true);
+					method->callback, method->callback_data != nullptr ? method->callback_data : method, true);
 		}
 	};
 	auto bind_properties = [this, p_type](auto &p_properties, bool p_is_static) {
@@ -380,8 +377,8 @@ void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
 					registry_, p_type->type_id, i, property_name.get_data(), p_is_static,
 					property->getter,
 					property->setter != nullptr ? property->setter : &PuertsTypeRegistry::read_only_property_setter_callback,
-					property->getter_userdata != nullptr ? property->getter_userdata : property,
-					property,
+					property->getter_data != nullptr ? property->getter_data : property,
+					property->setter != nullptr && property->setter_data != nullptr ? property->setter_data : property,
 					true);
 		}
 	};
@@ -396,6 +393,10 @@ void PuertsTypeRegistry::register_type(TypeRecord *p_type) {
 }
 
 void PuertsTypeRegistry::on_native_binding_exit(void *ptr, void *class_data, void *environment_context_ptr, void *userdata) {
+	const auto *type = static_cast<const TypeRecord *>(class_data);
+	if (type == nullptr || type->variant_type == Variant::NIL) {
+		return;
+	}
 	auto *environment_context = static_cast<PuertsEnvironmentContext *>(environment_context_ptr);
 	if (environment_context == nullptr || !environment_context->accepts_callbacks()) {
 		return;
@@ -411,62 +412,31 @@ void *PuertsTypeRegistry::bound_constructor_callback(struct pesapi_ffi *apis, pe
 		return nullptr;
 	}
 
-	void *instance = nullptr;
 	if (type->constructor_overloads.size() == 1) {
-		const TypeRecord::ConstructorOverload &overload = type->constructor_overloads[0];
-		if (!frame.require_argument_count(overload.arity)) {
-			return nullptr;
-		}
-		(void)overload.invoke(apis, frame, instance);
-		return instance;
+		const auto &constructor = type->constructor_overloads[0];
+		return frame.require_argument_count(constructor.arity) ? constructor.invoke(frame) : nullptr;
 	}
-
-	frame.set_report_errors(false);
-	for (const TypeRecord::ConstructorOverload &overload : type->constructor_overloads) {
-		if (frame.argument_count() == overload.arity && overload.invoke(apis, frame, instance)) {
-			return instance;
-		}
-	}
-	apis->throw_by_string(info, "No constructor overload matches the provided arguments.");
-	return nullptr;
-}
-
-void PuertsTypeRegistry::bound_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
-	puerts::internal::CallbackContext frame(apis, info);
-	if (!frame.require()) {
-		return;
-	}
-
-	if (method->overloads.size() == 1) {
-		const TypeRecord::MethodOverload &overload = method->overloads[0];
-		const bool valid_arity = overload.max_arity < 0
-				? frame.require_minimum_argument_count(overload.min_arity)
-				: frame.require_argument_count(overload.min_arity);
-		if (valid_arity) {
-			(void)overload.invoke(apis, info, frame);
-		}
-		return;
-	}
-
-	frame.set_report_errors(false);
-	bool matched_arity = false;
-	for (const TypeRecord::MethodOverload &overload : method->overloads) {
-		if (frame.argument_count() < overload.min_arity ||
-				(overload.max_arity >= 0 && frame.argument_count() > overload.max_arity)) {
+	const TypeRecord::ConstructorOverload *selected = nullptr;
+	int best_cost = INT_MAX;
+	bool ambiguous = false;
+	for (const auto &constructor : type->constructor_overloads) {
+		if (constructor.arity != frame.argument_count()) {
 			continue;
 		}
-		matched_arity = true;
-		if (overload.invoke(apis, info, frame)) {
-			return;
+		const int cost = constructor.match(frame);
+		if (cost >= 0 && cost < best_cost) {
+			selected = &constructor;
+			best_cost = cost;
+			ambiguous = false;
+		} else if (cost >= 0 && cost == best_cost) {
+			ambiguous = true;
 		}
 	}
-	if (!matched_arity) {
-		apis->throw_by_string(info, "Argument count does not match the bound signature.");
-		return;
+	if (selected == nullptr || ambiguous) {
+		(void)frame.reject(ambiguous ? "Ambiguous constructor overload." : "No constructor overload matches the provided arguments.");
+		return nullptr;
 	}
-	const char *reason = frame.last_rejection();
-	apis->throw_by_string(info, reason != nullptr ? reason : "No overload matches the provided arguments.");
+	return selected->invoke(frame);
 }
 
 void *PuertsTypeRegistry::no_constructor_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
@@ -506,7 +476,7 @@ void *PuertsTypeRegistry::object_default_constructor_callback(struct pesapi_ffi 
 }
 
 void PuertsTypeRegistry::object_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
+	const auto *method = static_cast<const PuertsReflectedMethod *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		if (Object *object = require_holder_object(context); object != nullptr) {
 			return_reflected_method(object, method, context);
@@ -515,14 +485,14 @@ void PuertsTypeRegistry::object_method_callback(struct pesapi_ffi *apis, pesapi_
 }
 
 void PuertsTypeRegistry::object_static_method_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	const auto *method = static_cast<const TypeRecord::Method *>(apis->get_userdata(info));
+	const auto *method = static_cast<const PuertsReflectedMethod *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		return_reflected_method(nullptr, method, context);
 	});
 }
 
 void PuertsTypeRegistry::object_property_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
+	auto *property = static_cast<const PuertsReflectedProperty *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		Object *object = require_holder_object(context);
 		if (object == nullptr) {
@@ -542,7 +512,7 @@ void PuertsTypeRegistry::object_property_getter_callback(struct pesapi_ffi *apis
 }
 
 void PuertsTypeRegistry::object_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
+	auto *property = static_cast<const PuertsReflectedProperty *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		Object *object = require_holder_object(context);
 		if (object == nullptr) {
@@ -561,11 +531,15 @@ void PuertsTypeRegistry::object_property_setter_callback(struct pesapi_ffi *apis
 	});
 }
 
-void PuertsTypeRegistry::object_signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+void PuertsTypeRegistry::signal_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
 	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
 		Object *object = require_holder_object(context);
 		if (object == nullptr) {
+			return;
+		}
+		if (!object->has_signal(property->name)) {
+			throw_script_error(apis, info, "Signal not found: " + String(property->name));
 			return;
 		}
 		puerts::return_variant_to_script(
@@ -577,26 +551,37 @@ void PuertsTypeRegistry::object_signal_getter_callback(struct pesapi_ffi *apis, 
 	});
 }
 
-void PuertsTypeRegistry::enum_group_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	auto *enum_type = static_cast<TypeRecord *>(apis->get_userdata(info));
-	PuertsTypeRegistry &registry = PuertsTypeRegistry::get_singleton();
-	if (!registry.ensure_registered(enum_type)) {
-		throw_script_error(apis, info, "Failed to register enum type: " + String(enum_type->name));
+void PuertsTypeRegistry::nested_type_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+	const auto &type_name = *static_cast<const StringName *>(apis->get_userdata(info));
+	auto &registry = get_singleton();
+	TypeRecord *type = registry.find_type_by_name(type_name);
+	if (type == nullptr || !registry.ensure_registered(type)) {
+		throw_script_error(apis, info, "Type is not registered: " + String(type_name));
 		return;
 	}
+	apis->add_return(info, apis->create_class(apis->get_env(info), type->type_id));
+}
 
-	pesapi_env env = apis->get_env(info);
-	apis->add_return(info, apis->create_class(env, enum_type->type_id));
+void PuertsTypeRegistry::singleton_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+	const auto *property = static_cast<const TypeRecord::Property *>(apis->get_userdata(info));
+	dispatch_callback(apis, info, [&](puerts::internal::CallbackContext &context) {
+		Engine *engine = Engine::get_singleton();
+		if (engine == nullptr || !engine->has_singleton(property->name)) {
+			(void)context.reject("Requested singleton is unavailable.");
+			return;
+		}
+		puerts::return_variant_to_script(apis, info, context.script_env(), context.puerts_environment(), Variant(engine->get_singleton(property->name)));
+	});
 }
 
 void PuertsTypeRegistry::integer_constant_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	auto *property = static_cast<TypeRecord::Property *>(apis->get_userdata(info));
+	const int64_t value = *static_cast<const int64_t *>(apis->get_userdata(info));
 	pesapi_env env = apis->get_env(info);
-	if (property->int_constant >= INT32_MIN && property->int_constant <= INT32_MAX) {
-		apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(property->int_constant)));
+	if (value >= INT32_MIN && value <= INT32_MAX) {
+		apis->add_return(info, apis->create_int32(env, static_cast<int32_t>(value)));
 		return;
 	}
-	apis->add_return(info, apis->create_int64(env, property->int_constant));
+	apis->add_return(info, apis->create_int64(env, value));
 }
 
 void PuertsTypeRegistry::read_only_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {

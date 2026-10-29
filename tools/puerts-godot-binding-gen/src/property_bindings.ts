@@ -2,15 +2,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import {
-	countMethodOverloadsInHeader,
-	hasLikelyMemberDeclaration
-} from "./header_analysis.js";
-import {
 	sanitizeIdentifier,
 	toSnakeCase
 } from "./text_utils.js";
 import {mapPropertyValueType} from "./type_mapping.js";
-import type {ApiClassLike, BoundPropertyBinding, HeaderAnalysis, PropertyRule} from "./types.js";
+import type {ApiClassLike, BoundPropertyBinding, PropertyRule} from "./types.js";
 
 function makePropertyHelperBaseName(className: string, propertyName: string): string {
 	return `${sanitizeIdentifier(toSnakeCase(className))}_${sanitizeIdentifier(propertyName)}`;
@@ -27,13 +23,17 @@ function buildPropertyGetterExpression(rule: PropertyRule): string {
 }
 
 function buildPropertySetterStatement(rule: PropertyRule): string {
-	if (rule.kind === "method") {
-		return `p_self.${rule.setter!}(eastl::move(p_value));`;
+	const scalar = rule.type === "int" || rule.type === "float";
+	if (rule.kind === "method" || rule.kind === "indexed_method") {
+		const index = rule.kind === "indexed_method" ? 1 : 0;
+		const value = scalar
+			? `static_cast<puerts::internal::native_parameter_t<decltype(&godot::${rule.class}::${rule.setter!}), ${index}>>(p_value)`
+			: "eastl::move(p_value)";
+		const argumentsList = rule.kind === "indexed_method" ? `${rule.index!}, ${value}` : value;
+		return `p_self.${rule.setter!}(${argumentsList});`;
 	}
-	if (rule.kind === "indexed_method") {
-		return `p_self.${rule.setter!}(${rule.index!}, eastl::move(p_value));`;
-	}
-	return `p_self.${rule.member_expr!} = eastl::move(p_value);`;
+	const value = scalar ? `static_cast<decltype(p_self.${rule.member_expr!})>(p_value)` : "eastl::move(p_value)";
+	return `p_self.${rule.member_expr!} = ${value};`;
 }
 
 function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; setterName: string; code: string } {
@@ -59,69 +59,35 @@ function generatePropertyHelperCode(rule: PropertyRule): { getterName: string; s
 
 export function collectPropertyBindings(
 	cls: ApiClassLike,
-	headerAnalysis: HeaderAnalysis,
 	customRulesByClass: Map<string, PropertyRule[]>,
-	missingPropertyNotes: string[],
 	helperNamespace: string,
+	excludedProperties: ReadonlySet<string> = new Set(),
 ): BoundPropertyBinding[] {
 	const bindings: BoundPropertyBinding[] = [];
 	const customRules = customRulesByClass.get(cls.name) ?? [];
 	const apiMemberNames = new Set((cls.members ?? []).map((m) => m.name));
 	const usedCustomNames = new Set<string>();
-	const hasHeaderSource = headerAnalysis.source.length > 0;
-	const customMethodCountCache = new Map<string, number>();
-	const memberDeclCache = new Map<string, boolean>();
-	const resolveMethodCount = (methodName: string): number => {
-		const known = headerAnalysis.methodNameCounts.get(methodName);
-		if (known !== undefined) {
-			return known;
-		}
-		const cached = customMethodCountCache.get(methodName);
-		if (cached !== undefined) {
-			return cached;
-		}
-		const count = hasHeaderSource ? countMethodOverloadsInHeader(headerAnalysis.source, methodName) : 0;
-		customMethodCountCache.set(methodName, count);
-		return count;
-	};
-	const hasMember = (memberName: string): boolean => {
-		if (headerAnalysis.topLevelMembers.has(memberName)) {
-			return true;
-		}
-		const cached = memberDeclCache.get(memberName);
-		if (cached !== undefined) {
-			return cached;
-		}
-		const exists = hasHeaderSource ? hasLikelyMemberDeclaration(headerAnalysis.source, memberName) : true;
-		memberDeclCache.set(memberName, exists);
-		return exists;
-	};
 
 	for (const rule of customRules) {
-		if (!apiMemberNames.has(rule.name)) {
-			missingPropertyNotes.push(`${rule.class}.${rule.name} (missing in extension_api members)`);
+		if (excludedProperties.has(`${cls.name}.${rule.name}`)) {
 			continue;
 		}
-
-		if ((rule.kind === "method" || rule.kind === "indexed_method") && hasHeaderSource) {
-			const getterCount = resolveMethodCount(rule.getter!);
-			const setterCount = resolveMethodCount(rule.setter!);
-			if (getterCount === 0 || setterCount === 0) {
-				missingPropertyNotes.push(
-					`${rule.class}.${rule.name} (missing method: ${getterCount === 0 ? rule.getter : ""}${getterCount === 0 && setterCount === 0 ? "/" : ""}${setterCount === 0 ? rule.setter : ""})`,
-				);
-				continue;
-			}
+		if (!apiMemberNames.has(rule.name)) {
+			throw new Error(`Property rule does not match the selected API: ${rule.class}.${rule.name}.`);
 		}
 
-		if (rule.kind === "member_expr" && hasHeaderSource) {
-			const root = rule.member_expr!.split(/[.\[]/)[0];
-			if (!hasMember(root)) {
-				missingPropertyNotes.push(`${rule.class}.${rule.name} (missing member root: ${root})`);
-				continue;
-			}
+		if (usedCustomNames.has(rule.name)) {
+			throw new Error(`Duplicate property adapter: ${rule.class}.${rule.name}.`);
 		}
-
+		if ((rule.kind === "method" || rule.kind === "indexed_method") && (!rule.getter || !rule.setter)) {
+			throw new Error(`Property adapter requires a getter and setter: ${rule.class}.${rule.name}.`);
+		}
+		if (rule.kind === "indexed_method" && !Number.isInteger(rule.index)) {
+			throw new Error(`Indexed property adapter requires an integer index: ${rule.class}.${rule.name}.`);
+		}
+		if (rule.kind === "member_expr" && !rule.member_expr) {
+			throw new Error(`Property adapter requires a member expression: ${rule.class}.${rule.name}.`);
+		}
 		const helper = generatePropertyHelperCode(rule);
 		bindings.push({
 			name: rule.name,
@@ -132,10 +98,10 @@ export function collectPropertyBindings(
 	}
 
 	for (const member of cls.members ?? []) {
-		if (usedCustomNames.has(member.name)) {
+		if (excludedProperties.has(`${cls.name}.${member.name}`)) {
 			continue;
 		}
-		if (!hasMember(member.name)) {
+		if (usedCustomNames.has(member.name)) {
 			continue;
 		}
 		bindings.push({
