@@ -92,6 +92,7 @@ def main() -> None:
     parser.add_argument("--target", required=True, choices=TARGETS)
     parser.add_argument("--precision", required=True, choices=("single", "double"))
     parser.add_argument("--godot", required=True)
+    parser.add_argument("--scope", required=True, choices=("ci", "build"))
     parser.add_argument("--backends", default="")
     parser.add_argument("--threads", default="true", choices=("true", "false"))
     args = parser.parse_args()
@@ -100,10 +101,8 @@ def main() -> None:
     sources = [
         ROOT / "manifest.toml",
         ROOT / "thirdparty/patches.toml",
-        Path(__file__).resolve(),
         ROOT / "misc/scripts/make_puerts.py",
         ROOT / "misc/scripts/scons/puerts_layout.py",
-        ROOT / ".github/actions/gdextension/action.yml",
     ]
     sources.extend((ROOT / "thirdparty/patches").glob("*.patch"))
     versions = toolchain_versions(args.platform)
@@ -113,7 +112,7 @@ def main() -> None:
     native_hash = fingerprint(
         [command_output("git", "-C", "thirdparty/puerts", "rev-parse", "HEAD"), *versions, *native_config], sources
     )
-    native_key = f"puerts-v1-{args.platform}-{args.arch}-{native_hash}"
+    native_key = f"puerts-native-{args.platform}-{args.arch}-{TARGETS[args.target].cmake.lower()}-{native_hash}"
     scons_sources = [ROOT / "SConstruct", *(ROOT / "misc/scripts/scons").glob("*.py")]
     scons_hash = fingerprint(
         [
@@ -122,14 +121,18 @@ def main() -> None:
             args.precision,
             args.godot,
             *(
-                command_output("git", "-C", name, "rev-parse", "HEAD")
+                command_output("git", "rev-parse", f"HEAD:{name}")
                 for name in ("godot-cpp", "thirdparty/EASTL", "thirdparty/EABase")
             ),
         ],
         scons_sources,
     )
+    scons_key = (
+        f"gdextension-{args.scope}-{args.platform}-{args.arch}-{args.target}-"
+        f"godot{args.godot}-{args.precision}-{scons_hash}"
+    )
     with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-        output.write(f"native-key={native_key}\nscons-key=scons-v1-{args.platform}-{args.arch}-{scons_hash}\n")
+        output.write(f"native-key={native_key}\nscons-key={scons_key}\n")
         output.write(
             "native-paths<<CACHE_PATHS\n"
             + "\n".join(native_cache_paths(args.platform, args.arch, args.target, backends))

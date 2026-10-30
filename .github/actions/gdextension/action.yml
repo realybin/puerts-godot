@@ -37,6 +37,9 @@ inputs:
   restore_cache:
     description: restore cache
     default: "true"
+  cache_scope:
+    description: SCons cache namespace (ci or build).
+    required: true
   save_native_cache:
     description: Whether this job owns native cache writes.
     default: "true"
@@ -70,9 +73,10 @@ runs:
         GODOT: ${{ inputs.api_version }}
         BACKENDS: ${{ inputs.backends }}
         THREADS: ${{ inputs.web_threads }}
+        CACHE_SCOPE: ${{ inputs.cache_scope }}
       run: |
         python -m misc.scripts.ci_cache --platform "$PLATFORM" --arch "$ARCH" --target "$TARGET" \
-          --precision "$PRECISION" --godot "$GODOT" --backends "$BACKENDS" --threads "$THREADS"
+          --precision "$PRECISION" --godot "$GODOT" --scope "$CACHE_SCOPE" --backends "$BACKENDS" --threads "$THREADS"
 
     - name: Restore Puerts libraries
       id: native-cache
