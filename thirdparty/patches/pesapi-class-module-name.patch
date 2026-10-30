@@ -1,0 +1,16 @@
+Subject: [PATCH] Honor the explicit module name when registering PESAPI classes
+
+--- a/unity/native/puerts/source/PesapiRegister.cpp
++++ b/unity/native/puerts/source/PesapiRegister.cpp
+@@ -102,8 +102,9 @@
+     puerts::ScriptClassDefinition classDef = ScriptClassEmptyDefinition;
+     classDef.TypeId = type_id;
+     classDef.SuperTypeId = super_type_id;
+-    puerts::PString ScriptNameWithModuleName = GPesapiModuleName == nullptr ? puerts::PString() : GPesapiModuleName;
+-    if (GPesapiModuleName)
++    const char* effective_module_name = module_name ? module_name : GPesapiModuleName;
++    puerts::PString ScriptNameWithModuleName = effective_module_name;
++    if (effective_module_name)
+     {
+         ScriptNameWithModuleName += ".";
+         ScriptNameWithModuleName += type_name;

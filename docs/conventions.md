@@ -27,6 +27,17 @@ import Godot, { Node as GodotNode } from "godot";
 
 See [README.md](../src/PuertsRuntime/ECMAScript/babel-plugin-godot-import-rewrite/README.md) for details.
 
+Import helpers from `"puerts"` and addon types from `"PAddon"`. Babel rewrites them into global function references and calls:
+
+```typescript
+import { to_callable } from "puerts";
+import * as Addon from "PAddon";
+
+const Client = Addon.WebSocketPP; // load_addon_type("WebSocketPP")
+```
+
+See [Native addons](addons.md) for addon development, loading, and TypeScript declarations.
+
 ## Type mapping
 
 Default mapping for Godot `Variant` values passed to script:

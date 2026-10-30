@@ -52,6 +52,7 @@ func _exit_tree() -> void:
 - [后端](docs/zh-CN/backends.md)
 - [约定](docs/zh-CN/conventions.md)
 - [静态绑定](docs/zh-CN/static-binding.md)
+- [原生 Addon](docs/zh-CN/addons.md)
 - [生命周期](docs/zh-CN/lifetime.md)
 - [StringName 缓存](docs/zh-CN/u8-cache.md)
 - [进阶用法](docs/zh-CN/advanced.md)

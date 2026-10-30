@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="PuertsAddon" inherits="RefCounted">
+	<brief_description>Loads PESAPI native addons.</brief_description>
+	<description>Registers addon types in the PESAPI registry shared by all environments. Load addons on the main thread before executing scripts. Supports desktop dynamic libraries on Windows, Linux, and macOS. Restart the process after replacing a loaded library.</description>
+	<methods>
+		<method name="load" qualifiers="static">
+			<return type="int" enum="Error" />
+			<param index="0" name="path" type="String" />
+			<param index="1" name="module_name" type="String" />
+			<description>Loads the library at [param path] and calls its registration entry for the current PESAPI version. Accepts absolute paths, res://, and user:// paths to files on disk. [param module_name] must be an ASCII identifier matching the first argument to PESAPI_MODULE.
+Returns OK on success or when the same path and module are already loaded. Returns ERR_CANT_OPEN if the library or a dependency cannot be loaded, ERR_METHOD_NOT_FOUND if the entry is missing, ERR_ALREADY_IN_USE if the module name is associated with another path, ERR_BUSY if registration is in progress, ERR_INVALID_PARAMETER for invalid arguments or a call from another thread, and ERR_UNAVAILABLE on unsupported platforms.</description>
+		</method>
+	</methods>
+</class>

@@ -19,3 +19,11 @@ backends = ["quickjs"]
 file = "papi-v8-nodejs-linux-origin-rpath"
 platform = "linux"
 backends = ["v8", "nodejs"]
+
+[[patches]]
+file = "pesapi-class-module-name"
+backends = ["core"]
+
+[[patches]]
+file = "papi-quickjs-dispose-finalizers"
+backends = ["quickjs"]

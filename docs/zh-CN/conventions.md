@@ -27,6 +27,17 @@ import Godot, { Node as GodotNode } from "godot";
 
 更多信息请参见 [README.md](../../src/PuertsRuntime/ECMAScript/babel-plugin-godot-import-rewrite/README.md)
 
+辅助函数从 `"puerts"` 导入，Addon 类型从 `"PAddon"` 导入。它们在 Babel 转换时重写为全局函数访问：
+
+```typescript
+import { to_callable } from "puerts";
+import * as Addon from "PAddon";
+
+const Client = Addon.WebSocketPP; // load_addon_type("WebSocketPP")
+```
+
+Addon 编写、加载与 dts 配置见[原生 Addon](addons.md)。
+
 ## 类型映射
 
 传递给脚本的 Godot `Variant` 值的默认映射：

@@ -204,6 +204,8 @@ for backend in BACKENDS.values():
         sources = project_env.SharedObject(sources)
         project_env.Depends(sources, runtime_header)
     if backend.name == "core":
+        if env["platform"] == "linux":
+            project_env.Append(LIBS=["dl"])
         if env["platform"] in ("ios", "web"):
             # The native static archive carries part of EASTL (e.g. hashtable.cpp).
             # Link only supplemental EASTL objects to avoid duplicate symbols.

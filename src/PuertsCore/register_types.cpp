@@ -8,6 +8,7 @@
 #include <godot_cpp/core/version.hpp>
 #include <godot_cpp/godot.hpp>
 
+#include "puerts_addon.h"
 #include "puerts_builtin_binding.h"
 #include "puerts_environment.h"
 #include "puerts_script_value.h"
@@ -18,6 +19,7 @@ void initialize_puerts_core_module(godot::ModuleInitializationLevel p_level) {
 		return;
 	}
 
+	GDREGISTER_CLASS(PuertsAddon);
 	GDREGISTER_CLASS(PuertsEnvironment);
 	GDREGISTER_CLASS(PuertsScriptValue);
 	GDREGISTER_CLASS(PuertsStringNameUtf8Cache);

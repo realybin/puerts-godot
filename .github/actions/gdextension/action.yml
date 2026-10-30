@@ -156,6 +156,29 @@ runs:
         use-dotnet: false
         include-templates: false
 
+    - name: Build test addon
+      if: ${{ inputs.run_tests == 'true' && (inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux') }}
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        ARCH: ${{ inputs.arch }}
+      run: |
+        cmake_args=()
+        if [ "$PLATFORM" = "windows" ]; then
+          case "$ARCH" in
+            x86_64) cmake_args+=(-A x64) ;;
+            x86_32) cmake_args+=(-A Win32) ;;
+            arm64) cmake_args+=(-A ARM64) ;;
+          esac
+        elif [ "$PLATFORM" = "macos" ]; then
+          cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=$ARCH")
+        fi
+        cmake -S tests/native_addon -B build/addon -DCMAKE_BUILD_TYPE=Debug "${cmake_args[@]}"
+        cmake --build build/addon --config Debug
+        addon_path=$(cat build/addon/addon-path-Debug.txt)
+        test -f "$addon_path"
+        echo "PUERTS_TEST_ADDON_PATH=$addon_path" >> "$GITHUB_ENV"
+
     - name: Run tests
       if: ${{ inputs.run_tests == 'true' && inputs.platform != 'web' }}
       shell: bash

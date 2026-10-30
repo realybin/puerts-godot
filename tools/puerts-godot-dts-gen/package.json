@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc -p tsconfig.json",
+		"test": "npm run build && node --test test/*.test.mjs",
 		"generate": "node dist/index.js --input ../../godot-cpp/gdextension/extension_api.json --output ./output/godot.d.ts",
 		"prepublishOnly": "echo 'This package is private and should not be published!' && exit 1"
 	},

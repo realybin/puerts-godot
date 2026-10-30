@@ -54,6 +54,7 @@ Keep the environment alive while using its script values. See [object lifetime](
 - [Backends](docs/backends.md)
 - [Conventions](docs/conventions.md)
 - [Static binding](docs/static-binding.md)
+- [Native addons](docs/addons.md)
 - [Object lifetime](docs/lifetime.md)
 - [StringName cache](docs/u8-cache.md)
 - [Advanced usage](docs/advanced.md)

@@ -1,0 +1,18 @@
+Subject: [PATCH] Keep the QuickJS mapper alive until runtime finalizers complete
+
+--- a/unity/native/papi-quickjs/source/CppObjectMapperQuickjs.cpp
++++ b/unity/native/papi-quickjs/source/CppObjectMapperQuickjs.cpp
+@@ -442,11 +442,11 @@
+         JS_FreeValue(ctx, *obj);
+     }
+     StrongRefObjects.clear();
+-    CDataCache.clear();
++    // Keep the weak object cache and runtime mapper alive until JS_FreeRuntime
++    // has finalized objects still reachable from the context (including globals).
+     TypeIdToFunctionMap.clear();
+     //CDataCache.~hash_map();
+     //TypeIdToFunctionMap.~hash_map();
+-    JS_SetRuntimeOpaque1(rt, nullptr);
+ }
+ 
+ }

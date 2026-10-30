@@ -17,6 +17,9 @@ public:
 	static PuertsTypeRegistry &get_singleton();
 
 	[[nodiscard]] pesapi_registry get_registry() const;
+	using AddonRegisterFunction = void (*)(pesapi_registry_api *, pesapi_registry);
+	void register_addon(AddonRegisterFunction p_register);
+	static void load_addon_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 
 	bool register_static_type(TypeRecord &&p_record);
 	[[nodiscard]] const void *find_or_add_object_type(const godot::StringName &p_name);

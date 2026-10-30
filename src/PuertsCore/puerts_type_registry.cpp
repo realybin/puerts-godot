@@ -18,6 +18,7 @@
 #include <godot_cpp/variant/signal.hpp>
 
 #include <climits>
+#include <cstring>
 
 using namespace godot;
 
@@ -587,6 +588,36 @@ void PuertsTypeRegistry::integer_constant_getter_callback(struct pesapi_ffi *api
 void PuertsTypeRegistry::read_only_property_setter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	const auto *property = static_cast<const TypeRecord::Property *>(apis->get_userdata(info));
 	throw_script_error(apis, info, "Property is read-only: " + String(property->name));
+}
+
+void PuertsTypeRegistry::register_addon(AddonRegisterFunction p_register) {
+	p_register(&reg_api_, registry_);
+}
+
+void PuertsTypeRegistry::load_addon_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
+	const pesapi_env env = apis->get_env(info);
+	const auto *context = static_cast<const PuertsEnvironmentContext *>(apis->get_env_private(env));
+	if (context == nullptr || !context->accepts_callbacks()) {
+		apis->throw_by_string(info, "Puerts environment is not available.");
+		return;
+	}
+	if (apis->get_args_len(info) != 1 || !apis->is_string(env, apis->get_arg(info, 0))) {
+		apis->throw_by_string(info, "load_addon_type expects exactly one string argument.");
+		return;
+	}
+	const String name = puerts::internal::read_utf8_string(apis, env, apis->get_arg(info, 0));
+	const CharString utf8 = name.utf8();
+	if (utf8.length() == 0 || std::memchr(utf8.get_data(), '\0', utf8.length()) != nullptr) {
+		apis->throw_by_string(info, "Addon type name must be nonempty and contain no NUL characters.");
+		return;
+	}
+	PuertsTypeRegistry &registry = get_singleton();
+	const void *type_id = registry.reg_api_.find_type_id(registry.registry_, nullptr, utf8.get_data());
+	if (type_id == nullptr) {
+		throw_script_error(apis, info, "Addon type not found: " + name);
+		return;
+	}
+	apis->add_return(info, apis->create_class(env, type_id));
 }
 
 void PuertsTypeRegistry::load_type_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {

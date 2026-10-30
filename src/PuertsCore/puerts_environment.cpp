@@ -17,6 +17,7 @@ extern "C" int GetPapiVersion();
 namespace {
 
 constexpr char kLoadTypePropertyName[] = "load_type";
+constexpr char kLoadAddonTypePropertyName[] = "load_addon_type";
 constexpr char kToCallablePropertyName[] = "to_callable";
 constexpr char kLogErrorPropertyName[] = "log_error";
 constexpr char kLogWarnPropertyName[] = "log_warn";
@@ -154,6 +155,8 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 
 	pesapi_value load_type = api_->create_function(env, &PuertsTypeRegistry::load_type_callback, nullptr, nullptr);
 	api_->set_property(env, api_->global(env), kLoadTypePropertyName, load_type);
+	pesapi_value load_addon_type = api_->create_function(env, &PuertsTypeRegistry::load_addon_type_callback, nullptr, nullptr);
+	api_->set_property(env, api_->global(env), kLoadAddonTypePropertyName, load_addon_type);
 	pesapi_value to_callable = api_->create_function(env, &PuertsEnvironment::script_to_callable_callback, nullptr, nullptr);
 	api_->set_property(env, api_->global(env), kToCallablePropertyName, to_callable);
 	pesapi_value log_error = api_->create_function(env, &PuertsEnvironment::script_log_error_callback, nullptr, nullptr);

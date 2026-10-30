@@ -1,0 +1,12 @@
+{
+  "name": "babel-plugin-godot-import-rewrite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/plugin-transform-typescript": "^7.28.0"
+  }
+}
