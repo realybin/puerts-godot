@@ -1,82 +1,107 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsEnvironment" inherits="RefCounted">
-	<brief_description>Owns one script runtime.</brief_description>
-	<description>Initialize with a backend and UTF-8 name cache. Keep it alive while using its values, and use one thread. The Web backend retains its environment until page unload.</description>
+	<brief_description>Runs scripts and exchanges values with a selected script engine.</brief_description>
+	<description>
+		Create a runtime with [method initialize], execute code with [method eval], and exchange values with [method set_global] and [method get_global].
+		[b]Lifetime:[/b] Keep a reference to the environment while using its script values or script-backed [Callable]s. Use the environment, its values, and its [PuertsStringNameUtf8Cache] on the same thread.
+		[b]Errors:[/b] Register [method set_error_callback] before initialization to receive errors, including script exceptions and unsupported backend operations.
+		[codeblocks]
+		[gdscript]
+		var environment := PuertsEnvironment.new()
+		environment.set_error_callback(func(message: String): push_error(message))
+		if environment.initialize(PuertsV8Backend.new(), PuertsStringNameUtf8Cache.new()) == OK:
+		    environment.set_global(&amp;"answer", 42)
+		    var result := environment.eval("answer + 1", &amp;"example.js")
+		    if result != null:
+		        print(result.to_native()) # 43
+		    environment.dispose()
+		[/gdscript]
+		[/codeblocks]
+		[b]Web:[/b] [PuertsWebBackend] allows only one environment, which remains alive until page unload. [method dispose] and reinitialization are unsupported.
+	</description>
 	<methods>
 		<method name="initialize">
 			<return type="int" enum="Error" />
 			<param index="0" name="backend" type="Object" />
 			<param index="1" name="string_name_utf8_cache" type="PuertsStringNameUtf8Cache" />
-			<description>Creates a runtime from the backend and UTF-8 name cache, disposing an idle previous runtime. Returns ERR_BUSY during an active operation or lifecycle change. The Web backend returns ERR_ALREADY_IN_USE when reinitialized, or ERR_CANT_CREATE when another environment exists.</description>
+			<description>Creates a runtime using [param backend] and a non-null [param string_name_utf8_cache]. The environment retains both resources on success.
+			Reinitialization disposes the previous idle runtime and invalidates its values and callables. If creating the replacement fails, the environment remains uninitialized.
+			Returns [constant @GlobalScope.OK] on success, [constant @GlobalScope.ERR_INVALID_PARAMETER] for invalid arguments, [constant @GlobalScope.ERR_UNCONFIGURED] for an invalid backend interface, or [constant @GlobalScope.ERR_CANT_CREATE] if runtime creation fails. Returns [constant @GlobalScope.ERR_BUSY] during initialization, disposal, or an active script operation.
+			For [PuertsWebBackend], reinitialization returns [constant @GlobalScope.ERR_ALREADY_IN_USE]; creating a second environment returns [constant @GlobalScope.ERR_CANT_CREATE].</description>
 		</method>
 		<method name="dispose">
 			<return type="void" />
-			<description>Invalidates values and callables, then releases the runtime after active operations return. Safe to repeat. The Web backend reports an error and leaves the environment alive.</description>
+			<description>Releases the runtime and permanently invalidates its script values and script-backed [Callable]s. Safe to repeat; the environment can subsequently be initialized again.
+			When called during a script operation or callback, stops accepting new operations and defers destruction until the outermost operation returns.
+			[PuertsWebBackend] reports an error and keeps the environment running.</description>
 		</method>
 		<method name="is_ready" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true while the environment accepts operations.</description>
+			<description>Returns [code]true[/code] if the environment is initialized and accepts script operations.</description>
 		</method>
 		<method name="get_backend" qualifiers="const">
 			<return type="Object" />
-			<description>Returns the attached backend, or null when none is attached.</description>
+			<description>Returns the current backend resource, or [code]null[/code] when no backend is attached.</description>
 		</method>
 		<method name="set_error_callback">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
-			<description>Sets the synchronous callback for error messages; an invalid Callable disables it.</description>
+			<description>Sets [param callback] to receive initialization errors, script exceptions, rejected operations, and script [code]log_error[/code] messages. The callback receives one [String] argument and runs synchronously on the calling thread.
+			Set it before [method initialize] to receive initialization errors. Pass [code]Callable()[/code] to disable it. Messages are discarded when no valid callback is set.</description>
 		</method>
 		<method name="set_warn_callback">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
-			<description>Sets the synchronous callback for warning messages; an invalid Callable disables it.</description>
+			<description>Sets [param callback] to receive one [String] argument for messages sent through the script global [code]log_warn[/code]. It runs synchronously on the calling thread. Pass [code]Callable()[/code] to disable it; messages without a valid callback are discarded.</description>
 		</method>
 		<method name="set_info_callback">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
-			<description>Sets the synchronous callback for information messages; an invalid Callable disables it.</description>
+			<description>Sets [param callback] to receive one [String] argument for messages sent through the script global [code]log_info[/code]. It runs synchronously on the calling thread. Pass [code]Callable()[/code] to disable it; messages without a valid callback are discarded.</description>
 		</method>
 		<method name="eval">
 			<return type="PuertsScriptValue" />
 			<param index="0" name="code" type="String" />
 			<param index="1" name="chunk_name" type="StringName" default="&amp;&quot;chunk&quot;" />
-			<description>Executes code and wraps its result. Returns null on failure; use the wrapper type checks for a successful null or undefined result.</description>
+			<description>Executes [param code] and returns its result as a [PuertsScriptValue]. [param chunk_name] identifies the source in diagnostics.
+			Returns [code]null[/code] on failure or when the environment is not ready. Successful script null and undefined results are wrapped; inspect them with [method PuertsScriptValue.is_null] and [method PuertsScriptValue.is_undefined].
+			For Lua, use [code]return[/code] to produce a result, for example [code]return 40 + 2[/code].</description>
 		</method>
 		<method name="set_global">
 			<return type="void" />
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="value" type="Variant" />
-			<description>Converts value and assigns it to the named script global. A value from another environment is rejected.</description>
+			<description>Converts [param value] to a script value and assigns it to global [param name]. A [PuertsScriptValue] must be valid and belong to this environment.</description>
 		</method>
 		<method name="get_global">
 			<return type="PuertsScriptValue" />
 			<param index="0" name="name" type="StringName" />
-			<description>Returns the named global as a PuertsScriptValue, or null when the read fails.</description>
+			<description>Reads global [param name] as a [PuertsScriptValue]. Missing globals follow the backend language rules, such as JavaScript undefined or Lua nil. Returns [code]null[/code] on failure or when the environment is not ready.</description>
 		</method>
 		<method name="tick">
 			<return type="void" />
-			<description>Runs one update step for V8 or Node.js.</description>
+			<description>Runs one backend update step. Supported by [PuertsV8Backend] and [PuertsNodejsBackend]; call regularly, for example from [method Node._process].</description>
 		</method>
 		<method name="low_memory_notification">
 			<return type="void" />
-			<description>Notifies V8, Node.js, or QuickJS of memory pressure; collection is backend-controlled.</description>
+			<description>Requests garbage collection from [PuertsV8Backend], [PuertsNodejsBackend], or [PuertsQuickjsBackend].</description>
 		</method>
 		<method name="open_debugger">
 			<return type="void" />
 			<param index="0" name="port" type="int" />
-			<description>Opens the V8 or Node.js inspector on port.</description>
+			<description>Starts the inspector on [param port] for [PuertsV8Backend] or [PuertsNodejsBackend]. Use [method debugger_tick] to process inspector traffic and [method close_debugger] when finished.</description>
 		</method>
 		<method name="debugger_tick">
 			<return type="bool" />
-			<description>Processes inspector traffic for V8 or Node.js; returns false when unsupported.</description>
+			<description>Processes one inspector update for [PuertsV8Backend] or [PuertsNodejsBackend] and returns the backend inspector status. Returns [code]false[/code] if the environment is not ready or the backend does not support inspection; these failures are reported through [method set_error_callback].</description>
 		</method>
 		<method name="close_debugger">
 			<return type="void" />
-			<description>Closes the active inspector.</description>
+			<description>Closes the inspector for [PuertsV8Backend] or [PuertsNodejsBackend].</description>
 		</method>
 		<method name="terminate_execution">
 			<return type="void" />
-			<description>Requests termination of the current script on supported backends.</description>
+			<description>Requests termination of script execution in [PuertsV8Backend] or [PuertsNodejsBackend].</description>
 		</method>
 	</methods>
 </class>

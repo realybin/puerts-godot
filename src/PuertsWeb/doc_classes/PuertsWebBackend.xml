@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsWebBackend" inherits="Resource">
-	<brief_description>Selects the browser JavaScript engine for Web exports.</brief_description>
-	<description>Web-only backend using the browser's JavaScript engine and global object. Requires the browser main thread, WeakRef, FinalizationRegistry, and CSP permission for unsafe-eval. One [PuertsEnvironment] is retained until page unload; disposal and reinitialization are unsupported. Debug with browser DevTools.</description>
+	<brief_description>Uses the browser's JavaScript runtime.</brief_description>
+	<description>
+		Pass an instance to [method PuertsEnvironment.initialize] to select Browser JavaScript.
+		Scripts share the browser's [code]globalThis[/code] and can access browser APIs such as the DOM.
+		Only one environment can be created. It remains alive until page unload; disposal and reinitialization are unsupported.
+		Use [code]ClassDB.instantiate("PuertsWebBackend")[/code] in scripts that must parse in the desktop editor, where this Web-only class is unavailable.
+	</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />
-			<description>Returns [code]web[/code].</description>
+			<description>Returns [code]&amp;"web"[/code].</description>
 		</method>
 		<method name="get_backend_name" qualifiers="const">
 			<return type="String" />
-			<description>Returns [code]Browser JavaScript[/code].</description>
+			<description>Returns [code]"Browser JavaScript"[/code].</description>
 		</method>
 		<method name="get_language_id" qualifiers="const">
 			<return type="StringName" />
-			<description>Returns [code]ecmascript[/code].</description>
+			<description>Returns [code]&amp;"ecmascript"[/code], the script language identifier.</description>
 		</method>
 		<method name="_puerts_get_functions_ptr" qualifiers="const">
 			<return type="int" />
-			<description>Returns the internal function table address used by the core.</description>
+			<description>Internal interface used by [method PuertsEnvironment.initialize] to obtain the backend function table.</description>
 		</method>
 	</methods>
 </class>

@@ -1,97 +1,114 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsScriptValue" inherits="RefCounted">
-	<brief_description>Retains one script value.</brief_description>
-	<description>A valid wrapper keeps its script value reachable but does not keep the environment alive. Disposal invalidates it permanently.</description>
+	<brief_description>Retains a value in a Puerts script environment.</brief_description>
+	<description>
+		Represents a value returned by [method PuertsEnvironment.eval], [method PuertsEnvironment.get_global], property reads, or function calls.
+		[b]Lifetime:[/b] Retains the script value, but not its [PuertsEnvironment]. Keep the environment alive and use both on the same thread. Disposing or replacing the runtime permanently invalidates its wrappers.
+		Use [method to_native] to convert to Godot values, and the property and call methods to work with script objects and functions. Operation errors are reported through [method PuertsEnvironment.set_error_callback].
+		[b]Type checks:[/b] Types can overlap: a JavaScript Number can satisfy both [method is_int] and [method is_float]. For invalid wrappers, all type checks return [code]false[/code] except [method is_null] and [method is_undefined], which return [code]true[/code].
+	</description>
 	<methods>
 		<method name="is_valid" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true while this wrapper and its environment are live.</description>
+			<description>Returns [code]true[/code] if the wrapper retains a script value and its environment accepts operations.</description>
 		</method>
 		<method name="is_null" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for a script null or an invalid wrapper.</description>
+			<description>Returns [code]true[/code] if the backend identifies the value as null. Also returns [code]true[/code] for an invalid wrapper; check [method is_valid] first.</description>
 		</method>
 		<method name="is_undefined" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for script undefined or an invalid wrapper.</description>
+			<description>Returns [code]true[/code] for script undefined or an invalid wrapper. Check [method is_valid] first.</description>
 		</method>
 		<method name="is_bool" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for a script boolean.</description>
+			<description>Returns [code]true[/code] for a script boolean.</description>
 		</method>
 		<method name="is_int" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for an integer according to the backend.</description>
+			<description>Returns [code]true[/code] if the backend recognizes a 32-bit or 64-bit integer. This includes integer Numbers in V8 and Node.js, even though [method to_int] requires BigInt.</description>
 		</method>
 		<method name="is_float" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for a floating-point value according to the backend.</description>
+			<description>Returns [code]true[/code] if the backend recognizes a floating-point number. For JavaScript Number, this includes integers.</description>
 		</method>
 		<method name="is_string" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for a script string.</description>
+			<description>Returns [code]true[/code] for a script string.</description>
 		</method>
 		<method name="is_binary" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for a script binary value.</description>
+			<description>Returns [code]true[/code] for binary data readable with [method to_binary].</description>
 		</method>
 		<method name="is_object" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for a script object.</description>
+			<description>Returns [code]true[/code] for a script object.</description>
 		</method>
 		<method name="is_function" qualifiers="const">
 			<return type="bool" />
-			<description>Returns true for a script function.</description>
+			<description>Returns [code]true[/code] for a script function that can be invoked with [method call].</description>
 		</method>
 		<method name="to_bool" qualifiers="const">
 			<return type="bool" />
-			<description>Reads a boolean with the backend accessor; returns false when invalid.</description>
+			<description>Reads a script boolean. Conversion of other types is backend-dependent. Returns [code]false[/code] when invalid.</description>
 		</method>
 		<method name="to_int" qualifiers="const">
 			<return type="int" />
-			<description>Reads a signed 64-bit integer. V8 and Node.js require BigInt and return 0 for Number; use to_native or to_float for Number values.</description>
+			<description>Reads a signed 64-bit integer. Returns [code]0[/code] when invalid.
+			[b]V8 and Node.js:[/b] Requires BigInt; JavaScript Number returns [code]0[/code], including integer Numbers. Use [method to_native] for automatic conversion or [method to_float] for Number.</description>
 		</method>
 		<method name="to_float" qualifiers="const">
 			<return type="float" />
-			<description>Reads a floating-point value; returns 0.0 when invalid.</description>
+			<description>Reads a floating-point number, including integer JavaScript Numbers. Conversion of other types is backend-dependent. Returns [code]0.0[/code] when invalid.</description>
 		</method>
 		<method name="to_string" qualifiers="const">
 			<return type="String" />
-			<description>Reads a string; returns an empty String when invalid.</description>
+			<description>Reads a script string as a Godot [String]. Returns an empty string when invalid.</description>
 		</method>
 		<method name="to_binary" qualifiers="const">
 			<return type="PackedByteArray" />
-			<description>Copies script binary data to PackedByteArray; returns an empty array when invalid.</description>
+			<description>Copies binary data into a [PackedByteArray]. Check [method is_binary] before reading. Returns an empty array when invalid.</description>
 		</method>
 		<method name="to_native" qualifiers="const">
 			<return type="Variant" />
-			<description>Converts primitives and supported native values to Variant. Ordinary script objects and functions remain wrapped.</description>
+			<description>Converts script booleans, numbers, and strings to Godot values and recovers wrapped Godot values. Script null and undefined become [code]null[/code]. Ordinary script objects, arrays, and functions remain [PuertsScriptValue] wrappers. Returns [code]null[/code] when invalid.</description>
 		</method>
 		<method name="unwrap_native" qualifiers="const">
 			<return type="Variant" />
-			<description>Returns the wrapped Godot value, or null when invalid, freed, or non-native.</description>
+			<description>Recovers the Godot [Variant] represented by a native wrapper, such as a Godot object passed to the script. Returns [code]null[/code] for ordinary script values, invalid wrappers, or freed Godot objects.</description>
 		</method>
 		<method name="get_property" qualifiers="const">
 			<return type="PuertsScriptValue" />
 			<param index="0" name="name" type="StringName" />
-			<description>Returns the named property as a wrapper; failures report through the environment callback.</description>
+			<description>Reads property [param name] as a wrapper. Missing properties follow the backend language rules. Returns [code]null[/code] on failure, including access to a freed Godot object.</description>
 		</method>
 		<method name="set_property">
 			<return type="void" />
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="value" type="Variant" />
-			<description>Converts and assigns a Variant to the named property; cross-environment values are rejected.</description>
+			<description>Converts [param value] to a script value and assigns it to property [param name]. A [PuertsScriptValue] must be valid and belong to the same environment.</description>
 		</method>
 		<method name="call" qualifiers="const">
 			<return type="PuertsScriptValue" />
 			<param index="0" name="args" type="Array" default="[]" />
-			<description>Calls the wrapped function with args and returns its result wrapper, or null on failure.</description>
+			<description>Calls this script function with positional arguments from [param args], converting them from Godot values. A [PuertsScriptValue] argument must be valid and belong to the same environment. The script global object is passed as the receiver; use [method call_method] for an object's method.
+			Returns a result wrapper, or [code]null[/code] if the value is not callable, argument conversion fails, or the script throws an exception.
+			For an initialized ECMAScript [code]environment[/code]:
+			[codeblocks]
+			[gdscript]
+			var function := environment.eval("(a, b) =&gt; a + b")
+			if function != null:
+			    var result: PuertsScriptValue = function.call([20, 22])
+			    if result != null:
+			        print(result.to_native()) # 42
+			[/gdscript]
+			[/codeblocks]</description>
 		</method>
 		<method name="call_method" qualifiers="const">
 			<return type="PuertsScriptValue" />
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="args" type="Array" default="[]" />
-			<description>Calls the named method with args using the wrapped object as receiver, or returns null on failure.</description>
+			<description>Looks up function [param name] and calls it with [param args], using this value as the receiver. Arguments follow the conversion rules of [method call]. Returns a result wrapper, or [code]null[/code] if the property is not callable or the operation fails.</description>
 		</method>
 	</methods>
 </class>

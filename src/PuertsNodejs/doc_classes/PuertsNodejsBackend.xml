@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsNodejsBackend" inherits="Resource">
-	<brief_description>Selects Node.js.</brief_description>
-	<description>Pass to PuertsEnvironment.initialize. Supports tick, inspector, low-memory notification, and termination.</description>
+	<brief_description>Creates ECMAScript runtimes backed by Node.js.</brief_description>
+	<description>
+		Pass an instance to [method PuertsEnvironment.initialize] to select Node.js.
+		Call [method PuertsEnvironment.tick] regularly to advance backend work. Supports inspector debugging, low-memory notification, and execution termination.
+		Use either Node.js or V8 in a process; loading both can cause conflicts.
+	</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />
-			<description>Returns the stable backend identifier.</description>
+			<description>Returns [code]&amp;"nodejs"[/code].</description>
 		</method>
 		<method name="get_backend_name" qualifiers="const">
 			<return type="String" />
-			<description>Returns the display name.</description>
+			<description>Returns [code]"Node.js"[/code].</description>
 		</method>
 		<method name="get_language_id" qualifiers="const">
 			<return type="StringName" />
-			<description>Returns the language identifier.</description>
+			<description>Returns [code]&amp;"ecmascript"[/code], the script language identifier.</description>
 		</method>
 		<method name="_puerts_get_functions_ptr" qualifiers="const">
 			<return type="int" />
-			<description>Returns the internal function table address used by the core.</description>
+			<description>Internal interface used by [method PuertsEnvironment.initialize] to obtain the backend function table.</description>
 		</method>
 	</methods>
 </class>

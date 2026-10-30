@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsV8Backend" inherits="Resource">
-	<brief_description>Selects V8.</brief_description>
-	<description>Pass to PuertsEnvironment.initialize. Supports tick, inspector, low-memory notification, and termination.</description>
+	<brief_description>Creates ECMAScript runtimes backed by V8.</brief_description>
+	<description>
+		Pass an instance to [method PuertsEnvironment.initialize] to select V8.
+		Supports [method PuertsEnvironment.tick], inspector debugging, low-memory notification, and execution termination.
+		Use either V8 or Node.js in a process; loading both can cause conflicts.
+	</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />
-			<description>Returns the stable backend identifier.</description>
+			<description>Returns [code]&amp;"v8"[/code].</description>
 		</method>
 		<method name="get_backend_name" qualifiers="const">
 			<return type="String" />
-			<description>Returns the display name.</description>
+			<description>Returns [code]"V8"[/code].</description>
 		</method>
 		<method name="get_language_id" qualifiers="const">
 			<return type="StringName" />
-			<description>Returns the language identifier.</description>
+			<description>Returns [code]&amp;"ecmascript"[/code], the script language identifier.</description>
 		</method>
 		<method name="_puerts_get_functions_ptr" qualifiers="const">
 			<return type="int" />
-			<description>Returns the internal function table address used by the core.</description>
+			<description>Internal interface used by [method PuertsEnvironment.initialize] to obtain the backend function table.</description>
 		</method>
 	</methods>
 </class>
