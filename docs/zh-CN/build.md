@@ -61,3 +61,19 @@ scons target=template_debug platform=web arch=wasm32 precision=single api_versio
 另外还要调整为
 * `Cross-Origin-Opener-Policy: same-origin`
 * `Cross-Origin-Embedder-Policy: require-corp`
+
+## 发布包
+
+Build GDExtension 会将所选构建打包，上传为工作流产物
+`puerts-godot-packages`。每个组件的压缩包命名为
+`puerts-godot-<component>-v<version>-godot<api>-<single|double>.zip`。
+包内只包含本次运行所选的平台、构建目标和 Web 线程模式。
+
+将 core 包和所需后端包解压到项目目录，确保项目版本、Godot API 版本及浮点精度一致。
+只有 core 包包含 README、许可证和文档。
+
+在本地打包已下载的构建产物时，请保留各产物的目录名称：
+
+```bash
+python misc/scripts/package_release.py --artifacts artifacts --output dist
+```

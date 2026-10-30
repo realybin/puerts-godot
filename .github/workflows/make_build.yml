@@ -99,15 +99,29 @@ jobs:
       save_cache: ${{ inputs.save_cache }}
       artifact_name: puerts-godot-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float_precision }}-${{ matrix.target_type }}-godot-${{ matrix.godot.api_version }}${{ matrix.target.platform == 'web' && format('-{0}', inputs.web_threads && 'threads' || 'nothreads') || '' }}
 
-  merge:
+  package:
     runs-on: ubuntu-22.04
     needs: [prepare, build]
     if: ${{ needs.prepare.outputs.targets != '[]' && needs.prepare.outputs.godot_versions != '[]' }}
     steps:
-      - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
         with:
-          name: puerts-godot-all
+          python-version: '3.12'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
           pattern: puerts-godot-*
-          separate-directories: 'true'
-          delete-merged: true
+          path: artifacts
+
+      - name: Package components
+        run: python misc/scripts/package_release.py --artifacts artifacts --output dist
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: puerts-godot-packages
+          path: dist/*.zip
+          if-no-files-found: error
