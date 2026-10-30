@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsNodejsBackend" inherits="Resource">
 	<brief_description>Creates ECMAScript runtimes backed by Node.js.</brief_description>
-	<description>
-		Pass an instance to [method PuertsEnvironment.initialize] to select Node.js.
-		Call [method PuertsEnvironment.tick] regularly to advance backend work. Supports inspector debugging, low-memory notification, and execution termination.
-		Use either Node.js or V8 in a process; loading both can cause conflicts.
-	</description>
+	<description>Pass an instance to [method PuertsEnvironment.initialize] to select Node.js.
+Call [method PuertsEnvironment.tick] regularly to advance backend work. Supports inspector debugging, low-memory notification, and execution termination.
+[b]Note:[/b] Use either Node.js or V8 in a process; loading both can cause conflicts.</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />

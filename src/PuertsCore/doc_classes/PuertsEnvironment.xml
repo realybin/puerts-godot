@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsEnvironment" inherits="RefCounted">
 	<brief_description>Runs scripts and exchanges values with a selected script engine.</brief_description>
-	<description>
-		Create a runtime with [method initialize], execute code with [method eval], and exchange values with [method set_global] and [method get_global].
-		[b]Lifetime:[/b] Keep a reference to the environment while using its script values or script-backed [Callable]s. Use the environment, its values, and its [PuertsStringNameUtf8Cache] on the same thread.
-		[b]Errors:[/b] Register [method set_error_callback] before initialization to receive errors, including script exceptions and unsupported backend operations.
-		[codeblocks]
-		[gdscript]
-		var environment := PuertsEnvironment.new()
-		environment.set_error_callback(func(message: String): push_error(message))
-		if environment.initialize(PuertsV8Backend.new(), PuertsStringNameUtf8Cache.new()) == OK:
-		    environment.set_global(&amp;"answer", 42)
-		    var result := environment.eval("answer + 1", &amp;"example.js")
-		    if result != null:
-		        print(result.to_native()) # 43
-		    environment.dispose()
-		[/gdscript]
-		[/codeblocks]
-		[b]Web:[/b] [PuertsWebBackend] allows only one environment, which remains alive until page unload. [method dispose] and reinitialization are unsupported.
-	</description>
+	<description>Create a runtime with [method initialize], execute code with [method eval], and exchange values with [method set_global] and [method get_global].
+Keep a reference to the environment while using its script values or script-backed [Callable]s. Use the environment, its values, and its [PuertsStringNameUtf8Cache] on the same thread.
+Register [method set_error_callback] before initialization to receive errors, including script exceptions and unsupported backend operations.
+[codeblock lang=gdscript]
+var environment := PuertsEnvironment.new()
+environment.set_error_callback(func(message: String): push_error(message))
+if environment.initialize(PuertsV8Backend.new(), PuertsStringNameUtf8Cache.new()) == OK:
+	environment.set_global(&amp;"answer", 42)
+	var result := environment.eval("answer + 1", &amp;"example.js")
+	if result != null:
+		print(result.to_float()) # 43.0
+	environment.dispose()
+[/codeblock]
+[b]Note:[/b] [PuertsWebBackend] allows only one environment, which remains alive until page unload. [method dispose] and reinitialization are unsupported.</description>
 	<methods>
 		<method name="initialize">
 			<return type="int" enum="Error" />
 			<param index="0" name="backend" type="Object" />
 			<param index="1" name="string_name_utf8_cache" type="PuertsStringNameUtf8Cache" />
 			<description>Creates a runtime using [param backend] and a non-null [param string_name_utf8_cache]. The environment retains both resources on success.
-			Reinitialization disposes the previous idle runtime and invalidates its values and callables. If creating the replacement fails, the environment remains uninitialized.
-			Returns [constant @GlobalScope.OK] on success, [constant @GlobalScope.ERR_INVALID_PARAMETER] for invalid arguments, [constant @GlobalScope.ERR_UNCONFIGURED] for an invalid backend interface, or [constant @GlobalScope.ERR_CANT_CREATE] if runtime creation fails. Returns [constant @GlobalScope.ERR_BUSY] during initialization, disposal, or an active script operation.
-			For [PuertsWebBackend], reinitialization returns [constant @GlobalScope.ERR_ALREADY_IN_USE]; creating a second environment returns [constant @GlobalScope.ERR_CANT_CREATE].</description>
+Reinitialization disposes the previous idle runtime and invalidates its values and callables. If creating the replacement fails, the environment remains uninitialized.
+Returns [constant @GlobalScope.OK] on success, [constant @GlobalScope.ERR_INVALID_PARAMETER] for invalid arguments, [constant @GlobalScope.ERR_UNCONFIGURED] for an invalid backend interface, or [constant @GlobalScope.ERR_CANT_CREATE] if runtime creation fails. Returns [constant @GlobalScope.ERR_BUSY] during initialization, disposal, or an active script operation.
+For [PuertsWebBackend], reinitialization returns [constant @GlobalScope.ERR_ALREADY_IN_USE]; creating a second environment returns [constant @GlobalScope.ERR_CANT_CREATE].</description>
 		</method>
 		<method name="dispose">
 			<return type="void" />
 			<description>Releases the runtime and permanently invalidates its script values and script-backed [Callable]s. Safe to repeat; the environment can subsequently be initialized again.
-			When called during a script operation or callback, stops accepting new operations and defers destruction until the outermost operation returns.
-			[PuertsWebBackend] reports an error and keeps the environment running.</description>
+When called during a script operation or callback, stops accepting new operations and defers destruction until the outermost operation returns.
+[PuertsWebBackend] reports an error and keeps the environment running.</description>
 		</method>
 		<method name="is_ready" qualifiers="const">
 			<return type="bool" />
@@ -47,7 +43,7 @@
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
 			<description>Sets [param callback] to receive initialization errors, script exceptions, rejected operations, and script [code]log_error[/code] messages. The callback receives one [String] argument and runs synchronously on the calling thread.
-			Set it before [method initialize] to receive initialization errors. Pass [code]Callable()[/code] to disable it. Messages are discarded when no valid callback is set.</description>
+Set it before [method initialize] to receive initialization errors. Pass [code]Callable()[/code] to disable it. Messages are discarded when no valid callback is set.</description>
 		</method>
 		<method name="set_warn_callback">
 			<return type="void" />
@@ -64,8 +60,8 @@
 			<param index="0" name="code" type="String" />
 			<param index="1" name="chunk_name" type="StringName" default="&amp;&quot;chunk&quot;" />
 			<description>Executes [param code] and returns its result as a [PuertsScriptValue]. [param chunk_name] identifies the source in diagnostics.
-			Returns [code]null[/code] on failure or when the environment is not ready. Successful script null and undefined results are wrapped; inspect them with [method PuertsScriptValue.is_null] and [method PuertsScriptValue.is_undefined].
-			For Lua, use [code]return[/code] to produce a result, for example [code]return 40 + 2[/code].</description>
+Returns [code]null[/code] on failure or when the environment is not ready. Successful script null and undefined results are wrapped; inspect them with [method PuertsScriptValue.is_null] and [method PuertsScriptValue.is_undefined].
+For Lua, use [code]return[/code] to produce a result, for example [code]return 40 + 2[/code].</description>
 		</method>
 		<method name="set_global">
 			<return type="void" />

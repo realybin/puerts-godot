@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsV8Backend" inherits="Resource">
 	<brief_description>Creates ECMAScript runtimes backed by V8.</brief_description>
-	<description>
-		Pass an instance to [method PuertsEnvironment.initialize] to select V8.
-		Supports [method PuertsEnvironment.tick], inspector debugging, low-memory notification, and execution termination.
-		Use either V8 or Node.js in a process; loading both can cause conflicts.
-	</description>
+	<description>Pass an instance to [method PuertsEnvironment.initialize] to select V8.
+Supports [method PuertsEnvironment.tick], inspector debugging, low-memory notification, and execution termination.
+[b]Note:[/b] Use either V8 or Node.js in a process; loading both can cause conflicts.</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />

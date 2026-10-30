@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsQuickjsBackend" inherits="Resource">
 	<brief_description>Creates ECMAScript runtimes backed by QuickJS.</brief_description>
-	<description>
-		Pass an instance to [method PuertsEnvironment.initialize] to select QuickJS.
-		Supports garbage collection through [method PuertsEnvironment.low_memory_notification].
-	</description>
+	<description>Pass an instance to [method PuertsEnvironment.initialize] to select QuickJS.
+Supports garbage collection through [method PuertsEnvironment.low_memory_notification].</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />

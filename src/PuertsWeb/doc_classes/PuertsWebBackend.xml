@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="PuertsWebBackend" inherits="Resource">
 	<brief_description>Uses the browser's JavaScript runtime.</brief_description>
-	<description>
-		Pass an instance to [method PuertsEnvironment.initialize] to select Browser JavaScript.
-		Scripts share the browser's [code]globalThis[/code] and can access browser APIs such as the DOM.
-		Only one environment can be created. It remains alive until page unload; disposal and reinitialization are unsupported.
-		Use [code]ClassDB.instantiate("PuertsWebBackend")[/code] in scripts that must parse in the desktop editor, where this Web-only class is unavailable.
-	</description>
+	<description>Pass an instance to [method PuertsEnvironment.initialize] to select Browser JavaScript.
+Scripts share the browser's [code]globalThis[/code] and can access browser APIs such as the DOM.
+Use [code]ClassDB.instantiate("PuertsWebBackend")[/code] in scripts that must parse in the desktop editor, where this Web-only class is unavailable.
+[b]Note:[/b] Only one environment can be created. It remains alive until page unload; disposal and reinitialization are unsupported.</description>
 	<methods>
 		<method name="get_backend_id" qualifiers="const">
 			<return type="StringName" />
