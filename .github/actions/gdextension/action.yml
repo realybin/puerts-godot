@@ -132,6 +132,10 @@ runs:
         if [ -n "$PUERTS_BACKENDS" ]; then
           extra_scons_args+=("backends=$PUERTS_BACKENDS")
         fi
+        if [ "${{ inputs.platform }}" = "android" ]; then
+          ndk_version=$(awk -F= '/^Pkg[.]Revision[[:space:]]*=/ {gsub(/[[:space:]]/, "", $2); print $2}' "$ANDROID_NDK_HOME/source.properties")
+          extra_scons_args+=("ndk_version=$ndk_version")
+        fi
         if [ "${{ inputs.platform }}" = "ios" ]; then
           extra_scons_args+=(ios_min_version=16.0)
         fi
