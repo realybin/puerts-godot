@@ -2,16 +2,11 @@
 
 * Godot 4.5 or later; the latest version is recommended.
 
-Build it yourself or get prebuilt binaries from [GitHub Actions](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml).
-
-Put the extensions and libraries in the project:
-
-```text
-res://bin/
-res://puerts_core.gdextension
-res://puerts_v8.gdextension
-```
-
+Download core and the desired backend (v8 for the example below) from a successful
+[Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml) run.
+Use packages with matching project versions, Godot API versions, and precision.
+Extract both ZIP files into your project root, preserving the `addons/puerts-godot/` directory.
+You can also [build from source](build.md).
 
 ```gdscript
 extends Node

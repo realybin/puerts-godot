@@ -2,16 +2,10 @@
 
 * Godot 4.5 或更高版本，建议使用最新版本。
 
-自行构建或从 [GitHub Actions](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml) 取得预构建的版本。
-
-将扩展和库放入项目：
-
-```text
-res://bin/
-res://puerts_core.gdextension
-res://puerts_v8.gdextension
-```
-
+从成功的 [Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
+运行中下载 core 和所需后端（下例使用 v8）。两者的项目版本、Godot API 版本及精度须一致。
+将两个 ZIP 解压到项目根目录，保留 `addons/puerts-godot/` 目录结构。
+也可以[从源码构建](build.md)。
 
 ```gdscript
 extends Node

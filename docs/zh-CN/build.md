@@ -62,23 +62,8 @@ scons target=template_debug platform=web arch=wasm32 precision=single api_versio
 * `Cross-Origin-Opener-Policy: same-origin`
 * `Cross-Origin-Embedder-Policy: require-corp`
 
-## 发布包
+## CI 构建
 
-Build GDExtension 会将所选构建打包，上传为工作流产物
-`puerts-godot-packages`。每个组件的压缩包命名为
-`puerts-godot-<component>-v<version>-godot<api>-<single|double>.zip`。
-包内只包含本次运行所选的平台、构建目标和 Web 线程模式。
-
-将 core 包和所需后端包解压到项目目录，确保项目版本、Godot API 版本及浮点精度一致。
-只有 core 包包含 README、许可证和文档。
-
-中间构建产物使用
-`gdextension-build-godot<api>-<precision>-<platform>-<arch>-<target>[-threads|-nothreads]`
-命名，线程后缀仅用于 Web 构建。
-例如：`gdextension-build-godot4.7-single-windows-x86_64-template_debug`。
-
-在本地打包已下载的构建产物时，请保留这些产物的目录名称：
-
-```bash
-python misc/scripts/package_release.py --artifacts artifacts --output dist
-```
+[Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
+按所选平台、Godot API 版本、构建目标和精度生成组件包。
+安装方法见[入门](getting-started.md)。

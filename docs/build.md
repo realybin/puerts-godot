@@ -62,25 +62,8 @@ Also set the following headers:
 * `Cross-Origin-Opener-Policy: same-origin`
 * `Cross-Origin-Embedder-Policy: require-corp`
 
+## CI builds
 
-## Release packages
-
-Build GDExtension packages the selected builds and uploads them as the
-`puerts-godot-packages` workflow artifact. Each component archive is named
-`puerts-godot-<component>-v<version>-godot<api>-<single|double>.zip`.
-Archives contain only the platforms, targets, and Web thread variants selected for that run.
-
-Extract the core archive and the desired backend archives into your project directory.
-Use matching project versions, Godot API versions, and float precision.
-Only core includes the README files, licenses, and documentation.
-
-Intermediate build artifacts use
-`gdextension-build-godot<api>-<precision>-<platform>-<arch>-<target>[-threads|-nothreads]`.
-The thread suffix is only present for Web builds.
-For example: `gdextension-build-godot4.7-single-windows-x86_64-template_debug`.
-
-To package downloaded build artifacts locally, preserve these artifact directory names:
-
-```bash
-python misc/scripts/package_release.py --artifacts artifacts --output dist
-```
+[Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
+produces component packages for the selected platforms, Godot API versions, build target, and precision.
+See [Getting Started](getting-started.md) for installation.
