@@ -37,6 +37,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--arch", default="", help="Godot arch (x86_64/x86_32/arm64/arm32/wasm32).")
     parser.add_argument("--config", choices=["Release", "Debug"], default="Debug", help="Puerts CMake config.")
     parser.add_argument(
+        "--skip-build",
+        action="store_true",
+        help="Use restored native libraries; apply patches and stage dependencies only.",
+    )
+    parser.add_argument(
         "--backends", default=",".join(BACKENDS), help="Comma-separated backends: " + ",".join(BACKENDS)
     )
     parser.add_argument(
@@ -118,7 +123,7 @@ def build_backend(platform: Platform, puerts_arch: str, config: str, backend: Ba
 
     env = os.environ.copy()
     if platform.name == "android":
-        env.setdefault("ANDROID_NDK", str(Path.home() / "android-ndk-r27d"))
+        env.setdefault("ANDROID_NDK", env.get("ANDROID_NDK_HOME", str(Path.home() / "android-ndk-r27d")))
     elif platform.name == "web":
         compiler_flags = "-pthread -fPIC" if threads else "-fPIC"
         for key, flags in (
@@ -210,10 +215,10 @@ def main() -> int:
     for name in MANIFEST.patch_names(platform.name, build_list):
         ensure_patch(name)
 
-    run(["npm", "ci"], UNITY_DIR)
-
-    for name in build_list:
-        build_backend(platform, puerts_arch, args.config, BACKENDS[name], args.threads == "true")
+    if not args.skip_build:
+        run(["npm", "ci"], UNITY_DIR)
+        for name in build_list:
+            build_backend(platform, puerts_arch, args.config, BACKENDS[name], args.threads == "true")
 
     for name in build_list:
         stage_dependencies(platform.name, arch, BACKENDS[name])
@@ -224,7 +229,7 @@ def main() -> int:
     print(f"  config: {args.config}")
     if platform.name == "web":
         print(f"  threads: {args.threads}")
-    print(f"  built: {', '.join(build_list)}")
+    print(f"  {'restored' if args.skip_build else 'built'}: {', '.join(build_list)}")
     if "web" in selected:
         print("  web: built by SCons from src/PuertsWeb; no native engine dependency")
     if skipped:

@@ -29,11 +29,12 @@ on:
         options:
           - single
           - double
-      restore_cache: { description: "Restore build cache", type: boolean, required: false, default: false }
+      restore_cache: { description: "Restore build cache", type: boolean, required: false, default: true }
       save_cache: { description: "Save build cache", type: boolean, required: false, default: false }
 
 jobs:
   prepare:
+    name: Plan
     runs-on: ubuntu-22.04
     outputs:
       targets: ${{ steps.select.outputs.targets }}
@@ -72,6 +73,7 @@ jobs:
           echo "godot_versions=$godot_versions" >> "$GITHUB_OUTPUT"
 
   build:
+    name: Build ${{ matrix.target.platform }} ${{ matrix.target.arch }}${{ fromJSON(needs.prepare.outputs.godot_versions)[1] != null && format(' (Godot {0})', matrix.godot.api_version) || '' }}
     needs: prepare
     if: ${{ needs.prepare.outputs.targets != '[]' && needs.prepare.outputs.godot_versions != '[]' }}
     strategy:
@@ -80,26 +82,39 @@ jobs:
         target: ${{ fromJSON(needs.prepare.outputs.targets) }}
         godot: ${{ fromJSON(needs.prepare.outputs.godot_versions) }}
 
-    uses: ./.github/workflows/build_target.yml
-    secrets: inherit
-    with:
-      runner: ${{ matrix.target.os }}
-      platform: ${{ matrix.target.platform }}
-      arch: ${{ matrix.target.arch }}
-      target_type: ${{ inputs.target_type }}
-      float_precision: ${{ inputs.float_precision }}
-      web_threads: ${{ inputs.web_threads }}
-      api_version: ${{ matrix.godot.api_version }}
-      godot_version: ${{ matrix.godot.godot_version }}
-      run_tests: true
-      upload_artifact: true
-      restore_cache: ${{ inputs.restore_cache }}
-      save_cache: ${{ inputs.save_cache }}
+    runs-on: ${{ matrix.target.os }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
 
-  package:
+      - uses: ./.github/actions/gdextension
+        with:
+          platform: ${{ matrix.target.platform }}
+          arch: ${{ matrix.target.arch }}
+          target_type: ${{ inputs.target_type }}
+          float_precision: ${{ inputs.float_precision }}
+          web_threads: ${{ inputs.web_threads }}
+          api_version: ${{ matrix.godot.api_version }}
+          godot_version: ${{ matrix.godot.godot_version }}
+          run_tests: true
+          upload_artifact: true
+          restore_cache: ${{ inputs.restore_cache }}
+          save_cache: ${{ inputs.save_cache && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+          save_native_cache: ${{ matrix.godot.api_version == fromJSON(needs.prepare.outputs.godot_versions)[0].api_version }}
+
+  publish:
+    name: Publish packages${{ fromJSON(needs.prepare.outputs.godot_versions)[1] != null && format(' (Godot {0})', matrix.godot.api_version) || '' }}
     runs-on: ubuntu-22.04
     needs: [prepare, build]
     if: ${{ needs.prepare.outputs.targets != '[]' && needs.prepare.outputs.godot_versions != '[]' }}
+    permissions:
+      contents: read
+      actions: write
+    strategy:
+      fail-fast: false
+      matrix:
+        godot: ${{ fromJSON(needs.prepare.outputs.godot_versions) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -110,16 +125,94 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
-          pattern: gdextension-build-*
+          pattern: gdextension-build-godot${{ matrix.godot.api_version }}-${{ inputs.float_precision }}-*
           path: artifacts
 
-      - name: Package components
-        run: python misc/scripts/package_release.py --artifacts artifacts --output dist
+      - name: Stage packages
+        id: package
+        run: |
+          python misc/scripts/package_release.py --artifacts artifacts --output dist
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from misc.scripts.manifest import BACKENDS
 
-      - name: Upload packages
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              for component in BACKENDS:
+                  for directory in Path("dist").glob(f"puerts-godot-{component}-v*"):
+                      output.write(f"{component}={directory.name}\n")
+          PY
+
+      - name: Upload core
+        if: ${{ steps.package.outputs.core != '' }}
         uses: actions/upload-artifact@v7
         with:
-          name: puerts-godot-packages
-          path: dist/*.zip
+          name: ${{ steps.package.outputs.core }}
+          path: dist/${{ steps.package.outputs.core }}/
           if-no-files-found: error
-          compression-level: 0
+          overwrite: true
+
+      - name: Upload v8
+        if: ${{ steps.package.outputs.v8 != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.package.outputs.v8 }}
+          path: dist/${{ steps.package.outputs.v8 }}/
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Upload nodejs
+        if: ${{ steps.package.outputs.nodejs != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.package.outputs.nodejs }}
+          path: dist/${{ steps.package.outputs.nodejs }}/
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Upload quickjs
+        if: ${{ steps.package.outputs.quickjs != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.package.outputs.quickjs }}
+          path: dist/${{ steps.package.outputs.quickjs }}/
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Upload lua
+        if: ${{ steps.package.outputs.lua != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.package.outputs.lua }}
+          path: dist/${{ steps.package.outputs.lua }}/
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Upload web
+        if: ${{ steps.package.outputs.web != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.package.outputs.web }}
+          path: dist/${{ steps.package.outputs.web }}/
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Remove intermediate artifacts
+        uses: actions/github-script@v8
+        env:
+          ARTIFACT_PREFIX: gdextension-build-godot${{ matrix.godot.api_version }}-${{ inputs.float_precision }}-
+        with:
+          script: |
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              ...context.repo,
+              run_id: context.runId,
+              per_page: 100,
+            });
+            for (const artifact of artifacts) {
+              if (artifact.name.startsWith(process.env.ARTIFACT_PREFIX)) {
+                await github.rest.actions.deleteArtifact({
+                  ...context.repo,
+                  artifact_id: artifact.id,
+                });
+              }
+            }

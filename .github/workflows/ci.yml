@@ -12,6 +12,10 @@ on:
       - '**.md'
   merge_group:
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-22.04
@@ -37,7 +41,7 @@ jobs:
           clang-format -style=file --dry-run --Werror "${files[@]}"
 
   build:
-    name: build and test (${{ matrix.target.platform }}, ${{ matrix.target.arch }}, ${{ matrix.target.os }}, ${{ matrix.target_type }}, ${{ matrix.float_precision }}${{ matrix.target.platform == 'web' && format(', {0}', matrix.web_threads && 'threads' || 'nothreads') || '' }})
+    name: Build ${{ matrix.target.platform }} ${{ matrix.target.arch }}${{ matrix.target.platform == 'web' && format(' ({0})', matrix.web_threads && 'threads' || 'nothreads') || '' }}
     needs: lint
     strategy:
       fail-fast: false
@@ -71,17 +75,21 @@ jobs:
 #            target_type: template_release
 #            float_precision: double
 
-    uses: ./.github/workflows/build_target.yml
-    secrets: inherit
-    with:
-      runner: ${{ matrix.target.os }}
-      platform: ${{ matrix.target.platform }}
-      arch: ${{ matrix.target.arch }}
-      target_type: ${{ matrix.target_type }}
-      float_precision: ${{ matrix.float_precision }}
-      backends: ${{ matrix.target.platform == 'web' && 'core,web' || '' }}
-      web_threads: ${{ matrix.web_threads }}
-      run_tests: true
-      upload_artifact: ${{ matrix.target.platform == 'web' }}
-      restore_cache: true
-      save_cache: ${{ github.event_name == 'push' }}
+    runs-on: ${{ matrix.target.os }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - uses: ./.github/actions/gdextension
+        with:
+          platform: ${{ matrix.target.platform }}
+          arch: ${{ matrix.target.arch }}
+          target_type: ${{ matrix.target_type }}
+          float_precision: ${{ matrix.float_precision }}
+          backends: ${{ matrix.target.platform == 'web' && 'core,web' || '' }}
+          web_threads: ${{ matrix.web_threads || false }}
+          run_tests: true
+          upload_artifact: ${{ matrix.target.platform == 'web' }}
+          restore_cache: true
+          save_cache: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}

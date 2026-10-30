@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package extracted Build GDExtension artifacts into installable component archives."""
+"""Package extracted Build GDExtension artifacts into installable component directories."""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ import fnmatch
 import re
 import shutil
 import sys
-import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
@@ -29,7 +28,6 @@ ARTIFACT_NAME = re.compile(
     r"(?:-(?P<threads>threads|nothreads))?"
 )
 EXCLUDED_SUFFIXES = {".exp", ".ilk", ".lib", ".pdb"}
-ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 
 @dataclass(frozen=True)
@@ -153,22 +151,16 @@ def documentation_files() -> dict[str, Path]:
     return {f"{ADDON_ROOT}/{path.relative_to(REPO_ROOT).as_posix()}": path for path in paths}
 
 
-def zip_entry(name: str) -> zipfile.ZipInfo:
-    entry = zipfile.ZipInfo(name, ZIP_TIMESTAMP)
-    entry.compress_type = zipfile.ZIP_DEFLATED
-    entry.external_attr = 0o644 << 16
-    return entry
+def write_package(directory: Path, files: dict[str, Path], descriptor_name: str, descriptor: str) -> None:
+    directory.mkdir(parents=True, exist_ok=False)
+    for name, source in sorted(files.items()):
+        destination = directory / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, destination)
+    (directory / descriptor_name).write_text(descriptor, encoding="utf-8")
 
 
-def write_archive(path: Path, files: dict[str, Path], descriptor_name: str, descriptor: str) -> None:
-    with zipfile.ZipFile(path, "w") as archive:
-        archive.writestr(zip_entry(descriptor_name), descriptor.encode("utf-8"))
-        for name, source in sorted(files.items()):
-            with source.open("rb") as reader, archive.open(zip_entry(name), "w") as writer:
-                shutil.copyfileobj(reader, writer)
-
-
-def package_artifacts(artifacts: list[BuildArtifact], output: Path) -> None:
+def package_artifacts(artifacts: list[BuildArtifact], output: Path, component: str | None = None) -> None:
     build_info = load_build_info()
     output.mkdir(parents=True, exist_ok=True)
     groups = sorted({(artifact.godot, artifact.precision) for artifact in artifacts})
@@ -177,7 +169,7 @@ def package_artifacts(artifacts: list[BuildArtifact], output: Path) -> None:
         components = {name: collect_files(backend, builds) for name, backend in BACKENDS.items()}
         required_libraries = {name: libraries for name, (_, libraries) in components.items()}
         for name, (files, libraries) in components.items():
-            if not libraries:
+            if not libraries or component is not None and name != component:
                 continue
             backend = BACKENDS[name]
             for requirement in backend.requires:
@@ -187,8 +179,8 @@ def package_artifacts(artifacts: list[BuildArtifact], output: Path) -> None:
             descriptor = render_descriptor(backend, files, libraries, required_libraries, build_info.label)
             if name == "core":
                 files.update(documentation_files())
-            path = output / f"puerts-godot-{name}-v{build_info.version}-godot{godot}-{precision}.zip"
-            write_archive(path, files, f"{ADDON_ROOT}/{backend.extension}", descriptor)
+            path = output / f"puerts-godot-{name}-v{build_info.version}-godot{godot}-{precision}"
+            write_package(path, files, f"{ADDON_ROOT}/{backend.extension}", descriptor)
             print(f"[package_release] {path} ({len(files) + 1} files)")
 
 
@@ -196,9 +188,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--artifacts", type=Path, required=True, help="directory containing extracted CI artifacts")
     parser.add_argument("--output", type=Path, default=Path("dist"), help="output directory (default: dist)")
+    parser.add_argument("--component", choices=BACKENDS, help="stage only this component (default: all)")
     args = parser.parse_args(argv)
     try:
-        package_artifacts(discover_artifacts(args.artifacts), args.output)
+        package_artifacts(discover_artifacts(args.artifacts), args.output, args.component)
     except (OSError, ValueError) as error:
         print(f"[package_release] {error}", file=sys.stderr)
         return 2

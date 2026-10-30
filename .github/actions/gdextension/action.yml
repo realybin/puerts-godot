@@ -1,0 +1,216 @@
+name: Build GDExtension
+description: Build and test one platform configuration.
+inputs:
+  platform:
+    description: platform
+    required: true
+  arch:
+    description: arch
+    required: true
+  target_type:
+    description: target type
+    required: true
+  float_precision:
+    description: float precision
+    required: true
+  backends:
+    description: backends
+    default: ""
+  web_threads:
+    description: web threads
+    default: "true"
+  em_version:
+    description: em version
+    default: "4.0.0"
+  upload_artifact:
+    description: upload artifact
+    default: "false"
+  run_tests:
+    description: run tests
+    default: "false"
+  api_version:
+    description: api version
+    default: "4.7"
+  godot_version:
+    description: godot version
+    default: "4.7.2"
+  restore_cache:
+    description: restore cache
+    default: "true"
+  save_native_cache:
+    description: Whether this job owns native cache writes.
+    default: "true"
+  save_cache:
+    description: save cache
+    default: "false"
+runs:
+  using: composite
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+
+    - name: Setup godot-cpp
+      uses: ./godot-cpp/.github/actions/setup-godot-cpp
+      with:
+        platform: ${{ inputs.platform }}
+        em-version: ${{ inputs.em_version }}
+        ndk-version: r27d
+
+    - name: Describe build caches
+      id: cache
+      if: ${{ inputs.restore_cache == 'true' || inputs.save_cache == 'true' }}
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        ARCH: ${{ inputs.arch }}
+        TARGET: ${{ inputs.target_type }}
+        PRECISION: ${{ inputs.float_precision }}
+        GODOT: ${{ inputs.api_version }}
+        BACKENDS: ${{ inputs.backends }}
+        THREADS: ${{ inputs.web_threads }}
+      run: |
+        python -m misc.scripts.ci_cache --platform "$PLATFORM" --arch "$ARCH" --target "$TARGET" \
+          --precision "$PRECISION" --godot "$GODOT" --backends "$BACKENDS" --threads "$THREADS"
+
+    - name: Restore Puerts libraries
+      id: native-cache
+      if: ${{ inputs.restore_cache == 'true' || inputs.save_cache == 'true' }}
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ steps.cache.outputs.native-paths }}
+        key: ${{ steps.cache.outputs.native-key }}
+        lookup-only: ${{ inputs.restore_cache != 'true' }}
+
+    - name: Setup Node
+      if: ${{ inputs.restore_cache != 'true' || steps.native-cache.outputs.cache-hit != 'true' || (inputs.platform == 'web' && inputs.run_tests == 'true') }}
+      uses: actions/setup-node@v6
+      with:
+        node-version: "20"
+
+    - name: Build puerts native backends
+      shell: bash
+      env:
+        PUERTS_BACKENDS: ${{ inputs.backends }}
+        WEB_THREADS: ${{ inputs.web_threads }}
+        NATIVE_CACHE_RESTORED: ${{ inputs.restore_cache == 'true' && steps.native-cache.outputs.cache-hit == 'true' }}
+      run: |
+        extra_args=()
+        if [ "$NATIVE_CACHE_RESTORED" = "true" ]; then
+          extra_args+=(--skip-build)
+        fi
+        if [ -n "$PUERTS_BACKENDS" ]; then
+          extra_args+=(--backends "$PUERTS_BACKENDS")
+        fi
+        if [ "${{ inputs.platform }}" = "web" ]; then
+          extra_args+=(--threads "$WEB_THREADS")
+        fi
+        python3 misc/scripts/make_puerts.py \
+          --platform ${{ inputs.platform }} \
+          --arch ${{ inputs.arch }} \
+          --config ${{ inputs.target_type == 'template_release' && 'Release' || 'Debug' }} \
+          "${extra_args[@]}"
+
+    - name: Restore SCons baseline
+      id: scons-cache
+      if: ${{ inputs.restore_cache == 'true' || inputs.save_cache == 'true' }}
+      uses: actions/cache/restore@v4
+      with:
+        path: .scons-cache/
+        key: ${{ steps.cache.outputs.scons-key }}
+        lookup-only: ${{ inputs.restore_cache != 'true' }}
+
+    - name: Build GDExtension
+      shell: bash
+      env:
+        SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
+        PUERTS_BACKENDS: ${{ inputs.backends }}
+        WEB_THREADS: ${{ inputs.web_threads }}
+      run: |
+        extra_scons_args=()
+        if [ -n "$PUERTS_BACKENDS" ]; then
+          extra_scons_args+=("backends=$PUERTS_BACKENDS")
+        fi
+        if [ "${{ inputs.platform }}" = "ios" ]; then
+          extra_scons_args+=(ios_min_version=16.0)
+        fi
+        if [ "${{ inputs.platform }}" = "web" ]; then
+          extra_scons_args+=("threads=$WEB_THREADS")
+        fi
+        scons target=${{ inputs.target_type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float_precision }} api_version=${{ inputs.api_version }} "${extra_scons_args[@]}"
+
+    - name: Setup Godot
+      if: ${{ inputs.run_tests == 'true' && (inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux') }}
+      uses: chickensoft-games/setup-godot@v2
+      with:
+        version: ${{ inputs.godot_version }}
+        use-dotnet: false
+        include-templates: false
+
+    - name: Run tests
+      if: ${{ inputs.run_tests == 'true' && inputs.platform != 'web' }}
+      shell: bash
+      run: |
+        python3 misc/scripts/run_tests.py --platform "${{ inputs.platform }}" --godot godot --timeout 120
+
+    - name: Run Web runtime tests
+      if: ${{ inputs.run_tests == 'true' && inputs.platform == 'web' }}
+      shell: bash
+      run: node --expose-gc --test tests/web/runtime.test.cjs
+
+    - name: Save Puerts libraries
+      if: ${{ inputs.save_cache == 'true' && inputs.save_native_cache == 'true' && steps.native-cache.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ steps.cache.outputs.native-paths }}
+        key: ${{ steps.cache.outputs.native-key }}
+
+    - name: Save SCons baseline
+      if: ${{ inputs.save_cache == 'true' && steps.scons-cache.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v4
+      with:
+        path: .scons-cache/
+        key: ${{ steps.cache.outputs.scons-key }}
+
+    - name: Summarize build
+      shell: bash
+      run: |
+        cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+        | Configuration | Value |
+        | --- | --- |
+        | Platform | ${{ inputs.platform }}/${{ inputs.arch }} |
+        | Godot API | ${{ inputs.api_version }} |
+        | Target | ${{ inputs.target_type }} |
+        | Precision | ${{ inputs.float_precision }} |
+        | Puerts cache reused | ${{ inputs.restore_cache == 'true' && steps.native-cache.outputs.cache-hit == 'true' }} |
+        | SCons cache reused | ${{ inputs.restore_cache == 'true' && steps.scons-cache.outputs.cache-hit == 'true' }} |
+        EOF
+
+    - name: Stage Web extension descriptors
+      if: ${{ inputs.upload_artifact == 'true' && inputs.platform == 'web' }}
+      shell: bash
+      env:
+        FLOAT_PRECISION: ${{ inputs.float_precision }}
+      run: |
+        if compgen -G "bin/PuertsWeb.web.*.wasm" >/dev/null; then
+          cp tests/web/puerts_core.gdextension tests/web/puerts_web.gdextension bin/
+          if [ "$FLOAT_PRECISION" = "double" ]; then
+            sed -i 's/\.wasm32/.double.wasm32/g' bin/puerts_core.gdextension bin/puerts_web.gdextension
+          fi
+        fi
+
+    - name: Upload build artifact
+      if: ${{ inputs.upload_artifact == 'true' }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: gdextension-build-godot${{ inputs.api_version }}-${{ inputs.float_precision }}-${{ inputs.platform }}-${{ inputs.arch }}-${{ inputs.target_type }}${{ inputs.platform == 'web' && (inputs.web_threads == 'true' && '-threads' || '-nothreads') || '' }}
+        if-no-files-found: error
+        compression-level: 0
+        retention-days: 7
+        path: |
+          ${{ github.workspace }}/bin/**
+          !${{ github.workspace }}/bin/**/*.exp
+          !${{ github.workspace }}/bin/**/*.lib
+          !${{ github.workspace }}/bin/**/*.pdb
+          !${{ github.workspace }}/bin/**/*.ilk
