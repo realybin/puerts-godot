@@ -145,10 +145,14 @@ def render_descriptor(
     return render_gdextension(backend, next(iter(libraries)).godot, mappings, version_label)
 
 
-def documentation_files() -> dict[str, Path]:
-    paths = [REPO_ROOT / name for name in ("README.md", "README.zh-CN.md", "LICENSE.txt", "COPYRIGHT.txt")]
-    paths.extend(path for path in (REPO_ROOT / "docs").rglob("*") if path.is_file())
-    return {f"{ADDON_ROOT}/{path.relative_to(REPO_ROOT).as_posix()}": path for path in paths}
+def documentation_files(backend: Backend) -> dict[str, Path]:
+    source = REPO_ROOT / "src" / backend.source_dir / "doc_classes"
+    files = {f"{ADDON_ROOT}/docs/{path.relative_to(source).as_posix()}": path for path in source.rglob("*.xml")}
+    if backend.name == "core":
+        paths = [REPO_ROOT / name for name in ("README.md", "README.zh-CN.md", "LICENSE.txt", "COPYRIGHT.txt")]
+        paths.extend(path for path in (REPO_ROOT / "docs").rglob("*") if path.is_file())
+        files.update({f"{ADDON_ROOT}/{path.relative_to(REPO_ROOT).as_posix()}": path for path in paths})
+    return files
 
 
 def write_package(directory: Path, files: dict[str, Path], descriptor_name: str, descriptor: str) -> None:
@@ -177,8 +181,7 @@ def package_artifacts(artifacts: list[BuildArtifact], output: Path, component: s
                     if artifact not in required_libraries[requirement]:
                         raise ValueError(f"Missing {requirement} required by {name} in {artifact.directory}")
             descriptor = render_descriptor(backend, files, libraries, required_libraries, build_info.label)
-            if name == "core":
-                files.update(documentation_files())
+            files.update(documentation_files(backend))
             path = output / f"puerts-godot-{name}-v{build_info.version}-godot{godot}-{precision}"
             write_package(path, files, f"{ADDON_ROOT}/{backend.extension}", descriptor)
             print(f"[package_release] {path} ({len(files) + 1} files)")
