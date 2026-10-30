@@ -46,10 +46,6 @@ on:
         required: false
         type: string
         default: "4.7.2"
-      artifact_name:
-        required: false
-        type: string
-        default: ""
       restore_cache:
         required: false
         type: boolean
@@ -61,7 +57,7 @@ on:
 
 jobs:
   build:
-    name: build and test (Godot ${{ inputs.api_version }})
+    name: ${{ inputs.platform }}/${{ inputs.arch }} (Godot ${{ inputs.api_version }}, ${{ inputs.target_type }}, ${{ inputs.float_precision }})
     runs-on: ${{ inputs.runner }}
 
     steps:
@@ -183,13 +179,17 @@ jobs:
             fi
           fi
 
-      - name: Upload Artifact
+      - name: Upload build artifact
         if: ${{ inputs.upload_artifact }}
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ inputs.artifact_name != '' && inputs.artifact_name || format('puerts-godot-{0}-{1}-{2}-{3}-godot-{4}{5}', inputs.platform, inputs.arch, inputs.float_precision, inputs.target_type, inputs.api_version, inputs.platform == 'web' && (inputs.web_threads && '-threads' || '-nothreads') || '') }}
+          name: gdextension-build-godot${{ inputs.api_version }}-${{ inputs.float_precision }}-${{ inputs.platform }}-${{ inputs.arch }}-${{ inputs.target_type }}${{ inputs.platform == 'web' && (inputs.web_threads && '-threads' || '-nothreads') || '' }}
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
           path: |
             ${{ github.workspace }}/bin/**
             !${{ github.workspace }}/bin/**/*.exp
             !${{ github.workspace }}/bin/**/*.lib
             !${{ github.workspace }}/bin/**/*.pdb
+            !${{ github.workspace }}/bin/**/*.ilk

@@ -74,7 +74,12 @@ Extract the core archive and the desired backend archives into your project dire
 Use matching project versions, Godot API versions, and float precision.
 Only core includes the README files, licenses, and documentation.
 
-To package downloaded build artifacts locally, preserve their artifact directory names:
+Intermediate build artifacts use
+`gdextension-build-godot<api>-<precision>-<platform>-<arch>-<target>[-threads|-nothreads]`.
+The thread suffix is only present for Web builds.
+For example: `gdextension-build-godot4.7-single-windows-x86_64-template_debug`.
+
+To package downloaded build artifacts locally, preserve these artifact directory names:
 
 ```bash
 python misc/scripts/package_release.py --artifacts artifacts --output dist

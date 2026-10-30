@@ -24,8 +24,8 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ADDON_ROOT = "addons/puerts-godot"
 ARTIFACT_NAME = re.compile(
-    r"puerts-godot-(?P<platform>\w+)-(?P<arch>\w+)-(?P<precision>single|double)-"
-    r"(?P<target>template_debug|template_release)-godot-(?P<godot>\d+\.\d+)"
+    r"gdextension-build-godot(?P<godot>\d+\.\d+)-(?P<precision>single|double)-"
+    r"(?P<platform>\w+)-(?P<arch>\w+)-(?P<target>template_debug|template_release)"
     r"(?:-(?P<threads>threads|nothreads))?"
 )
 EXCLUDED_SUFFIXES = {".exp", ".ilk", ".lib", ".pdb"}

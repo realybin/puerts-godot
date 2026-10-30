@@ -79,8 +79,6 @@ jobs:
       matrix:
         target: ${{ fromJSON(needs.prepare.outputs.targets) }}
         godot: ${{ fromJSON(needs.prepare.outputs.godot_versions) }}
-        target_type: ["${{ inputs.target_type }}"]
-        float_precision: ["${{ inputs.float_precision }}"]
 
     uses: ./.github/workflows/build_target.yml
     secrets: inherit
@@ -88,8 +86,8 @@ jobs:
       runner: ${{ matrix.target.os }}
       platform: ${{ matrix.target.platform }}
       arch: ${{ matrix.target.arch }}
-      target_type: ${{ matrix.target_type }}
-      float_precision: ${{ matrix.float_precision }}
+      target_type: ${{ inputs.target_type }}
+      float_precision: ${{ inputs.float_precision }}
       web_threads: ${{ inputs.web_threads }}
       api_version: ${{ matrix.godot.api_version }}
       godot_version: ${{ matrix.godot.godot_version }}
@@ -97,7 +95,6 @@ jobs:
       upload_artifact: true
       restore_cache: ${{ inputs.restore_cache }}
       save_cache: ${{ inputs.save_cache }}
-      artifact_name: puerts-godot-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float_precision }}-${{ matrix.target_type }}-godot-${{ matrix.godot.api_version }}${{ matrix.target.platform == 'web' && format('-{0}', inputs.web_threads && 'threads' || 'nothreads') || '' }}
 
   package:
     runs-on: ubuntu-22.04
@@ -113,7 +110,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
-          pattern: puerts-godot-*
+          pattern: gdextension-build-*
           path: artifacts
 
       - name: Package components
@@ -125,3 +122,4 @@ jobs:
           name: puerts-godot-packages
           path: dist/*.zip
           if-no-files-found: error
+          compression-level: 0
