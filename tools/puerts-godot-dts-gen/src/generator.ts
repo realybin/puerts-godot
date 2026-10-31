@@ -25,9 +25,11 @@ export function generate(api: ApiData, generatorOptions: GeneratorOptions = {}):
 	lines.push(
 		`declare function to_callable<T extends (...args: any[]) => any>(callback: T): import(${JSON.stringify(options.moduleName)}).Callable<T>;`,
 	);
-	lines.push("declare function log_error(message: string): void;");
-	lines.push("declare function log_warn(message: string): void;");
-	lines.push("declare function log_info(message: string): void;");
+	lines.push("declare const PLogger: {");
+	for (const level of ["trace", "debug", "info", "warning", "error"]) {
+		lines.push(`\t${level}(category: number, message: string): void;`);
+	}
+	lines.push("};");
 	lines.push("");
 	lines.push(`declare module ${JSON.stringify(options.moduleName)} {`);
 	lines.push("\tnamespace godot {");
@@ -68,7 +70,7 @@ export function generate(api: ApiData, generatorOptions: GeneratorOptions = {}):
 	lines.push("}");
 	lines.push("");
 	lines.push('declare module "puerts" {');
-	for (const name of ["load_type", "load_addon_type", "to_callable", "log_error", "log_warn", "log_info"]) {
+	for (const name of ["load_type", "load_addon_type", "to_callable", "PLogger"]) {
 		lines.push(`\texport const ${name}: typeof globalThis.${name};`);
 	}
 	lines.push("}");

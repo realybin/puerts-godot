@@ -13,12 +13,12 @@ func root_value() -> Variant:
 
 func test_reentrant_dispose() -> bool:
 	var calls := [0]
-	env.set_error_callback(func(_message: String):
+	env.set_log_callback(func(_category: int, _level: int, _message: String):
 		calls[0] += 1
 		env.dispose()
 	)
 	var value = evaluate("error('dispose')", "throw new Error('dispose')")
-	env.set_error_callback(Callable())
+	env.set_log_callback(Callable())
 	equal(value, null, "failed eval")
 	equal(calls[0], 1, "one error callback")
 	check(not env.is_ready(), "dispose is deferred until active eval finishes")
@@ -246,12 +246,12 @@ func test_dispose_during_callable() -> bool:
 
 func test_log_callback_can_replace_itself() -> bool:
 	var calls := [0]
-	env.set_info_callback(func(_message: String):
+	env.set_log_callback(func(_category: int, _level: int, _message: String):
 		calls[0] += 1
-		env.set_info_callback(Callable())
+		env.set_log_callback(Callable())
 		env.dispose()
 	)
-	evaluate("log_info('done'); return 42", "log_info('done'); 42")
+	evaluate("PLogger.info(1, 'done'); return 42", "PLogger.info(1, 'done'); 42")
 	equal(calls[0], 1, "log callback completes after clearing itself")
 	check(not env.is_ready(), "logging defers disposal")
 	return true
@@ -274,8 +274,8 @@ func test_reinitialization_keeps_old_handles_invalid() -> bool:
 
 func test_signal_callback_can_disconnect_itself() -> bool:
 	var callback: Callable = native(evaluate(
-		"local ref = load_type('RefCounted')(); captured_id = ref:get_instance_id(); return to_callable(function() log_info('disconnect'); ref:set_meta('called', true) end)",
-		"(() => { const ref = new (load_type('RefCounted'))(); globalThis.captured_id = ref.get_instance_id(); return to_callable(() => { log_info('disconnect'); ref.set_meta('called', true); }); })()"
+		"local ref = load_type('RefCounted')(); captured_id = ref:get_instance_id(); return to_callable(function() PLogger.info(1, 'disconnect'); ref:set_meta('called', true) end)",
+		"(() => { const ref = new (load_type('RefCounted'))(); globalThis.captured_id = ref.get_instance_id(); return to_callable(() => { PLogger.info(1, 'disconnect'); ref.set_meta('called', true); }); })()"
 	))
 	var id = env.get_global("captured_id").to_int()
 	var reference: WeakRef = weakref(instance_from_id(id))
@@ -284,11 +284,11 @@ func test_signal_callback_can_disconnect_itself() -> bool:
 	signal_value.connect(callback)
 	callback = Callable()
 	collect_garbage()
-	env.set_info_callback(func(_message: String):
+	env.set_log_callback(func(_category: int, _level: int, _message: String):
 		signal_value.disconnect(signal_value.get_connections()[0].callable)
 	)
 	signal_value.emit()
 	check(signal_value.get_connections().is_empty(), "callback disconnects itself")
 	check(released(reference), "completed callback releases its closure")
-	env.set_info_callback(Callable())
+	env.set_log_callback(Callable())
 	return true

@@ -54,7 +54,7 @@ export default function godotImportRewritePlugin({types: t}) {
   }
 
   const runtimeFunctions = new Set([
-    "load_type", "load_addon_type", "to_callable", "log_error", "log_warn", "log_info",
+    "load_type", "load_addon_type", "to_callable", "PLogger",
   ]);
 
   function importedName(specifier) {

@@ -16,7 +16,7 @@ var _env: PuertsEnvironment
 func _ready() -> void:
 	var pool := PuertsStringNameUtf8Cache.new()
 	_env = PuertsEnvironment.new()
-	_env.set_error_callback(func(message: String): push_error(message))
+	_env.set_log_callback(func(_category: int, _level: int, message: String): push_error(message))
 	if _env.initialize(PuertsV8Backend.new(), pool) != OK:
 		return
 	var value := _env.eval("40 + 2", &"bootstrap.js")
@@ -52,26 +52,28 @@ See [conventions](conventions.md) and [object lifetime](lifetime.md) for the rem
 
 ## Logging
 
-> [!WARNING]
-> Breaking changes are planned to add a Category.
-
-We provide the following interfaces to Godot:
-
 ```gdscript
-_env.set_error_callback(func(message: String): ...(message))
-_env.set_warn_callback(func(message: String): ...(message))
-_env.set_info_callback(func(message: String): ...(message))
+_env.set_log_callback(func(category: int, level: int, message: String):
+    print("[%d][%d] %s" % [category, level, message])
+)
+_env.set_log_level(PuertsEnvironment.LOG_LEVEL_INFO)
+_env.set_category_log_level(1, PuertsEnvironment.LOG_LEVEL_DEBUG)
+_env.clear_category_log_level(1)
 ```
-
-That is, you can use these methods in the script engine to handle these cases:
 
 ```javascript
-log_error("..")
-log_warn("...")
-log_info("...")
+PLogger.trace(1, "Sending packet");
+PLogger.debug(1, "Connected");
+PLogger.info(1, "Player joined");
+PLogger.warning(1, "Connection is slow");
+PLogger.error(1, "Connection failed");
 ```
 
-The callbacks are optional.
+- Category IDs are positive 32-bit integers. `0` is reserved for Puerts internal errors and script exceptions.
+- By default, logs at `INFO` and above are emitted. You can override the minimum level for individual categories.
+- The callback runs synchronously on the thread that produces the log. Nested logs produced inside the callback are discarded.
+- Without a valid callback, logs are sent to Godot. Pass `Callable()` to restore default output.
+- Calling `dispose()` and then `initialize()` on the same `PuertsEnvironment` preserves its logging settings; no reconfiguration is needed.
 
 ## ESM
 

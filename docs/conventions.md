@@ -61,7 +61,7 @@ This is not recommended, however, as it incurs extra overhead; so the default is
 `to_callable(function)` retains the function and its closure. Keep the callable to disconnect it:
 
 ```javascript
-const callback = to_callable(() => log_info("timeout"));
+const callback = to_callable(() => PLogger.info(1, "timeout"));
 timer.timeout.connect(callback);
 timer.timeout.disconnect(callback);
 ```

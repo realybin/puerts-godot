@@ -25,7 +25,7 @@ func _ready() -> void:
 	pool = ClassDB.instantiate("PuertsStringNameUtf8Cache")
 	backend = ClassDB.instantiate("PuertsWebBackend")
 	env = ClassDB.instantiate("PuertsEnvironment")
-	env.set_error_callback(func(message: String): errors.append(message))
+	env.set_log_callback(func(_category: int, _level: int, message: String): errors.append(message))
 	if not equal(env.initialize(backend, pool), OK, "initialize browser environment"):
 		finish()
 		return
@@ -98,7 +98,7 @@ func test_single_environment_lifetime() -> void:
 	var held_callable: Variant = function.to_native() if function != null else Callable()
 	var second: Object = ClassDB.instantiate("PuertsEnvironment")
 	var second_errors: Array[String] = []
-	second.set_error_callback(func(message: String): second_errors.append(message))
+	second.set_log_callback(func(_category: int, _level: int, message: String): second_errors.append(message))
 	equal(second.initialize(backend, pool), ERR_CANT_CREATE, "second environment initialization fails")
 	check(not second.is_ready(), "second environment stays inactive")
 	check(not second_errors.is_empty(), "second initialization reports its error")
@@ -117,14 +117,14 @@ func test_single_environment_lifetime() -> void:
 		equal(final_value.to_native(), 42, "original environment stays usable")
 	var reentrant_calls := [0]
 	var reentrant_result := [OK]
-	env.set_error_callback(func(message: String):
+	env.set_log_callback(func(_category: int, _level: int, message: String):
 		errors.append(message)
 		reentrant_calls[0] += 1
 		env.dispose()
 		reentrant_result[0] = env.initialize(backend, pool)
 	)
 	env.dispose()
-	env.set_error_callback(func(message: String): errors.append(message))
+	env.set_log_callback(func(_category: int, _level: int, message: String): errors.append(message))
 	equal(reentrant_calls[0], 1, "recursive lifecycle rejection callback runs once")
 	equal(reentrant_result[0], ERR_ALREADY_IN_USE, "reinitialization from error callback is rejected")
 	check(env.is_ready() and held.is_valid(), "recursive rejection preserves environment and value")

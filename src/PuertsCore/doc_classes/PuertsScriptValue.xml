@@ -3,7 +3,7 @@
 	<brief_description>Retains a value in a Puerts script environment.</brief_description>
 	<description>Represents a value returned by [method PuertsEnvironment.eval], [method PuertsEnvironment.get_global], property reads, or function calls.
 Retains the script value, but not its [PuertsEnvironment]. Keep the environment alive and use both on the same thread. Disposing or replacing the runtime permanently invalidates its wrappers.
-When the type is known, prefer [method to_int], [method to_float], [method to_string], or another typed accessor. Use [method unwrap_native] for wrapped Godot values, and [method to_native] when the type is determined at runtime. Operation errors are reported through [method PuertsEnvironment.set_error_callback].
+When the type is known, prefer [method to_int], [method to_float], [method to_string], or another typed accessor. Use [method unwrap_native] for wrapped Godot values, and [method to_native] when the type is determined at runtime. Operation errors are reported through [method PuertsEnvironment.set_log_callback].
 [b]Note:[/b] Types can overlap: a JavaScript Number can satisfy both [method is_int] and [method is_float]. For invalid wrappers, all type checks return [code]false[/code] except [method is_null] and [method is_undefined], which return [code]true[/code].</description>
 	<methods>
 		<method name="is_valid" qualifiers="const">

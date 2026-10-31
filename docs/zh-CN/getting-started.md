@@ -15,7 +15,7 @@ var _env: PuertsEnvironment
 func _ready() -> void:
 	var pool := PuertsStringNameUtf8Cache.new()
 	_env = PuertsEnvironment.new()
-	_env.set_error_callback(func(message: String): push_error(message))
+	_env.set_log_callback(func(_category: int, _level: int, message: String): push_error(message))
 	if _env.initialize(PuertsV8Backend.new(), pool) != OK:
 		return
 	var value := _env.eval("40 + 2", &"bootstrap.js")
@@ -51,26 +51,28 @@ func _game_exiting() -> void:
 
 ## 日志
 
-> [!WARNING]
-> 计划 Breaking changes，增加 Category。
-
-我们向 Godot 提供以下接口：
-
 ```gdscript
-_env.set_error_callback(func(message: String): ...(message))
-_env.set_warn_callback(func(message: String): ...(message))
-_env.set_info_callback(func(message: String): ...(message))
+_env.set_log_callback(func(category: int, level: int, message: String):
+    print("[%d][%d] %s" % [category, level, message])
+)
+_env.set_log_level(PuertsEnvironment.LOG_LEVEL_INFO)
+_env.set_category_log_level(1, PuertsEnvironment.LOG_LEVEL_DEBUG)
+_env.clear_category_log_level(1)
 ```
-
-也就是你可以在脚本引擎中使用这些方法处理这些情况：
 
 ```javascript
-log_error("..")
-log_warn("...")
-log_info("...")
+PLogger.trace(1, "Sending packet");
+PLogger.debug(1, "Connected");
+PLogger.info(1, "Player joined");
+PLogger.warning(1, "Connection is slow");
+PLogger.error(1, "Connection failed");
 ```
 
-回调并非必须设置。
+- 分类 ID 使用正的 32 位整数，`0` 保留给 Puerts 内部错误和脚本异常。
+- 默认输出 `INFO` 及以上级别的日志；可为指定分类单独设置最低级别。
+- 回调在产生日志的线程同步执行，回调中产生的嵌套日志会被丢弃。
+- 未设置有效回调时，日志输出到 Godot。传入 `Callable()` 可恢复默认输出。
+- 同一个 `PuertsEnvironment` 调用 `dispose()` 后再 `initialize()`，日志配置仍然保留，无需重新设置。
 
 ## ESM
 

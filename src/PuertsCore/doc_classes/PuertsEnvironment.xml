@@ -2,19 +2,41 @@
 <class name="PuertsEnvironment" inherits="RefCounted">
 	<brief_description>Runs scripts and exchanges values with a selected script engine.</brief_description>
 	<description>Create a runtime with [method initialize], execute code with [method eval], and exchange values with [method set_global] and [method get_global].
-Keep a reference to the environment while using its script values or script-backed [Callable]s. Use the environment, its values, and its [PuertsStringNameUtf8Cache] on the same thread.
-Register [method set_error_callback] before initialization to receive errors, including script exceptions and unsupported backend operations.
+[b]Basic usage[/b]
 [codeblock lang=gdscript]
 var environment := PuertsEnvironment.new()
-environment.set_error_callback(func(message: String): push_error(message))
-if environment.initialize(PuertsV8Backend.new(), PuertsStringNameUtf8Cache.new()) == OK:
+var backend := PuertsV8Backend.new()
+var cache := PuertsStringNameUtf8Cache.new()
+
+if environment.initialize(backend, cache) == OK:
 	environment.set_global(&amp;"answer", 42)
 	var result := environment.eval("answer + 1", &amp;"example.js")
 	if result != null:
 		print(result.to_float()) # 43.0
 	environment.dispose()
 [/codeblock]
-[b]Note:[/b] [PuertsWebBackend] allows only one environment, which remains alive until page unload. [method dispose] and reinitialization are unsupported.</description>
+[b]Script globals[/b]
+	• [code]load_type(name)[/code] — Loads a Godot type.
+	• [code]load_addon_type(name)[/code] — Loads a registered addon type.
+	• [code]to_callable(function)[/code] — Converts a script function to a Godot [Callable].
+	• [code]PLogger[/code] — Writes categorized logs, as shown below.
+Use [method set_global] to expose additional objects or data to scripts.
+[b]Logging[/b]
+Each method takes a category ID and a message:
+	• [b]Categories:[/b] Positive int32 IDs. Category [code]0[/code] is reserved for Puerts.
+	• [b]Filtering:[/b] Defaults to [constant LOG_LEVEL_INFO]. Configure with [method set_log_level] and [method set_category_log_level].
+	• [b]Output:[/b] Defaults to Godot output when no valid callback is configured. Register [method set_log_callback] before initialization to also capture initialization errors. See that method for a callback example.
+[codeblock lang=javascript]
+PLogger.trace(1, "Sending packet");
+PLogger.debug(1, "Connected");
+PLogger.info(2, "Player joined");
+PLogger.warning(1, "Connection is slow");
+PLogger.error(1, "Connection failed");
+[/codeblock]
+[b]Lifetime and threading[/b]
+Keep a reference to the environment while using its script values or script-backed [Callable]s.
+Use the environment, its values, and its [PuertsStringNameUtf8Cache] on the same thread.
+[b]Web backend:[/b] [PuertsWebBackend] allows only one environment, which remains alive until page unload. [method dispose] and reinitialization are unsupported.</description>
 	<methods>
 		<method name="initialize">
 			<return type="int" enum="Error" />
@@ -39,21 +61,44 @@ When called during a script operation or callback, stops accepting new operation
 			<return type="Object" />
 			<description>Returns the current backend resource, or [code]null[/code] when no backend is attached.</description>
 		</method>
-		<method name="set_error_callback">
+		<method name="set_log_callback">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
-			<description>Sets [param callback] to receive initialization errors, script exceptions, rejected operations, and script [code]log_error[/code] messages. The callback receives one [String] argument and runs synchronously on the calling thread.
-Set it before [method initialize] to receive initialization errors. Pass [code]Callable()[/code] to disable it. Messages are discarded when no valid callback is set.</description>
+			<description>Receives (category: int, level: int, message: String) synchronously on the calling thread. Nested logs from callbacks are discarded. An empty Callable restores default Godot output. Category 0 is reserved for internal errors and script exceptions.
+Calling [method dispose] and then [method initialize] on the same [PuertsEnvironment] preserves its log callback, default minimum level, and category overrides. They do not need to be configured again.
+Register the callback before [method initialize] to also receive initialization errors:
+[codeblock]
+environment.set_log_callback(func(category: int, level: int, message: String):
+	var text := "[%d] %s" % [category, message]
+	match level:
+		PuertsEnvironment.LOG_LEVEL_ERROR:
+			push_error(text)
+		PuertsEnvironment.LOG_LEVEL_WARNING:
+			push_warning(text)
+		_:
+			print(text)
+)
+
+# Restore default Godot output.
+environment.set_log_callback(Callable())
+[/codeblock]
+			</description>
 		</method>
-		<method name="set_warn_callback">
+		<method name="set_log_level">
 			<return type="void" />
-			<param index="0" name="callback" type="Callable" />
-			<description>Sets [param callback] to receive one [String] argument for messages sent through the script global [code]log_warn[/code]. It runs synchronously on the calling thread. Pass [code]Callable()[/code] to disable it; messages without a valid callback are discarded.</description>
+			<param index="0" name="level" type="int" />
+			<description>Sets the default minimum log level (INFO initially). Valid levels range from TRACE to ERROR.</description>
 		</method>
-		<method name="set_info_callback">
+		<method name="set_category_log_level">
 			<return type="void" />
-			<param index="0" name="callback" type="Callable" />
-			<description>Sets [param callback] to receive one [String] argument for messages sent through the script global [code]log_info[/code]. It runs synchronously on the calling thread. Pass [code]Callable()[/code] to disable it; messages without a valid callback are discarded.</description>
+			<param index="0" name="category" type="int" />
+			<param index="1" name="level" type="int" />
+			<description>Overrides the minimum log level for a nonnegative int32 category. Calling [method dispose] and then [method initialize] on the same [PuertsEnvironment] preserves this override.</description>
+		</method>
+		<method name="clear_category_log_level">
+			<return type="void" />
+			<param index="0" name="category" type="int" />
+			<description>Removes the category override, restoring the default minimum level.</description>
 		</method>
 		<method name="eval">
 			<return type="PuertsScriptValue" />
@@ -89,7 +134,7 @@ For Lua, use [code]return[/code] to produce a result, for example [code]return 4
 		</method>
 		<method name="debugger_tick">
 			<return type="bool" />
-			<description>Processes one inspector update for [PuertsV8Backend] or [PuertsNodejsBackend] and returns the backend inspector status. Returns [code]false[/code] if the environment is not ready or the backend does not support inspection; these failures are reported through [method set_error_callback].</description>
+			<description>Processes one inspector update for [PuertsV8Backend] or [PuertsNodejsBackend] and returns the backend inspector status. Returns [code]false[/code] if the environment is not ready or the backend does not support inspection; these failures are reported through [method set_log_callback].</description>
 		</method>
 		<method name="close_debugger">
 			<return type="void" />
@@ -100,4 +145,11 @@ For Lua, use [code]return[/code] to produce a result, for example [code]return 4
 			<description>Requests termination of script execution in [PuertsV8Backend] or [PuertsNodejsBackend].</description>
 		</method>
 	</methods>
+	<constants>
+		<constant name="LOG_LEVEL_TRACE" value="0" enum="LogLevel">Minimum severity: trace.</constant>
+		<constant name="LOG_LEVEL_DEBUG" value="1" enum="LogLevel">Minimum severity: debug.</constant>
+		<constant name="LOG_LEVEL_INFO" value="2" enum="LogLevel">Minimum severity: info.</constant>
+		<constant name="LOG_LEVEL_WARNING" value="3" enum="LogLevel">Minimum severity: warning.</constant>
+		<constant name="LOG_LEVEL_ERROR" value="4" enum="LogLevel">Minimum severity: error.</constant>
+	</constants>
 </class>

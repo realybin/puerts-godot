@@ -61,7 +61,7 @@ Addon 编写、加载与 dts 配置见[原生 Addon](addons.md)。
 `to_callable(function)` 会保留该函数及其闭包。要断开连接，请保留该可调用对象：
 
 ```javascript
-const callback = to_callable(() => log_info("timeout"));
+const callback = to_callable(() => PLogger.info(1, "timeout"));
 timer.timeout.connect(callback);
 timer.timeout.disconnect(callback);
 ```

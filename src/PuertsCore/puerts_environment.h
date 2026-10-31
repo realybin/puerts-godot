@@ -36,6 +36,16 @@ bool return_variant_to_script(pesapi_ffi *p_api, pesapi_callback_info p_info, pe
 class PuertsEnvironment : public godot::RefCounted {
 	GDCLASS(PuertsEnvironment, godot::RefCounted)
 
+public:
+	enum LogLevel {
+		LOG_LEVEL_TRACE,
+		LOG_LEVEL_DEBUG,
+		LOG_LEVEL_INFO,
+		LOG_LEVEL_WARNING,
+		LOG_LEVEL_ERROR,
+	};
+
+private:
 	godot::Ref<godot::RefCounted> backend_ref_;
 	// Non-disposable browser runtimes keep their owner alive for the page lifetime.
 	godot::Ref<PuertsEnvironment> page_lifetime_ref_;
@@ -49,9 +59,10 @@ class PuertsEnvironment : public godot::RefCounted {
 	puerts_eastl::hash_map<void *, PuertsScriptValue *> script_value_cache_;
 	// Keys occupy the upper address range and are never reused.
 	uintptr_t next_cache_key_ = (UINTPTR_MAX >> 2U) + 1;
-	godot::Callable error_callback_;
-	godot::Callable warn_callback_;
-	godot::Callable info_callback_;
+	godot::Callable log_callback_;
+	LogLevel log_level_ = LOG_LEVEL_INFO;
+	puerts_eastl::hash_map<int32_t, LogLevel> category_log_levels_;
+	bool reporting_log_ = false;
 
 protected:
 	static void _bind_methods();
@@ -64,9 +75,10 @@ public:
 	void dispose();
 	bool is_ready() const;
 	[[nodiscard]] godot::Object *get_backend() const;
-	void set_error_callback(const godot::Callable &p_callback);
-	void set_warn_callback(const godot::Callable &p_callback);
-	void set_info_callback(const godot::Callable &p_callback);
+	void set_log_callback(const godot::Callable &p_callback);
+	void set_log_level(LogLevel p_level);
+	void set_category_log_level(int32_t p_category, LogLevel p_level);
+	void clear_category_log_level(int32_t p_category);
 
 	godot::Ref<PuertsScriptValue> eval(const godot::String &p_code, const godot::StringName &p_chunk_name = godot::StringName("chunk"));
 
@@ -101,14 +113,9 @@ private:
 
 	void log_error(const godot::String &p_message);
 	void log_lifecycle_rejection(const godot::String &p_message);
-	void log_warn(const godot::String &p_message);
-	void log_info(const godot::String &p_message);
-	void emit_log(const godot::Callable &p_callback, const godot::String &p_message);
-	template <void (PuertsEnvironment::*LogFunction)(const godot::String &)>
-	static void dispatch_log_callback(struct pesapi_ffi *p_api, pesapi_callback_info p_info);
-	static void script_log_error_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
-	static void script_log_warn_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
-	static void script_log_info_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
+	void emit_log(int32_t p_category, LogLevel p_level, const godot::String &p_message);
+	template <LogLevel Level>
+	static void script_log_callback(pesapi_ffi *p_api, pesapi_callback_info p_info);
 	static void script_to_callable_callback(struct pesapi_ffi *apis, pesapi_callback_info info);
 	[[nodiscard]] godot::CharString get_utf8(const godot::StringName &p_name);
 	pesapi_value variant_to_script(
@@ -150,5 +157,7 @@ private:
 
 	godot::Ref<PuertsStringNameUtf8Cache> string_name_utf8_cache_;
 };
+
+VARIANT_ENUM_CAST(PuertsEnvironment::LogLevel);
 
 #endif // PUERTS_GODOT_PUERTS_ENVIRONMENT_H

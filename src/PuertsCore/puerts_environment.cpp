@@ -9,6 +9,7 @@
 #include "puerts_type_registry.h"
 
 #include <godot_cpp/core/object.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -19,9 +20,6 @@ namespace {
 constexpr char kLoadTypePropertyName[] = "load_type";
 constexpr char kLoadAddonTypePropertyName[] = "load_addon_type";
 constexpr char kToCallablePropertyName[] = "to_callable";
-constexpr char kLogErrorPropertyName[] = "log_error";
-constexpr char kLogWarnPropertyName[] = "log_warn";
-constexpr char kLogInfoPropertyName[] = "log_info";
 
 } // namespace
 
@@ -45,9 +43,15 @@ void PuertsEnvironment::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("dispose"), &PuertsEnvironment::dispose);
 	ClassDB::bind_method(D_METHOD("is_ready"), &PuertsEnvironment::is_ready);
 	ClassDB::bind_method(D_METHOD("get_backend"), &PuertsEnvironment::get_backend);
-	ClassDB::bind_method(D_METHOD("set_error_callback", "callback"), &PuertsEnvironment::set_error_callback);
-	ClassDB::bind_method(D_METHOD("set_warn_callback", "callback"), &PuertsEnvironment::set_warn_callback);
-	ClassDB::bind_method(D_METHOD("set_info_callback", "callback"), &PuertsEnvironment::set_info_callback);
+	ClassDB::bind_method(D_METHOD("set_log_callback", "callback"), &PuertsEnvironment::set_log_callback);
+	ClassDB::bind_method(D_METHOD("set_log_level", "level"), &PuertsEnvironment::set_log_level);
+	ClassDB::bind_method(D_METHOD("set_category_log_level", "category", "level"), &PuertsEnvironment::set_category_log_level);
+	ClassDB::bind_method(D_METHOD("clear_category_log_level", "category"), &PuertsEnvironment::clear_category_log_level);
+	BIND_ENUM_CONSTANT(LOG_LEVEL_TRACE);
+	BIND_ENUM_CONSTANT(LOG_LEVEL_DEBUG);
+	BIND_ENUM_CONSTANT(LOG_LEVEL_INFO);
+	BIND_ENUM_CONSTANT(LOG_LEVEL_WARNING);
+	BIND_ENUM_CONSTANT(LOG_LEVEL_ERROR);
 	ClassDB::bind_method(D_METHOD("eval", "code", "chunk_name"), &PuertsEnvironment::eval, DEFVAL(StringName("chunk")));
 	ClassDB::bind_method(D_METHOD("set_global", "name", "value"), &PuertsEnvironment::set_global);
 	ClassDB::bind_method(D_METHOD("get_global", "name"), &PuertsEnvironment::get_global);
@@ -159,12 +163,13 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 	api_->set_property(env, api_->global(env), kLoadAddonTypePropertyName, load_addon_type);
 	pesapi_value to_callable = api_->create_function(env, &PuertsEnvironment::script_to_callable_callback, nullptr, nullptr);
 	api_->set_property(env, api_->global(env), kToCallablePropertyName, to_callable);
-	pesapi_value log_error = api_->create_function(env, &PuertsEnvironment::script_log_error_callback, nullptr, nullptr);
-	api_->set_property(env, api_->global(env), kLogErrorPropertyName, log_error);
-	pesapi_value log_warn = api_->create_function(env, &PuertsEnvironment::script_log_warn_callback, nullptr, nullptr);
-	api_->set_property(env, api_->global(env), kLogWarnPropertyName, log_warn);
-	pesapi_value log_info = api_->create_function(env, &PuertsEnvironment::script_log_info_callback, nullptr, nullptr);
-	api_->set_property(env, api_->global(env), kLogInfoPropertyName, log_info);
+	auto *const logger = api_->create_object(env);
+	api_->set_property(env, logger, "trace", api_->create_function(env, &PuertsEnvironment::script_log_callback<LOG_LEVEL_TRACE>, nullptr, nullptr));
+	api_->set_property(env, logger, "debug", api_->create_function(env, &PuertsEnvironment::script_log_callback<LOG_LEVEL_DEBUG>, nullptr, nullptr));
+	api_->set_property(env, logger, "info", api_->create_function(env, &PuertsEnvironment::script_log_callback<LOG_LEVEL_INFO>, nullptr, nullptr));
+	api_->set_property(env, logger, "warning", api_->create_function(env, &PuertsEnvironment::script_log_callback<LOG_LEVEL_WARNING>, nullptr, nullptr));
+	api_->set_property(env, logger, "error", api_->create_function(env, &PuertsEnvironment::script_log_callback<LOG_LEVEL_ERROR>, nullptr, nullptr));
+	api_->set_property(env, api_->global(env), "PLogger", logger);
 
 	if (!backend_functions_->supports_dispose) {
 		page_lifetime_ref_ = keep_alive;
@@ -232,16 +237,23 @@ Object *PuertsEnvironment::get_backend() const {
 	return backend_ref_.ptr();
 }
 
-void PuertsEnvironment::set_error_callback(const Callable &p_callback) {
-	error_callback_ = p_callback;
+void PuertsEnvironment::set_log_callback(const Callable &p_callback) {
+	log_callback_ = p_callback;
 }
 
-void PuertsEnvironment::set_warn_callback(const Callable &p_callback) {
-	warn_callback_ = p_callback;
+void PuertsEnvironment::set_log_level(LogLevel p_level) {
+	ERR_FAIL_COND(p_level < LOG_LEVEL_TRACE || p_level > LOG_LEVEL_ERROR);
+	log_level_ = p_level;
 }
 
-void PuertsEnvironment::set_info_callback(const Callable &p_callback) {
-	info_callback_ = p_callback;
+void PuertsEnvironment::set_category_log_level(int32_t p_category, LogLevel p_level) {
+	ERR_FAIL_COND(p_category < 0);
+	ERR_FAIL_COND(p_level < LOG_LEVEL_TRACE || p_level > LOG_LEVEL_ERROR);
+	category_log_levels_[p_category] = p_level;
+}
+
+void PuertsEnvironment::clear_category_log_level(int32_t p_category) {
+	category_log_levels_.erase(p_category);
 }
 
 void PuertsEnvironment::tick() {
@@ -282,7 +294,7 @@ void PuertsEnvironment::terminate_execution() {
 }
 
 void PuertsEnvironment::log_error(const String &p_message) {
-	emit_log(error_callback_, p_message);
+	emit_log(0, LOG_LEVEL_ERROR, p_message);
 }
 
 void PuertsEnvironment::log_lifecycle_rejection(const String &p_message) {
@@ -301,46 +313,49 @@ void PuertsEnvironment::log_lifecycle_rejection(const String &p_message) {
 	log_error(p_message);
 }
 
-void PuertsEnvironment::log_warn(const String &p_message) {
-	emit_log(warn_callback_, p_message);
-}
-
-void PuertsEnvironment::log_info(const String &p_message) {
-	emit_log(info_callback_, p_message);
-}
-
-void PuertsEnvironment::emit_log(const Callable &p_callback, const String &p_message) {
-	const Callable callback = p_callback;
-	if (!callback.is_valid()) {
+void PuertsEnvironment::emit_log(int32_t p_category, LogLevel p_level, const String &p_message) {
+	const auto it = category_log_levels_.find(p_category);
+	const int32_t minimum = it == category_log_levels_.end() ? log_level_ : it->second;
+	if (p_level < minimum || reporting_log_) {
 		return;
 	}
-	callback.call(p_message);
-}
-
-static String read_log_message_arg(pesapi_ffi *p_api, pesapi_env p_env, pesapi_callback_info p_info) {
-	return puerts::internal::read_utf8_string(p_api, p_env, p_api->get_arg(p_info, 0));
-}
-
-template <void (PuertsEnvironment::*LogFunction)(const String &)>
-void PuertsEnvironment::dispatch_log_callback(pesapi_ffi *p_api, pesapi_callback_info p_info) {
-	const pesapi_env env = p_api->get_env(p_info);
-	const auto *environment_context = static_cast<const PuertsEnvironmentContext *>(p_api->get_env_private(env));
-	if (environment_context == nullptr || environment_context->environment == nullptr) {
+	// Keep the current callback alive even if it replaces or clears itself.
+	const Callable callback = log_callback_;
+	if (callback.is_valid()) {
+		struct ReportingGuard {
+			bool &reporting;
+			explicit ReportingGuard(bool &p_reporting) : reporting(p_reporting) { reporting = true; }
+			~ReportingGuard() { reporting = false; }
+		} guard(reporting_log_);
+		(void)callback.call(p_category, p_level, p_message);
 		return;
 	}
-	(environment_context->environment->*LogFunction)(read_log_message_arg(p_api, env, p_info));
+	const String text = vformat("[%d] %s", p_category, p_message);
+	if (p_level == LOG_LEVEL_ERROR) {
+		UtilityFunctions::push_error(text);
+	} else if (p_level == LOG_LEVEL_WARNING) {
+		UtilityFunctions::push_warning(text);
+	} else {
+		UtilityFunctions::print(text);
+	}
 }
 
-void PuertsEnvironment::script_log_error_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	PuertsEnvironment::dispatch_log_callback<&PuertsEnvironment::log_error>(apis, info);
-}
-
-void PuertsEnvironment::script_log_warn_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	PuertsEnvironment::dispatch_log_callback<&PuertsEnvironment::log_warn>(apis, info);
-}
-
-void PuertsEnvironment::script_log_info_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
-	PuertsEnvironment::dispatch_log_callback<&PuertsEnvironment::log_info>(apis, info);
+template <PuertsEnvironment::LogLevel Level>
+void PuertsEnvironment::script_log_callback(pesapi_ffi *p_api, pesapi_callback_info p_info) {
+	puerts::internal::CallbackContext frame(p_api, p_info);
+	if (!frame.require()) {
+		return;
+	}
+	auto *const env = frame.script_env();
+	if (frame.argument_count() != 2 || !p_api->is_int32(env, frame.argument_value(0)) ||
+			p_api->get_value_int32(env, frame.argument_value(0)) <= 0 || !p_api->is_string(env, frame.argument_value(1))) {
+		p_api->throw_by_string(p_info, "PLogger expects a positive int32 category and a string message. Category 0 is reserved for Puerts.");
+		return;
+	}
+	PuertsEnvironment *environment = frame.puerts_environment();
+	OperationScope operation(environment);
+	environment->emit_log(p_api->get_value_int32(env, frame.argument_value(0)), Level,
+			puerts::internal::read_utf8_string(p_api, env, frame.argument_value(1)));
 }
 
 void PuertsEnvironment::script_to_callable_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {

@@ -5,7 +5,7 @@ Rewrites Puerts type and helper imports into runtime global function calls.
 | Source | Exports | Rewrite |
 |---|---|---|
 | `godot` | Godot types | `load_type("TypeName")` |
-| `puerts` | `load_type`, `load_addon_type`, `to_callable`, `log_error`, `log_warn`, `log_info` | Direct references to the global functions |
+| `puerts` | `load_type`, `load_addon_type`, `to_callable`, `PLogger` | Direct references to the globals |
 | `PAddon` | Addon types | `load_addon_type("FullTypeName")` |
 
 ## Configuration

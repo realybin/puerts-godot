@@ -22,16 +22,16 @@ test("addon namespace, named imports and global aliases execute without module o
     import { "Net.Client" as Namespaced } from "PAddon";
     import { to_callable as wrap } from "puerts";
     import * as puerts from "puerts";
-    result = [Addon.WebSocketPP, Addon["Net.Client"], Client, Namespaced, wrap(42), puerts.log_info];
+    result = [Addon.WebSocketPP, Addon["Net.Client"], Client, Namespaced, wrap(42), puerts.PLogger];
   `);
   assert.doesNotMatch(code, /import |Proxy/);
   const context = {
     load_addon_type: (name) => name,
     to_callable: (value) => value,
-    log_info() {},
+    PLogger: { info() {} },
   };
   vm.runInNewContext(code, context);
-  assert.deepEqual(Array.from(context.result), ["WebSocketPP", "Net.Client", "WebSocketPP", "Net.Client", 42, context.log_info]);
+  assert.deepEqual(Array.from(context.result), ["WebSocketPP", "Net.Client", "WebSocketPP", "Net.Client", 42, context.PLogger]);
 });
 
 test("binding identity preserves shadowing and object shorthand keys", () => {
