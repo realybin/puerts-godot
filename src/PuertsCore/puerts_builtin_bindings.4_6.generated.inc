@@ -169,6 +169,30 @@ inline void color_v_setter(godot::Color &p_self, double p_value) {
 	p_self.set_v(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_v), 0>>(p_value));
 }
 
+inline double color_ok_hsl_h_getter(const godot::Color &p_self) {
+	return p_self.get_ok_hsl_h();
+}
+
+inline void color_ok_hsl_h_setter(godot::Color &p_self, double p_value) {
+	p_self.set_ok_hsl_h(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_ok_hsl_h), 0>>(p_value));
+}
+
+inline double color_ok_hsl_s_getter(const godot::Color &p_self) {
+	return p_self.get_ok_hsl_s();
+}
+
+inline void color_ok_hsl_s_setter(godot::Color &p_self, double p_value) {
+	p_self.set_ok_hsl_s(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_ok_hsl_s), 0>>(p_value));
+}
+
+inline double color_ok_hsl_l_getter(const godot::Color &p_self) {
+	return p_self.get_ok_hsl_l();
+}
+
+inline void color_ok_hsl_l_setter(godot::Color &p_self, double p_value) {
+	p_self.set_ok_hsl_l(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::set_ok_hsl_l), 0>>(p_value));
+}
+
 inline double plane_x_getter(const godot::Plane &p_self) {
 	return p_self.normal.x;
 }
@@ -1613,6 +1637,12 @@ inline decltype(auto) color_from_hsv_overload0_arity3(double p_arg_0, double p_a
 inline decltype(auto) color_from_hsv_overload0_arity4(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3) {
 	return godot::Color::from_hsv(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_hsv), 3>>(p_arg_3));
 }
+inline decltype(auto) color_from_ok_hsl_overload0_arity3(double p_arg_0, double p_arg_1, double p_arg_2) {
+	return godot::Color::from_ok_hsl(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_ok_hsl), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_ok_hsl), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_ok_hsl), 2>>(p_arg_2));
+}
+inline decltype(auto) color_from_ok_hsl_overload0_arity4(double p_arg_0, double p_arg_1, double p_arg_2, double p_arg_3) {
+	return godot::Color::from_ok_hsl(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_ok_hsl), 0>>(p_arg_0), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_ok_hsl), 1>>(p_arg_1), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_ok_hsl), 2>>(p_arg_2), static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_ok_hsl), 3>>(p_arg_3));
+}
 inline decltype(auto) color_from_rgbe9995_overload0_arity1(int64_t p_arg_0) {
 	return godot::Color::from_rgbe9995(static_cast<puerts::internal::native_parameter_t<decltype(&godot::Color::from_rgbe9995), 0>>(p_arg_0));
 }
@@ -1812,6 +1842,7 @@ inline void register_type_color() {
 			.static_method<&puerts_generated::color_html_is_valid_overload0_arity1>("html_is_valid")
 			.static_method<&puerts_generated::color_from_string_overload0_arity2>("from_string")
 			.static_method<&puerts_generated::color_from_hsv_overload0_arity3, &puerts_generated::color_from_hsv_overload0_arity4>("from_hsv")
+			.static_method<&puerts_generated::color_from_ok_hsl_overload0_arity3, &puerts_generated::color_from_ok_hsl_overload0_arity4>("from_ok_hsl")
 			.static_method<&puerts_generated::color_from_rgbe9995_overload0_arity1>("from_rgbe9995")
 			.static_method<&puerts_generated::color_from_rgba8_overload0_arity3, &puerts_generated::color_from_rgba8_overload0_arity4>("from_rgba8")
 			.property<&puerts_generated::color_r8_getter, &puerts_generated::color_r8_setter>("r8")
@@ -1821,6 +1852,9 @@ inline void register_type_color() {
 			.property<&puerts_generated::color_h_getter, &puerts_generated::color_h_setter>("h")
 			.property<&puerts_generated::color_s_getter, &puerts_generated::color_s_setter>("s")
 			.property<&puerts_generated::color_v_getter, &puerts_generated::color_v_setter>("v")
+			.property<&puerts_generated::color_ok_hsl_h_getter, &puerts_generated::color_ok_hsl_h_setter>("ok_hsl_h")
+			.property<&puerts_generated::color_ok_hsl_s_getter, &puerts_generated::color_ok_hsl_s_setter>("ok_hsl_s")
+			.property<&puerts_generated::color_ok_hsl_l_getter, &puerts_generated::color_ok_hsl_l_setter>("ok_hsl_l")
 			.property<&godot::Color::r>("r")
 			.property<&godot::Color::g>("g")
 			.property<&godot::Color::b>("b")

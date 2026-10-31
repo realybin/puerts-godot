@@ -1,12 +1,4 @@
 {
-	"excluded_methods": [
-		"Color.from_ok_hsl"
-	],
-	"excluded_properties": [
-		"Color.ok_hsl_h",
-		"Color.ok_hsl_s",
-		"Color.ok_hsl_l"
-	],
 	"methods": {
 		"Basis.rotated": {
 			"native_signature": "godot::Basis (godot::Basis::*)(const godot::Vector3 &, godot::real_t) const",
