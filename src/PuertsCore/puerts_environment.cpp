@@ -63,11 +63,17 @@ void PuertsEnvironment::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("terminate_execution"), &PuertsEnvironment::terminate_execution);
 }
 
-PuertsEnvironment::~PuertsEnvironment() {
+void PuertsEnvironment::_notification(int p_what) {
+	if (p_what != NOTIFICATION_PREDELETE) {
+		return;
+	}
+	// Invalidate weak environment pointers before its C++ destructor starts.
+	puerts::internal::EnvironmentLock lock(mutex_);
 	dispose_internal();
 }
 
 Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNameUtf8Cache> &p_string_name_utf8_cache) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	if (environment_context_.state == PuertsEnvironmentState::Ready && backend_functions_ != nullptr && !backend_functions_->supports_dispose) {
 		log_lifecycle_rejection("This Puerts backend does not support environment reinitialization.");
 		return ERR_ALREADY_IN_USE;
@@ -120,6 +126,10 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 	}
 
 	const auto *functions = reinterpret_cast<const PuertsBackendFunctionTable *>(static_cast<uintptr_t>(functions_address));
+	if (functions->version != PuertsBackendFunctionTable::VERSION) {
+		log_error("Puerts backend interface version mismatch. Rebuild Core and all backends together.");
+		return ERR_UNCONFIGURED;
+	}
 	if (functions->get_api_version == nullptr || functions->get_ffi == nullptr || functions->create_env_ref == nullptr || functions->destroy_env_ref == nullptr) {
 		log_error("Puerts backend function table is incomplete.");
 		return ERR_UNCONFIGURED;
@@ -174,10 +184,16 @@ Error PuertsEnvironment::initialize(Object *p_backend, const Ref<PuertsStringNam
 	if (!backend_functions_->supports_dispose) {
 		page_lifetime_ref_ = keep_alive;
 	}
+	{
+		puerts::internal::MutexLock termination_lock(termination_mutex_);
+		execution_handle_ = functions->get_execution_handle != nullptr ? functions->get_execution_handle(env_ref_) : nullptr;
+		terminate_execution_ = functions->terminate_execution;
+	}
 	return OK;
 }
 
 void PuertsEnvironment::dispose() {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	if (environment_context_.state != PuertsEnvironmentState::Ready) {
 		return;
 	}
@@ -218,6 +234,9 @@ void PuertsEnvironment::dispose_internal() {
 	environment_context_.environment = nullptr;
 
 	if (env_ref_ != nullptr) {
+		puerts::internal::MutexLock termination_lock(termination_mutex_);
+		execution_handle_ = nullptr;
+		terminate_execution_ = nullptr;
 		backend_functions_->destroy_env_ref(env_ref_);
 	}
 
@@ -230,45 +249,54 @@ void PuertsEnvironment::dispose_internal() {
 }
 
 bool PuertsEnvironment::is_ready() const {
+	puerts::internal::MutexLock lock(*mutex_);
 	return environment_context_.state == PuertsEnvironmentState::Ready;
 }
 
-Object *PuertsEnvironment::get_backend() const {
-	return backend_ref_.ptr();
+Ref<RefCounted> PuertsEnvironment::get_backend() const {
+	puerts::internal::EnvironmentLock lock(mutex_);
+	return backend_ref_;
 }
 
 void PuertsEnvironment::set_log_callback(const Callable &p_callback) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	log_callback_ = p_callback;
 }
 
 void PuertsEnvironment::set_log_level(LogLevel p_level) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	ERR_FAIL_COND(p_level < LOG_LEVEL_TRACE || p_level > LOG_LEVEL_ERROR);
 	log_level_ = p_level;
 }
 
 void PuertsEnvironment::set_category_log_level(int32_t p_category, LogLevel p_level) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	ERR_FAIL_COND(p_category < 0);
 	ERR_FAIL_COND(p_level < LOG_LEVEL_TRACE || p_level > LOG_LEVEL_ERROR);
 	category_log_levels_[p_category] = p_level;
 }
 
 void PuertsEnvironment::clear_category_log_level(int32_t p_category) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	category_log_levels_.erase(p_category);
 }
 
 void PuertsEnvironment::tick() {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	call_backend(
 			backend_functions_ != nullptr ? backend_functions_->tick : nullptr,
 			"Puerts backend does not support tick.");
 }
 
 void PuertsEnvironment::low_memory_notification() {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	call_backend(
 			backend_functions_ != nullptr ? backend_functions_->low_memory_notification : nullptr,
 			"Puerts backend does not support low memory notification.");
 }
 
 void PuertsEnvironment::open_debugger(int32_t p_port) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	call_backend(
 			backend_functions_ != nullptr ? backend_functions_->open_debugger : nullptr,
 			"Puerts backend does not support remote debugging.",
@@ -276,21 +304,30 @@ void PuertsEnvironment::open_debugger(int32_t p_port) {
 }
 
 bool PuertsEnvironment::debugger_tick() {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	return call_backend(
 			backend_functions_ != nullptr ? backend_functions_->debugger_tick : nullptr,
 			"Puerts backend does not support debugger tick.");
 }
 
 void PuertsEnvironment::close_debugger() {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	call_backend(
 			backend_functions_ != nullptr ? backend_functions_->close_debugger : nullptr,
 			"Puerts backend does not support remote debugging.");
 }
 
 void PuertsEnvironment::terminate_execution() {
-	call_backend(
-			backend_functions_ != nullptr ? backend_functions_->terminate_execution : nullptr,
-			"Puerts backend does not support terminate execution.");
+	{
+		// Never wait for the execution mutex: the running script may not return.
+		puerts::internal::MutexLock termination_lock(termination_mutex_);
+		if (execution_handle_ != nullptr && terminate_execution_ != nullptr) {
+			terminate_execution_(execution_handle_);
+			return;
+		}
+	}
+	puerts::internal::EnvironmentLock lock(mutex_);
+	log_error("Puerts backend does not support terminate execution.");
 }
 
 void PuertsEnvironment::log_error(const String &p_message) {
@@ -314,6 +351,7 @@ void PuertsEnvironment::log_lifecycle_rejection(const String &p_message) {
 }
 
 void PuertsEnvironment::emit_log(int32_t p_category, LogLevel p_level, const String &p_message) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	const auto it = category_log_levels_.find(p_category);
 	const int32_t minimum = it == category_log_levels_.end() ? log_level_ : it->second;
 	if (p_level < minimum || reporting_log_) {
@@ -406,9 +444,11 @@ void PuertsEnvironment::unregister_script_value(PuertsScriptValue *p_value) {
 
 void PuertsEnvironment::invalidate_script_values() {
 	while (!script_values_.empty()) {
-		Ref<PuertsScriptValue> value(script_values_.back());
-		// A backend release can synchronously destroy other registered values.
-		unregister_script_value(value.ptr());
+		PuertsScriptValue *value = script_values_.back();
+		Ref<PuertsScriptValue> keep_alive(value);
+		// A zero-refcount wrapper is waiting in PREDELETE on this same mutex.
+		// Its C++ destructor cannot start until it has unregistered itself.
+		unregister_script_value(value);
 		value->release_value_ref();
 	}
 	script_value_cache_.clear();

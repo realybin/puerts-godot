@@ -2,7 +2,12 @@ import glob
 import json
 import os
 
-from ..manifest import Backend, Platform, Target
+try:
+    from ..manifest import Backend, Platform, Target
+except ImportError:
+    from manifest import Backend, Platform, Target
+
+NATIVE_BUILD_METADATA = "puerts-build.json"
 
 
 def resolve_puerts_paths(
@@ -68,3 +73,19 @@ def collect_ios_dependency_archives(backend_config, puerts_root, backend_dir, pu
                 seen_archives.add(normalized_path)
 
     return archives, missing_patterns
+
+
+def validate_native_build(library_dir: str, thread_safe: bool) -> None:
+    metadata_path = os.path.join(library_dir, NATIVE_BUILD_METADATA)
+    try:
+        with open(metadata_path, encoding="utf-8") as metadata_file:
+            metadata = json.load(metadata_file)
+    except (OSError, ValueError) as error:
+        raise ValueError(
+            f"Missing or invalid native build metadata: {metadata_path}. Rebuild with make_puerts.py."
+        ) from error
+    if not isinstance(metadata, dict) or metadata.get("thread_safe") is not thread_safe:
+        mode = "yes" if thread_safe else "no"
+        raise ValueError(
+            f"Native thread_safe mode does not match SCons. Rebuild with make_puerts.py --thread-safe {mode}."
+        )

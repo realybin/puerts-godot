@@ -6,6 +6,7 @@
 #include "puerts_bridge_registry.h"
 #include "puerts_environment.h"
 #include "puerts_reflected_binding.h"
+#include "puerts_registry_lock.h"
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/object.hpp>
@@ -182,6 +183,7 @@ pesapi_registry PuertsTypeRegistry::get_registry() const {
 }
 
 PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_record(const void *p_type_id) const {
+	puerts::internal::RegistryLock lock(registry_);
 	const auto found = types_by_id_.find(p_type_id);
 	return found == types_by_id_.end() ? nullptr : found->second;
 }
@@ -196,6 +198,7 @@ bool PuertsTypeRegistry::has_type(const void *p_type_id) const {
 }
 
 bool PuertsTypeRegistry::register_static_type(TypeRecord &&p_record) {
+	puerts::internal::RegistryLock lock(registry_);
 	ERR_FAIL_COND_V_MSG(p_record.name.is_empty(), false, "A bound type requires a name.");
 	ERR_FAIL_COND_V_MSG(types_by_name_.find(p_record.name) != types_by_name_.end(), false, "A type with this name is already registered.");
 	ERR_FAIL_COND_V_MSG(p_record.type_id != nullptr && has_type(p_record.type_id), false, "This C++ type is already registered.");
@@ -254,6 +257,7 @@ PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_or_add_object_record(co
 }
 
 const void *PuertsTypeRegistry::find_or_add_object_type(const StringName &p_name) {
+	puerts::internal::RegistryLock lock(registry_);
 	TypeRecord *type = find_or_add_object_record(p_name);
 	return type != nullptr ? type->type_id : nullptr;
 }
@@ -279,6 +283,7 @@ PuertsTypeRegistry::TypeRecord *PuertsTypeRegistry::find_type_by_name(const Stri
 }
 
 bool PuertsTypeRegistry::ensure_registered(TypeRecord *p_type) {
+	puerts::internal::RegistryLock lock(registry_);
 	switch (p_type->registration_state) {
 		case TypeRecord::RegistrationState::Registered:
 			return true;
@@ -300,11 +305,13 @@ bool PuertsTypeRegistry::ensure_registered(TypeRecord *p_type) {
 }
 
 bool PuertsTypeRegistry::ensure_registered(const void *p_type_id) {
+	puerts::internal::RegistryLock lock(registry_);
 	TypeRecord *type = find_record(p_type_id);
 	return type != nullptr && ensure_registered(type);
 }
 
 void *PuertsTypeRegistry::cast_native(void *p_pointer, const void *p_type_id, const void *p_base_type_id) const {
+	puerts::internal::RegistryLock lock(registry_);
 	for (TypeRecord *type = find_record(p_type_id); type != nullptr; type = type->base) {
 		if (type->type_id == p_base_type_id) {
 			return p_pointer;
@@ -318,6 +325,7 @@ void *PuertsTypeRegistry::cast_native(void *p_pointer, const void *p_type_id, co
 }
 
 bool PuertsTypeRegistry::can_own_native(const void *p_type_id) const {
+	puerts::internal::RegistryLock lock(registry_);
 	const TypeRecord *type = find_record(p_type_id);
 	return type != nullptr && type->finalize != nullptr;
 }
@@ -555,8 +563,15 @@ void PuertsTypeRegistry::signal_getter_callback(struct pesapi_ffi *apis, pesapi_
 void PuertsTypeRegistry::nested_type_getter_callback(struct pesapi_ffi *apis, pesapi_callback_info info) {
 	const auto &type_name = *static_cast<const StringName *>(apis->get_userdata(info));
 	auto &registry = get_singleton();
-	TypeRecord *type = registry.find_type_by_name(type_name);
-	if (type == nullptr || !registry.ensure_registered(type)) {
+	TypeRecord *type = nullptr;
+	{
+		puerts::internal::RegistryLock lock(registry.registry_);
+		type = registry.find_type_by_name(type_name);
+		if (type != nullptr && !registry.ensure_registered(type)) {
+			type = nullptr;
+		}
+	}
+	if (type == nullptr) {
 		throw_script_error(apis, info, "Type is not registered: " + String(type_name));
 		return;
 	}
@@ -591,6 +606,7 @@ void PuertsTypeRegistry::read_only_property_setter_callback(struct pesapi_ffi *a
 }
 
 void PuertsTypeRegistry::register_addon(AddonRegisterFunction p_register) {
+	puerts::internal::RegistryLock lock(registry_);
 	p_register(&reg_api_, registry_);
 }
 
@@ -629,8 +645,15 @@ void PuertsTypeRegistry::load_type_callback(struct pesapi_ffi *apis, pesapi_call
 
 	const String class_name = puerts::internal::read_utf8_string(apis, env, apis->get_arg(info, 0));
 	PuertsTypeRegistry &type_registry = PuertsTypeRegistry::get_singleton();
-	auto *type = type_registry.find_type_by_name(class_name);
-	if (type == nullptr || !type_registry.ensure_registered(type)) {
+	TypeRecord *type = nullptr;
+	{
+		puerts::internal::RegistryLock lock(type_registry.registry_);
+		type = type_registry.find_type_by_name(class_name);
+		if (type != nullptr && !type_registry.ensure_registered(type)) {
+			type = nullptr;
+		}
+	}
+	if (type == nullptr) {
 		throw_script_error(apis, info, "Type not found: " + class_name);
 		return;
 	}

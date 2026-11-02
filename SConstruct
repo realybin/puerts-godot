@@ -4,12 +4,15 @@ import shutil
 import subprocess
 import sys
 
+from SCons.Variables import BoolVariable, Variables
+
 from methods import print_error
 from misc.scripts.manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS
 from misc.scripts.scons.puerts_layout import (
     collect_ios_dependency_archives,
     load_backend_config,
     resolve_puerts_paths,
+    validate_native_build,
 )
 
 # You can find documentation for SCons and SConstruct files at:
@@ -23,7 +26,12 @@ Run the following command to download godot-cpp:
     sys.exit(1)
 
 requested_backend_argument = ARGUMENTS.pop("backends", None)
+puerts_options = Variables()
+puerts_options.Add(BoolVariable("thread_safe", "Enable Puerts thread synchronization", True))
+puerts_arguments = {"thread_safe": ARGUMENTS.pop("thread_safe", "yes")}
 env = SConscript("godot-cpp/SConstruct")
+puerts_options.Update(env, puerts_arguments)
+Help(puerts_options.GenerateHelpText(env))
 
 puerts_path = os.path.join("thirdparty", "puerts", "unity", "native")
 if not os.path.exists(puerts_path):
@@ -100,6 +108,8 @@ def fail_missing_puerts_artifact(path):
         + env["arch"]
         + " --config "
         + puerts_config
+        + " --thread-safe "
+        + ("yes" if env["thread_safe"] else "no")
     )
     sys.exit(1)
 
@@ -141,6 +151,8 @@ for backend in BACKENDS.values():
         continue
 
     project_env = env.Clone()
+    if env["thread_safe"] and (env["platform"] != "web" or env["threads"]):
+        project_env.Append(CPPDEFINES=["PUERTS_THREAD_SAFE"])
     runtime_binary = None
     if backend.name != "web":
         try:
@@ -151,6 +163,12 @@ for backend in BACKENDS.values():
 
         if not os.path.isdir(lib_path):
             fail_missing_puerts_artifact(lib_path)
+        if not GetOption("clean") and not GetOption("help"):
+            try:
+                validate_native_build(lib_path, env["thread_safe"])
+            except ValueError as error:
+                print_error(str(error))
+                sys.exit(1)
         project_env.Append(LIBPATH=[lib_path])
     if env["platform"] == "linux":
         # Ensure runtime dependencies are resolved from the extension directory first.

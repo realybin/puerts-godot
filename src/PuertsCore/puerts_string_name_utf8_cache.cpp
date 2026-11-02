@@ -12,6 +12,7 @@ void PuertsStringNameUtf8Cache::_bind_methods() {
 }
 
 CharString PuertsStringNameUtf8Cache::get_utf8(const StringName &p_name) {
+	puerts::internal::MutexLock lock(mutex_);
 	if (p_name.is_empty()) {
 		return {};
 	}
@@ -22,5 +23,6 @@ CharString PuertsStringNameUtf8Cache::get_utf8(const StringName &p_name) {
 }
 
 void PuertsStringNameUtf8Cache::clear() {
+	puerts::internal::MutexLock lock(mutex_);
 	cache_.clear();
 }

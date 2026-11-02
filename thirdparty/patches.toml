@@ -27,3 +27,19 @@ backends = ["core"]
 [[patches]]
 file = "papi-quickjs-dispose-finalizers"
 backends = ["quickjs"]
+
+[[patches]]
+file = "puerts-thread-safe-build"
+backends = ["core"]
+
+[[patches]]
+file = "puerts-thread-safe-registry"
+backends = ["core"]
+
+[[patches]]
+file = "papi-v8-thread-safe-scopes"
+backends = ["v8", "nodejs"]
+
+[[patches]]
+file = "papi-quickjs-thread-stack"
+backends = ["quickjs"]

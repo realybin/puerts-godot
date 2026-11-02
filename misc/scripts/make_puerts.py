@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import filecmp
+import json
 import os
 import shlex
 import shutil
@@ -13,9 +14,11 @@ import sys
 from pathlib import Path
 
 try:
-    from .manifest import BACKENDS, MANIFEST, PLATFORMS, Backend, Platform
+    from .manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS, Backend, Platform
+    from .scons.puerts_layout import NATIVE_BUILD_METADATA, resolve_puerts_paths, validate_native_build
 except ImportError:
-    from manifest import BACKENDS, MANIFEST, PLATFORMS, Backend, Platform
+    from manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS, Backend, Platform
+    from scons.puerts_layout import NATIVE_BUILD_METADATA, resolve_puerts_paths, validate_native_build
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PUERTS_REPO_DIR = REPO_ROOT / "thirdparty" / "puerts"
@@ -49,6 +52,12 @@ def parse_args() -> argparse.Namespace:
         choices=["true", "false"],
         default="true",
         help="Web threading support; match the SCons threads option (default: true).",
+    )
+    parser.add_argument(
+        "--thread-safe",
+        choices=["yes", "no"],
+        default="yes",
+        help="Match the SCons thread_safe option (default: yes).",
     )
     return parser.parse_args()
 
@@ -104,7 +113,14 @@ def normalize_backends(raw: str) -> list[str]:
     return names
 
 
-def build_backend(platform: Platform, puerts_arch: str, config: str, backend: Backend, threads: bool = True) -> None:
+def build_backend(
+    platform: Platform,
+    puerts_arch: str,
+    config: str,
+    backend: Backend,
+    threads: bool = True,
+    thread_safe: bool = True,
+) -> None:
     backend_dir = NATIVE_DIR / backend.native_dir
     if not backend_dir.is_dir():
         raise FileNotFoundError(f"Backend directory not found: {backend_dir}")
@@ -120,6 +136,9 @@ def build_backend(platform: Platform, puerts_arch: str, config: str, backend: Ba
         "--config",
         config,
     ]
+
+    if thread_safe and (platform.name != "web" or threads):
+        cmd.append("--thread_safe")
 
     env = os.environ.copy()
     if platform.name == "android":
@@ -215,10 +234,27 @@ def main() -> int:
     for name in MANIFEST.patch_names(platform.name, build_list):
         ensure_patch(name)
 
+    thread_safe = args.thread_safe == "yes"
+    target = TARGETS["template_release" if args.config == "Release" else "template_debug"]
     if not args.skip_build:
         run(["npm", "ci"], UNITY_DIR)
-        for name in build_list:
-            build_backend(platform, puerts_arch, args.config, BACKENDS[name], args.threads == "true")
+    for name in build_list:
+        library_dir, _ = resolve_puerts_paths(str(NATIVE_DIR), platform, arch, target, BACKENDS[name])
+        metadata_path = Path(library_dir) / NATIVE_BUILD_METADATA
+        if args.skip_build:
+            validate_native_build(library_dir, thread_safe)
+            continue
+        # A failed rebuild must never leave a stamp claiming the old mode is valid.
+        metadata_path.unlink(missing_ok=True)
+        build_backend(
+            platform,
+            puerts_arch,
+            args.config,
+            BACKENDS[name],
+            threads=args.threads == "true",
+            thread_safe=thread_safe,
+        )
+        metadata_path.write_text(json.dumps({"thread_safe": thread_safe}) + "\n", encoding="utf-8")
 
     for name in build_list:
         stage_dependencies(platform.name, arch, BACKENDS[name])
@@ -227,6 +263,7 @@ def main() -> int:
     print(f"  platform: {platform.name}")
     print(f"  arch: {arch} -> {puerts_arch}")
     print(f"  config: {args.config}")
+    print(f"  thread_safe: {args.thread_safe}")
     if platform.name == "web":
         print(f"  threads: {args.threads}")
     print(f"  {'restored' if args.skip_build else 'built'}: {', '.join(build_list)}")

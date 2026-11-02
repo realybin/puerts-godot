@@ -1,0 +1,244 @@
+diff --git a/unity/native/puerts/source/ScriptClassRegistry.cpp b/unity/native/puerts/source/ScriptClassRegistry.cpp
+--- a/unity/native/puerts/source/ScriptClassRegistry.cpp
++++ b/unity/native/puerts/source/ScriptClassRegistry.cpp
+@@ -11,8 +11,12 @@
+ #include "UObject/Class.h"
+ #endif
+ #include <EASTL/map.h>
++#include <EASTL/vector.h>
+ #include <EASTL/allocator_malloc.h>
+ #include <string.h>
++#ifdef THREAD_SAFE
++#include <mutex>
++#endif
+ #include "TypeInfo.hpp"
+ #include "PString.h"
+ #if defined(__EMSCRIPTEN__)
+@@ -82,6 +86,17 @@
+     ScriptClassRegistry();
+     ~ScriptClassRegistry();
+ 
++    void Lock() {
++#ifdef THREAD_SAFE
++        Mutex.lock();
++#endif
++    }
++    void Unlock() {
++#ifdef THREAD_SAFE
++        Mutex.unlock();
++#endif
++    }
++
+     void RegisterClass(const ScriptClassDefinition& ClassDefinition);
+ 
+     void SetClassTypeInfo(const void* TypeId, const NamedFunctionInfo* ConstructorInfos, const NamedFunctionInfo* MethodInfos,
+@@ -125,6 +140,9 @@
+ #endif
+ 
+ private:
++#ifdef THREAD_SAFE
++    std::recursive_mutex Mutex;
++#endif
+     eastl::map<const void*, ScriptClassDefinition*, eastl::less<const void*>, eastl::allocator_malloc> CDataIdToClassDefinition;
+     eastl::map<PString, ScriptClassDefinition*, eastl::less<PString>, eastl::allocator_malloc> CDataNameToClassDefinition; //��Ҫ����rtti������������������ᵼ�¶�libstdc++/libc++������������û��ʹ��c++��api
+     pesapi_class_not_found_callback ClassNotFoundCallback = nullptr;
+@@ -296,16 +314,28 @@
+ 
+ void ScriptClassRegistry::ForeachRegisterClass(ClassDefinitionForeachCallback Callback)
+ {
+-    for (auto& KV : CDataNameToClassDefinition)
+-    {
+-        Callback(KV.second);
+-    }
+-#if USING_IN_UNREAL_ENGINE
+-    for (auto& KV : StructNameToClassDefinition)
+-    {
+-        Callback(KV.second);
+-    }
+-#endif
++    eastl::vector<const ScriptClassDefinition*, eastl::allocator_malloc> Classes;
++    {
++#ifdef THREAD_SAFE
++        std::lock_guard<std::recursive_mutex> Lock(Mutex);
++#endif
++        for (auto& KV : CDataIdToClassDefinition)
++        {
++            Classes.push_back(KV.second);
++        }
++#if USING_IN_UNREAL_ENGINE
++        for (auto& KV : StructNameToClassDefinition)
++        {
++            Classes.push_back(KV.second);
++        }
++#endif
++    }
++    // Class definitions remain valid for the registry lifetime. Do not invoke
++    // external callbacks under the registry lock: they may enter a runtime.
++    for (const auto* ClassDefinition : Classes)
++    {
++        Callback(ClassDefinition);
++    }
+ }
+ 
+ ScriptClassRegistry* CreateRegistry()
+@@ -315,14 +345,27 @@
+     return ret;
+ }
+ 
++class RegistryLock
++{
++public:
++    explicit RegistryLock(ScriptClassRegistry* InRegistry) : Registry(InRegistry) { Registry->Lock(); }
++    ~RegistryLock() { Registry->Unlock(); }
++    RegistryLock(const RegistryLock&) = delete;
++    RegistryLock& operator=(const RegistryLock&) = delete;
++private:
++    ScriptClassRegistry* Registry;
++};
++
+ void RegisterScriptClass(ScriptClassRegistry* Registry, const ScriptClassDefinition& ClassDefinition)
+ {
++    RegistryLock Lock(Registry);
+     Registry->RegisterClass(ClassDefinition);
+ }
+ 
+ void SetClassTypeInfo(ScriptClassRegistry* Registry, const void* TypeId, const NamedFunctionInfo* ConstructorInfos, const NamedFunctionInfo* MethodInfos,
+     const NamedFunctionInfo* FunctionInfos, const NamedPropertyInfo* PropertyInfos, const NamedPropertyInfo* VariableInfos)
+ {
++    RegistryLock Lock(Registry);
+     Registry->SetClassTypeInfo(TypeId, ConstructorInfos, MethodInfos, FunctionInfos, PropertyInfos, VariableInfos);
+ }
+ 
+@@ -333,31 +376,37 @@
+ 
+ const ScriptClassDefinition* FindClassByID(ScriptClassRegistry* Registry, const void* TypeId)
+ {
++    RegistryLock Lock(Registry);
+     return Registry->FindClassByID(TypeId);
+ }
+ 
+ void OnClassNotFound(ScriptClassRegistry* Registry, pesapi_class_not_found_callback Callback)
+ {
++    RegistryLock Lock(Registry);
+     Registry->OnClassNotFound(Callback);
+ }
+ 
+ const ScriptClassDefinition* LoadClassByID(ScriptClassRegistry* Registry, const void* TypeId)
+ {
++    RegistryLock Lock(Registry);
+     return Registry->LoadClassByID(TypeId);
+ }
+ 
+ const ScriptClassDefinition* FindCppTypeClassByName(ScriptClassRegistry* Registry, const PString& Name)
+ {
++    RegistryLock Lock(Registry);
+     return Registry->FindCppTypeClassByName(Name);
+ }
+ 
+ const ScriptClassDefinition* FindCppTypeClassByCName(ScriptClassRegistry* Registry, const char* Name)
+ {
++    RegistryLock Lock(Registry);
+     return Registry->FindCppTypeClassByName(Name);
+ }
+ 
+ bool TraceObjectLifecycle(ScriptClassRegistry* Registry, const void* TypeId, pesapi_on_native_object_enter OnEnter, pesapi_on_native_object_exit OnExit)
+ {
++    RegistryLock Lock(Registry);
+     if (auto clsDef = const_cast<ScriptClassDefinition*>(Registry->FindClassByID(TypeId)))
+     {
+         clsDef->OnEnter = OnEnter;
+@@ -413,6 +462,18 @@
+ 
+ }    // namespace PUERTS_NAMESPACE
+ 
++extern "C" {
++PESAPI_MODULE_EXPORT void PuertsLockRegistry(pesapi_registry Registry)
++{
++    reinterpret_cast<PUERTS_REG_NAMESPACE::ScriptClassRegistry*>(Registry)->Lock();
++}
++
++PESAPI_MODULE_EXPORT void PuertsUnlockRegistry(pesapi_registry Registry)
++{
++    reinterpret_cast<PUERTS_REG_NAMESPACE::ScriptClassRegistry*>(Registry)->Unlock();
++}
++}
++
+ #if defined(__EMSCRIPTEN__)
+ extern "C"
+ {
+diff --git a/unity/native/puerts/source/PesapiRegister.cpp b/unity/native/puerts/source/PesapiRegister.cpp
+--- a/unity/native/puerts/source/PesapiRegister.cpp
++++ b/unity/native/puerts/source/PesapiRegister.cpp
+@@ -14,10 +14,24 @@
+ #include <EASTL/vector.h>
+ #include <EASTL/allocator_malloc.h>
+ 
++extern "C" void PuertsLockRegistry(pesapi_registry Registry);
++extern "C" void PuertsUnlockRegistry(pesapi_registry Registry);
++
+ namespace pesapi
+ {
+ namespace regimpl
+ {
++
++class RegistryLock
++{
++public:
++    explicit RegistryLock(pesapi_registry Registry) : Registry(Registry) { PuertsLockRegistry(Registry); }
++    ~RegistryLock() { PuertsUnlockRegistry(Registry); }
++    RegistryLock(const RegistryLock&) = delete;
++    RegistryLock& operator=(const RegistryLock&) = delete;
++private:
++    pesapi_registry Registry;
++};
+ 
+ struct pesapi_type_info__
+ {
+@@ -99,6 +113,7 @@
+ void pesapi_define_class(pesapi_registry registry, const void* type_id, const void* super_type_id, const char* module_name, const char* type_name, pesapi_constructor constructor,
+     pesapi_finalize finalize, void* data, int copy_str)
+ {
++    RegistryLock Lock(registry);
+     puerts::ScriptClassDefinition classDef = ScriptClassEmptyDefinition;
+     classDef.TypeId = type_id;
+     classDef.SuperTypeId = super_type_id;
+@@ -124,6 +139,7 @@
+ 
+ void pesapi_set_property_info_size(pesapi_registry registry, const void* type_id, int method_count, int function_count, int property_count, int variable_count)
+ {
++    RegistryLock Lock(registry);
+     puerts::ScriptClassDefinition* classDef = const_cast<puerts::ScriptClassDefinition*>(puerts::FindClassByID(reinterpret_cast<puerts::ScriptClassRegistry*>(registry), type_id));
+     if (classDef)
+     {
+@@ -141,6 +157,7 @@
+ void pesapi_set_method_info(pesapi_registry registry, const void* type_id, int index, const char* name, int is_static,
+     pesapi_callback method, void* data, int copy_str)
+ {
++    RegistryLock Lock(registry);
+     const puerts::ScriptClassDefinition* classDef = puerts::FindClassByID(reinterpret_cast<puerts::ScriptClassRegistry*>(registry), type_id);
+     if (classDef)
+     {
+@@ -158,6 +175,7 @@
+ void pesapi_set_property_info(pesapi_registry registry, const void* type_id, int index, const char* name, int is_static,
+     pesapi_callback getter, pesapi_callback setter, void* getter_data, void* setter_data, int copy_str)
+ {
++    RegistryLock Lock(registry);
+     const puerts::ScriptClassDefinition* classDef = puerts::FindClassByID(reinterpret_cast<puerts::ScriptClassRegistry*>(registry), type_id);
+     if (classDef)
+     {
+@@ -187,6 +205,7 @@
+ void pesapi_class_type_info(pesapi_registry registry, const char* proto_magic_id, const void* type_id, const void* constructor_info, const void* methods_info,
+     const void* functions_info, const void* properties_info, const void* variables_info)
+ {
++    RegistryLock Lock(registry);
+     if (strcmp(proto_magic_id, PUERTS_BINDING_PROTO_ID()) != 0)
+     {
+         return;
+@@ -210,6 +229,7 @@
+ int pesapi_trace_native_object_lifecycle(
+     pesapi_registry registry, const void* type_id, pesapi_on_native_object_enter on_enter, pesapi_on_native_object_exit on_exit)
+ {
++    RegistryLock Lock(registry);
+     return puerts::TraceObjectLifecycle(reinterpret_cast<puerts::ScriptClassRegistry*>(registry), type_id, on_enter, on_exit);
+ }
+ 

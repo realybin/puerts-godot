@@ -24,6 +24,7 @@ Common arguments:
 - `--config`: `Debug|Release`
 - `--backends`: `core,v8,nodejs,quickjs,lua,web`
 - `--threads`: Web `true|false`
+- `--thread-safe`: `yes|no`, default `yes`; match SCons `thread_safe=yes|no`
 
 Metadata: [`manifest.toml`](../manifest.toml).
 
@@ -50,6 +51,8 @@ scons target=template_release platform=linux arch=x86_64 precision=single api_ve
 ```
 
 Output goes to `bin/`.
+
+Thread synchronization defaults to `thread_safe=yes`. To disable it, pass `--thread-safe no` to `make_puerts.py` and `thread_safe=no` to SCons. Rebuild both the native libraries and GDExtension when changing this option; SCons checks the native build metadata and rejects a mismatch. Non-threaded Web builds compile out synchronization regardless of this option.
 
 ## Web builds
 

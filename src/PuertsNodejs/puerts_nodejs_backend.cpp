@@ -55,11 +55,12 @@ void puerts_nodejs_close_debugger(pesapi_env_ref p_env_ref) {
 	NodejsDestroyInspector(GetNodejsIsolate(p_env_ref));
 }
 
-void puerts_nodejs_terminate_execution(pesapi_env_ref p_env_ref) {
-	NodejsTerminateExecution(GetNodejsIsolate(p_env_ref));
+void puerts_nodejs_terminate_execution(void *p_execution_handle) {
+	NodejsTerminateExecution(p_execution_handle);
 }
 
 const PuertsBackendFunctionTable puerts_nodejs_functions = {
+	PuertsBackendFunctionTable::VERSION,
 	&puerts_nodejs_get_api_version,
 	&puerts_nodejs_get_ffi,
 	&puerts_nodejs_create_env_ref,
@@ -70,6 +71,8 @@ const PuertsBackendFunctionTable puerts_nodejs_functions = {
 	&puerts_nodejs_debugger_tick,
 	&puerts_nodejs_close_debugger,
 	&puerts_nodejs_terminate_execution,
+	true,
+	&GetNodejsIsolate,
 };
 
 const PuertsBackendDescriptor puerts_nodejs_descriptor = {

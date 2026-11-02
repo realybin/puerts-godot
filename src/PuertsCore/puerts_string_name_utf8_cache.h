@@ -5,6 +5,7 @@
 #define PUERTS_GODOT_PUERTS_STRING_NAME_UTF8_CACHE_H
 
 #include "puerts_eastl.h"
+#include "puerts_threading.h"
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -27,6 +28,7 @@ class PuertsStringNameUtf8Cache : public godot::RefCounted {
 	};
 
 	using HashMap = puerts_eastl::hash_map<godot::StringName, godot::CharString, StringNameHash, StringNameEqual, true>;
+	puerts::internal::RecursiveMutex mutex_;
 	HashMap cache_;
 
 protected:

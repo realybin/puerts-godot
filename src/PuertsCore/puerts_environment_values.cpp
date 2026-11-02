@@ -14,6 +14,7 @@
 using namespace godot;
 
 Ref<PuertsScriptValue> PuertsEnvironment::eval(const String &p_code, const StringName &p_chunk_name) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	if (!is_ready()) {
 		log_error("Puerts environment is not initialized.");
 		return {};
@@ -36,6 +37,7 @@ Ref<PuertsScriptValue> PuertsEnvironment::eval(const String &p_code, const Strin
 }
 
 void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_value) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	if (!is_ready()) {
 		log_error("Puerts environment is not initialized.");
 		return;
@@ -58,6 +60,7 @@ void PuertsEnvironment::set_global(const StringName &p_name, const Variant &p_va
 }
 
 Ref<PuertsScriptValue> PuertsEnvironment::get_global(const StringName &p_name) {
+	puerts::internal::EnvironmentLock lock(mutex_);
 	if (!is_ready()) {
 		log_error("Puerts environment is not initialized.");
 		return {};
@@ -142,6 +145,11 @@ pesapi_value PuertsEnvironment::variant_to_script(
 			}
 			auto *script_value = Object::cast_to<PuertsScriptValue>(object);
 			if (script_value != nullptr) {
+				// Check the immutable mutex identity before entering another environment.
+				// Locking two environments here would allow an AB/BA deadlock.
+				if (script_value->mutex_.get() != mutex_.get()) {
+					return fail("Puerts script value belongs to another PuertsEnvironment.");
+				}
 				if (!script_value->is_valid()) {
 					return fail("Puerts script value is no longer valid.");
 				}
@@ -269,7 +277,10 @@ Ref<PuertsScriptValue> PuertsEnvironment::create_script_value(pesapi_env p_env, 
 			if (cached != script_value_cache_.end()) {
 				cache_key = cached->first;
 				if (cached->second != nullptr) {
-					return Ref<PuertsScriptValue>(cached->second);
+					Ref<PuertsScriptValue> retained(cached->second);
+					if (retained.is_valid()) {
+						return retained;
+					}
 				}
 			}
 			// The private slot is shared backend state. Never overwrite a value that

@@ -117,4 +117,4 @@ reloadable = false
 [tests.runtime]
 platforms = ["windows", "macos", "linux"]
 backends = ["lua", "quickjs", "v8"]
-aliases = { nodejs = "v8" }
+aliases = {}

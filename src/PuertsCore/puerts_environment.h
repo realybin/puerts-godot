@@ -8,6 +8,7 @@
 #include "puerts_eastl.h"
 #include "puerts_runtime.h"
 #include "puerts_string_name_utf8_cache.h"
+#include "puerts_threading.h"
 
 #include <cstdint>
 
@@ -46,6 +47,10 @@ public:
 	};
 
 private:
+	const puerts::internal::EnvironmentMutex mutex_ = puerts::internal::make_environment_mutex();
+	mutable puerts::internal::RecursiveMutex termination_mutex_;
+	void *execution_handle_ = nullptr;
+	void (*terminate_execution_)(void *) = nullptr;
 	godot::Ref<godot::RefCounted> backend_ref_;
 	// Non-disposable browser runtimes keep their owner alive for the page lifetime.
 	godot::Ref<PuertsEnvironment> page_lifetime_ref_;
@@ -66,15 +71,16 @@ private:
 
 protected:
 	static void _bind_methods();
+	void _notification(int p_what);
 
 public:
 	PuertsEnvironment() = default;
-	~PuertsEnvironment() override;
+	~PuertsEnvironment() override = default;
 
 	godot::Error initialize(godot::Object *p_backend, const godot::Ref<PuertsStringNameUtf8Cache> &p_string_name_utf8_cache);
 	void dispose();
 	bool is_ready() const;
-	[[nodiscard]] godot::Object *get_backend() const;
+	[[nodiscard]] godot::Ref<godot::RefCounted> get_backend() const;
 	void set_log_callback(const godot::Callable &p_callback);
 	void set_log_level(LogLevel p_level);
 	void set_category_log_level(int32_t p_category, LogLevel p_level);

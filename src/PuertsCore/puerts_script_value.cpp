@@ -13,6 +13,10 @@ using namespace godot;
 
 template <typename Result, typename Function>
 Result PuertsScriptValue::with_value(Result p_fallback, Function &&p_function, bool p_may_reenter) const {
+	if (!mutex_) {
+		return p_fallback;
+	}
+	puerts::internal::EnvironmentLock lock(mutex_);
 	PuertsEnvironment *environment = get_environment();
 	if (environment == nullptr || !environment->is_ready() || api_ == nullptr || value_ref_ == nullptr) {
 		if (environment != nullptr) {
@@ -54,7 +58,13 @@ void PuertsScriptValue::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("call_method", "name", "args"), &PuertsScriptValue::call_method, DEFVAL(Array()));
 }
 
-PuertsScriptValue::~PuertsScriptValue() {
+void PuertsScriptValue::_notification(int p_what) {
+	if (p_what != NOTIFICATION_PREDELETE || !mutex_) {
+		return;
+	}
+	// Remove weak cache entries before the C++ destructor starts. A concurrent
+	// cache lookup may fail to retain this object once its refcount reaches zero.
+	puerts::internal::EnvironmentLock lock(mutex_);
 	PuertsEnvironment *environment = get_environment();
 	if (environment != nullptr) {
 		environment->unregister_script_value(this);
@@ -63,6 +73,10 @@ PuertsScriptValue::~PuertsScriptValue() {
 }
 
 bool PuertsScriptValue::is_valid() const {
+	if (!mutex_) {
+		return false;
+	}
+	puerts::internal::EnvironmentLock lock(mutex_);
 	PuertsEnvironment *environment = get_environment();
 	return environment != nullptr && environment->is_ready() && api_ != nullptr && value_ref_ != nullptr;
 }
@@ -294,6 +308,7 @@ bool PuertsScriptValue::invoke_script_function(
 }
 
 void PuertsScriptValue::initialize(PuertsEnvironment *p_environment, pesapi_ffi *p_api, pesapi_value_ref p_value_ref) {
+	mutex_ = p_environment->mutex_;
 	environment_ = p_environment;
 	api_ = p_api;
 	value_ref_ = p_value_ref;
@@ -301,19 +316,26 @@ void PuertsScriptValue::initialize(PuertsEnvironment *p_environment, pesapi_ffi 
 
 void PuertsScriptValue::release_value_ref() {
 	PuertsEnvironment *environment = environment_;
+	if (environment == nullptr) {
+		return;
+	}
 	PuertsEnvironment::OperationScope operation(environment);
-	if (cache_key_ != nullptr && environment != nullptr) {
-		environment->script_value_cache_[cache_key_] = nullptr;
-		if (api_ != nullptr && value_ref_ != nullptr && environment->is_ready()) {
-			puerts::internal::EnvironmentHandleScope scope(api_, environment->env_ref_);
-			pesapi_env env = scope.env();
-			pesapi_value value = api_->get_value_from_ref(env, value_ref_);
-			void *private_ptr = nullptr;
-			if (api_->get_private(env, value, &private_ptr) && private_ptr == cache_key_ &&
-					api_->set_private(env, value, nullptr)) {
-				void *detached_entry = cache_key_;
-				if (api_->get_private(env, value, &detached_entry) && detached_entry == nullptr) {
-					environment->script_value_cache_.erase(cache_key_);
+	puerts::internal::EnvironmentHandleScope scope(api_, environment->env_ref_);
+	if (cache_key_ != nullptr) {
+		auto cached = environment->script_value_cache_.find(cache_key_);
+		// A zero-refcount wrapper may already have been replaced in the cache.
+		if (cached != environment->script_value_cache_.end() && cached->second == this) {
+			cached->second = nullptr;
+			if (environment->is_ready()) {
+				pesapi_env env = scope.env();
+				pesapi_value value = api_->get_value_from_ref(env, value_ref_);
+				void *private_ptr = nullptr;
+				if (api_->get_private(env, value, &private_ptr) && private_ptr == cache_key_ &&
+						api_->set_private(env, value, nullptr)) {
+					void *detached_entry = cache_key_;
+					if (api_->get_private(env, value, &detached_entry) && detached_entry == nullptr) {
+						environment->script_value_cache_.erase(cache_key_);
+					}
 				}
 			}
 		}
@@ -324,10 +346,8 @@ void PuertsScriptValue::release_value_ref() {
 	value_ref_ = nullptr;
 	api_ = nullptr;
 	environment_ = nullptr;
-	// Finalizers may release other wrappers or reenter disposal.
-	if (ffi != nullptr && value_ref != nullptr) {
-		ffi->release_value_ref(value_ref);
-	}
+	// Finalizers and scope closing may release other wrappers or request disposal.
+	ffi->release_value_ref(value_ref);
 }
 
 bool PuertsScriptValue::ensure_live_native_object_receiver(PuertsEnvironment *p_environment, pesapi_env p_env, pesapi_value p_value) const {

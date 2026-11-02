@@ -18,4 +18,8 @@
 
 ## Reentry and Threads
 
-Use an environment and its values on a single thread; the Web backend requires the browser main thread. For disposal during callbacks, see [object lifetime](lifetime.md#disposal-and-reinitialization).
+Independent native environments can execute concurrently; calls into one environment and its values are serialized. Use Godot `Thread` for background work and keep the environment alive while using its values.
+
+Godot objects and addon data retain their own thread restrictions. Callbacks run on the caller's thread. Do not synchronously wait inside a callback for another thread that needs the same environment. `dispose()` from another thread waits for the active operation; V8's `terminate_execution()` can interrupt it. The browser Web backend requires the main thread.
+
+Load addons on the main thread before starting script workers. For disposal during callbacks, see [object lifetime](lifetime.md#disposal-and-reinitialization).

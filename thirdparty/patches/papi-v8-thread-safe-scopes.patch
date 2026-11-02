@@ -1,0 +1,164 @@
+diff --git a/unity/native/papi-v8/source/PesapiV8Impl.cpp b/unity/native/papi-v8/source/PesapiV8Impl.cpp
+--- a/unity/native/papi-v8/source/PesapiV8Impl.cpp
++++ b/unity/native/papi-v8/source/PesapiV8Impl.cpp
+@@ -54,12 +54,13 @@
+ #ifdef THREAD_SAFE
+         locker(isolate),
+ #endif
+-        scope(isolate), trycatch(isolate)
++        isolate_scope(isolate), scope(isolate), trycatch(isolate)
+     {
+     }
+ #ifdef THREAD_SAFE
+     v8::Locker locker;
+ #endif
++    v8::Isolate::Scope isolate_scope;
+     v8::HandleScope scope;
+     v8::TryCatch trycatch;
+     puerts::PString errinfo;
+@@ -597,7 +598,6 @@
+     {
+         return nullptr;
+     }
+-    env_ref->isolate->Enter();
+     auto scope = new pesapi_scope__(env_ref->isolate);
+     env_ref->context_persistent.Get(env_ref->isolate)->Enter();
+     return scope;
+@@ -609,7 +609,6 @@
+     {
+         return nullptr;
+     }
+-    env_ref->isolate->Enter();
+     auto scope = new (memory) pesapi_scope__(env_ref->isolate);
+     env_ref->context_persistent.Get(env_ref->isolate)->Enter();
+     return scope;
+@@ -624,6 +623,11 @@
+ {
+     if (!scope)
+         return nullptr;
++    if (scope->trycatch.HasTerminated())
++    {
++        scope->errinfo = "Script execution was terminated.";
++        return scope->errinfo.c_str();
++    }
+     scope->errinfo = *v8::String::Utf8Value(scope->scope.GetIsolate(), scope->trycatch.Exception());
+     if (with_stack)
+     {
+@@ -658,7 +662,6 @@
+     auto isolate = scope->scope.GetIsolate();
+     isolate->GetCurrentContext()->Exit();
+     delete (scope);
+-    isolate->Exit();
+ }
+ 
+ void pesapi_close_scope_placement(pesapi_scope scope)
+@@ -668,7 +671,6 @@
+     auto isolate = scope->scope.GetIsolate();
+     isolate->GetCurrentContext()->Exit();
+     scope->~pesapi_scope__();
+-    isolate->Exit();
+ }
+ 
+ pesapi_value_ref pesapi_create_value_ref(pesapi_env env, pesapi_value pvalue, uint32_t internal_field_count)
+diff --git a/unity/native/papi-v8/source/BackendEnv.cpp b/unity/native/papi-v8/source/BackendEnv.cpp
+--- a/unity/native/papi-v8/source/BackendEnv.cpp
++++ b/unity/native/papi-v8/source/BackendEnv.cpp
+@@ -5,6 +5,9 @@
+ * This file is subject to the terms and conditions defined in file 'LICENSE', which is part of this source code package.
+ */
+ #include "BackendEnv.h"
++#ifdef THREAD_SAFE
++#include <mutex>
++#endif
+ #include "Log.h"
+ #include "PromiseRejectCallback.hpp"
+ #include "V8Utils.h"
+@@ -210,8 +213,13 @@
+ 
+ void FBackendEnv::GlobalPrepare()
+ {
++#ifdef THREAD_SAFE
++    static std::once_flag Once;
++    std::call_once(Once, [] {
++#else
+     if (!GPlatform)
+     {
++#endif
+         std::string Flags = "--stack_size=856";
+ #if PUERTS_DEBUG || EXPOSE_GC
+         Flags += " --expose-gc";
+@@ -245,7 +253,11 @@
+         v8::V8::InitializePlatform(GPlatform.get());
+         v8::V8::Initialize();
+ #endif
+-    }
++#ifdef THREAD_SAFE
++    });
++#else
++    }
++#endif
+ }
+ 
+ void FBackendEnv::Initialize(void* external_quickjs_runtime, void* external_quickjs_context)
+@@ -333,6 +345,10 @@
+ 
+ void FBackendEnv::UnInitialize()
+ {
++    {
++#ifdef THREAD_SAFE
++    v8::Locker Locker(MainIsolate);
++#endif
+ #if WITH_NODEJS
+     // node::EmitExit(NodeEnv);
+     node::Stop(NodeEnv);
+@@ -346,6 +362,7 @@
+     Platform->UnregisterIsolate(MainIsolate);
+ #endif
+     MainContext.Reset();
++    }
+     MainIsolate->Dispose();
+     MainIsolate = nullptr;
+ #if WITH_NODEJS
+diff --git a/unity/native/papi-v8/source/JSEngine.cpp b/unity/native/papi-v8/source/JSEngine.cpp
+--- a/unity/native/papi-v8/source/JSEngine.cpp
++++ b/unity/native/papi-v8/source/JSEngine.cpp
+@@ -47,8 +47,6 @@
+         BackendEnv.StopPolling();
+         DestroyInspector();
+         
+-        BackendEnv.JsPromiseRejectCallback.Reset();
+-
+         {
+             auto Isolate = MainIsolate;
+ #ifdef THREAD_SAFE
+@@ -58,13 +56,13 @@
+             v8::HandleScope HandleScope(Isolate);
+             auto Context = ResultInfo.Context.Get(Isolate);
+             v8::Context::Scope ContextScope(Context);
++            BackendEnv.JsPromiseRejectCallback.Reset();
+             BackendEnv.PathToModuleMap.clear();
+             BackendEnv.ScriptIdToPathMap.clear();
++            ResultInfo.Context.Reset();
++            ResultInfo.Result.Reset();
++            CppObjectMapperV8.UnInitialize(MainIsolate);
+         }
+-        ResultInfo.Context.Reset();
+-        ResultInfo.Result.Reset();
+-
+-        CppObjectMapperV8.UnInitialize(MainIsolate);
+         
+         BackendEnv.UnInitialize();
+     }
+diff --git a/unity/native/papi-nodejs/source/PapiExport.cpp b/unity/native/papi-nodejs/source/PapiExport.cpp
+--- a/unity/native/papi-nodejs/source/PapiExport.cpp
++++ b/unity/native/papi-nodejs/source/PapiExport.cpp
+@@ -134,9 +134,6 @@
+ 
+ V8_EXPORT void NodejsTerminateExecution(v8::Isolate *Isolate)
+ {
+-#ifdef THREAD_SAFE
+-    v8::Locker Locker(Isolate);
+-#endif
+     Isolate->TerminateExecution();
+ }
+ 

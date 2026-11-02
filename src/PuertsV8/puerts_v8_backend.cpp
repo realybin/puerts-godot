@@ -55,11 +55,12 @@ void puerts_v8_close_debugger(pesapi_env_ref p_env_ref) {
 	DestroyInspector(GetV8Isolate(p_env_ref));
 }
 
-void puerts_v8_terminate_execution(pesapi_env_ref p_env_ref) {
-	TerminateExecution(GetV8Isolate(p_env_ref));
+void puerts_v8_terminate_execution(void *p_execution_handle) {
+	TerminateExecution(p_execution_handle);
 }
 
 const PuertsBackendFunctionTable puerts_v8_functions = {
+	PuertsBackendFunctionTable::VERSION,
 	&puerts_v8_get_api_version,
 	&puerts_v8_get_ffi,
 	&puerts_v8_create_env_ref,
@@ -70,6 +71,8 @@ const PuertsBackendFunctionTable puerts_v8_functions = {
 	&puerts_v8_debugger_tick,
 	&puerts_v8_close_debugger,
 	&puerts_v8_terminate_execution,
+	true,
+	&GetV8Isolate,
 };
 
 const PuertsBackendDescriptor puerts_v8_descriptor = {

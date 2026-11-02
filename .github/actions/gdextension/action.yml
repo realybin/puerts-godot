@@ -19,6 +19,9 @@ inputs:
   web_threads:
     description: web threads
     default: "true"
+  thread_safe:
+    description: Puerts thread synchronization (yes or no).
+    default: "yes"
   em_version:
     description: em version
     default: "4.0.0"
@@ -54,6 +57,10 @@ runs:
       with:
         python-version: "3.12"
 
+    - name: Check build configuration
+      shell: bash
+      run: python -m unittest discover -s tests -p test_threading_build.py
+
     - name: Setup godot-cpp
       uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
@@ -73,10 +80,11 @@ runs:
         GODOT: ${{ inputs.api_version }}
         BACKENDS: ${{ inputs.backends }}
         THREADS: ${{ inputs.web_threads }}
+        THREAD_SAFE: ${{ inputs.thread_safe }}
         CACHE_SCOPE: ${{ inputs.cache_scope }}
       run: |
         python -m misc.scripts.ci_cache --platform "$PLATFORM" --arch "$ARCH" --target "$TARGET" \
-          --precision "$PRECISION" --godot "$GODOT" --scope "$CACHE_SCOPE" --backends "$BACKENDS" --threads "$THREADS"
+          --precision "$PRECISION" --godot "$GODOT" --scope "$CACHE_SCOPE" --backends "$BACKENDS" --threads "$THREADS" --thread-safe "$THREAD_SAFE"
 
     - name: Restore Puerts libraries
       id: native-cache
@@ -98,9 +106,10 @@ runs:
       env:
         PUERTS_BACKENDS: ${{ inputs.backends }}
         WEB_THREADS: ${{ inputs.web_threads }}
+        THREAD_SAFE: ${{ inputs.thread_safe }}
         NATIVE_CACHE_RESTORED: ${{ inputs.restore_cache == 'true' && steps.native-cache.outputs.cache-hit == 'true' }}
       run: |
-        extra_args=()
+        extra_args=(--thread-safe "$THREAD_SAFE")
         if [ "$NATIVE_CACHE_RESTORED" = "true" ]; then
           extra_args+=(--skip-build)
         fi
@@ -131,8 +140,9 @@ runs:
         SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
         PUERTS_BACKENDS: ${{ inputs.backends }}
         WEB_THREADS: ${{ inputs.web_threads }}
+        THREAD_SAFE: ${{ inputs.thread_safe }}
       run: |
-        extra_scons_args=()
+        extra_scons_args=("thread_safe=$THREAD_SAFE")
         if [ -n "$PUERTS_BACKENDS" ]; then
           extra_scons_args+=("backends=$PUERTS_BACKENDS")
         fi
@@ -182,6 +192,8 @@ runs:
     - name: Run tests
       if: ${{ inputs.run_tests == 'true' && inputs.platform != 'web' }}
       shell: bash
+      env:
+        PUERTS_TEST_THREAD_SAFE: ${{ inputs.thread_safe }}
       run: |
         python3 misc/scripts/run_tests.py --platform "${{ inputs.platform }}" --godot godot --timeout 120
 

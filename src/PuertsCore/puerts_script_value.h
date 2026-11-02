@@ -14,6 +14,7 @@
 #include <godot_cpp/variant/variant.hpp>
 
 #include "pesapi.h"
+#include "puerts_threading.h"
 
 class PuertsEnvironment;
 
@@ -24,6 +25,7 @@ class PuertsScriptCallable;
 class PuertsScriptValue : public godot::RefCounted {
 	GDCLASS(PuertsScriptValue, godot::RefCounted)
 
+	puerts::internal::EnvironmentMutex mutex_;
 	PuertsEnvironment *environment_ = nullptr;
 	pesapi_ffi *api_ = nullptr;
 	pesapi_value_ref value_ref_ = nullptr;
@@ -32,10 +34,11 @@ class PuertsScriptValue : public godot::RefCounted {
 
 protected:
 	static void _bind_methods();
+	void _notification(int p_what);
 
 public:
 	PuertsScriptValue() = default;
-	~PuertsScriptValue() override;
+	~PuertsScriptValue() override = default;
 
 	[[nodiscard]] bool is_valid() const;
 	[[nodiscard]] bool is_null() const;

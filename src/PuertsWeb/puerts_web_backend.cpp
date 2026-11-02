@@ -7,6 +7,7 @@
 namespace {
 
 const PuertsBackendFunctionTable puerts_web_functions = {
+	PuertsBackendFunctionTable::VERSION,
 	&puerts_web_get_api_version,
 	&puerts_web_get_ffi,
 	&puerts_web_create_env_ref,

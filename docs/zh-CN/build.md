@@ -24,6 +24,7 @@ git submodule update --init --recursive
 - `--config`：`Debug|Release`
 - `--backends`：`core,v8,nodejs,quickjs,lua,web`
 - `--threads`：Web `true|false`
+- `--thread-safe`：`yes|no`，默认 `yes`，须与 SCons 的 `thread_safe=yes|no` 一致
 
 元数据 [`manifest.toml`](../../manifest.toml)。
 
@@ -67,3 +68,7 @@ scons target=template_debug platform=web arch=wasm32 precision=single api_versio
 [Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
 按所选平台、Godot API 版本、构建目标和精度生成组件包。
 安装方法见[入门](getting-started.md)。
+
+## 线程同步选项
+
+默认启用 `thread_safe=yes`。关闭时，向 `make_puerts.py` 传入 `--thread-safe no`，并向 SCons 传入 `thread_safe=no`。切换选项后须重新编译原生库和 GDExtension；SCons 会检查原生库构建信息，拒绝混用不同配置。无 Web 线程支持的构建会编译掉同步。

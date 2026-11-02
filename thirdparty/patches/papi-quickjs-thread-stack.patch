@@ -1,0 +1,51 @@
+diff --git a/unity/native/papi-quickjs/include/PapiData.h b/unity/native/papi-quickjs/include/PapiData.h
+--- a/unity/native/papi-quickjs/include/PapiData.h
++++ b/unity/native/papi-quickjs/include/PapiData.h
+@@ -86,6 +86,9 @@
+     {
+         this->ctx = ctx;
+         prev_scope = getCurrentScope(ctx);
++        if (prev_scope == nullptr) {
++            JS_UpdateStackTop(JS_GetRuntime(ctx));
++        }
+         setCurrentScope(ctx, this);
+         values_used = 0;
+         caught = nullptr;
+diff --git a/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp b/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp
+--- a/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp
++++ b/unity/native/papi-quickjs/source/PapiQuickjsImpl.cpp
+@@ -836,7 +836,6 @@
+         js_argv[i] = *qjsValueFromPesapiValue(argv[i]);
+     }
+     auto rt = JS_GetRuntime(ctx);
+-    JS_UpdateStackTop(rt);
+     JSValue retOrEx = JS_Call(ctx, *func, *thisObj, argc, js_argv);
+     if (JS_IsException(retOrEx)) {
+         auto scope = getCurrentScope(ctx);
+@@ -858,7 +857,6 @@
+     buff.reserve(code_size + 1);
+     buff.insert(buff.end(), code, code + code_size);
+     buff.push_back('\0'); // 尽管JS_Eval传了长度，但如果代码没有以\0结尾，JS_Eval会出现随机错误
+-    JS_UpdateStackTop(rt);
+     JSValue retOrEx = JS_Eval(ctx, (const char *)buff.data(), code_size, path, JS_EVAL_TYPE_GLOBAL);
+     if (JS_IsException(retOrEx)) {
+         auto scope = getCurrentScope(ctx);
+diff --git a/unity/native/papi-quickjs/source/PapiExport.cpp b/unity/native/papi-quickjs/source/PapiExport.cpp
+--- a/unity/native/papi-quickjs/source/PapiExport.cpp
++++ b/unity/native/papi-quickjs/source/PapiExport.cpp
+@@ -7,6 +7,7 @@
+ #include "BackendEnv.h"
+ #include "CppObjectMapperQuickjs.h"
+ #include "pesapi.h"
++#include "PapiData.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -46,6 +47,7 @@
+ {
+     auto env = pesapi::qjsimpl::g_pesapi_ffi.get_env_from_ref(env_ref);
+     auto ctx = reinterpret_cast<JSContext*>(env);
++    pesapi::qjsimpl::pesapi_scope__ scope(ctx);
+     JS_RunGC(JS_GetRuntime(ctx));
+ }
+ 

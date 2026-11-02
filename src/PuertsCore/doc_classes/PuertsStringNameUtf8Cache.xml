@@ -2,7 +2,7 @@
 <class name="PuertsStringNameUtf8Cache" inherits="RefCounted">
 	<brief_description>Reuses UTF-8 conversions of names passed to script operations.</brief_description>
 	<description>Caches UTF-8 conversions of [StringName] values used by [PuertsEnvironment], including global names, property names, and source names. Pass an instance to [method PuertsEnvironment.initialize].
-Environments on the same thread can share this cache.</description>
+Environments can share this cache.</description>
 	<methods>
 		<method name="clear">
 			<return type="void" />

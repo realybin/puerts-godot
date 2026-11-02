@@ -1,0 +1,28 @@
+diff --git a/unity/cli/make.mjs b/unity/cli/make.mjs
+--- a/unity/cli/make.mjs
++++ b/unity/cli/make.mjs
+@@ -432,7 +432,8 @@
+     mkdir('-p', CMAKE_BUILD_PATH);
+     mkdir('-p', OUTPUT_PATH);
+     const DArgsName = ['-DBACKEND_DEFINITIONS=', '-DBACKEND_LIB_NAMES=', '-DBACKEND_INC_NAMES='];
+-    let CmakeDArgs = [definitionD, linkD, incD].map((r, index) => r ? DArgsName[index] + '"' + r + '"' : null).filter(t => t).join(' ');
++    // Clear cached feature definitions even when the new configuration has none.
++    let CmakeDArgs = [definitionD, linkD, incD].map((r, index) => (r || index === 0) ? DArgsName[index] + '"' + r + '"' : null).filter(t => t).join(' ');
+     
+     options.websocket = options.websocket || 0;
+     CmakeDArgs += ` -DWITH_WEBSOCKET=${options.websocket}`;
+diff --git a/unity/native/puerts/CMakeLists.txt b/unity/native/puerts/CMakeLists.txt
+--- a/unity/native/puerts/CMakeLists.txt
++++ b/unity/native/puerts/CMakeLists.txt
+@@ -46,6 +46,11 @@
+ endif()
+ 
+ target_compile_definitions(PuertsCore PUBLIC BUILDING_PUERTS_API_SHARED)
++if (";${BACKEND_DEFINITIONS};" MATCHES ";THREAD_SAFE;")
++    target_compile_definitions(PuertsCore PRIVATE THREAD_SAFE)
++    find_package(Threads REQUIRED)
++    target_link_libraries(PuertsCore PRIVATE Threads::Threads)
++endif()
+ 
+ target_compile_definitions(PuertsCore PUBLIC EA_DEPRECATIONS_FOR_2024_APRIL=EA_DISABLED)
+ target_compile_definitions(PuertsCore PUBLIC EA_DEPRECATIONS_FOR_2024_SEPT=EA_DISABLED)

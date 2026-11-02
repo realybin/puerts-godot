@@ -13,7 +13,7 @@ from pathlib import Path
 
 from .make_puerts import normalize_backends
 from .manifest import BACKENDS, MANIFEST, PLATFORMS, TARGETS
-from .scons.puerts_layout import resolve_puerts_paths
+from .scons.puerts_layout import NATIVE_BUILD_METADATA, resolve_puerts_paths
 
 ROOT = Path(__file__).resolve().parents[2]
 NATIVE = Path("thirdparty/puerts/unity/native")
@@ -65,7 +65,8 @@ def native_cache_paths(platform_name: str, arch: str, target: str, backends: tup
         library_dir = Path(library_dir).as_posix()
         # Preserve only final libraries, never CMake state, object files or UPM copies.
         paths.extend(
-            f"{library_dir}/{pattern}" for pattern in ("*.a", "*.lib", "*.dll", "*.so*", "*.dylib", "*.bundle")
+            f"{library_dir}/{pattern}"
+            for pattern in ("*.a", "*.lib", "*.dll", "*.so*", "*.dylib", "*.bundle", NATIVE_BUILD_METADATA)
         )
         paths.extend(
             (NATIVE / backend.native_dir / backend.dependency_root / pattern).as_posix()
@@ -95,6 +96,7 @@ def main() -> None:
     parser.add_argument("--scope", required=True, choices=("ci", "build"))
     parser.add_argument("--backends", default="")
     parser.add_argument("--threads", default="true", choices=("true", "false"))
+    parser.add_argument("--thread-safe", default="yes", choices=("yes", "no"))
     args = parser.parse_args()
     requested = normalize_backends(args.backends) if args.backends else BACKENDS
     backends = MANIFEST.resolve_backends(name for name in requested if BACKENDS[name].supports(args.platform))
@@ -106,7 +108,7 @@ def main() -> None:
     ]
     sources.extend((ROOT / "thirdparty/patches").glob("*.patch"))
     versions = toolchain_versions(args.platform)
-    native_config = [args.platform, args.arch, TARGETS[args.target].cmake, *backends]
+    native_config = [args.platform, args.arch, TARGETS[args.target].cmake, args.thread_safe, *backends]
     if args.platform == "web":
         native_config.append(args.threads)
     native_hash = fingerprint(

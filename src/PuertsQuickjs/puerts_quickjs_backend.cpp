@@ -34,6 +34,7 @@ void puerts_quickjs_low_memory_notification(pesapi_env_ref p_env_ref) {
 }
 
 const PuertsBackendFunctionTable puerts_quickjs_functions = {
+	PuertsBackendFunctionTable::VERSION,
 	&puerts_quickjs_get_api_version,
 	&puerts_quickjs_get_ffi,
 	&puerts_quickjs_create_env_ref,
