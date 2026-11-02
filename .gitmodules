@@ -5,6 +5,7 @@
 [submodule "thirdparty/puerts"]
 	path = thirdparty/puerts
 	url = https://github.com/Tencent/puerts
+	ignore = dirty
 [submodule "thirdparty/EASTL"]
 	path = thirdparty/EASTL
 	url = https://github.com/electronicarts/EASTL
