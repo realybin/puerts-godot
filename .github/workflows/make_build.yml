@@ -58,7 +58,7 @@ jobs:
 
           targets='[]'
           add_target windows_x86_64 windows x86_64 windows-2022
-          add_target macos_arm64 macos arm64 macos-14
+          add_target macos_arm64 macos arm64 macos-15
           add_target linux_x86_64 linux x86_64 ubuntu-22.04
           add_target android_arm64 android arm64 ubuntu-22.04
           add_target ios_arm64 ios arm64 macos-15
