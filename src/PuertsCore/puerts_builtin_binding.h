@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
 
 #ifndef PUERTS_GODOT_PUERTS_BUILTIN_BINDING_H
 #define PUERTS_GODOT_PUERTS_BUILTIN_BINDING_H

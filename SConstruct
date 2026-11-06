@@ -90,7 +90,7 @@ def _embed_web_runtime(target, source, env):
     with open(str(target[0]), "w", encoding="utf-8", newline="\n") as header:
         header.write(
             "// SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors\n"
-            "// SPDX-License-Identifier: BSD-3-Clause\n"
+            "// SPDX-License-Identifier: Apache-2.0\n"
             "// Generated from puerts_web_runtime.js by SCons.\n"
             "#pragma once\n"
             'inline constexpr char puerts_web_runtime_source[] = R"PUERTS_WEB(\n' + runtime_source + '\n)PUERTS_WEB";\n'

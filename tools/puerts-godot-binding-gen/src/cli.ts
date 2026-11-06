@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

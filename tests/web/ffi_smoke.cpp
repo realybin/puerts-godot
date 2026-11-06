@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
 
 // Link the production Web and Core side modules into an Emscripten main
 // module. These tests use PESAPI directly and never initialize the Godot engine.

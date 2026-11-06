@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
 
 import type { ApiData } from "./api-types.js";
 import { resolveApiVersion } from "./api-version.js";

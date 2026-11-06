@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
 
 const OPERATOR_SPECS = Object.freeze({
 	"==": Object.freeze({ scriptName: "op_Equality", variantEnum: "OP_EQUAL", kind: "binary" }),

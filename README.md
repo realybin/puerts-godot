@@ -140,6 +140,11 @@ By default, we support versions labeled **Partial support**. Versions marked **N
 
 [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 
+## License
+
+puerts-godot is licensed under the [Apache License 2.0](LICENSE.txt).
+Third-party licenses are listed in [COPYRIGHT.txt](COPYRIGHT.txt).
+
 ## Credits
 
 - [Tencent/puerts](https://github.com/Tencent/puerts) Most of the core logic and API design is based on Tencent's puerts project.

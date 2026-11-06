@@ -138,6 +138,11 @@ prek install
 
 [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 
+## 许可证
+
+puerts-godot 采用 [Apache License 2.0](LICENSE.txt)。
+第三方依赖的许可证见 [COPYRIGHT.txt](COPYRIGHT.txt)。
+
 ## 致谢
 
 - [Tencent/puerts](https://github.com/Tencent/puerts)：核心逻辑与 API 设计大多源自腾讯 puerts 项目。

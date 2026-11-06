@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
 
 // Exercise the browser bridge independently of Godot/Emscripten.
 // Run with: node --expose-gc --test tests/web/runtime.test.cjs

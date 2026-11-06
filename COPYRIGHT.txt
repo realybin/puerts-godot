@@ -5,30 +5,10 @@ Source: https://github.com/realybin/puerts-godot
 Comment:
  This file follows DEP-5 (machine-readable copyright format 1.0).
  It documents licensing information found in the current source tree.
- Project-specific files do not currently include a top-level license file.
- If a project-wide license is added later, update the "Project files" stanza.
 
-Files: README.md
- .clang-format
- .editorconfig
- .gdignore
- .gitattributes
- .gitignore
- SConstruct
- methods.py
- thirdparty/patches/*
- misc/scripts/*
- src/*
- docs/*
- tests/*.gd
- tests/*.gd.uid
- tests/*.godot
- tests/*.tscn
- tests/*.gdextension
- tests/*.gdextension.uid
- tests/tests/*
+Files: *
 Copyright: 2026-present puerts-godot contributors
-License: BSD-3-clause
+License: Apache-2.0
 
 Files: godot-cpp/*
 Copyright: 2017-present Godot Engine contributors
@@ -45,6 +25,9 @@ License: BSD-3-clause
 Files: thirdparty/EASTL/*
 Copyright: 2019 Electronic Arts
 License: BSD-3-clause
+
+License: Apache-2.0
+ The full license text is included in LICENSE.txt.
 
 License: Expat
  Permission is hereby granted, free of charge, to any person obtaining

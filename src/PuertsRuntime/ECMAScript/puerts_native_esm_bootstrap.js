@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 puerts-godot contributors
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
 
 globalThis.__puer_resolve_module_url__ = function (specifier, referrer) {
 	const resolved = globalThis.__puer_module_loader__.call("Resolve", specifier, referrer);
