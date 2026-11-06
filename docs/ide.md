@@ -1,23 +1,24 @@
 # IDE
 
-We recommend developing in an editor rather than relying entirely on vibe coding/agentic coding.
+我们建议使用编辑器进行开发而不是完全的 Vibe Coding/Agentic Coding。
 
 ## JetBrains CLion
 
-We recommend [JetBrains CLion](https://www.jetbrains.com/clion/). We also thank JetBrains for providing a free open-source license that supports our development; CLion's excellent developer experience has accelerated our work.
+我们建议使用 [JetBrains CLion](https://www.jetbrains.com/clion/)，也感谢 JetBrains 提供的免费开源许可证帮助我们开发，
+CLion 的优秀开发体验加速了我们的开发工作。
 
-Add the `compiledb=yes` argument when [building](build.md):
+在构建 [build.md](build.md) 时加入参数 `compiledb=yes`
 
 ```diff
 --scons target=template_debug platform=windows arch=x86_64 precision=single api_version=4.7
 ++scons target=template_debug platform=windows arch=x86_64 precision=single api_version=4.7 compiledb=yes
 ```
 
-Then open the project root in JetBrains CLion.
+然后用 JetBrains CLion 在本项目根目录打开。
 
-### Debugging JavaScript/TypeScript
+### 调试 JavaScript/TypeScript
 
-For backends that support a debugger, you can debug with JetBrains CLion's [Run/Debug Configuration: Attach to Node.js/Chrome | CLion Documentation](https://www.jetbrains.com/help/clion/2026.2/run-debug-configuration-node-js-remote-debug.html) feature (JetBrains Rider is also supported).
+我们在支持调试器的后端中，可以使用 JetBrains CLion 的（JetBrains Rider也支持） [Run/Debug Configuration: Attach to Node.js/Chrome | CLion Documentation](https://www.jetbrains.com/help/clion/2026.2/run-debug-configuration-node-js-remote-debug.html) 功能进行调试。
 
 ## See also
 

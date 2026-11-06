@@ -1,5 +1,5 @@
-# StringName Cache
+# StringName 缓存
 
-`PuertsStringNameUtf8Cache` caches the UTF-8 strings used for global names, properties, methods, and chunk names.
+`PuertsStringNameUtf8Cache` 缓存用于全局名称、属性、方法和代码块名称的 u8 字符串。
 
-Call `clear()` to discard cached entries. Returned UTF-8 values and existing script values remain valid after clearing. Environments on different threads can share a cache.
+调用 `clear()` 可丢弃缓存条目。清除后，已返回的 UTF-8 值和现有脚本值仍然有效。不同线程的环境可以共享缓存。

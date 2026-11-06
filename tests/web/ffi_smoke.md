@@ -1,6 +1,6 @@
 # Web FFI smoke test
 
-Tests the compiled Core/Web modules without Godot. [Build both modules](../../docs/build.md#web-builds) with Debug, single precision, and `threads=false`, then run from the repository root (PowerShell):
+Tests the compiled Core/Web modules without Godot. [Build both modules](../../docs/en/build.md#web-builds) with Debug, single precision, and `threads=false`, then run from the repository root (PowerShell):
 
 ```powershell
 New-Item -ItemType Directory -Force build/web-ffi
@@ -18,7 +18,7 @@ em++ -std=c++17 tests/web/ffi_smoke.cpp `
 node -e 'const path = require("path"); global.document = {}; require("./build/web-ffi/smoke.js")({ locateFile(file) { return path.resolve(file.includes("Puerts") ? "bin" : "build/web-ffi", path.basename(file)); } });'
 ```
 
-`global.document = {}` satisfies the bridge's main-thread check. Test DOM access with the [Godot Web smoke project](../../docs/testing.md#browser-javascript-backend).
+`global.document = {}` satisfies the bridge's main-thread check. Test DOM access with the [Godot Web smoke project](../../docs/en/testing.md#browser-javascript-backend).
 
 Success prints `[web-ffi] PASS`; assertion failures exit nonzero.
 

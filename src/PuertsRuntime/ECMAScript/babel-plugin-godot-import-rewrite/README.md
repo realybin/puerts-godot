@@ -65,4 +65,4 @@ const OtherCounter = Addon["Example.Counter"];
 
 Type-only imports are removed.
 
-See [Native addons](../../../../docs/addons.md) for loading and TypeScript declarations.
+See [Native addons](../../../../docs/en/addons.md) for loading and TypeScript declarations.

@@ -9,5 +9,5 @@ func _process(_delta: float) -> void:
 		_env.debugger_tick()
 ```
 
-Open the following in Chrome DevTools:
-* devtools://devtools/bundled/inspector.html?v8only=true&ws=127.0.0.1:9229
+在 Chrome DevTools 中打开
+ * devtools://devtools/bundled/inspector.html?v8only=true&ws=127.0.0.1:9229

@@ -2,7 +2,7 @@
 
 This is a tool to generate godot.d.ts for language server.
 
-The output declares `"godot"` types, `"puerts"` helpers, and the corresponding global functions. Addon authors provide their own `"PAddon"` declarations; see [Native addons](../../docs/addons.md#typescript-declarations).
+The output declares `"godot"` types, `"puerts"` helpers, and the corresponding global functions. Addon authors provide their own `"PAddon"` declarations; see [Native addons](../../docs/en/addons.md#typescript-declarations).
 
 ## Usage
 

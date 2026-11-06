@@ -1,12 +1,11 @@
-# Getting Started
+# 入门
 
-* Godot 4.5 or later; the latest version is recommended.
+* Godot 4.5 或更高版本，建议使用最新版本。
 
-Download core and the desired backend (v8 for the example below) from a successful
-[Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml) run.
-Use packages with matching project versions, Godot API versions, and precision.
-Extract both ZIP files into your project root, preserving the `addons/puerts-godot/` directory.
-You can also [build from source](build.md).
+从成功的 [Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
+运行中下载 core 和所需后端（下例使用 v8）。两者的项目版本、Godot API 版本及精度须一致。
+将两个 ZIP 解压到项目根目录，保留 `addons/puerts-godot/` 目录结构。
+也可以[从源码构建](build.md)。
 
 ```gdscript
 extends Node
@@ -25,32 +24,32 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if _env != null and _env.is_ready():
-		_env.tick() # Logic tick, not available on all backends
+		_env.tick() # Logic tick, may not available for all backends
 
 func _game_exiting() -> void:
 	if _env != null:
-		_env.dispose() # Dispose the environment at the right time, e.g. when the game exits
+		_env.dispose() # 在适当的时机释放环境，如游戏结束时
 ```
 
-## Values
+## 值
 
-We roughly provide the following API:
+我们大致有以下 API
 
 * `set_global()` `get_global()`
 * `eval()`
 * `get_property()` `call()` `call_method()` `PuertsScriptValue`
 * `to_float()` `to_int()`... `unwrap_native()` `to_native()`
 
-`PuertsScriptValue` wraps a value in the script engine:
-* It is a reference to a script value. Destroying the wrapper decrements the reference; when the reference count reaches zero (depending on the situation), the script engine reclaims the script value.
-* It must not be used across script instances.
+`PuertsScriptValue` 包装了脚本引擎中的值：
+* 是一个对脚本值的引用，销毁包装器会使得该引用减一，当引用计数为 0 时（视情况），脚本值会被引擎回收。
+* 不得跨脚本实例使用
 
 > [!WARNING]
-> You can read the documentation of these APIs in the editor, and we recommend reading all of them carefully.
+> 你可以在编辑器中阅读到这些 API 的文档，我们建议你详细阅读所有的API。
 
-See [conventions](conventions.md) and [object lifetime](lifetime.md) for the remaining methods.
+其余方法参见[约定](conventions.md)、[对象生命周期](lifetime.md)
 
-## Logging
+## 日志
 
 ```gdscript
 _env.set_log_callback(func(category: int, level: int, message: String):
@@ -69,12 +68,12 @@ PLogger.warning(1, "Connection is slow");
 PLogger.error(1, "Connection failed");
 ```
 
-- Category IDs are positive 32-bit integers. `0` is reserved for Puerts internal errors and script exceptions.
-- By default, logs at `INFO` and above are emitted. You can override the minimum level for individual categories.
-- The callback runs synchronously on the thread that produces the log. Nested logs produced inside the callback are discarded.
-- Without a valid callback, logs are sent to Godot. Pass `Callable()` to restore default output.
-- Calling `dispose()` and then `initialize()` on the same `PuertsEnvironment` preserves its logging settings; no reconfiguration is needed.
+- 分类 ID 使用正的 32 位整数，`0` 保留给 Puerts 内部错误和脚本异常。
+- 默认输出 `INFO` 及以上级别的日志；可为指定分类单独设置最低级别。
+- 回调在产生日志的线程同步执行，回调中产生的嵌套日志会被丢弃。
+- 未设置有效回调时，日志输出到 Godot。传入 `Callable()` 可恢复默认输出。
+- 同一个 `PuertsEnvironment` 调用 `dispose()` 后再 `initialize()`，日志配置仍然保留，无需重新设置。
 
 ## ESM
 
-See [README.md](../src/PuertsRuntime/ECMAScript/README.md)
+参见 [README.md](../src/PuertsRuntime/ECMAScript/README.md)

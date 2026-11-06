@@ -1,8 +1,8 @@
-# Backends
+# 后端
 
-We currently support:
+我们目前支持了
 
-| Backend                | Language   |
+| 后端                   | 语言       |
 |------------------------|------------|
 | `PuertsV8Backend`      | ECMAScript |
 | `PuertsNodejsBackend`  | ECMAScript |
@@ -10,15 +10,15 @@ We currently support:
 | `PuertsLuaBackend`     | Lua        |
 | `PuertsWebBackend`     | ECMAScript |
 
-> Use either V8 or Node.js in a process; loading both may conflict, especially on Linux.
+> 一个进程中请选择 V8 或 Node.js；同时加载两者可能产生冲突，尤其在 Linux 上。
 
-## Browser JavaScript (Web)
+## 浏览器 JavaScript (Web)
 
-`PuertsWebBackend` runs in the browser's JavaScript engine and shares the same `globalThis`, including DOM access.
+`PuertsWebBackend` 运行在浏览器的 JavaScript 引擎中，持有相同的 `globalThis`，包括 DOM 访问。
 
-We only support a singleton, so you can use only one `PuertsEnvironment`.
+我们只会支持单例，所以你只能使用一个 `PuertsEnvironment`。
 
-After installing the [Web extensions](build.md#web-builds):
+安装 [Web 扩展](build.md#web-构建)后：
 
 ```gdscript
 var pool = ClassDB.instantiate("PuertsStringNameUtf8Cache")
@@ -31,4 +31,4 @@ if title != null:
 ```
 
 > [!NOTE]
-> Use `ClassDB.instantiate()` because Web-only extension classes are unavailable in the desktop editor and would make the project unbuildable.
+> 请使用 `ClassDB.instantiate()`，因为仅 Web 可用的扩展类在桌面编辑器中不可用，会导致不可构建。

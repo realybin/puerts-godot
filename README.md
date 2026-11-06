@@ -1,26 +1,18 @@
 # puerts-godot
 
-`puerts-godot` runs ECMAScript and Lua in Godot through Puerts.
+[English](README.en.md)
 
-It provides:
+`puerts-godot` 让 ECMAScript 与 Lua 通过 Puerts 在 Godot 中运行。
 
-- V8, Node.js, QuickJS, Lua, and browser JavaScript (Web) backends.
-- Multiple independent `PuertsEnvironment` runtimes, except the Web backend.
-- Godot object bindings and C++ static bindings.
+- 支持 V8、Node.js、QuickJS、Lua 及浏览器 JavaScript（Web）后端。
+- 除 Web 后端外，可运行多个相互独立的 `PuertsEnvironment` 运行时。
+- 提供 Godot 对象绑定与 C++ 静态绑定。
 
-> [!NOTE]
-> This project is a community-maintained, third-party implementation of Puerts integration for Godot.
-
-> [!WARNING]
-> Experimental, use with caution, and expect breaking changes in the future before the 1.0 release.
-
-Read in: **English** | [简体中文](README.zh-CN.md)
-
-Showcase:
+## Showcase
 
 https://github.com/user-attachments/assets/2026e5d9-a95b-466b-8918-cfe784a2e6da
 
-## Quick example
+## 快速示例
 
 ```gdscript
 extends Node
@@ -46,111 +38,101 @@ func _exit_tree() -> void:
 		env.dispose()
 ```
 
-Keep the environment alive while using its script values. See [object lifetime](docs/lifetime.md) for disposal rules.
+使用脚本值期间，请保持环境存活。释放规则见[对象生命周期](docs/lifetime.md)。
 
-## Documentation
+## 文档
 
-- [Getting started](docs/getting-started.md)
-- [Backends](docs/backends.md)
-- [Conventions](docs/conventions.md)
-- [Static binding](docs/static-binding.md)
-- [Native addons](docs/addons.md)
-- [Object lifetime](docs/lifetime.md)
-- [StringName cache](docs/u8-cache.md)
-- [Advanced usage](docs/advanced.md)
-- [V8 inspector](docs/v8-inspector.md)
+- [入门](docs/getting-started.md)
+- [后端](docs/backends.md)
+- [约定](docs/conventions.md)
+- [静态绑定](docs/static-binding.md)
+- [原生 Addon](docs/addons.md)
+- [生命周期](docs/lifetime.md)
+- [StringName 缓存](docs/u8-cache.md)
+- [进阶用法](docs/advanced.md)
+- [V8 检查器](docs/v8-inspector.md)
 - [IDE](docs/ide.md)
-- [Build](docs/build.md)
-- [Testing](docs/testing.md)
+- [构建](docs/build.md)
+- [测试](docs/testing.md)
 
-## Supported backends
+## 支持的后端
 
-| Platform        | V8+  | Nodejs+ | Quickjs | Lua  | Browser JS |
-|-----------------|------|---------|---------|------|------------|
-| Windows(x86_64) | Yes  | Yes     | Yes     | Yes  | —          |
-| Linux(x86_64)   | Yes  | Yes     | Yes     | Yes  | —          |
-| macOS(arm64)    | Yes* | Yes*    | Yes*    | Yes* | —          |
-| Android(armv8)  | Yes  | Yes     | Yes     | Yes  | —          |
-| iOS             | ?    | ?       | ?       | ?    | —          |
-| Web(wasm32)     | x    | x       | Yes     | Yes  | Yes        |
-
-
-+: Use one of them, do not use V8 both Nodejs in the same process, especially in linux, it may cause some issues, pr wellcome.
-
-*: CI passes on macOS, but not tested on real devices yet. (no device on hand)
-
-?: Not tested yet due to lack of devices or time
-
-x: No plan to support, V8 and Nodejs cannot run in Web
-
-`PuertsWebBackend` uses the browser JavaScript engine. See [Backends](docs/backends.md#browser-javascript-web) and [Web builds](docs/build.md#web-builds).
-
-## Example project
-
-[puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) contains a complete project.
-
-## Roadmap
-
-- [x] [Web support](docs/backends.md#browser-javascript-web)
-- [x] Working on technical writing
-- [ ] Stable release
-- [ ] Better API design
-- [ ] Performance optimization
-- [ ] V8 bytecode cache guide and support
-
-Under consideration:
-
-- Use as [ScriptLanguage](https://docs.godotengine.org/en/stable/getting_started/step_by_step/scripting_languages.html).
-  It means you can use pure ECMAScript without GDScript or other languages.\
-  _**Issue:**_
-  GDScript is the default scripting language in Godot and already supports a wide range of features.
-  However, maintaining a third-party ScriptLanguage integration may pose risks to the community — if it's poorly designed or unstable, it could disrupt the community ecosystem, and we simply don't have enough time to maintain it.
-- Python support.\
-  _**Issue:**_
-  Need to find a good way to distribute Python binaries and its core libraries.
+| 平台            | V8+  | Nodejs+ | Quickjs | Lua  | 浏览器 JS |
+|-----------------|------|---------|---------|------|-----------|
+| Windows(x86_64) | Yes  | Yes     | Yes     | Yes  | —         |
+| Linux(x86_64)   | Yes  | Yes     | Yes     | Yes  | —         |
+| macOS(arm64)    | Yes* | Yes*    | Yes*    | Yes* | —         |
+| Android(armv8)  | Yes  | Yes     | Yes     | Yes  | —         |
+| iOS             | ?    | ?       | ?       | ?    | —         |
+| Web(wasm32)     | x    | x       | Yes     | Yes  | Yes       |
 
 
-## Contributing
++：二者选其一，请勿在同一进程内同时使用 V8 与 Node.js，在 Linux 上尤其容易出问题；欢迎提交 PR。
 
-You should set up `prek` for formatting checks
+*：macOS 上 CI 已通过，但尚未在真机验证（手头暂无设备）。
+
+?：因缺少设备或时间，尚未测试。
+
+x：暂无支持计划；V8 与 Node.js 无法运行于 Web。
+
+`PuertsWebBackend` 使用浏览器的 JavaScript 引擎。参见[后端](docs/backends.md#浏览器-javascript-web)与 [Web 构建](docs/build.md#web-构建)。
+
+## 示例项目
+
+[puerts-godot-demo](https://github.com/realybin/puerts-godot-demo) 提供了一个完整项目示例。
+
+## 反馈
+
+本项目出于个人用途公开，不保证可用性，有问题请及时反馈至 Issue。交流应当清晰，但是请适当使用 LLM，没有描述清楚很难阅读理解。
+
+## 软件生命周期
+
+遵循 [Godot 的发布支持时间线](https://docs.godotengine.org/en/stable/about/release_policy.html#release-support-timeline)。
+
+默认支持标记为 **Partial support** 的版本；**No support (end of life)** 的版本不在支持范围内。
+
+## 版本规范
+
+[Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
+
+## 许可证
+
+puerts-godot 采用 [Apache License 2.0](LICENSE.txt)。
+第三方依赖的许可证见 [COPYRIGHT.txt](COPYRIGHT.txt)。
+
+## 贡献
+
+暂时不接受功能性的贡献。
+
+先配置 `prek` 用于格式检查
 
 ```shell
 pip install prek
 prek install
 ```
 
-**You should add license header to all source files, see other source files for examples.**
+**所有源文件都需添加许可证头，可参考其他源文件。**
 
-DCO is required, please sign off your commits with `git commit -s` or `git commit --signoff`.
+提交需遵循 DCO，请使用 `git commit -s` 或 `git commit --signoff` 签署。
 
-1. Testing your changes
-2. Open an issue before submitting changes
-3. Add tests if it finds a bug or adds a new feature if possible
-4. clang-format is required, so make a sure format before submitting a PR
-5. Separate changes into multiple pull requests if it's too big, we do not accept big PRs
-6. We prioritize human-made contributions. Please understand that with our limited time, **AI-generated issues and pull requests may be closed without review**.
+1. 测试你的改动
+2. 提交前先创建 issue
+3. 修复 bug 或新增特性时，尽量补充测试
+4. 必须使用 clang-format，提交 PR 前请确认格式
+5. 改动过大请拆分为多个 PR，我们不接受大型 PR
+6. 我们优先考虑人工编写的贡献。由于时间有限，**AI 生成的 issue 和 PR 可能未经审查直接关闭**。
 
-## Lifecycle
+## AI 政策
 
-We follow [Godot’s Release Support Timeline](https://docs.godotengine.org/en/stable/about/release_policy.html#release-support-timeline).
+1. 禁止全自动的Agent生成的贡献。
+2. 我们接受 AI 生成的贡献，前提是遵循贡献指南。沟通过程中请尽量不要使用智能体自动化。
 
-By default, we support versions labeled **Partial support**. Versions marked **No support (end of life)** are not supported.
+## 致谢
 
-## Versioning
+- [Tencent/puerts](https://github.com/Tencent/puerts)：核心逻辑与 API 设计大多源自腾讯 puerts 项目。
+- [Godot Engine](https://godotengine.org/)：Godot 是开源游戏引擎，为游戏开发提供强大而灵活的平台。
 
-[Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
-
-## License
-
-puerts-godot is licensed under the [Apache License 2.0](LICENSE.txt).
-Third-party licenses are listed in [COPYRIGHT.txt](COPYRIGHT.txt).
-
-## Credits
-
-- [Tencent/puerts](https://github.com/Tencent/puerts) Most of the core logic and API design is based on Tencent's puerts project.
-- [Godot Engine](https://godotengine.org/) Godot is an open-source game engine that provides a powerful and flexible platform for game development.
-
-## You May Also Like...
+## 也可以看看
 
 - [godotjs/GodotJS](https://github.com/godotjs/GodotJS) Add TypeScript/JavaScript Support for Godot 4.x with v8/QuickJS/JavaScriptCore/Browser
 - [godothub/gode](https://github.com/godothub/gode) Godot with JavaScript / TypeScript & NodeJS🌟

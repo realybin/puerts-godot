@@ -1,10 +1,10 @@
-# Conventions
+# 约定
 
-We provide some helper functions.
+我们提供了一些辅助函数。
 
-## Loading types
+## 加载类型
 
-`load_type(name)` queries static bindings first, then Godot ClassDB. Cache a type that is used repeatedly.
+`load_type(name)` 会先查询静态绑定，再查询 Godot ClassDB。对重复使用的类型请做缓存。
 
 ```javascript
 const Vector2 = load_type("Vector2");
@@ -13,21 +13,21 @@ value.length(); // 5
 ```
 
 > [!NOTE]
-> Types obtained from ClassDB only support zero-argument construction. Static bindings may expose other constructors.
+> 从 ClassDB 获得的类型只支持无参构造。静态绑定可以暴露其他构造函数。
 
-### Using import
+### 使用 import
 
-For convenience, we also provide a Babel plugin based on the rewritten output, so you can use `import` to load types.
+为了便利使用，我们还提供了基于重写输出的 Babel 插件，让你能够使用 import 来加载类型。
 
-That is, you can write:
+也就是可以：
 
 ```javascript
 import Godot, { Node as GodotNode } from "godot";
 ```
 
-See [README.md](../src/PuertsRuntime/ECMAScript/babel-plugin-godot-import-rewrite/README.md) for details.
+更多信息请参见 [README.md](../src/PuertsRuntime/ECMAScript/babel-plugin-godot-import-rewrite/README.md)
 
-Import helpers from `"puerts"` and addon types from `"PAddon"`. Babel rewrites them into global function references and calls:
+辅助函数从 `"puerts"` 导入，Addon 类型从 `"PAddon"` 导入。它们在 Babel 转换时重写为全局函数访问：
 
 ```typescript
 import { to_callable } from "puerts";
@@ -36,29 +36,29 @@ import * as Addon from "PAddon";
 const Client = Addon.WebSocketPP; // load_addon_type("WebSocketPP")
 ```
 
-See [Native addons](addons.md) for addon development, loading, and TypeScript declarations.
+Addon 编写、加载与 dts 配置见[原生 Addon](addons.md)。
 
-## Type mapping
+## 类型映射
 
-Default mapping for Godot `Variant` values passed to script:
+传递给脚本的 Godot `Variant` 值的默认映射：
 
-| Godot                                                             | Script           |
-|-------------------------------------------------------------------|------------------|
-| `null`  `bool`  `int`  `float`  `String`  `StringName`            | Cast             |
-| `Object`                                                          | Wrapper          |
-| Built-in types (such as `Vector2`, `Array`, `Dictionary`, etc.)   | Wrapper          |
-| `PuertsScriptValue`                                               | Raw Script Value |
+| Godot                                              | 脚本             |
+|----------------------------------------------------|------------------|
+| `null`  `bool` `int` `float` `String` `StringName` | Cast             |
+| `Object`                                           | 包装             |
+| 内置类型（如 `Vector2`、`Array`、`Dictionary` 等） | 包装             |
+| `PuertsScriptValue`                                | Raw Script Value |
 
-Casts for `PackedByteArray`:
+`PackedByteArray` 的 Cast：
 
-- `VARIANT_TO_SCRIPT_PACKED_BYTE_ARRAY_CAST`: copies `PackedByteArray` into the script's ByteArray type.
-- `SCRIPT_TO_VARIANT_PACKED_BYTE_ARRAY_CAST`: copies the script binary into `PackedByteArray` when converting to `Variant`, including `to_native()`.
+- `VARIANT_TO_SCRIPT_PACKED_BYTE_ARRAY_CAST`：将 `PackedByteArray` 复制到脚本的 ByteArray 类型。
+- `SCRIPT_TO_VARIANT_PACKED_BYTE_ARRAY_CAST`：转换为 `Variant` 时（包括 `to_native()`）将脚本二进制复制到 `PackedByteArray`。
 
-This is not recommended, however, as it incurs extra overhead; so the default is wrapping.
+但是这并不推荐，会带来额外的开销；所以默认都是包装。
 
 ## Callable & Signal
 
-`to_callable(function)` retains the function and its closure. Keep the callable to disconnect it:
+`to_callable(function)` 会保留该函数及其闭包。要断开连接，请保留该可调用对象：
 
 ```javascript
 const callback = to_callable(() => PLogger.info(1, "timeout"));
@@ -66,30 +66,30 @@ timer.timeout.connect(callback);
 timer.timeout.disconnect(callback);
 ```
 
-Disposing the environment invalidates script callables. A signal connection also retains its callable until it is disconnected or its emitter is destroyed.
+释放环境会使脚本可调用对象失效。信号连接也会保持其可调用对象，直到断开连接或其发射者被销毁。
 
-## Enums, Constants, and GlobalScope
+## 枚举、常量与 GlobalScope
 
-Enums are nested static members. Constants are read-only static properties. Global functions and constants are members of `GlobalScope`.
+枚举是嵌套的静态成员。常量是只读静态属性。全局函数和常量是 `GlobalScope` 的成员。
 
 ```javascript
 const Vector2 = load_type("Vector2");
 Vector2.Axis.AXIS_X; // 0
-Vector2.ZERO;        // value constant
+Vector2.ZERO;        // 值常量
 
 const GlobalScope = load_type("GlobalScope");
 GlobalScope.sin(1.0);
 ```
 
-## Operators
+## 运算符
 
-Operator overloads are static methods named by the operator map:
+运算符重载是以运算符映射命名的静态方法：
 
 ```javascript
 const sum = Vector2.op_Addition(new Vector2(1, 2), new Vector2(3, 4));
 ```
 
 > [!NOTE]
-> We do it this way because JavaScript does not support operator overloading.
+> 我们这样做的原因是 JavaScript 不支持运算符重载。
 
-See the [operator map](../tools/puerts-godot-operator-model/index.js) for more mappings.
+更多的运算符映射请参见[运算符映射](../tools/puerts-godot-operator-model/index.js)。

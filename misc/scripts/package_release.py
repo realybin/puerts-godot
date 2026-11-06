@@ -149,7 +149,7 @@ def documentation_files(backend: Backend) -> dict[str, Path]:
     source = REPO_ROOT / "src" / backend.source_dir / "doc_classes"
     files = {f"{ADDON_ROOT}/docs/{path.relative_to(source).as_posix()}": path for path in source.rglob("*.xml")}
     if backend.name == "core":
-        paths = [REPO_ROOT / name for name in ("README.md", "README.zh-CN.md", "LICENSE.txt", "COPYRIGHT.txt")]
+        paths = [REPO_ROOT / name for name in ("README.md", "README.en.md", "LICENSE.txt", "COPYRIGHT.txt")]
         paths.extend(path for path in (REPO_ROOT / "docs").rglob("*") if path.is_file())
         files.update({f"{ADDON_ROOT}/{path.relative_to(REPO_ROOT).as_posix()}": path for path in paths})
     return files

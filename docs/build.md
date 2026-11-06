@@ -1,47 +1,47 @@
-# Build
+# 构建
 
-Prerequisites
+前置条件
 
 * git
 * Python 3.11+
 * Node.js 20+
 * SCons
-* C/C++ toolchain
+* C/C++ Toolchain
 * Emscripten (for Web)
 
-Initialize submodules:
+初始化子模块：
 
 ```bash
 git submodule update --init --recursive
 ```
 
-See command options with `python misc/scripts/make_puerts.py --help`.
+用 `python misc/scripts/make_puerts.py --help` 查看命令选项。
 
-Common arguments:
+常用参数：
 
-- `--platform`: `windows|macos|linux|android|ios|web`
-- `--arch`: `x86_64|x86_32|arm64|arm32|wasm32`
-- `--config`: `Debug|Release`
-- `--backends`: `core,v8,nodejs,quickjs,lua,web`
-- `--threads`: Web `true|false`
-- `--thread-safe`: `yes|no`, default `yes`; match SCons `thread_safe=yes|no`
+- `--platform`：`windows|macos|linux|android|ios|web`
+- `--arch`：`x86_64|x86_32|arm64|arm32|wasm32`
+- `--config`：`Debug|Release`
+- `--backends`：`core,v8,nodejs,quickjs,lua,web`
+- `--threads`：Web `true|false`
+- `--thread-safe`：`yes|no`，默认 `yes`，须与 SCons 的 `thread_safe=yes|no` 一致
 
-Metadata: [`manifest.toml`](../manifest.toml).
+元数据 [`manifest.toml`](../manifest.toml)。
 
-## Dependencies
+## 依赖
 
-puerts-godot depends on [puerts](https://github.com/Tencent/puerts), so puerts must be built in advance.
+puerts-godot 依赖于 [puerts](https://github.com/Tencent/puerts)，所以我们需要预先构建 puerts。
 
 ```bash
 # Windows x64 Debug
 python misc/scripts/make_puerts.py --platform windows --arch x86_64 --config Debug
-# Linux x64 Release, only core + quickjs
+# Linux x64 Release，仅 core + quickjs
 python misc/scripts/make_puerts.py --platform linux --arch x86_64 --config Release --backends core,quickjs
 ```
 
-## Build
+## 构建
 
-We generate the C++ static bindings for the core API from Godot's API metadata: [`puerts-godot-binding-gen`](../tools/puerts-godot-binding-gen/README.md)
+我们通过 godot 的 api 元数据生成核心 API 的C++静态绑定 [`puerts-godot-binding-gen`](../tools/puerts-godot-binding-gen/README.md)
 
 ```bash
 # Windows x64 Debug
@@ -50,23 +50,25 @@ scons target=template_debug platform=windows arch=x86_64 precision=single api_ve
 scons target=template_release platform=linux arch=x86_64 precision=single api_version=4.7
 ```
 
-Output goes to `bin/`.
+输出 `bin/`
 
-Thread synchronization defaults to `thread_safe=yes`. To disable it, pass `--thread-safe no` to `make_puerts.py` and `thread_safe=no` to SCons. Rebuild both the native libraries and GDExtension when changing this option; SCons checks the native build metadata and rejects a mismatch. Non-threaded Web builds compile out synchronization regardless of this option.
-
-## Web builds
+## Web 构建
 
 ```bash
 python misc/scripts/make_puerts.py --platform web --arch wasm32 --config Debug --backends core,web --threads false
 scons target=template_debug platform=web arch=wasm32 precision=single api_version=4.7 backends=core,web threads=false
 ```
 
-Also set the following headers:
+另外还要调整为
 * `Cross-Origin-Opener-Policy: same-origin`
 * `Cross-Origin-Embedder-Policy: require-corp`
 
-## CI builds
+## CI 构建
 
 [Build GDExtension](https://github.com/realybin/puerts-godot/actions/workflows/make_build.yml)
-produces component packages for the selected platforms, Godot API versions, build target, and precision.
-See [Getting Started](getting-started.md) for installation.
+按所选平台、Godot API 版本、构建目标和精度生成组件包。
+安装方法见[入门](getting-started.md)。
+
+## 线程同步选项
+
+默认启用 `thread_safe=yes`。关闭时，向 `make_puerts.py` 传入 `--thread-safe no`，并向 SCons 传入 `thread_safe=no`。切换选项后须重新编译原生库和 GDExtension；SCons 会检查原生库构建信息，拒绝混用不同配置。无 Web 线程支持的构建会编译掉同步。

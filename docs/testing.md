@@ -1,20 +1,20 @@
-# Testing
+# 测试
 
-Run from the repository root:
+请在仓库根目录运行：
 
 ```powershell
 python misc/scripts/run_tests.py --godot C:\path\to\Godot_v4.x.x-stable_win64_console.exe --timeout=80
 ```
 
-## Browser JavaScript backend
+## 浏览器 JavaScript 后端
 
-JavaScript runtime tests (Node.js):
+JavaScript 运行时测试（Node.js）：
 
 ```bash
 node --expose-gc --test tests/web/runtime.test.cjs
 ```
 
-For Godot, [build Core and Web](build.md#web-builds) in Debug mode and copy the `.wasm` files to `tests/web/bin/`. The supplied export preset uses no threads; for a threaded build, enable `variant/thread_support`. Install matching export templates, then run:
+对于 Godot，请以 Debug 模式[构建 Core 和 Web](build.md#web-构建)，并将 `.wasm` 文件复制到 `tests/web/bin/`。随附的导出预设不使用线程；如需线程构建，请启用 `variant/thread_support`。安装匹配的导出模板，然后运行：
 
 ```bash
 mkdir -p build/web-smoke

@@ -100,7 +100,7 @@ While the game is running, attach through the VS Code configuration.
 }
 ```
 
-See [V8 Inspector](https://github.com/realybin/puerts-godot/blob/main/docs/v8-inspector.md) for details.
+See [V8 Inspector](https://github.com/realybin/puerts-godot/blob/main/docs/en/v8-inspector.md) for details.
 
 ## Exporting
 
