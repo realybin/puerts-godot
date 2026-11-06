@@ -9,3 +9,4 @@
 [submodule "thirdparty/EASTL"]
 	path = thirdparty/EASTL
 	url = https://github.com/electronicarts/EASTL
+	ignore = dirty
