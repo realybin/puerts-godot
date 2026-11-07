@@ -3,6 +3,8 @@
 
 extends "res://tests/support/test_case.gd"
 
+const TCPProbe = preload("res://tests/support/tcp_probe.gd")
+
 
 func test_debugger_open_and_close() -> bool:
 	if backend_name not in ["v8", "nodejs"]:
@@ -14,23 +16,7 @@ func test_debugger_open_and_close() -> bool:
 	server.stop()
 	env.open_debugger(port)
 	env.debugger_tick()
-	check(connects(port), "debugger accepts TCP connections")
+	check(TCPProbe.connects(port, true), "debugger accepts TCP connections")
 	env.close_debugger()
-	check(not connects(port), "debugger stops accepting connections")
+	check(not TCPProbe.connects(port, false), "debugger stops accepting connections")
 	return true
-
-
-func connects(port: int) -> bool:
-	var client := StreamPeerTCP.new()
-	if client.connect_to_host("127.0.0.1", port) != OK:
-		return false
-	var deadline := Time.get_ticks_msec() + 1000
-	while Time.get_ticks_msec() < deadline:
-		if client.poll() != OK or client.get_status() == StreamPeerTCP.STATUS_ERROR:
-			break
-		if client.get_status() == StreamPeerTCP.STATUS_CONNECTED:
-			client.disconnect_from_host()
-			return true
-		OS.delay_msec(10)
-	client.disconnect_from_host()
-	return false
