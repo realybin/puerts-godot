@@ -23,7 +23,7 @@ test("runtime functions move to puerts and addon declarations merge with string 
     }`],
     ["/other-addon.d.ts", 'declare module "PAddon" { export class Other {} }'],
     ["/main.ts", `
-      import { to_callable, load_type, load_addon_type } from "puerts";
+      import { to_callable, load_type, load_addon_type, PLogger as logger } from "puerts";
       import * as Addon from "PAddon";
       import { "Example.Counter" as Counter } from "PAddon";
       const a: number = new Addon.PlainCounter().increment();
@@ -32,6 +32,8 @@ test("runtime functions move to puerts and addon declarations merge with string 
       type Instance = InstanceType<typeof Addon["Example.Counter"]>;
       to_callable(() => b);
       load_type("Object"); load_addon_type("Example.Counter");
+      logger.info(1, "addon ready");
+      globalThis.PLogger.debug(1, "addon ready");
       // @ts-expect-error runtime helpers no longer belong to godot
       import { to_callable as oldHelper } from "godot";
       // @ts-expect-error addon declarations retain real method signatures

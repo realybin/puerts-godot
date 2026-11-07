@@ -24,7 +24,7 @@ Success prints `[web-ffi] PASS`; assertion failures exit nonzero.
 
 ## Worker memory growth
 
-Rebuild Core/Web with `threads=true`. In the harness command, use the threaded `.wasm` filenames (without `.nothreads`), add `-pthread -sINITIAL_MEMORY=16777216`, replace `-sENVIRONMENT=node` with `-sENVIRONMENT=web`, and output to `build/web-ffi-threads/smoke.js`.
+Rebuild Core/Web with `threads=true`. In the harness command, use the threaded `.wasm` filenames (without `.nothreads`). Add `-pthread -sINITIAL_MEMORY=16777216 -sIMPORTED_MEMORY=1 -sEXPORTED_RUNTIME_METHODS=HEAPU8`, replace `-sENVIRONMENT=node` with `-sENVIRONMENT=web`, and output to `build/web-ffi-threads/smoke.js`.
 
 Copy [ffi_threads_smoke.html](ffi_threads_smoke.html) there as `index.html`. Serve with `python tests/web/serve.py --directory .` and open [the harness](http://localhost:8000/build/web-ffi-threads/). Success prints `[web-ffi] MEMORY_GROWTH PASS`.
 

@@ -14,7 +14,7 @@ JavaScript runtime tests (Node.js):
 node --expose-gc --test tests/web/runtime.test.cjs
 ```
 
-For Godot, [build Core and Web](build.md#web-builds) in Debug mode and copy the `.wasm` files to `tests/web/bin/`. The supplied export preset uses no threads; for a threaded build, enable `variant/thread_support`. Install matching export templates, then run:
+For Godot, [build Core and Web](build.md#web-builds) in Debug mode and copy the `.wasm` files to `tests/web/bin/`. The supplied export preset uses no threads. For a threaded build, enable `variant/thread_support`. Install Web export templates with GDExtension support that match the Godot version and thread setting, then run these commands from the repository root.
 
 ```bash
 mkdir -p build/web-smoke

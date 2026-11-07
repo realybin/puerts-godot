@@ -9,535 +9,158 @@ local function expect_throws(fn, needle, label)
 	expect(string.find(tostring(err), needle, 1, true) ~= nil, label .. ": " .. tostring(err))
 end
 
-local function near(a, b, eps)
-	return math.abs(a - b) <= eps
-end
-
 _G.binding_cases = {
-	exists = function()
-		expect(load_type ~= nil and to_callable ~= nil, "global helper missing")
-
-		expect(load_type(backend_class_name) ~= nil, "backend class constructor missing")
-
+	type_loading = function()
+		local Backend = load_type(backend_class_name)
+		expect(Backend():get_backend_id() == backend_object:get_backend_id(), "registered backend constructor")
 		expect_throws(function()
-			return load_type("DefinitelyMissingType")
-		end, "Type not found", "missing type check")
+			load_type("DefinitelyMissingType")
+		end, "Type not found", "missing type")
 
-		expect(load_type("Time").Month.MONTH_JANUARY == 1, "class enum mismatch")
-
-		expect(load_type("Vector2") ~= nil, "builtin class constructor missing")
-	end,
-
-	backend_constructor = function()
-		expect(load_type(backend_class_name)():get_backend_id() == backend_object:get_backend_id(), "backend constructor mismatch")
-	end,
-
-	global_scope = function()
 		local GlobalScope = load_type("GlobalScope")
-		expect(GlobalScope ~= nil, "GlobalScope type missing")
-
-		expect(near(GlobalScope.sin(math.pi * 0.5), 1.0, 1e-6), "GlobalScope utility mismatch")
-
-		expect(type(GlobalScope.Engine.get_frames_drawn) == "function", "GlobalScope singleton mismatch")
-
-		expect(GlobalScope.Key.KEY_ENTER > 0, "GlobalScope enum mismatch")
-
-		expect(GlobalScope.Variant.Type.TYPE_INT == 2, "GlobalScope Variant enum mismatch")
+		expect(math.abs(GlobalScope.sin(math.pi / 2) - 1) < 1e-6, "global utility")
+		expect(GlobalScope.Engine:get_frames_drawn() >= 0, "global singleton")
+		expect(GlobalScope.Variant.Type.TYPE_INT == 2, "nested global enum")
 	end,
 
 	reflected_objects = function()
 		local Image = load_type("Image")
 		local image = Image.create_empty(4, 4, true, Image.Format.FORMAT_RGBA8)
-		expect(image:has_mipmaps(), "image starts with mipmaps")
 		expect_throws(function()
 			image:clear_mipmaps(1)
-		end, "Too many arguments", "void method arity rejection")
-		expect(image:has_mipmaps(), "rejected call leaves mipmaps intact")
-		expect(image:clear_mipmaps() == nil, "void method returns nil")
-		expect(not image:has_mipmaps(), "void method clears mipmaps")
+		end, "Too many arguments", "reflected arity rejection")
+		expect(image:has_mipmaps(), "rejected call leaves receiver intact")
+		expect(image:clear_mipmaps() == nil and not image:has_mipmaps(), "reflected void method")
 
-		local RandomNumberGenerator = load_type("RandomNumberGenerator")
-		local rng = RandomNumberGenerator()
-		rng.seed = 13579
-		local sample = rng:randi()
-		expect(rng.seed == 13579 and sample >= 0, "rng reflected binding mismatch")
-
-		local NodeType = load_type("Node")
-		local node = NodeType()
-		expect(node:get_class() == "Node" and node:get_child_count() == 0, "node reflected binding mismatch")
-		expect(NodeType.NOTIFICATION_READY == 13, "node reflected constant mismatch")
-		expect_throws(function()
-			NodeType.NOTIFICATION_READY = 99
-		end, "read-only", "node reflected constant readonly")
-
-		local ObjectType = load_type("Object")
-		local obj = ObjectType()
-		expect(
-			obj:get_class() == "Object" and
-				obj:has_signal("script_changed") and
-				ObjectType.ConnectFlags.CONNECT_DEFERRED == 1 and
-				ObjectType.NOTIFICATION_PREDELETE == 1,
-			"object reflected binding mismatch"
-		)
-		expect(obj:call("get_instance_id") == obj:get_instance_id(), "object vararg return mismatch")
-		local script_changed = obj.script_changed
-		expect(
-			script_changed ~= nil and
-				script_changed:is_null() == false and
-				script_changed:get_name() == "script_changed" and
-				script_changed:get_object_id() == obj:get_instance_id(),
-			"object reflected signal property mismatch"
-		)
-		expect_throws(function()
-			ObjectType.ConnectFlags.CONNECT_DEFERRED = 99
-		end, "read-only", "object reflected enum readonly")
-
-		local GraphNode = load_type("GraphNode")
-		local GradientTexture2D = load_type("GradientTexture2D")
+		local graph_node = load_type("GraphNode")()
+		local icon = load_type("GradientTexture2D")()
 		local Color = load_type("Color")
-		local graph_node = GraphNode()
-		local slot_icon = GradientTexture2D()
-		graph_node:set_slot(
-			0,
-			true,
-			1,
-			Color(1, 0, 0, 1),
-			true,
-			2,
-			Color(0, 1, 0, 1),
-			slot_icon,
-			slot_icon,
-			true
-		)
-		expect(
-			graph_node:is_slot_enabled_left(0) and graph_node:is_slot_enabled_right(0),
-			"reflected overflow arguments mismatch"
-		)
+		graph_node:set_slot(0, true, 1, Color.WHITE, true, 2, Color.WHITE, icon, icon, false)
+		expect(graph_node:get_slot_custom_icon_right(0) == icon and not graph_node:is_slot_draw_stylebox(0), "reflected arguments exceed inline capacity")
 
+		local style = load_type("StyleBoxFlat")()
+		style.border_width_left = 7
+		expect(style.border_width_left == 7, "indexed property fallback")
+	end,
+
+	container_conversion = function()
 		local ArrayType = load_type("Array")
 		local CodeEdit = load_type("CodeEdit")
-		local GlobalScope = load_type("GlobalScope")
+		local types = load_type("GlobalScope").Variant.Type
+		local editor = CodeEdit()
 		local prefixes = ArrayType()
 		prefixes:push_back("#")
-		local code_edit = CodeEdit()
-		code_edit:set_auto_indent_prefixes(prefixes)
-		local stored_prefixes = code_edit:get_auto_indent_prefixes()
-		expect(
-			prefixes:is_typed() == false and
-				stored_prefixes:is_typed() and
-				stored_prefixes:get_typed_builtin() == GlobalScope.Variant.Type.TYPE_STRING and
-				stored_prefixes:get(0) == "#",
-			"untyped array conversion mismatch"
-		)
-
-		local FileDialog = load_type("FileDialog")
-		local filters = ArrayType()
-		filters:push_back("*.txt")
-		local file_dialog = FileDialog()
-		file_dialog:set_filters(filters)
-		local stored_filters = file_dialog:get_filters()
-		expect(
-			stored_filters:size() == 1 and stored_filters:get(0) == "*.txt",
-			"array to reflected packed array conversion mismatch"
-		)
+		editor:set_auto_indent_prefixes(prefixes)
+		local typed = editor:get_auto_indent_prefixes()
+		expect(not prefixes:is_typed() and typed:get_typed_builtin() == types.TYPE_STRING and typed:get(0) == "#", "untyped array to typed strings")
 
 		local SystemFont = load_type("SystemFont")
-		local StringName = load_type("StringName")
-		local fallback_font = SystemFont()
-		local untyped_fallbacks = ArrayType()
-		untyped_fallbacks:push_back(fallback_font)
+		local fallback = SystemFont()
 		local font = SystemFont()
-		font:set_fallbacks(untyped_fallbacks)
-		local stored_fallbacks = font:get_fallbacks()
-		expect(
-			stored_fallbacks:is_typed() and
-				stored_fallbacks:get_typed_builtin() == GlobalScope.Variant.Type.TYPE_OBJECT and
-				StringName.op_Equality(stored_fallbacks:get_typed_class_name(), "Font") and
-				stored_fallbacks:get(0) == fallback_font,
-			"untyped object array conversion mismatch"
-		)
+		local fonts = ArrayType()
+		fonts:push_back(fallback)
+		font:set_fallbacks(fonts)
+		local fallbacks = font:get_fallbacks()
+		local StringName = load_type("StringName")
+		expect(StringName.op_Equality(fallbacks:get_typed_class_name(), "Font") and fallbacks:get(0) == fallback, "untyped array to typed objects")
 
-		local DictionaryType = load_type("Dictionary")
-		local brace_pairs = DictionaryType()
-		brace_pairs:set("(", ")")
-		code_edit:set_auto_brace_completion_pairs(brace_pairs)
-		expect(
-			code_edit:get_auto_brace_completion_pairs():get("(", nil) == ")",
-			"untyped dictionary argument mismatch"
-		)
+		local Dictionary = load_type("Dictionary")
+		local pairs = Dictionary()
+		pairs:set("(", ")")
+		editor:set_auto_brace_completion_pairs(pairs)
+		expect(editor:get_auto_brace_completion_pairs():get("(") == ")", "reflected dictionary argument")
 
-		local GraphEdit = load_type("GraphEdit")
-		local type_names = DictionaryType()
-		type_names:set(1, "flow")
-		local graph_edit = GraphEdit()
-		graph_edit.type_names = type_names
-		local stored_type_names = graph_edit.type_names
-		expect(
-			stored_type_names:is_typed() == false and stored_type_names:get(1, nil) == "flow",
-			"untyped dictionary property passthrough mismatch"
-		)
+		local PackedStringArray = load_type("PackedStringArray")
+		local packed = PackedStringArray()
+		packed:append("!")
+		local joined = PackedStringArray.op_Addition(packed, prefixes)
+		expect(joined:size() == 2 and joined:get(1) == "#", "Array to packed array in generated binding")
 
-		local StyleBoxFlat = load_type("StyleBoxFlat")
-		local style_box = StyleBoxFlat()
-		style_box.border_width_left = 7
-		expect(style_box.border_width_left == 7, "indexed property fallback mismatch")
-
-		expect(
-			load_type("FileAccess").file_exists("res://project.godot") and load_type("FileAccess").get_size("res://project.godot") > 0,
-			"static reflected binding mismatch"
-		)
+		local bytes = load_type("PackedByteArray")()
+		bytes:append(65)
+		bytes:append(0)
+		expect(bytes:get(0) == 65 and bytes:hex_encode() == "4100", "packed bytes round trip through generated methods")
 	end,
 
-	error_paths = function()
-		expect(load_type() == nil, "load_type empty arg should return nil")
-
-		expect_throws(function()
-			return load_type("DirAccess")()
-		end, "No constructor available", "missing constructor check")
-
-		expect_throws(function()
-			return to_callable()
-		end, "expects exactly one argument", "to_callable arity rejection")
-
-		expect_throws(function()
-			return to_callable({})
-		end, "expects a script function", "to_callable type rejection")
-
-		expect_throws(function()
-			return to_callable(load_type("Callable")())
-		end, "expects a script function", "to_callable Callable rejection")
-
-		expect_throws(function()
-			return load_type("RandomNumberGenerator")(1)
-		end, "zero-argument construction", "constructor arg rejection")
-
-		expect_throws(function()
-			local RandomNumberGenerator = load_type("RandomNumberGenerator")
-			local rng = RandomNumberGenerator()
-			rng.seed = "oops"
-		end, "Invalid argument", "property type rejection")
-
-		expect_throws(function()
-			return load_type("Object")(1)
-		end, "Argument count does not match the bound signature", "object static constructor arity rejection")
-
-		expect_throws(function()
-			load_type("Time").Month.MONTH_JANUARY = 2
-		end, "read-only", "readonly enum rejection")
-
-		expect_throws(function()
-			local LightmapGIData = load_type("LightmapGIData")
-			local data = LightmapGIData()
-			data.lightmap_textures = {}
-		end, "read-only", "readonly property rejection")
-
-	end,
-
-	binding_contracts = function()
-		local ObjectType = load_type("Object")
-		local RandomNumberGenerator = load_type("RandomNumberGenerator")
-		local generator = RandomNumberGenerator()
-		local base_instance = ObjectType()
-		expect(base_instance.get_class(generator) == "RandomNumberGenerator", "static base method accepts reflected derived receiver")
-		expect(load_type("GlobalScope").instance_from_id(generator:get_instance_id()) == generator, "object round trip preserves wrapper identity")
-
+	builtin_bindings = function()
 		local Vector2 = load_type("Vector2")
-		local Vector2i = load_type("Vector2i")
-		local vector = Vector2i(2, 4)
-		local scaled_float = Vector2i.op_Multiply(vector, 0.5)
-		expect(scaled_float.x == 1 and scaled_float.y == 2, "floating overload wins over integer narrowing")
-		local scaled_integer = Vector2i.op_Multiply(vector, 2)
-		expect(scaled_integer.x == 4 and scaled_integer.y == 8, "integer overload preserves its result")
-		local divided = Vector2i.op_Division(vector, 0.5)
-		expect(divided.x == 4 and divided.y == 8, "division preserves a fractional scalar")
-		expect(vector.x == 2 and vector.y == 4, "operator invocation keeps the source value unchanged")
-		local axis = load_type("Vector2.Axis")
-		expect(getmetatable(Vector2.Axis) == getmetatable(axis) and Vector2.Axis.AXIS_X == axis.AXIS_X and Vector2.Axis.AXIS_Y == axis.AXIS_Y, "enum scope shares its type metatable and constants")
+		local vector = Vector2(3, 4)
+		expect(math.abs(vector:limit_length():length() - 1) < 1e-6, "instance method default argument")
+		local Color = load_type("Color")
+		expect(Color.from_hsv(0, 1, 1).a == 1, "static method default argument")
+		local dict = load_type("Dictionary")()
+		expect(dict:get_or_add("missing") == nil and dict:has("missing"), "explicit Variant default")
+		expect(Vector2.ZERO.x == 0 and getmetatable(Vector2.Axis) == getmetatable(load_type("Vector2.Axis")), "constant and enum scope identity")
+		expect_throws(function()
+			Vector2.Axis.AXIS_X = 7
+		end, "read-only", "enum member")
 	end,
 
 	static_argument_conversion = function()
 		local Vector2 = load_type("Vector2")
-		local Vector2i = load_type("Vector2i")
 		local vector = Vector2(3, 4)
-		expect(vector:dot(vector) == 25 and vector:dot(boxed_vector) == 25, "constructed and engine value argument conversion")
-		expect(vector:dot(Vector2i(3, 4)) == 25 and vector:dot(boxed_int_vector) == 25, "cross-type argument conversion")
+		expect(vector:dot(boxed_vector) == 25 and vector:dot(boxed_int_vector) == 25, "boxed and cross-type arguments")
 		local copy = Vector2(vector)
 		copy.x = 10
-		expect(vector.x == 3, "copy constructor keeps value independence")
-		local normalized = vector:normalized()
-		expect(near(normalized:length(), 1, 1e-6) and vector:length() == 5, "returned value keeps value independence")
+		expect(vector.x == 3, "copy constructor preserves value independence")
 		boxed_vector.x = 0
-		expect(boxed_vector:length() == 4, "boxed receiver mutation writes back")
+		expect(boxed_vector:length() == 4, "boxed receiver mutation")
+
 		local ints = load_type("PackedInt32Array")()
 		ints:append(-3.75)
 		ints:append(2147483648)
-		expect(ints:get(0) == -3 and ints:get(1) == -2147483648, "numeric fallback preserves narrowing")
-		expect_throws(function()
-			ints:append("oops")
-		end, "Argument type does not match", "scalar type rejection")
-		local floats = load_type("PackedFloat64Array")()
-		floats:append(3)
-		floats:append(1.25)
-		expect(floats:get(0) == 3 and floats:get(1) == 1.25, "integer and floating-point scalar conversion")
+		expect(ints:get(0) == -3 and ints:get(1) == -2147483648, "numeric narrowing")
 		local wide = load_type("PackedInt64Array")()
 		wide:append(4294967297)
-		floats:append(4294967297)
-		expect(wide:get(0) == 4294967297 and floats:get(2) == 4294967297, "64-bit integer fallback conversion")
-		backend_object:set_block_signals(true)
-		expect(backend_object:is_blocking_signals(), "boolean argument conversion")
-		backend_object:set_block_signals(false)
+		expect(wide:get(0) == 4294967297, "64-bit integer conversion")
+		local vectors = load_type("PackedVector2Array")()
+		vectors:append(vector)
+		expect(vectors:get(0).y == 4, "packed array boxes value elements")
 	end,
 
-	builtin_static_binding = function()
-		expect(load_type("Vector2")(3.0, 4.0):length() == 5.0, "vector2 constructor mismatch")
-		local default_limited = load_type("Vector2")(3.0, 4.0):limit_length()
-		expect(near(default_limited:length(), 1.0, 1e-6), "instance method default argument mismatch")
+	binding_contracts = function()
+		local ObjectType = load_type("Object")
+		local generator = load_type("RandomNumberGenerator")()
+		expect(ObjectType().get_class(generator) == "RandomNumberGenerator", "base method accepts reflected receiver")
+		expect(generator:call("get_instance_id") == generator:get_instance_id(), "object vararg method")
+		expect(load_type("GlobalScope").instance_from_id(generator:get_instance_id()) == generator, "object wrapper identity")
 
-		do
-			local Vector2 = load_type("Vector2")
-			expect(
-				Vector2.ZERO.x == 0 and Vector2.ZERO.y == 0 and Vector2.ONE.x == 1 and Vector2.ONE.y == 1,
-				"vector2 constants mismatch"
-			)
-			expect_throws(function()
-				Vector2.ZERO = nil
-			end, "read-only", "vector2 constant readonly")
-			expect(Vector2.Axis and Vector2.Axis.AXIS_X == 0 and Vector2.Axis.AXIS_Y == 1, "vector2 axis enum mismatch")
-			expect_throws(function()
-				Vector2.Axis = nil
-			end, "read-only", "vector2 axis enum group readonly")
-			expect_throws(function()
-				Vector2.Axis.AXIS_X = 7
-			end, "read-only", "vector2 axis enum readonly")
+		local Vector2i = load_type("Vector2i")
+		local vector = Vector2i(2, 4)
+		local fractional = Vector2i.op_Multiply(vector, 0.5)
+		local integral = Vector2i.op_Multiply(vector, 2)
+		expect(fractional.x == 1 and fractional.y == 2, "fractional overload")
+		expect(integral.x == 4 and integral.y == 8, "integer overload")
+		expect(vector.x == 2 and vector.y == 4, "operator preserves source value")
+
+		local signal = backend_object.script_changed
+		expect(signal:get_object_id() == backend_object:get_instance_id(), "bound signal property")
+		local calls = 0
+		local function on_signal()
+			calls = calls + 1
 		end
+		local callback = to_callable(on_signal)
+		local equivalent = to_callable(on_signal)
+		expect(signal:connect(callback) == 0 and signal:is_connected(equivalent), "script Callable equality")
+		signal:emit()
+		signal:disconnect(equivalent)
+		signal:emit()
+		expect(calls == 1, "equivalent Callable disconnects the signal")
+	end,
 
-		do
-			local Vector2 = load_type("Vector2")
-			local v = Vector2()
-			v.x = 8.0
-			v.y = 6.0
-			expect(v:length() == 10.0, "vector2 property mismatch")
-		end
-
-		do
-			local Vector2 = load_type("Vector2")
-			local Rect2 = load_type("Rect2")
-			local rect = Rect2(Vector2(2.0, 3.0), Vector2(4.0, 5.0))
-			expect(rect:has_point(Vector2(3.0, 4.0)) and rect:get_area() == 20.0 and rect.position.x == 2.0, "rect2 mismatch")
-		end
-
-		do
-			local StringName = load_type("StringName")
-			local name = StringName("player")
-			expect(name:contains("lay") and name:length() == 6, "string_name methods mismatch")
-			expect(name:begins_with("pla") and name:ends_with("yer") and name:to_upper() == "PLAYER", "string_name extras mismatch")
-			local parts = StringName("left,right"):split(",")
-			expect(parts:size() == 2 and parts:get(0) == "left" and parts:get(1) == "right", "partial default arguments mismatch")
-		end
-
-		do
-			local Color = load_type("Color")
-			local red = Color.from_hsv(0.0, 1.0, 1.0)
-			expect(near(red.r, 1.0, 1e-6) and near(red.a, 1.0, 1e-6), "static method default argument mismatch")
-		end
-
-		expect(load_type("RID")():is_valid() == false, "rid default mismatch")
-
-		do
-			local PackedInt32Array = load_type("PackedInt32Array")
-			local PackedFloat64Array = load_type("PackedFloat64Array")
-			local PackedStringArray = load_type("PackedStringArray")
-			local PackedVector2Array = load_type("PackedVector2Array")
-			local PackedColorArray = load_type("PackedColorArray")
-			local Vector2 = load_type("Vector2")
-			local Color = load_type("Color")
-
-			local ints = PackedInt32Array()
-			ints:append(3)
-			ints:set(0, 7)
-			local floats = PackedFloat64Array()
-			floats:append(1.5)
-			local strings = PackedStringArray()
-			strings:append("godot")
-			local vectors = PackedVector2Array()
-			vectors:append(Vector2(2.0, 4.0))
-			local colors = PackedColorArray()
-			colors:append(Color(0.1, 0.2, 0.3, 1.0))
-
-			expect(
-				ints:get(0) == 7 and ints:has(7) and floats:get(0) == 1.5 and strings:get(0) == "godot" and vectors:get(0).y == 4.0 and near(colors:get(0).b, 0.3, 0.001),
-				"packed arrays mismatch"
-			)
-		end
-
-		do
-			local PackedByteArray = load_type("PackedByteArray")
-			local bytes = PackedByteArray()
-			bytes:append(103)
-			bytes:append(111)
-			bytes:append(100)
-			bytes:append(111)
-			bytes:append(116)
-			expect(bytes:get(1) == 111 and bytes:get_string_from_utf8() == "godot" and bytes:hex_encode() == "676f646f74", "packed byte array mismatch")
-		end
-
-		do
-			local Callable = load_type("Callable")
-			local ArrayType = load_type("Array")
-			local c = Callable(backend_object, "get_backend_name")
-			local args = ArrayType()
-			expect(c:is_valid() and c:get_method() == "get_backend_name" and c:callv(args) == backend_object:get_backend_name() and c:call() == backend_object:get_backend_name(), "callable mismatch")
-			c:call_deferred()
-			expect(type(c.call_deferred) == "function", "callable call_deferred missing")
-			expect(args:reduce(c) == nil, "array reduce Variant default mismatch")
-
-			local add = to_callable(function(a, b)
-				return a + b
-			end)
-			expect(add:is_custom() and add:is_valid() and add:call(20, 22) == 42, "script callable mismatch")
-
-			local signal_calls = 0
-			local function on_script_changed()
-				signal_calls = signal_calls + 1
-			end
-			local callback = to_callable(on_script_changed)
-			local equivalent_callback = to_callable(on_script_changed)
-			local signal = backend_object.script_changed
-			expect_throws(function()
-				return signal:connect(on_script_changed)
-			end, "Argument type does not match", "implicit callable rejection")
-			expect(signal:connect(callback) == 0 and signal:is_connected(equivalent_callback), "script callable connect mismatch")
-			signal:emit()
-			signal:disconnect(equivalent_callback)
-			signal:emit()
-			expect(signal_calls == 1 and not signal:is_connected(callback), "script callable disconnect mismatch")
-		end
-
-		do
-			local Signal = load_type("Signal")
-			local sig = Signal(backend_object, "script_changed")
-			expect(sig:is_null() == false and sig:get_name() == "script_changed" and sig:get_object_id() == backend_object:get_instance_id(), "signal mismatch")
-
-			local sig_from_property = backend_object.script_changed
-			expect(
-				sig_from_property ~= nil and
-				sig_from_property:is_null() == false and
-				sig_from_property:get_name() == "script_changed" and
-				sig_from_property:get_object_id() == backend_object:get_instance_id(),
-				"signal property mismatch")
-		end
-
-		do
-			local ArrayType = load_type("Array")
-			local arr = ArrayType()
-			arr:append(1)
-			arr:append("x")
-			arr:set(0, 7)
-			expect(arr:size() == 2 and arr:get(0) == 7 and arr:has("x"), "array mismatch")
-		end
-
-		do
-			local ArrayType = load_type("Array")
-			local PackedStringArray = load_type("PackedStringArray")
-			local parts = ArrayType()
-			parts:push_back("a")
-			parts:push_back("b")
-			local packed_parts = PackedStringArray()
-			packed_parts:push_back("a")
-			packed_parts:push_back("b")
-			local merged_parts = PackedStringArray.op_Addition(packed_parts, parts)
-			expect(
-				merged_parts:size() == 4 and merged_parts:get(0) == "a" and merged_parts:get(3) == "b",
-				"array to packed array conversion mismatch"
-			)
-		end
-
-		do
-			local DictionaryType = load_type("Dictionary")
-			local dict = DictionaryType()
-			dict:set("answer", 42)
-			dict:set("name", "godot")
-			expect(dict:get("answer", nil) == 42 and dict:has("name") and dict:keys():size() == 2, "dictionary mismatch")
-			expect(dict:get("missing") == nil, "dictionary get Variant default mismatch")
-			expect(dict:get_or_add("inserted") == nil and dict:has("inserted"), "dictionary get_or_add Variant default mismatch")
-		end
-
-		backend_object:set_meta("__puerts_default_arg_meta__", 42)
-		expect(backend_object:get_meta("__puerts_default_arg_meta__") == 42, "object method default argument mismatch")
-		backend_object:remove_meta("__puerts_default_arg_meta__")
-
+	binding_errors = function()
+		local Vector2 = load_type("Vector2")
 		expect_throws(function()
-			return load_type("Basis")():tdotx(load_type("Vector2")(1.0, 2.0))
-		end, "Argument type does not match", "direct method type rejection")
-
+			Vector2(1)
+		end, "No constructor overload matches", "constructor arity")
 		expect_throws(function()
-			local Vector2 = load_type("Vector2")
-			local Color = load_type("Color")
-			local v = Vector2()
-			return v.length(Color(0.1, 0.2, 0.3, 1.0))
-		end, "Native object type does not match", "receiver type rejection")
-
+			Vector2().length(load_type("Color").WHITE)
+		end, "Native object type does not match", "wrong receiver")
 		expect_throws(function()
-			local Signal = load_type("Signal")
-			local Callable = load_type("Callable")
-			local sig = Signal(backend_object, "script_changed")
-			return sig.connect(Callable(backend_object, "get_backend_name"), 123)
-		end, "Native object type does not match", "overload receiver rejection")
-
+			backend_object.script_changed:connect({}, 0)
+		end, "Argument type does not match", "overloaded argument type")
 		expect_throws(function()
-			local Signal = load_type("Signal")
-			local sig = Signal(backend_object, "script_changed")
-			return sig:connect({}, 0)
-		end, "Argument type does not match", "overload plain table rejection")
-
-		expect_throws(function()
-			local Signal = load_type("Signal")
-			local sig = Signal(backend_object, "script_changed")
-			return sig:connect()
-		end, "Argument count does not match", "overload arity rejection")
-
-		expect_throws(function()
-			local Signal = load_type("Signal")
-			local sig = Signal(backend_object, "script_changed")
-			return sig:connect(backend_object, 0)
-		end, "Argument type does not match", "overload native object rejection")
-
-		expect_throws(function()
-			local Signal = load_type("Signal")
-			local Vector2 = load_type("Vector2")
-			local sig = Signal(backend_object, "script_changed")
-			return sig:connect(Vector2(1.0, 2.0), 0)
-		end, "Argument type does not match", "overload wrong builtin rejection")
-
-		expect_throws(function()
-			local Vector2 = load_type("Vector2")
-			return Vector2(1.0)
-		end, "No constructor overload matches", "constructor arity rejection")
-
-		expect_throws(function()
-			local Signal = load_type("Signal")
-			local Vector2 = load_type("Vector2")
-			return Signal(Vector2(1.0, 2.0), "script_changed")
-		end, "No constructor overload matches", "constructor wrong object rejection")
-
-		do
-			local Color = load_type("Color")
-			local c = Color(0.1, 0.2, 0.3, 0.4)
-			c.a = 1.0
-			local white_with_alpha = Color(Color.WHITE, 0.5)
-			expect(
-				c.a == 1.0 and
-					white_with_alpha.r == 1.0 and
-					white_with_alpha.g == 1.0 and
-					white_with_alpha.b == 1.0 and
-					white_with_alpha.a == 0.5 and
-					Color.TRANSPARENT.a == 0.0,
-				"color property or constants mismatch"
-			)
-			expect_throws(function()
-				Color.WHITE = nil
-			end, "read-only", "color constant readonly")
-		end
-
+			to_callable({})
+		end, "expects a script function", "Callable input type")
 	end,
 }

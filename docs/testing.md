@@ -14,7 +14,7 @@ JavaScript 运行时测试（Node.js）：
 node --expose-gc --test tests/web/runtime.test.cjs
 ```
 
-对于 Godot，请以 Debug 模式[构建 Core 和 Web](build.md#web-构建)，并将 `.wasm` 文件复制到 `tests/web/bin/`。随附的导出预设不使用线程；如需线程构建，请启用 `variant/thread_support`。安装匹配的导出模板，然后运行：
+对于 Godot，请以 Debug 模式[构建 Core 和 Web](build.md#web-构建)，并将 `.wasm` 文件复制到 `tests/web/bin/`。随附的导出预设不使用线程。如需线程构建，请启用 `variant/thread_support`。安装与 Godot 版本和线程设置匹配、启用了 GDExtension 支持的 Web 导出模板，然后在仓库根目录运行以下命令。
 
 ```bash
 mkdir -p build/web-smoke

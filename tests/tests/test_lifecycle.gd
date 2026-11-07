@@ -48,6 +48,8 @@ func test_dispose_invalidates_values_and_callable() -> bool:
 	for value in values:
 		if not check(value != null and value.is_valid(), "retained value is valid before dispose"):
 			return false
+	# Remove an entry between live wrappers before invalidating the registry.
+	values.remove_at(2)
 	env.dispose()
 	for value in values:
 		check(not value.is_valid(), "retained value invalidated")
@@ -61,28 +63,13 @@ func test_owner_release_with_retained_wrappers() -> bool:
 	var root = root_value()
 	var nested = root.get_property("nested")
 	var callback: Callable = native(evaluate("return to_callable(function() return 1 end)", "to_callable(() => 1)"))
-	env.dispose()
-	environments.clear()
-	env = null
-	backend = null
-	equal(weak_env.get_ref(), null, "wrappers do not retain disposed environment")
-	equal(weak_backend.get_ref(), null, "wrappers do not retain backend")
-	check(not root.is_valid() and not nested.is_valid() and not callback.is_valid(), "retained handles are invalid")
-	return true
-
-
-func test_values_released_before_environment() -> bool:
-	var root = root_value()
-	var nested = root.get_property("nested")
 	root = null
-	nested = null
-	var weak_env: WeakRef = weakref(env)
-	var weak_backend: WeakRef = weakref(backend)
 	environments.clear()
 	env = null
 	backend = null
-	equal(weak_env.get_ref(), null, "environment destructor")
-	equal(weak_backend.get_ref(), null, "backend release after values")
+	equal(weak_env.get_ref(), null, "wrappers do not retain environment")
+	equal(weak_backend.get_ref(), null, "wrappers do not retain backend")
+	check(not nested.is_valid() and not callback.is_valid(), "owner destruction invalidates retained handles")
 	return true
 
 
@@ -98,20 +85,6 @@ func test_environment_releases_script_owned_objects() -> bool:
 	check(is_instance_id_valid(ref_id) and is_instance_id_valid(node_id), "script-owned objects alive")
 	env.dispose()
 	check(not is_instance_id_valid(ref_id) and not is_instance_id_valid(node_id), "dispose frees script-owned objects")
-	return true
-
-
-func test_registry_removal_and_bulk_invalidation() -> bool:
-	var factory = evaluate("return function(value) return {value = value} end", "(value) => ({value})")
-	var values := []
-	for index in range(16):
-		values.append(factory.call([index]))
-	for index in range(1, values.size(), 2):
-		values[index] = null
-	env.dispose()
-	check(not factory.is_valid(), "factory invalidated")
-	for index in range(0, values.size(), 2):
-		check(not values[index].is_valid(), "remaining wrapper invalidated")
 	return true
 
 

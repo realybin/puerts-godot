@@ -27,11 +27,11 @@ func run_binding_case(name: String) -> bool:
 
 
 func test_type_loading() -> bool:
-	return run_binding_case("exists") and run_binding_case("backend_constructor")
+	return run_binding_case("type_loading")
 
 
-func test_global_scope() -> bool:
-	return run_binding_case("global_scope")
+func test_container_conversion() -> bool:
+	return run_binding_case("container_conversion")
 
 
 func test_reflected_objects() -> bool:
@@ -39,11 +39,11 @@ func test_reflected_objects() -> bool:
 
 
 func test_binding_errors() -> bool:
-	return run_binding_case("error_paths")
+	return run_binding_case("binding_errors")
 
 
 func test_builtin_bindings() -> bool:
-	return run_binding_case("builtin_static_binding")
+	return run_binding_case("builtin_bindings")
 
 
 func test_static_argument_conversion() -> bool:

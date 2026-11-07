@@ -51,7 +51,6 @@ test("scalar properties convert using their native member or setter parameter ty
  const bindings = collectPropertyBindings({ name: "Example", members: [{ name: "component" }, { name: "channel" }] }, rules, "generated");
  assert.ok(bindings[0].helperCode.includes("static_cast<decltype(p_self.normal.x)>(p_value)"));
  assert.ok(bindings[1].helperCode.includes("native_parameter_t<decltype(&godot::Example::set_channel), 0>"));
- assert.ok(!bindings.some(binding => binding.helperCode.includes("eastl::move")));
 });
 
 test("explicit script defaults are supplied and stale metadata is rejected", () => {

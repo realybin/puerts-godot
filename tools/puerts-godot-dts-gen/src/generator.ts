@@ -25,7 +25,7 @@ export function generate(api: ApiData, generatorOptions: GeneratorOptions = {}):
 	lines.push(
 		`declare function to_callable<T extends (...args: any[]) => any>(callback: T): import(${JSON.stringify(options.moduleName)}).Callable<T>;`,
 	);
-	lines.push("declare const PLogger: {");
+	lines.push("declare var PLogger: {");
 	for (const level of ["trace", "debug", "info", "warning", "error"]) {
 		lines.push(`\t${level}(category: number, message: string): void;`);
 	}
