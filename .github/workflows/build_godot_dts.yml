@@ -60,17 +60,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.1.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: "20"
           cache: npm
           cache-dependency-path: tools/puerts-godot-dts-gen/package-lock.json
 
       - name: Setup Godot
-        uses: chickensoft-games/setup-godot@v2
+        uses: chickensoft-games/setup-godot@v2.4.3
         with:
           version: ${{ matrix.godot.godot_version }}
           use-dotnet: false
@@ -123,7 +123,7 @@ jobs:
           test -s artifacts/godot.d.ts
 
       - name: Upload godot.d.ts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: godot-dts-${{ matrix.godot.api_version }}-${{ needs.prepare.outputs.documentation_suffix }}
           path: artifacts/godot.d.ts

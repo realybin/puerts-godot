@@ -53,7 +53,7 @@ runs:
   using: composite
   steps:
     - name: Setup Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v6.3.0
       with:
         python-version: "3.12"
 
@@ -62,7 +62,7 @@ runs:
       run: python -m unittest discover -s tests -p test_threading_build.py
 
     - name: Setup godot-cpp
-      uses: ./godot-cpp/.github/actions/setup-godot-cpp
+      uses: $/godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
         em-version: ${{ inputs.em_version }}
@@ -89,7 +89,7 @@ runs:
     - name: Restore Puerts libraries
       id: native-cache
       if: ${{ inputs.restore_cache == 'true' || inputs.save_cache == 'true' }}
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v4.3.0
       with:
         path: ${{ steps.cache.outputs.native-paths }}
         key: ${{ steps.cache.outputs.native-key }}
@@ -97,7 +97,7 @@ runs:
 
     - name: Setup Node
       if: ${{ inputs.restore_cache != 'true' || steps.native-cache.outputs.cache-hit != 'true' || (inputs.platform == 'web' && inputs.run_tests == 'true') }}
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v6.5.0
       with:
         node-version: "20"
 
@@ -128,7 +128,7 @@ runs:
     - name: Restore SCons baseline
       id: scons-cache
       if: ${{ inputs.restore_cache == 'true' || inputs.save_cache == 'true' }}
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v4.3.0
       with:
         path: .scons-cache/
         key: ${{ steps.cache.outputs.scons-key }}
@@ -160,7 +160,7 @@ runs:
 
     - name: Setup Godot
       if: ${{ inputs.run_tests == 'true' && (inputs.platform == 'windows' || inputs.platform == 'macos' || inputs.platform == 'linux') }}
-      uses: chickensoft-games/setup-godot@v2
+      uses: chickensoft-games/setup-godot@v2.4.3
       with:
         version: ${{ inputs.godot_version }}
         use-dotnet: false
@@ -204,14 +204,14 @@ runs:
 
     - name: Save Puerts libraries
       if: ${{ inputs.save_cache == 'true' && inputs.save_native_cache == 'true' && steps.native-cache.outputs.cache-hit != 'true' }}
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v4.3.0
       with:
         path: ${{ steps.cache.outputs.native-paths }}
         key: ${{ steps.cache.outputs.native-key }}
 
     - name: Save SCons baseline
       if: ${{ inputs.save_cache == 'true' && steps.scons-cache.outputs.cache-hit != 'true' }}
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v4.3.0
       with:
         path: .scons-cache/
         key: ${{ steps.cache.outputs.scons-key }}
@@ -245,7 +245,7 @@ runs:
 
     - name: Upload build artifact
       if: ${{ inputs.upload_artifact == 'true' }}
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: gdextension-build-godot${{ inputs.api_version }}-${{ inputs.float_precision }}-${{ inputs.platform }}-${{ inputs.arch }}-${{ inputs.target_type }}${{ inputs.platform == 'web' && (inputs.web_threads == 'true' && '-threads' || '-nothreads') || '' }}
         if-no-files-found: error

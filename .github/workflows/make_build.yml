@@ -84,11 +84,11 @@ jobs:
 
     runs-on: ${{ matrix.target.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
         with:
           submodules: true
 
-      - uses: ./.github/actions/gdextension
+      - uses: $/.github/actions/gdextension
         with:
           platform: ${{ matrix.target.platform }}
           arch: ${{ matrix.target.arch }}
@@ -117,14 +117,14 @@ jobs:
       matrix:
         godot: ${{ fromJSON(needs.prepare.outputs.godot_versions) }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v6.3.0
         with:
           python-version: '3.12'
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v8.0.2
         with:
           pattern: gdextension-build-godot${{ matrix.godot.api_version }}-${{ inputs.float_precision }}-*
           path: artifacts
@@ -146,7 +146,7 @@ jobs:
 
       - name: Upload core
         if: ${{ steps.package.outputs.core != '' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.package.outputs.core }}
           path: dist/${{ steps.package.outputs.core }}/
@@ -155,7 +155,7 @@ jobs:
 
       - name: Upload v8
         if: ${{ steps.package.outputs.v8 != '' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.package.outputs.v8 }}
           path: dist/${{ steps.package.outputs.v8 }}/
@@ -164,7 +164,7 @@ jobs:
 
       - name: Upload nodejs
         if: ${{ steps.package.outputs.nodejs != '' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.package.outputs.nodejs }}
           path: dist/${{ steps.package.outputs.nodejs }}/
@@ -173,7 +173,7 @@ jobs:
 
       - name: Upload quickjs
         if: ${{ steps.package.outputs.quickjs != '' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.package.outputs.quickjs }}
           path: dist/${{ steps.package.outputs.quickjs }}/
@@ -182,7 +182,7 @@ jobs:
 
       - name: Upload lua
         if: ${{ steps.package.outputs.lua != '' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.package.outputs.lua }}
           path: dist/${{ steps.package.outputs.lua }}/
@@ -191,7 +191,7 @@ jobs:
 
       - name: Upload web
         if: ${{ steps.package.outputs.web != '' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ${{ steps.package.outputs.web }}
           path: dist/${{ steps.package.outputs.web }}/
@@ -199,7 +199,7 @@ jobs:
           overwrite: true
 
       - name: Remove intermediate artifacts
-        uses: actions/github-script@v8
+        uses: actions/github-script@v8.0.0
         env:
           ARTIFACT_PREFIX: gdextension-build-godot${{ matrix.godot.api_version }}-${{ inputs.float_precision }}-
         with:

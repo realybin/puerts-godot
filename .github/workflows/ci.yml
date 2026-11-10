@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.1.0
 
       - name: Setup clang-format
         shell: bash
@@ -77,11 +77,11 @@ jobs:
 
     runs-on: ${{ matrix.target.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
         with:
           submodules: true
 
-      - uses: ./.github/actions/gdextension
+      - uses: $/.github/actions/gdextension
         with:
           platform: ${{ matrix.target.platform }}
           arch: ${{ matrix.target.arch }}
