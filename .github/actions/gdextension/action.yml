@@ -62,7 +62,7 @@ runs:
       run: python -m unittest discover -s tests -p test_threading_build.py
 
     - name: Setup godot-cpp
-      uses: $/godot-cpp/.github/actions/setup-godot-cpp
+      uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
         em-version: ${{ inputs.em_version }}
